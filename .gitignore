@@ -1,0 +1,186 @@
+# ============================================================
+
+# Java build output
+
+# ============================================================
+
+*.class
+*.jar
+*.war
+*.ear
+*.nar
+
+target/
+build/
+out/
+bin/
+
+# Maven
+
+.mvn/timing.properties
+.mvn/wrapper/maven-wrapper.jar
+dependency-reduced-pom.xml
+pom.xml.tag
+pom.xml.releaseBackup
+pom.xml.versionsBackup
+pom.xml.next
+release.properties
+
+# Gradle (kept in case the project later switches build tools)
+
+.gradle/
+!gradle/wrapper/gradle-wrapper.jar
+
+# ============================================================
+
+# IDE files
+
+# ============================================================
+
+# IntelliJ IDEA
+
+.idea/
+*.iml
+*.ipr
+*.iws
+
+# Visual Studio Code
+
+.vscode/
+
+# Eclipse
+
+.project
+.classpath
+.settings/
+
+# NetBeans
+
+/nbproject/private/
+/nbbuild/
+/dist/
+/nbdist/
+/.nb-gradle/
+
+# ============================================================
+
+# Operating-system files
+
+# ============================================================
+
+# macOS
+
+.DS_Store
+.AppleDouble
+.LSOverride
+
+# Windows
+
+Thumbs.db
+Desktop.ini
+$RECYCLE.BIN/
+
+# Linux
+
+*~
+
+# ============================================================
+
+# Logs, temporary files, and local caches
+
+# ============================================================
+
+*.log
+logs/
+tmp/
+temp/
+.cache/
+*.tmp
+*.swp
+*.swo
+*.bak
+*.orig
+
+# ============================================================
+
+# Local configuration and secrets
+
+# ============================================================
+
+.env
+.env.*
+*.local
+application-local.properties
+application-local.yml
+application-local.yaml
+
+# SSH keys must never be committed
+
+.ssh/
+id_rsa
+id_rsa.pub
+id_ed25519
+id_ed25519.pub
+
+# ============================================================
+
+# Runtime save data
+
+# ============================================================
+
+# Keep the directory itself, but do not commit personal saves.
+
+assets/save/*
+!assets/save/.gitkeep
+
+# Add additional generated save locations here if needed:
+
+# src/main/resources/save/*
+
+# !src/main/resources/save/.gitkeep
+
+# ============================================================
+
+# Test output and coverage reports
+
+# ============================================================
+
+coverage/
+reports/
+test-results/
+surefire-reports/
+failsafe-reports/
+
+# ============================================================
+
+# Archives and generated files
+
+# ============================================================
+
+*.zip
+*.tar
+*.tar.gz
+*.rar
+*.7z
+
+# ============================================================
+
+# Keep intentionally tracked project files
+
+# ============================================================
+
+# Do not ignore:
+
+# - README.md
+
+# - pom.xml
+
+# - docs/
+
+# - assets/data/
+
+# - src/
+
+# - checkstyle.xml
+
+# - pmd-ruleset.xml
