@@ -1,4 +1,4 @@
 package pvz.model;
 
-public class Zombie {
+public class Game {
 }
