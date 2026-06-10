@@ -1,4 +1,4 @@
-package pvz.model.enums;
+package pvz.model.entities.plants;
 
 public enum Plants {
     SUNFLOWER("Sunflower","Sun Producer","Day",50,300,0,24,5);
