@@ -1,4 +1,4 @@
 package pvz.view;
 
-public class TravelLogMenu {
+public class TravelLogMenu implements AppMenu {
 }

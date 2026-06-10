@@ -1,21 +1,26 @@
 package pvz.model.entities.plants;
 
+import java.util.ArrayList;
+
+import java.util.Arrays;
+
 public enum Plants {
-    SUNFLOWER("Sunflower","Sun Producer","Day",50,300,0,24,5);
+    SUNFLOWER("Sunflower", PlantsCategory.SUN_PRODUCER, new ArrayList<>(Arrays.asList(PlantTag.DAY)), 50, 300, 0, 24, 5);
 
-    private String name;
-    private String category;
-    private String tag;
-    private int cost;
-    private int baseHP;
-    private int damage;
-    private int actionInterval;
-    private int recharge;
+    private final String name;
+    private final PlantsCategory category;
+    private final ArrayList<PlantTag> tags;
+    private final int cost;
+    private final int baseHP;
+    private final int damage;
+    private final int actionInterval;
+    private final int recharge;
 
-    Plants(String name, String category, String tag, int cost, int baseHP, int damage, int actionInterval, int recharge) {
+    Plants(String name, PlantsCategory category, ArrayList<PlantTag> tags,
+           int cost, int baseHP, int damage, int actionInterval, int recharge) {
         this.name = name;
         this.category = category;
-        this.tag = tag;
+        this.tags = tags;
         this.cost = cost;
         this.baseHP = baseHP;
         this.damage = damage;
@@ -23,35 +28,12 @@ public enum Plants {
         this.recharge = recharge;
     }
 
-    public String getName() {
-        return name;
-    }
-
-    public String getCategory() {
-        return category;
-    }
-
-    public String getTag() {
-        return tag;
-    }
-
-    public int getCost() {
-        return cost;
-    }
-
-    public int getBaseHP() {
-        return baseHP;
-    }
-
-    public int getDamage() {
-        return damage;
-    }
-
-    public int getActionInterval() {
-        return actionInterval;
-    }
-
-    public int getRecharge() {
-        return recharge;
-    }
+    public String getName() { return name; }
+    public PlantsCategory getCategory() { return category; }
+    public ArrayList<PlantTag> getTags() { return tags; }
+    public int getCost() { return cost; }
+    public int getBaseHP() { return baseHP; }
+    public int getDamage() { return damage; }
+    public int getActionInterval() { return actionInterval; }
+    public int getRecharge() { return recharge; }
 }
