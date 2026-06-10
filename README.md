@@ -12,11 +12,11 @@ The project is developed incrementally across multiple phases. In the early phas
 
 ## Team
 
-| Member            | Email                                      | Student Code |
-| ----------------- | ------------------------------------------ | ------------ |
-| Arya Ghahremani   | [ghahremani.arya86@gmail.com](mailto:ghahremani.arya86@gmail.com) | 404171177    |
-| Iman Niknam       | [imanvid2334@gmail.com](mailto:imanvid2334@gmail.com) | 404106503    |
-| Amirali Keshavarz | [amirraliik24@gmail.com](mailto:amiralikeshavarz23nov@gmail.com) | 404106258    |
+| Member            | Email                                                                     | Student Code |
+| ----------------- | ------------------------------------------------------------------------- | ------------ |
+| Arya Ghahremani   | [ghahremani.arya86@gmail.com](mailto:ghahremani.arya86@gmail.com)         | 404171177    |
+| Iman Niknam       | [imanvid2334@gmail.com](mailto:imanvid2334@gmail.com)                     | 404106503    |
+| Amirali Keshavarz | [amirraliik24@gmail.com](mailto:amirraliik24@gmail.com) | 404106258    |
 
 The project is also supervised under Hamed Alinezhad, the TA designated as mentor for the team.
 
