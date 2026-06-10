@@ -163,6 +163,10 @@ failsafe-reports/
 *.rar
 *.7z
 
+# Temporary Files
+
+~*
+
 # ============================================================
 
 # Keep intentionally tracked project files
