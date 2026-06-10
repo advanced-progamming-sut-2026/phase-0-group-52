@@ -1,5 +1,6 @@
 package pvz.model;
 
+
 public class User {
     private String username;
     private String password;
@@ -15,10 +16,12 @@ public class User {
     private int dailyQuestCount;
     private int otherQuestCount;
     private int highScore;
-    //TODO collection
+    private Collection collection;
 
 
-    public User(String username, String password, String nickname, String email, String gender, boolean isLogged, int coinBalance, int diamondBalance, int lastChapter, int lastLevel, int minigamesFinished, int dailyQuestCount, int otherQuestCount, int highScore) {
+    public User(String username, String password, String nickname, String email, String gender, boolean isLogged, int coinBalance,
+                int diamondBalance, int lastChapter, int lastLevel, int minigamesFinished,
+                int dailyQuestCount, int otherQuestCount, int highScore, Collection collection) {
         this.username = username;
         this.password = password;
         this.nickname = nickname;
@@ -33,6 +36,7 @@ public class User {
         this.dailyQuestCount = dailyQuestCount;
         this.otherQuestCount = otherQuestCount;
         this.highScore = highScore;
+        this.collection = collection;
     }
 
     public int getHighScore() {

@@ -1,6 +1,6 @@
 package pvz.model.entities.zombies;
 
-public enum BigWaveBeachZombies {
+public enum BigWaveBeachZombies implements ZombieType{
     ZOMBIE_BEACH_DEFAULT,ZOMBIE_BEACH_ARMOR1_DEFAULT
     ,ZOMBIE_BEACH_ARMOR2DEFAULT,ZOMBIE_BEACH_SNORKEL
     ,ZOMBIE_BEACH_SURFER,ZOMBIE_BEACH_FISHERMAN,
