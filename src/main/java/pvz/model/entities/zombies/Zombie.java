@@ -1,7 +1,7 @@
 package pvz.model.entities.zombies;
 
+import pvz.model.ChapterType;
 import pvz.model.Vec2;
-import pvz.model.enums.*;
 
 public abstract class Zombie {
     private double hp;

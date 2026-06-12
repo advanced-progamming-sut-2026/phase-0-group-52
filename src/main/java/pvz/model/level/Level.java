@@ -1,7 +1,7 @@
 package pvz.model.level;
 
+import pvz.model.ChapterType;
 import pvz.model.entities.plants.Plants;
-import pvz.model.enums.*;
 
 import java.util.ArrayList;
 
