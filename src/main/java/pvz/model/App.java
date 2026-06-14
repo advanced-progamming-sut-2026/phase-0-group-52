@@ -21,4 +21,12 @@ public class App {
         this.currentmenu = currentmenu;
         this.minigame = minigame;
     }
+
+    public User getCurrentuser() { return currentuser; }
+    public void setCurrentuser(User currentuser) { this.currentuser = currentuser; }
+
+    public MenuType getCurrentmenu() { return currentmenu; }
+    public void setCurrentmenu(MenuType currentmenu) { this.currentmenu = currentmenu; }
+
+    public ArrayList<User> getUsers() { return users; }
 }
