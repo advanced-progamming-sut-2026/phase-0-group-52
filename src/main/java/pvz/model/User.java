@@ -1,5 +1,7 @@
 package pvz.model;
 
+import pvz.model.news.NewsList;
+
 public class User {
     private String username;
     private String password;
@@ -16,6 +18,8 @@ public class User {
     private int otherQuestCount;
     private int highScore;
     private Collection collection;
+    private int difficultyLevel;
+    private NewsList newsList;
 
 
     public User(String username, String password, String nickname, String email, String gender, boolean isLogged, int coinBalance,
@@ -36,7 +40,14 @@ public class User {
         this.otherQuestCount = otherQuestCount;
         this.highScore = highScore;
         this.collection = collection;
+        this.difficultyLevel = 3;
+        this.newsList = new NewsList();
     }
+
+    public int getDifficultyLevel() { return difficultyLevel; }
+    public void setDifficultyLevel(int difficultyLevel) { this.difficultyLevel = difficultyLevel; }
+
+    public NewsList getNewsList() { return newsList; }
 
     public int getHighScore() {
         return highScore;
