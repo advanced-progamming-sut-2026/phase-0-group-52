@@ -1,6 +1,5 @@
 package pvz.model;
 
-import pvz.model.entities.Lawnmower;
 import pvz.model.entities.plants.Plant;
 import pvz.model.level.Level;
 
@@ -13,19 +12,17 @@ public class Game {
     private GameField field;
     private int sunamount;
     private ArrayList<Plant> plants;
-    private ArrayList<Wave> wave;
-    private int time;
+    private ArrayList<Wave> waves;
 
     public Game(App app, Chapter chapter, Level level, GameField field, int sunamount,
-                ArrayList<Plant> plants, ArrayList<Wave> wave, int time) {
+                ArrayList<Plant> plants, ArrayList<Wave> waves, int time) {
         this.app = app;
         this.chapter = chapter;
         this.level = level;
         this.field = field;
         this.sunamount = sunamount;
         this.plants = plants;
-        this.wave = wave;
-        this.time = time;
+        this.waves = waves;
     }
 
     public App getApp() {
@@ -76,11 +73,11 @@ public class Game {
         this.plants = plants;
     }
 
-    public ArrayList<Wave> getWave() {
-        return wave;
+    public ArrayList<Wave> getWaves() {
+        return waves;
     }
 
-    public void setWave(ArrayList<Wave> wave) {
-        this.wave = wave;
+    public void setWaves(ArrayList<Wave> waves) {
+        this.waves = waves;
     }
 }
