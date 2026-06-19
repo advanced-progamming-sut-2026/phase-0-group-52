@@ -2,16 +2,16 @@ package pvz.controller.menu;
 
 import pvz.model.App;
 import pvz.view.MenuType;
-import pvz.view.SettingMenu;
+import pvz.view.SettingsMenu;
 
-public class SettingMenuController {
+public class SettingsMenuController{
 
     private final App app;
-    private final SettingMenu view;
+    private final SettingsMenu view;
 
-    public SettingMenuController(App app) {
+    public SettingsMenuController(App app) {
         this.app = app;
-        this.view = new SettingMenu();
+        this.view = new SettingsMenu();
     }
 
     public void handleCommand(String[] parts) {
