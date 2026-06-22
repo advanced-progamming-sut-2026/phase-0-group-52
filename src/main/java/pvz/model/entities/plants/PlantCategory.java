@@ -1,4 +1,4 @@
-package pvz.model.enums;
+package pvz.model.entities.plants;
 
 public enum PlantCategory {
     SUN_PRODUCERS,SHOOTERS,LOBBERS,EXPLOSIVES,

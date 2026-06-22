@@ -3,14 +3,14 @@ package pvz.model.entities.plants;
 
 import pvz.model.Vec2;
 
-public abstract class Plant implements PlantInterface {
-    private Plants type;
+public abstract class PlantTile{
+    private CollectionPlant type;
     private double hp;
     private int price;
     private Vec2 position;
     private double attackdamage;
 
-    public Plant(Plants type, double hp, int price, Vec2 position, double attackdamage) {
+    public PlantTile(CollectionPlant type, double hp, int price, Vec2 position, double attackdamage) {
         this.type = type;
         this.hp = hp;
         this.price = price;
@@ -22,11 +22,11 @@ public abstract class Plant implements PlantInterface {
 
     }
 
-    public Plants getType() {
+    public CollectionPlant getType() {
         return type;
     }
 
-    public void setType(Plants type) {
+    public void setType(CollectionPlant type) {
         this.type = type;
     }
 

@@ -17,4 +17,20 @@ public abstract class Level extends AttackPattern {
         this.allowedplants = allowedplants;
         this.attackPattern = attackPattern;
     }
+
+    public int getLevelnumber(){
+        return levelnumber;
+    }
+
+    public ChapterType getChaptertype(){
+        return chaptertype;
+    }
+
+    public ArrayList<Plants> getAllowedplants(){
+        return allowedplants;
+    }
+
+    public AttackPattern getAttackPattern(){
+        return attackPattern;
+    }
 }
