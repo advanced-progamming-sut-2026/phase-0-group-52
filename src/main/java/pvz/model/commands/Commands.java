@@ -1,4 +1,4 @@
-package pvz.model.enums.commands;
+package pvz.model.commands;
 
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
