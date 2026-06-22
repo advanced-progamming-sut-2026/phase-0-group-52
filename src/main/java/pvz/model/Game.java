@@ -1,6 +1,6 @@
 package pvz.model;
 
-import pvz.model.entities.plants.Plant;
+import pvz.model.entities.plants.PlantTile;
 import pvz.model.level.Level;
 
 import java.util.ArrayList;
@@ -11,11 +11,11 @@ public class Game {
     private Level level;
     private GameField field;
     private int sunamount;
-    private ArrayList<Plant> plants;
+    private ArrayList<PlantTile> plants;
     private ArrayList<Wave> waves;
 
     public Game(App app, Chapter chapter, Level level, GameField field, int sunamount,
-                ArrayList<Plant> plants, ArrayList<Wave> waves, int time) {
+                ArrayList<PlantTile> plants, ArrayList<Wave> waves, int time) {
         this.app = app;
         this.chapter = chapter;
         this.level = level;
@@ -65,11 +65,11 @@ public class Game {
         this.sunamount = sunamount;
     }
 
-    public ArrayList<Plant> getPlants() {
+    public ArrayList<PlantTile> getPlants() {
         return plants;
     }
 
-    public void setPlants(ArrayList<Plant> plants) {
+    public void setPlants(ArrayList<PlantTile> plants) {
         this.plants = plants;
     }
 

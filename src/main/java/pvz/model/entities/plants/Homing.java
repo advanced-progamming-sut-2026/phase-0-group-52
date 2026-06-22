@@ -1,4 +1,4 @@
 package pvz.model.entities.plants;
 
-public class Homing extends Plant{
+public class Homing extends PlantTile{
 }
