@@ -1,6 +1,6 @@
 package pvz.view;
 
-public class SettingMenu implements AppMenu {
+public class SettingsMenu implements AppMenu {
 
     public void showDifficultyChanged(int level) {
         System.out.println("Difficulty changed to " + level + ".");

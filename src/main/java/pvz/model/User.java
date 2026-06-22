@@ -57,10 +57,7 @@ public class User {
         this.securityAnswerHash = securityAnswerHash;
         this.difficultyLevel = 3;
     }
-
-    public User(String username, String password, String nickname, String email, String gender, boolean isLogged, int coinBalance,
-                int diamondBalance, int lastChapter, int lastLevel, int minigamesFinished,
-                int dailyQuestCount, int otherQuestCount, int highScore, Collection collection) {
+    public User(String username, String password, String nickname, String email, String gender, boolean isLogged, int coinBalance, int diamondBalance, int lastChapter, int lastLevel, int minigamesFinished, int dailyQuestCount, int otherQuestCount, int highScore, Collection collection, int difficultyLevel, NewsList newsList){
         this.username = username;
         this.password = password;
         this.nickname = nickname;
@@ -76,8 +73,8 @@ public class User {
         this.otherQuestCount = otherQuestCount;
         this.highScore = highScore;
         this.collection = collection;
-        this.difficultyLevel = 3;
-        this.newsList = new NewsList();
+        this.difficultyLevel = difficultyLevel;
+        this.newsList = newsList;
     }
 
 
@@ -199,14 +196,6 @@ public class User {
 
     public void setSecurityAnswerHash(String securityAnswerHash) {
         this.securityAnswerHash = securityAnswerHash;
-    }
-
-    public String getSecurityQuestion() {
-        return securityQuestion;
-    }
-
-    public void setSecurityQuestion(String securityQuestion) {
-        this.securityQuestion = securityQuestion;
     }
 
     public String getPasswordHash() {
@@ -357,5 +346,4 @@ public class User {
         this.securityQuestion = securityQuestion;
     }
 
-
-}
+    }
