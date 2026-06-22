@@ -1,5 +1,6 @@
-package pvz.controller;
+package pvz.controller.menu;
 
+import pvz.controller.HashUtil;
 import pvz.database.UserRepository;
 import pvz.model.App;
 import pvz.model.Result;
