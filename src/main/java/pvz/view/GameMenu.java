@@ -1,5 +1,4 @@
 package pvz.view;
 
-public class GameMenu implements AppMenu{
-    
+public class GameMenu implements AppMenu {
 }

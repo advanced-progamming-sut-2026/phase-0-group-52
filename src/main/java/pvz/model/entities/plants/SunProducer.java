@@ -1,5 +1,5 @@
 package pvz.model.entities.plants;
 
-public class SunProducer extends Plant {
+public class SunProducer extends PlantTile{
 
 }

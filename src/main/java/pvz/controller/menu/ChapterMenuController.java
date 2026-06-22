@@ -1,0 +1,114 @@
+package pvz.controller.menu;
+
+import pvz.model.App;
+import pvz.model.ChapterType;
+import pvz.model.User;
+import pvz.view.ChapterMenu;
+import pvz.view.MenuType;
+
+public class ChapterMenuController {
+
+    private final App app;
+    private final ChapterMenu view;
+
+    public ChapterMenuController(App app) {
+        this.app = app;
+        this.view = new ChapterMenu();
+    }
+
+    public void handleCommand(String[] parts) {
+        if (parts.length < 2) {
+            view.showError("Invalid command.");
+            return;
+        }
+        switch (parts[1]) {
+            case "show":
+                if (parts.length >= 3 && parts[2].equals("current"))
+                    System.out.println("Current menu: " + app.getCurrentmenu());
+                else
+                    view.showError("Usage: menu show current");
+                break;
+            case "enter":
+                handleEnter(parts);
+                break;
+            case "coin-wallet":
+                view.showCoinWallet(app.getCurrentuser().getCoinBalance());
+                break;
+            case "gem-wallet":
+                view.showGemWallet(app.getCurrentuser().getDiamondBalance());
+                break;
+            case "cheat":
+                handleCheat(parts);
+                break;
+            case "leaderboard":
+                System.out.println("Leaderboard: (no records yet)");
+                break;
+            default:
+                view.showError("Unknown command: " + parts[1]);
+        }
+    }
+
+    private void handleEnter(String[] parts) {
+        if (parts.length < 3) {
+            view.showError("Usage: menu enter <menu_name>  |  menu enter chapter -c <chapterName>");
+            return;
+        }
+        if (parts[2].equals("chapter")) {
+            handleEnterChapter(parts);
+            return;
+        }
+        try {
+            MenuType target = MenuType.valueOf(parts[2].toUpperCase());
+            app.setCurrentmenu(target);
+        } catch (IllegalArgumentException e) {
+            view.showError("Unknown menu: " + parts[2]);
+        }
+    }
+
+    private void handleEnterChapter(String[] parts) {
+        if (parts.length < 5 || !parts[3].equals("-c")) {
+            view.showError("Usage: menu enter chapter -c <chapterName>");
+            return;
+        }
+        ChapterType chapter;
+        try {
+            chapter = ChapterType.valueOf(parts[4].toUpperCase());
+        } catch (IllegalArgumentException e) {
+            view.showError("Invalid chapter: " + parts[4] +
+                    ". Options: ANCIENT_EGYPT, FROSTBITE_CAVES, BIG_WAVE_BEACH, DARK_AGES");
+            return;
+        }
+        view.showEnteredChapter(chapter.name());
+    }
+
+    private void handleCheat(String[] parts) {
+        if (parts.length < 5 || !parts[2].equals("add")) {
+            view.showError("Usage: menu cheat add <n> <coin/diamond>");
+            return;
+        }
+        int amount;
+        try {
+            amount = Integer.parseInt(parts[3]);
+        } catch (NumberFormatException e) {
+            view.showError("Invalid amount: " + parts[3]);
+            return;
+        }
+        if (amount < 0) {
+            view.showError("Amount must be non-negative.");
+            return;
+        }
+        User user = app.getCurrentuser();
+        switch (parts[4].toLowerCase()) {
+            case "coin":
+                user.setCoinBalance(user.getCoinBalance() + amount);
+                view.showCheatResult(amount, "coin", user.getCoinBalance());
+                break;
+            case "diamond":
+                user.setDiamondBalance(user.getDiamondBalance() + amount);
+                view.showCheatResult(amount, "diamond", user.getDiamondBalance());
+                break;
+            default:
+                view.showError("Invalid type: " + parts[4] + ". Use 'coin' or 'diamond'.");
+        }
+    }
+}
