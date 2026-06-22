@@ -21,10 +21,7 @@ public class User {
     private int difficultyLevel;
     private NewsList newsList;
 
-
-    public User(String username, String password, String nickname, String email, String gender, boolean isLogged, int coinBalance,
-                int diamondBalance, int lastChapter, int lastLevel, int minigamesFinished,
-                int dailyQuestCount, int otherQuestCount, int highScore, Collection collection) {
+    public User(String username, String password, String nickname, String email, String gender, boolean isLogged, int coinBalance, int diamondBalance, int lastChapter, int lastLevel, int minigamesFinished, int dailyQuestCount, int otherQuestCount, int highScore, Collection collection, int difficultyLevel, NewsList newsList){
         this.username = username;
         this.password = password;
         this.nickname = nickname;
@@ -40,10 +37,13 @@ public class User {
         this.otherQuestCount = otherQuestCount;
         this.highScore = highScore;
         this.collection = collection;
-        this.difficultyLevel = 3;
-        this.newsList = new NewsList();
+        this.difficultyLevel = difficultyLevel;
+        this.newsList = newsList;
     }
 
+    public Collection getCollection(){
+        return collection;
+    }
     public int getDifficultyLevel() { return difficultyLevel; }
     public void setDifficultyLevel(int difficultyLevel) { this.difficultyLevel = difficultyLevel; }
 
