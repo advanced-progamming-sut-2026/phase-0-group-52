@@ -1,18 +1,17 @@
 package pvz.controller.menu;
 
 import pvz.model.App;
-import pvz.model.news.NewsList;
 import pvz.view.MenuType;
-import pvz.view.NewsMenu;
+import pvz.view.SettingsMenu;
 
-public class NewsMenuController {
+public class SettingsMenuController{
 
     private final App app;
-    private final NewsMenu view;
+    private final SettingsMenu view;
 
-    public NewsMenuController(App app) {
+    public SettingsMenuController(App app) {
         this.app = app;
-        this.view = new NewsMenu();
+        this.view = new SettingsMenu();
     }
 
     public void handleCommand(String[] parts) {
@@ -30,31 +29,32 @@ public class NewsMenuController {
             case "enter":
                 handleEnter(parts);
                 break;
-            case "news":
-                handleNews(parts);
+            case "settings":
+                handleChangeDifficulty(parts);
                 break;
             default:
                 view.showError("Unknown command: " + parts[1]);
         }
     }
 
-    private void handleNews(String[] parts) {
-        if (parts.length < 3) {
-            view.showError("Usage: menu news show-unread  |  menu news show-all");
+    private void handleChangeDifficulty(String[] parts) {
+        if (parts.length < 5 || !parts[2].equals("change-difficulty") || !parts[3].equals("-l")) {
+            view.showError("Usage: menu settings change-difficulty -l <1-5>");
             return;
         }
-        NewsList newsList = app.getCurrentuser().getNewsList();
-        switch (parts[2]) {
-            case "show-unread":
-                view.showNewsList(newsList.getUnread(), true);
-                newsList.markAllRead();
-                break;
-            case "show-all":
-                view.showNewsList(newsList.getAll(), false);
-                break;
-            default:
-                view.showError("Unknown subcommand: " + parts[2]);
+        int level;
+        try {
+            level = Integer.parseInt(parts[4]);
+        } catch (NumberFormatException e) {
+            view.showError("Invalid level: " + parts[4]);
+            return;
         }
+        if (level < 1 || level > 5) {
+            view.showInvalidDifficulty();
+            return;
+        }
+        app.getCurrentuser().setDifficultyLevel(level);
+        view.showDifficultyChanged(level);
     }
 
     private void handleEnter(String[] parts) {

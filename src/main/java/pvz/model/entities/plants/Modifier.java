@@ -1,4 +1,4 @@
 package pvz.model.entities.plants;
 
-public class Modifier extends Plant{
+public class Modifier extends PlantTile{
 }
