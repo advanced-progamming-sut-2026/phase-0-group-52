@@ -1,4 +1,4 @@
 package pvz.model.entities.plants;
 
-public class Wallnut extends Plant{
+public class Wallnut extends PlantTile{
 }

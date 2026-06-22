@@ -1,4 +1,4 @@
 package pvz.model.entities.plants;
 
-public class StrikeThrough extends Plant{
+public class StrikeThrough extends PlantTile{
 }
