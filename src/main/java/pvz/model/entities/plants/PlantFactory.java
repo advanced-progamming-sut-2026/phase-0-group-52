@@ -1,3 +1,3 @@
-package pvz.model.entities.plants;
+package model.entities.plants;
 
 public abstract class PlantFactory{}

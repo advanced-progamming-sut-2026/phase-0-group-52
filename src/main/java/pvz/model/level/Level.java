@@ -1,7 +1,7 @@
-package pvz.model.level;
+package model.level;
 
-import pvz.model.ChapterType;
-import pvz.model.entities.plants.Plants;
+import model.ChapterType;
+import model.entities.plants.Plants;
 
 import java.util.ArrayList;
 
@@ -16,21 +16,5 @@ public abstract class Level extends AttackPattern {
         this.chaptertype = chaptertype;
         this.allowedplants = allowedplants;
         this.attackPattern = attackPattern;
-    }
-
-    public int getLevelnumber(){
-        return levelnumber;
-    }
-
-    public ChapterType getChaptertype(){
-        return chaptertype;
-    }
-
-    public ArrayList<Plants> getAllowedplants(){
-        return allowedplants;
-    }
-
-    public AttackPattern getAttackPattern(){
-        return attackPattern;
     }
 }
