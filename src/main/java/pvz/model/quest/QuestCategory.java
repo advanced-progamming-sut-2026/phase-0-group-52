@@ -1,4 +1,4 @@
-package pvz.model.quest;
+package model.quest;
 
 public enum QuestCategory {
     DAILY, MAIN, EPIC;

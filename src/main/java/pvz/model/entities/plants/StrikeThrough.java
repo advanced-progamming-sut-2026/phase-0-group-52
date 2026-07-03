@@ -1,4 +1,17 @@
-package pvz.model.entities.plants;
+package model.entities.plants;
 
-public class StrikeThrough extends PlantTile{
+import model.Game;
+import model.Vec2;
+
+/** گیاه نفوذکننده (مثل Cactus). دسته‌بندی تیم. */
+public class StrikeThrough extends Plant {
+
+    public StrikeThrough(Plants type, Vec2 position) {
+        super(type, type.getBaseHP(), type.getCost(), position, type.getDamage());
+    }
+
+    @Override
+    public void onTick(Game game) {
+        // TODO (تیم): رفتار این دسته را پیاده کن.
+    }
 }

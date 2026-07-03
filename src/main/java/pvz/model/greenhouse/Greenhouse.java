@@ -1,4 +1,4 @@
-package pvz.model.greenhouse;
+package model.greenhouse;
 
 import java.util.ArrayList;
 

@@ -1,6 +1,6 @@
-package pvz.model.entities;
+package model.entities;
 
-import pvz.model.Vec2;
+import model.Vec2;
 
 public class Projectile {
     private double damage;
