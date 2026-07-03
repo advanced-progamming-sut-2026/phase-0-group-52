@@ -1,12 +1,12 @@
-package pvz.model;
+package model;
 
-import pvz.model.level.Level;
-import pvz.model.news.NewsList;
+import model.level.Level;
+import model.news.NewsList;
 
 import java.util.HashMap;
 import java.util.Map;
 
-public class User{
+public class User {
     private String username;
     private String password;
     private String nickname;
@@ -24,9 +24,9 @@ public class User{
     private Collection collection;
     private int difficultyLevel;
     private NewsList newsList;
-    private String passwordHash;
+    private  String passwordHash;
     private int securityQuestion;
-    private String securityAnswerHash;
+    private  String securityAnswerHash;
 
 
     private int id;
@@ -45,7 +45,9 @@ public class User{
     private int plantFoodNum;
 
 
-    public User(String username, String passwordHash, String nickname, String email, String gender, int securityQuestion, String securityAnswerHash){
+
+    public User(String username, String passwordHash, String nickname, String email,
+                String gender, int securityQuestion, String securityAnswerHash) {
         this.username = username;
         this.passwordHash = passwordHash;
         this.nickname = nickname;
@@ -56,7 +58,9 @@ public class User{
         this.difficultyLevel = 3;
     }
 
-    public User(String username, String password, String nickname, String email, String gender, boolean isLogged, int coinBalance, int diamondBalance, int lastChapter, int lastLevel, int minigamesFinished, int dailyQuestCount, int otherQuestCount, int highScore, Collection collection, int difficultyLevel, NewsList newsList){
+    public User(String username, String password, String nickname, String email, String gender, boolean isLogged, int coinBalance,
+                int diamondBalance, int lastChapter, int lastLevel, int minigamesFinished,
+                int dailyQuestCount, int otherQuestCount, int highScore, Collection collection) {
         this.username = username;
         this.password = password;
         this.nickname = nickname;
@@ -72,277 +76,286 @@ public class User{
         this.otherQuestCount = otherQuestCount;
         this.highScore = highScore;
         this.collection = collection;
-        this.difficultyLevel = difficultyLevel;
-        this.newsList = newsList;
+        this.difficultyLevel = 3;
+        this.newsList = new NewsList();
     }
 
 
-    public int getPlantFoodNum(){
+    public int getPlantFoodNum() {
         return plantFoodNum;
     }
 
-    public void setPlantFoodNum(int plantFoodNum){
+    public void setPlantFoodNum(int plantFoodNum) {
         this.plantFoodNum = plantFoodNum;
     }
 
-    public int getSeedPacket(){
+    public int getSeedPacket() {
         return seedPacket;
     }
 
-    public void setSeedPacket(int seedPacket){
+    public void setSeedPacket(int seedPacket) {
         this.seedPacket = seedPacket;
     }
 
-    public int getQuestNonDailyNum(){
+    public int getQuestNonDailyNum() {
         return questNonDailyNum;
     }
 
-    public void setQuestNonDailyNum(int questNonDailyNum){
+    public void setQuestNonDailyNum(int questNonDailyNum) {
         this.questNonDailyNum = questNonDailyNum;
     }
 
-    public int getQuestDailyNum(){
+    public int getQuestDailyNum() {
         return questDailyNum;
     }
 
-    public void setQuestDailyNum(int questDailyNum){
+    public void setQuestDailyNum(int questDailyNum) {
         this.questDailyNum = questDailyNum;
     }
 
-    public int getMaxPoint(){
+    public int getMaxPoint() {
         return maxPoint;
     }
 
-    public void setMaxPoint(int maxPoint){
+    public void setMaxPoint(int maxPoint) {
         this.maxPoint = maxPoint;
     }
 
-    public int getMiniGamesPlayed(){
+    public int getMiniGamesPlayed() {
         return miniGamesPlayed;
     }
 
-    public void setMiniGamesPlayed(int miniGamesPlayed){
+    public void setMiniGamesPlayed(int miniGamesPlayed) {
         this.miniGamesPlayed = miniGamesPlayed;
     }
 
-    public String getLastWonGame(){
+    public String getLastWonGame() {
         return lastWonGame;
     }
 
-    public void setLastWonGame(String lastWonGame){
+    public void setLastWonGame(String lastWonGame) {
         this.lastWonGame = lastWonGame;
     }
 
-    public Map<Level, Boolean> getLevels(){
+    public Map<Level, Boolean> getLevels() {
         return levels;
     }
 
-    public void setLevels(Map<Level, Boolean> levels){
+    public void setLevels(Map<Level, Boolean> levels) {
         this.levels = levels;
     }
 
-    public int getGems(){
+    public int getGems() {
         return gems;
     }
 
-    public void setGems(int gems){
+    public void setGems(int gems) {
         this.gems = gems;
     }
 
-    public int getCoins(){
+    public int getCoins() {
         return coins;
     }
 
-    public void setCoins(int coins){
+    public void setCoins(int coins) {
         this.coins = coins;
     }
 
-    public int getGamesPlayed(){
+    public int getGamesPlayed() {
         return gamesPlayed;
     }
 
-    public void setGamesPlayed(int gamesPlayed){
+    public void setGamesPlayed(int gamesPlayed) {
         this.gamesPlayed = gamesPlayed;
     }
 
-    public int getMostMeowPoint(){
+    public int getMostMeowPoint() {
         return mostMeowPoint;
     }
 
-    public void setMostMeowPoint(int mostMeowPoint){
+    public void setMostMeowPoint(int mostMeowPoint) {
         this.mostMeowPoint = mostMeowPoint;
     }
 
-    public String getAnswer(){
+    public String getAnswer() {
         return answer;
     }
 
-    public void setAnswer(String answer){
+    public void setAnswer(String answer) {
         this.answer = answer;
     }
 
-    public int getId(){
+    public int getId() {
         return id;
     }
 
-    public void setId(int id){
+    public void setId(int id) {
         this.id = id;
     }
 
-    public String getSecurityAnswerHash(){
+    public String getSecurityAnswerHash() {
         return securityAnswerHash;
     }
 
-    public void setSecurityAnswerHash(String securityAnswerHash){
+    public void setSecurityAnswerHash(String securityAnswerHash) {
         this.securityAnswerHash = securityAnswerHash;
     }
 
-    public String getPasswordHash(){
+    public String getSecurityQuestion() {
+        return securityQuestion;
+    }
+
+    public void setSecurityQuestion(String securityQuestion) {
+        this.securityQuestion = securityQuestion;
+    }
+
+    public String getPasswordHash() {
         return passwordHash;
     }
 
-    public void setPasswordHash(String passwordHash){
+    public void setPasswordHash(String passwordHash) {
         this.passwordHash = passwordHash;
     }
 
-    public NewsList getNewsList(){
+    public NewsList getNewsList() {
         return newsList;
     }
 
-    public void setNewsList(NewsList newsList){
+    public void setNewsList(NewsList newsList) {
         this.newsList = newsList;
     }
 
-    public int getDifficultyLevel(){
+    public int getDifficultyLevel() {
         return difficultyLevel;
     }
 
-    public void setDifficultyLevel(int difficultyLevel){
+    public void setDifficultyLevel(int difficultyLevel) {
         this.difficultyLevel = difficultyLevel;
     }
 
-    public Collection getCollection(){
+    public Collection getCollection() {
         return collection;
     }
 
-    public void setCollection(Collection collection){
+    public void setCollection(Collection collection) {
         this.collection = collection;
     }
 
-    public int getHighScore(){
+    public int getHighScore() {
         return highScore;
     }
 
-    public void setHighScore(int highScore){
+    public void setHighScore(int highScore) {
         this.highScore = highScore;
     }
 
-    public int getOtherQuestCount(){
+    public int getOtherQuestCount() {
         return otherQuestCount;
     }
 
-    public void setOtherQuestCount(int otherQuestCount){
+    public void setOtherQuestCount(int otherQuestCount) {
         this.otherQuestCount = otherQuestCount;
     }
 
-    public int getDailyQuestCount(){
+    public int getDailyQuestCount() {
         return dailyQuestCount;
     }
 
-    public void setDailyQuestCount(int dailyQuestCount){
+    public void setDailyQuestCount(int dailyQuestCount) {
         this.dailyQuestCount = dailyQuestCount;
     }
 
-    public int getMinigamesFinished(){
+    public int getMinigamesFinished() {
         return minigamesFinished;
     }
 
-    public void setMinigamesFinished(int minigamesFinished){
+    public void setMinigamesFinished(int minigamesFinished) {
         this.minigamesFinished = minigamesFinished;
     }
 
-    public int getLastLevel(){
+    public int getLastLevel() {
         return lastLevel;
     }
 
-    public void setLastLevel(int lastLevel){
+    public void setLastLevel(int lastLevel) {
         this.lastLevel = lastLevel;
     }
 
-    public int getLastChapter(){
+    public int getLastChapter() {
         return lastChapter;
     }
 
-    public void setLastChapter(int lastChapter){
+    public void setLastChapter(int lastChapter) {
         this.lastChapter = lastChapter;
     }
 
-    public int getDiamondBalance(){
+    public int getDiamondBalance() {
         return diamondBalance;
     }
 
-    public void setDiamondBalance(int diamondBalance){
+    public void setDiamondBalance(int diamondBalance) {
         this.diamondBalance = diamondBalance;
     }
 
-    public int getCoinBalance(){
+    public int getCoinBalance() {
         return coinBalance;
     }
 
-    public void setCoinBalance(int coinBalance){
+    public void setCoinBalance(int coinBalance) {
         this.coinBalance = coinBalance;
     }
 
-    public boolean isLogged(){
+    public boolean isLogged() {
         return isLogged;
     }
 
-    public void setLogged(boolean logged){
+    public void setLogged(boolean logged) {
         isLogged = logged;
     }
 
-    public String getGender(){
+    public String getGender() {
         return gender;
     }
 
-    public void setGender(String gender){
+    public void setGender(String gender) {
         this.gender = gender;
     }
 
-    public String getEmail(){
+    public String getEmail() {
         return email;
     }
 
-    public void setEmail(String email){
+    public void setEmail(String email) {
         this.email = email;
     }
 
-    public String getNickname(){
+    public String getNickname() {
         return nickname;
     }
 
-    public void setNickname(String nickname){
+    public void setNickname(String nickname) {
         this.nickname = nickname;
     }
 
-    public String getPassword(){
+    public String getPassword() {
         return password;
     }
 
-    public void setPassword(String password){
+    public void setPassword(String password) {
         this.password = password;
     }
 
-    public String getUsername(){
+    public String getUsername() {
         return username;
     }
 
-    public void setUsername(String username){
+    public void setUsername(String username) {
         this.username = username;
     }
 
-    public void setSecurityQuestion(int securityQuestion){
+    public void setSecurityQuestion(int securityQuestion) {
         this.securityQuestion = securityQuestion;
     }
+
 
 }

@@ -1,4 +1,4 @@
-package pvz.model;
+package model;
 
 public enum ChapterType {
     ANCIENT_EGYPT, FROSTBITE_CAVES, BIG_WAVE_BEACH, DARK_AGES;
