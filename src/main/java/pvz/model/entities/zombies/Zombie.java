@@ -1,19 +1,24 @@
-package pvz.model.entities.zombies;
+package model.entities.zombies;
 
-import pvz.model.ChapterType;
-import pvz.model.Vec2;
+import model.ChapterType;
+import model.Game;
+import model.Vec2;
 
 public abstract class Zombie {
     private double hp;
     private double speed;
-    private double damage;
-    private int line;
-    private Vec2 position;
+    private double damage;          // معادل EatDPS
+    private int line;               // ردیف (y)
+    private Vec2 position;          // x = ستون (اعشاری چون حرکت پیوسته است)
     private ArmorType armorType;
+    private double armorHp;         // جان زره؛ آسیب اول به زره می‌خورد
     private ChapterType chapter;
     private ZombieType type;
     private ZombieState state;
     private ZombieAbility ability;
+
+    /** شمارنده داخلی برای زمان‌بندی خوردن گیاه. */
+    protected double eatTimer = 0;
 
     public Zombie(double hp, double speed, double damage, int line, Vec2 position, ArmorType armorType,
                   ChapterType chapter, ZombieType type, ZombieState state, ZombieAbility ability) {
@@ -29,75 +34,72 @@ public abstract class Zombie {
         this.ability = ability;
     }
 
-    public double getHp() {
-        return hp;
+    // ---------- قلاب‌های polymorphic که موتور (GameEngine) صدا می‌زند ----------
+
+    /** هر تیک یک‌بار. هر زیرکلاس رفتار خود را اینجا پیاده می‌کند (حرکت/حمله/قابلیت ویژه). */
+    public abstract void onTick(Game game);
+
+    /** حرکت پیش‌فرض: یک‌خانه‌به‌چپ به اندازه‌ی speed در هر تیک. */
+    public void move(Game game) {
+        position.x -= speed;
     }
 
-    public void setHp(double hp) {
-        this.hp = hp;
+    /** آسیب‌زدن: اول به زره، سپس به جان. */
+    public void takeDamage(double dmg) {
+        if (armorHp > 0) {
+            double absorbed = Math.min(armorHp, dmg);
+            armorHp -= absorbed;
+            dmg -= absorbed;
+        }
+        if (dmg > 0) hp -= dmg;
     }
 
-    public double getSpeed() {
-        return speed;
+    /** آسیب مستقیم به جان (مثل تیر سمی که زره را نادیده می‌گیرد). */
+    public void takeDirectDamage(double dmg) {
+        hp -= dmg;
     }
 
-    public void setSpeed(double speed) {
-        this.speed = speed;
+    public boolean isDead() {
+        return hp <= 0;
     }
 
-    public double getDamage() {
-        return damage;
-    }
+    /** ستون فعلی (x). */
+    public int getCol() { return (int) Math.floor(position.x); }
+    /** ردیف (y). */
+    public int getRow() { return line; }
 
-    public void setDamage(double damage) {
-        this.damage = damage;
-    }
+    // ---------- getter / setter ----------
 
-    public int getLine() {
-        return line;
-    }
+    public double getHp() { return hp; }
+    public void setHp(double hp) { this.hp = hp; }
 
-    public void setLine(int line) {
-        this.line = line;
-    }
+    public double getSpeed() { return speed; }
+    public void setSpeed(double speed) { this.speed = speed; }
 
-    public Vec2 getPosition() {return position;}
+    public double getDamage() { return damage; }
+    public void setDamage(double damage) { this.damage = damage; }
 
-    public void setX(Vec2 position) {
-        this.position = position;
-    }
+    public int getLine() { return line; }
+    public void setLine(int line) { this.line = line; }
 
+    public Vec2 getPosition() { return position; }
+    public void setPosition(Vec2 position) { this.position = position; }
 
+    public double getArmorHp() { return armorHp; }
+    public void setArmorHp(double armorHp) { this.armorHp = armorHp; }
 
-    public ArmorType getArmorType() {
-        return armorType;
-    }
+    public ArmorType getArmorType() { return armorType; }
+    public void setArmorType(ArmorType armorType) { this.armorType = armorType; }
 
-    public void setArmorType(ArmorType armorType) {
-        this.armorType = armorType;
-    }
+    public ChapterType getChapter() { return chapter; }
+    public void setChapter(ChapterType chapter) { this.chapter = chapter; }
 
-    public ChapterType getChapter() {
-        return chapter;
-    }
+    public ZombieType getType() { return type; }
+    public void setType(ZombieType type) { this.type = type; }
 
-    public void setChapter(ChapterType chapter) {
-        this.chapter = chapter;
-    }
+    public ZombieState getState() { return state; }
+    public void setState(ZombieState state) { this.state = state; }
 
-    public ZombieType getType() {
-        return type;
-    }
-
-    public void setType(ZombieType type) {
-        this.type = type;
-    }
-
-    public ZombieState getState() {
-        return state;
-    }
-
-    public void setState(ZombieState state) {
-        this.state = state;
-    }
+    public ZombieAbility getAbility() { return ability; }
+    public void setAbility(ZombieAbility ability) { this.ability = ability; }
 }

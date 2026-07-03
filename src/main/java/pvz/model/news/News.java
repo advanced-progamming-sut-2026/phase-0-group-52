@@ -1,4 +1,4 @@
-package pvz.model.news;
+package model.news;
 
 
 public class News {

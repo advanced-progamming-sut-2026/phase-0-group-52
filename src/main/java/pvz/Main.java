@@ -1,7 +1,8 @@
-package pvz;
 
-public class Main{
+import view.AppView;
 
-
+public class Main {
+    public static void main(String[] args) {
+        AppView.run();
+    }
 }
-

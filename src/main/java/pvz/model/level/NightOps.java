@@ -1,4 +1,4 @@
-package pvz.model.level;
+package model.level;
 
 public class NightOps extends Level{
 }

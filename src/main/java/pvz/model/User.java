@@ -1,6 +1,10 @@
-package pvz.model;
+package model;
 
-import pvz.model.news.NewsList;
+import model.level.Level;
+import model.news.NewsList;
+
+import java.util.HashMap;
+import java.util.Map;
 
 public class User {
     private String username;
@@ -20,8 +24,43 @@ public class User {
     private Collection collection;
     private int difficultyLevel;
     private NewsList newsList;
+    private  String passwordHash;
+    private int securityQuestion;
+    private  String securityAnswerHash;
 
-    public User(String username, String password, String nickname, String email, String gender, boolean isLogged, int coinBalance, int diamondBalance, int lastChapter, int lastLevel, int minigamesFinished, int dailyQuestCount, int otherQuestCount, int highScore, Collection collection, int difficultyLevel, NewsList newsList){
+
+    private int id;
+    private String answer;
+    private int mostMeowPoint;
+    private int gamesPlayed;
+    private int coins;
+    private int gems;
+    private Map<Level, Boolean> levels = new HashMap<>();
+    private String lastWonGame;
+    private int miniGamesPlayed;
+    private int maxPoint;
+    private int questDailyNum;
+    private int questNonDailyNum;
+    private int seedPacket;
+    private int plantFoodNum;
+
+
+
+    public User(String username, String passwordHash, String nickname, String email,
+                String gender, int securityQuestion, String securityAnswerHash) {
+        this.username = username;
+        this.passwordHash = passwordHash;
+        this.nickname = nickname;
+        this.email = email;
+        this.gender = gender;
+        this.securityQuestion = securityQuestion;
+        this.securityAnswerHash = securityAnswerHash;
+        this.difficultyLevel = 3;
+    }
+
+    public User(String username, String password, String nickname, String email, String gender, boolean isLogged, int coinBalance,
+                int diamondBalance, int lastChapter, int lastLevel, int minigamesFinished,
+                int dailyQuestCount, int otherQuestCount, int highScore, Collection collection) {
         this.username = username;
         this.password = password;
         this.nickname = nickname;
@@ -37,17 +76,170 @@ public class User {
         this.otherQuestCount = otherQuestCount;
         this.highScore = highScore;
         this.collection = collection;
-        this.difficultyLevel = difficultyLevel;
+        this.difficultyLevel = 3;
+        this.newsList = new NewsList();
+    }
+
+
+    public int getPlantFoodNum() {
+        return plantFoodNum;
+    }
+
+    public void setPlantFoodNum(int plantFoodNum) {
+        this.plantFoodNum = plantFoodNum;
+    }
+
+    public int getSeedPacket() {
+        return seedPacket;
+    }
+
+    public void setSeedPacket(int seedPacket) {
+        this.seedPacket = seedPacket;
+    }
+
+    public int getQuestNonDailyNum() {
+        return questNonDailyNum;
+    }
+
+    public void setQuestNonDailyNum(int questNonDailyNum) {
+        this.questNonDailyNum = questNonDailyNum;
+    }
+
+    public int getQuestDailyNum() {
+        return questDailyNum;
+    }
+
+    public void setQuestDailyNum(int questDailyNum) {
+        this.questDailyNum = questDailyNum;
+    }
+
+    public int getMaxPoint() {
+        return maxPoint;
+    }
+
+    public void setMaxPoint(int maxPoint) {
+        this.maxPoint = maxPoint;
+    }
+
+    public int getMiniGamesPlayed() {
+        return miniGamesPlayed;
+    }
+
+    public void setMiniGamesPlayed(int miniGamesPlayed) {
+        this.miniGamesPlayed = miniGamesPlayed;
+    }
+
+    public String getLastWonGame() {
+        return lastWonGame;
+    }
+
+    public void setLastWonGame(String lastWonGame) {
+        this.lastWonGame = lastWonGame;
+    }
+
+    public Map<Level, Boolean> getLevels() {
+        return levels;
+    }
+
+    public void setLevels(Map<Level, Boolean> levels) {
+        this.levels = levels;
+    }
+
+    public int getGems() {
+        return gems;
+    }
+
+    public void setGems(int gems) {
+        this.gems = gems;
+    }
+
+    public int getCoins() {
+        return coins;
+    }
+
+    public void setCoins(int coins) {
+        this.coins = coins;
+    }
+
+    public int getGamesPlayed() {
+        return gamesPlayed;
+    }
+
+    public void setGamesPlayed(int gamesPlayed) {
+        this.gamesPlayed = gamesPlayed;
+    }
+
+    public int getMostMeowPoint() {
+        return mostMeowPoint;
+    }
+
+    public void setMostMeowPoint(int mostMeowPoint) {
+        this.mostMeowPoint = mostMeowPoint;
+    }
+
+    public String getAnswer() {
+        return answer;
+    }
+
+    public void setAnswer(String answer) {
+        this.answer = answer;
+    }
+
+    public int getId() {
+        return id;
+    }
+
+    public void setId(int id) {
+        this.id = id;
+    }
+
+    public String getSecurityAnswerHash() {
+        return securityAnswerHash;
+    }
+
+    public void setSecurityAnswerHash(String securityAnswerHash) {
+        this.securityAnswerHash = securityAnswerHash;
+    }
+
+    public String getSecurityQuestion() {
+        return securityQuestion;
+    }
+
+    public void setSecurityQuestion(String securityQuestion) {
+        this.securityQuestion = securityQuestion;
+    }
+
+    public String getPasswordHash() {
+        return passwordHash;
+    }
+
+    public void setPasswordHash(String passwordHash) {
+        this.passwordHash = passwordHash;
+    }
+
+    public NewsList getNewsList() {
+        return newsList;
+    }
+
+    public void setNewsList(NewsList newsList) {
         this.newsList = newsList;
     }
 
-    public Collection getCollection(){
+    public int getDifficultyLevel() {
+        return difficultyLevel;
+    }
+
+    public void setDifficultyLevel(int difficultyLevel) {
+        this.difficultyLevel = difficultyLevel;
+    }
+
+    public Collection getCollection() {
         return collection;
     }
-    public int getDifficultyLevel() { return difficultyLevel; }
-    public void setDifficultyLevel(int difficultyLevel) { this.difficultyLevel = difficultyLevel; }
 
-    public NewsList getNewsList() { return newsList; }
+    public void setCollection(Collection collection) {
+        this.collection = collection;
+    }
 
     public int getHighScore() {
         return highScore;
@@ -160,4 +352,10 @@ public class User {
     public void setUsername(String username) {
         this.username = username;
     }
+
+    public void setSecurityQuestion(int securityQuestion) {
+        this.securityQuestion = securityQuestion;
+    }
+
+
 }
