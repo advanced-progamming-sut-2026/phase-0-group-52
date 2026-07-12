@@ -18,6 +18,17 @@ import java.util.Set;
  */
 public class Game {
     public static final int MAX_PLANT_FOOD = 3;
+    /** نرخِ زمان بازی: ۱۰ تیک = ۱ ثانیه‌ی درون بازی (داک ص۲۳). */
+    public static final int TICKS_PER_SECOND = 10;
+
+    /** تبدیل ثانیه ← تیک (برای actionInterval / recharge / سقوط خورشید). */
+    public static int secondsToTicks(double seconds) {
+        return (int) Math.round(seconds * TICKS_PER_SECOND);
+    }
+
+    public static double ticksToSeconds(int ticks) {
+        return ticks / (double) TICKS_PER_SECOND;
+    }
 
     private App app;
     private Chapter chapter;

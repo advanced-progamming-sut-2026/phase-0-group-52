@@ -14,6 +14,7 @@ public class App {
 
     private static App instance;
     private Game game;
+    private GameEngine gameEngine;
     public Menu currentMenu;
     private ArrayList<User> users = new ArrayList<>();
     private User currentuser;
@@ -48,6 +49,9 @@ public class App {
 
     public Game getGame() { return game; }
     public void setGame(Game game) { this.game = game; }
+
+    public GameEngine getGameEngine() { return gameEngine; }
+    public void setGameEngine(GameEngine gameEngine) { this.gameEngine = gameEngine; }
 
     public User getCurrentuser() { return currentuser; }
     public void setCurrentuser(User currentuser) { this.currentuser = currentuser; }

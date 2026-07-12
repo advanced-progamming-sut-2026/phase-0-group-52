@@ -1,14 +1,15 @@
 package model.entities;
 
+import model.Game;
 import model.Vec2;
 
 /**
  * یک خورشید روی زمین یا در حال سقوط.
  * - خورشیدِ گیاه‌زا: روی گیاه می‌ماند تا برداشت شود (falling=false، fromSky=false).
- * - خورشیدِ آسمانی: ۵ تیک طول می‌کشد تا فرود بیاید (falling=true)، سپس روی زمین قابل برداشت است.
+ * - خورشیدِ آسمانی: ۵۰ تیک (۵ ثانیه) طول می‌کشد تا فرود بیاید (falling=true)، سپس روی زمین قابل برداشت است.
  */
 public class Sun {
-    public static final int FALL_TICKS = 5;
+    public static final int FALL_TICKS = 5 * Game.TICKS_PER_SECOND;  // ۵ ثانیه × ۱۰ = ۵۰ تیک
 
     private int amount;
     private SunType type;          // فقط برای خورشید آسمانی معنا دارد
