@@ -1,8 +1,8 @@
-package pvz.view;
+package view;
 
-import pvz.controller.LoginMenuController;
-import pvz.model.Result;
-import pvz.model.enums.commands.LoginCommands;
+import controller.LoginMenuController;
+import model.Result;
+import model.enums.commands.LoginCommands;
 import java.util.Scanner;
 import java.util.regex.Matcher;
 

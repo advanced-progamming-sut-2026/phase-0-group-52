@@ -1,6 +1,6 @@
-package pvz.view;
+package view;
 
-import pvz.model.App;
+import model.App;
 import java.util.Scanner;
 
 public class AppView {

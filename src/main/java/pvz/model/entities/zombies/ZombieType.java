@@ -1,4 +1,4 @@
-package pvz.model.entities.zombies;
+package model.entities.zombies;
 
 public interface ZombieType {
 }

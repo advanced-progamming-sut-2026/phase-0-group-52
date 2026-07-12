@@ -1,10 +1,10 @@
-package pvz.controller.menu;
+package controller.menu;
 
-import pvz.model.App;
-import pvz.model.ChapterType;
-import pvz.model.User;
-import pvz.view.ChapterMenu;
-import pvz.view.MenuType;
+import model.App;
+import model.ChapterType;
+import model.User;
+import view.ChapterMenu;
+import view.MenuType;
 
 public class ChapterMenuController {
 

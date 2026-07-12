@@ -1,4 +1,4 @@
-package pvz.view;
+package view;
 
 public class NetworkMenu implements AppMenu{
 }

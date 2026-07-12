@@ -1,8 +1,8 @@
-package pvz.controller.menu;
+package controller.menu;
 
-import pvz.model.App;
-import pvz.view.MainMenu;
-import pvz.view.MenuType;
+import model.App;
+import view.MainMenu;
+import view.MenuType;
 
 public class MainMenuController {
 

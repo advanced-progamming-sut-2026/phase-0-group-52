@@ -1,6 +1,6 @@
-package pvz.view;
+package view;
 
-import pvz.model.news.News;
+import model.news.News;
 
 import java.util.List;
 

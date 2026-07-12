@@ -1,13 +1,13 @@
-package pvz.model;
+package model;
 
-import pvz.database.DataBaseManager;
-import pvz.model.enums.Menu;
-import pvz.view.AppMenu;
+import database.DataBaseManager;
+import model.enums.Menu;
+import view.AppMenu;
 
 import java.util.ArrayList;
 
-import pvz.minigame.*;
-import pvz.view.MenuType;
+import minigame.*;
+import view.MenuType;
 
 public class App {
 //    private static final List<User> users = new ArrayList<>();
@@ -45,6 +45,9 @@ public class App {
             currentMenu = Menu.SignUpMenu;
         }
     }
+
+    public Game getGame() { return game; }
+    public void setGame(Game game) { this.game = game; }
 
     public User getCurrentuser() { return currentuser; }
     public void setCurrentuser(User currentuser) { this.currentuser = currentuser; }

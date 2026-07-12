@@ -1,4 +1,4 @@
-package pvz.model.entities.zombies;
+package model.entities.zombies;
 
 public enum DarkAgesZombies implements ZombieType {
     ZOMBIE_DARK_DEFAULT,ZOMBIE_DARK_ARMOR1_DEFAULT
