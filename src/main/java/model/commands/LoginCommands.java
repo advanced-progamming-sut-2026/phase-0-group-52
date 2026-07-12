@@ -1,6 +1,8 @@
-package pvz.model.commands;
+package model.commands;
 
-public enum LoginCommands implements Commands{
+import model.enums.commands.Commands;
+
+public enum LoginCommands implements Commands {
     LOGIN_REGEX("^\\s*login\\s+-u\\s+(?<username>\\S+)\\s+-p\\s+(?<password>\\S+)(?<stay>\\s+-stay-logged-in)?\\s*$"),
     FORGET_PASSWORD_REGEX("^\\s*forget\\s+password\\s+-u\\s+(\\S+)\\s+-e\\s+(\\S+)\\s*$"),
     ANSWER_QUESTION_REGEX("^\\s*answer\\s+-a\\s+(\\S+)\\s*$"),
