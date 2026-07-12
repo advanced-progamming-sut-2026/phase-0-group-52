@@ -322,19 +322,32 @@ public class GameEngine {
 
     /** ساختِ گیاه بر اساس دسته‌بندی. (تا وقتی PlantFactory کامل نشده.) */
     private Plant createPlant(Plants type, Vec2 pos) {
-        return switch (type.getCategory()) {
-            case SUN_PRODUCER -> new SunProducer(type, pos);
-            case LOBBER -> new Lobber(type, pos);
-            case MELEE -> new Melee(type, pos);
-            case HOMING -> new Homing(type, pos);
-            case SHOOTER -> new Shooter(type, pos);
-            case EXPLOSIVE -> new Explosive(type, pos);
-            case WALL_NUT -> new Wallnut(type, pos);
-            case MODIFIER -> new Modifier(type, pos);
-            case STRIKE_THROUGH -> new StrikeThrough(type, pos);
-            case MINT -> new Mint(type, pos);
-        };
+        switch (type.getCategory()) {
+            case SUN_PRODUCER:
+                return new SunProducer(type, pos);
+            case LOBBER:
+                return new Lobber(type, pos);
+            case MELEE:
+                return new Melee(type, pos);
+            case HOMING:
+                return new Homing(type, pos);
+            case SHOOTER:
+                return new Shooter(type, pos);
+            case EXPLOSIVE:
+                return new Explosive(type, pos);
+            case WALL_NUT:
+                return new Wallnut(type, pos);
+            case MODIFIER:
+                return new Modifier(type, pos);
+            case STRIKE_THROUGH:
+                return new StrikeThrough(type, pos);
+            case MINT:
+                return new Mint(type, pos);
+            default:
+                throw new IllegalArgumentException("Unknown category: " + type.getCategory());
+        }
     }
+
 
     // ======================================================================
     //  تقلب‌ها

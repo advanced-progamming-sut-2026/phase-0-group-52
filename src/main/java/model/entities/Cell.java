@@ -25,11 +25,18 @@ public class Cell {
     public void setType(CellType type) {
         this.type = type;
         switch (type) {
-            case TOMBSTONE -> this.hp = 700;
-            case FROZEN -> this.hp = 600;
-            default -> this.hp = 0;
+            case TOMBSTONE:
+                this.hp = 700;
+                break;
+            case FROZEN:
+                this.hp = 600;
+                break;
+            default:
+                this.hp = 0;
+                break;
         }
     }
+
 
     public boolean isPlantable() {
         return type.isPlantable() && plants.size() < 2;
