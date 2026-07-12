@@ -20,6 +20,11 @@ public abstract class Zombie {
     /** شمارنده داخلی برای زمان‌بندی خوردن گیاه. */
     protected double eatTimer = 0;
 
+    // وضعیت‌ها (کندی/توقف)
+    private double slowTimer = 0;      // تیک‌های باقی‌مانده‌ی کندی
+    private double slowFactor = 1.0;   // ضریب سرعت در حین کندی
+    private double stunTimer = 0;      // تیک‌های توقف کامل
+
     public Zombie(double hp, double speed, double damage, int line, Vec2 position, ArmorType armorType,
                   ChapterType chapter, ZombieType type, ZombieState state, ZombieAbility ability) {
         this.hp = hp;
@@ -36,13 +41,31 @@ public abstract class Zombie {
 
     // ---------- قلاب‌های polymorphic که موتور (GameEngine) صدا می‌زند ----------
 
-    /** هر تیک یک‌بار. هر زیرکلاس رفتار خود را اینجا پیاده می‌کند (حرکت/حمله/قابلیت ویژه). */
+    /** هر تیک یک‌بار. هر زیرکلاس رفتار خود را اینجا پیاده می‌کند. */
     public abstract void onTick(Game game);
 
-    /** حرکت پیش‌فرض: یک‌خانه‌به‌چپ به اندازه‌ی speed در هر تیک. */
+    /** حرکت یک‌خانه‌به‌چپ؛ با در نظر گرفتنِ توقف و کندی. */
     public void move(Game game) {
-        position.x -= speed;
+        if (stunTimer > 0) { stunTimer -= 1; return; }     // توقف کامل
+        double sp = speed;
+        if (slowTimer > 0) { sp *= slowFactor; slowTimer -= 1; }
+        position.x -= sp;
     }
+
+    // ---------- وضعیت‌ها ----------
+
+    public void applySlow(double ticks, double factor) {
+        this.slowTimer = Math.max(this.slowTimer, ticks);
+        this.slowFactor = factor;
+    }
+
+    public void applyStun(double ticks) {
+        this.stunTimer = Math.max(this.stunTimer, ticks);
+    }
+
+    public boolean isStunned() { return stunTimer > 0; }
+
+    // ---------- آسیب و چرخه‌ی حیات ----------
 
     /** آسیب‌زدن: اول به زره، سپس به جان. */
     public void takeDamage(double dmg) {
@@ -54,7 +77,7 @@ public abstract class Zombie {
         if (dmg > 0) hp -= dmg;
     }
 
-    /** آسیب مستقیم به جان (مثل تیر سمی که زره را نادیده می‌گیرد). */
+    /** آسیب مستقیم به جان (تیر سمی/بلع؛ زره را نادیده می‌گیرد). */
     public void takeDirectDamage(double dmg) {
         hp -= dmg;
     }
