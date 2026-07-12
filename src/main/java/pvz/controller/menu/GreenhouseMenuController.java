@@ -1,4 +1,4 @@
-package pvz.controller.menu;
+package controller.menu;
 
 public class GreenhouseMenuController {
 }

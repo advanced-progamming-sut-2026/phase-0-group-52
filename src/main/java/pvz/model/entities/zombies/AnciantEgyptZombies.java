@@ -1,4 +1,4 @@
-package pvz.model.entities.zombies;
+package model.entities.zombies;
 
 public enum AnciantEgyptZombies implements ZombieType {
     ZOMBIE_MUMMY_DEFAULT, ZOMBIE_MUMMY_ARMOR1DEFAULT, ZOMBIE_MUMMY_ARMOR2DEFAULT,

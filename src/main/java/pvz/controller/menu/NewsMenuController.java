@@ -1,9 +1,9 @@
-package pvz.controller.menu;
+package controller.menu;
 
-import pvz.model.App;
-import pvz.model.news.NewsList;
-import pvz.view.MenuType;
-import pvz.view.NewsMenu;
+import model.App;
+import model.news.NewsList;
+import view.MenuType;
+import view.NewsMenu;
 
 public class NewsMenuController {
 

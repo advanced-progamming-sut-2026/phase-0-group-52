@@ -1,6 +1,6 @@
-package pvz.minigame;
+package minigame;
 
-import pvz.model.*;
+import model.*;
 
 public class Minigame {
     private MinigameType type;

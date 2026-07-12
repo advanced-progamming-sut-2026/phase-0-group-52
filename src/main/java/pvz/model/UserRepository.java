@@ -1,7 +1,7 @@
-package pvz.model;
+package model;
 
-import pvz.database.DataBaseManager;
-import pvz.model.User;
+import database.DataBaseManager;
+import model.User;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;

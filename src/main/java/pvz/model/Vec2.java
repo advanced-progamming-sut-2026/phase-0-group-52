@@ -1,4 +1,4 @@
-package pvz.model;
+package model;
 
 public class Vec2 {
     public double x;
