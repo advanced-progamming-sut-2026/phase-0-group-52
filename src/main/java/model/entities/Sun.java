@@ -48,6 +48,13 @@ public class Sun {
         }
     }
 
+    /** خورشید رادیواکتیو که به زمین رسیده → به خورشید معمولی (۲۵) تبدیل می‌شود. */
+    public void convertToNormal() {
+        this.type = SunType.NORMAL;
+        this.amount = SunType.NORMAL.getAmount();   // 25
+    }
+
+
     public int getCol() { return (int) position.x; }
     public int getRow() { return (int) position.y; }
 
