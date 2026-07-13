@@ -113,26 +113,54 @@ public class GameEngine {
         for (Sun sun : game.getSuns()) {
             if (!sun.isFalling()) continue;
             sun.tickFall();
-            if (!sun.isFalling()) {
+            if (!sun.isFalling()) {                 // همین تیک به زمین رسید
+                if (sun.getType() == SunType.RADIOACTIVE) {
+                    sun.convertToNormal();          // رادیواکتیو → معمولی
+                }
                 System.out.println("Sun reached the ground at position ("
                     + sun.getCol() + ", " + sun.getRow() + ")");
-                // TODO: اگر رادیواکتیو بود، به خورشید معمولی تبدیل شود.
             }
         }
     }
 
     /** برداشت خورشید از یک خانه (دستور collect sun). */
+    /** برداشت خورشید. رادیواکتیوِ در حال سقوط منفجر می‌شود (به‌جای برداشت). */
     public boolean collectSun(int col, int row) {
         for (int i = 0; i < game.getSuns().size(); i++) {
             Sun sun = game.getSuns().get(i);
-            if (sun.getCol() == col && sun.getRow() == row && !sun.isFalling()) {
-                game.addSun(sun.getAmount());
-                game.getSuns().remove(i);
-                return true;
+            if (sun.getCol() != col || sun.getRow() != row) continue;
+
+            if (sun.isFalling()) {
+                if (sun.getType() == SunType.RADIOACTIVE) {   // برداشت در حال سقوط → انفجار
+                    explodeRadioactive(sun);
+                    game.getSuns().remove(i);
+                    return true;
+                }
+                continue; // خورشیدِ در حال سقوطِ غیررادیواکتیو قابل برداشت نیست
             }
+
+            game.addSun(sun.getAmount());   // خورشیدِ روی زمین → برداشت عادی
+            game.getSuns().remove(i);
+            return true;
         }
         return false;
     }
+
+    /** انفجارِ خورشید رادیواکتیو: ۱۵۰ به زامبی‌های ۵×۵، ۸۰ به گیاه‌های ۳×۳. */
+    private void explodeRadioactive(Sun sun) {
+        int cx = sun.getCol(), cy = sun.getRow();
+
+        for (Zombie z : new ArrayList<>(game.getZombies()))
+            if (Math.abs(z.getCol() - cx) <= 2 && Math.abs(z.getRow() - cy) <= 2)
+                z.takeDamage(150);                 // مربع ۵×۵ (شعاع ۲)
+
+        for (Plant p : new ArrayList<>(game.getPlants()))
+            if (Math.abs(p.getCol() - cx) <= 1 && Math.abs(p.getRow() - cy) <= 1)
+                p.takeDamage(80);                  // مربع ۳×۳ (شعاع ۱)
+
+        System.out.println("The radioactive sun exploded at (" + cx + ", " + cy + ")!");
+    }
+
 
     // ======================================================================
     //  موج‌ها (weighted-random + بودجه)
@@ -265,6 +293,7 @@ public class GameEngine {
     private void handleLawnmowersAndLoss() {
         for (Zombie z : new ArrayList<>(game.getZombies())) {
             if (z.getPosition().x >= 0) continue;
+            if (!game.getZombies().contains(z)) continue; // قبلاً توسط چمن‌زنِ همین ردیف کشته شده
 
             Lawnmower mower = game.getField().getLawnmower(z.getRow());
             if (mower != null && mower.isIsactive()) {
@@ -302,7 +331,6 @@ public class GameEngine {
         if (cell == null) return "Invalid tile.";
 
         if (cell.getType() == CellType.WATER) {
-            // روی آب فقط گیاهِ آبی/برگ؛ گیاهِ معمولی نیاز به برگِ زیرش دارد
             boolean aquatic = type.getTags().contains(PlantTag.WATER);
             boolean isLilyPad = (type == Plants.LILY_PAD);
             boolean hasLilyPad = cell.getPlants().stream().anyMatch(p -> p.getType() == Plants.LILY_PAD);
@@ -376,7 +404,7 @@ public class GameEngine {
     }
 
     // ======================================================================
-    //  تقلب‌ها
+    //  cheat
     // ======================================================================
 
     public void cheatAddSun(int n)    { game.addSun(n); }
