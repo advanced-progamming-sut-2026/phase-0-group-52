@@ -30,6 +30,8 @@ public final class ZombieFactory {
                 z = new SnorkelZombie(data, lane, pos, chapter);
                 break;
 
+            case ZOMBIE_BEACH_SNORKEL -> new SnorkelZombie(data, lane, pos, chapter);
+
             // ---- راه‌رونده‌های ساده (معمولی + همه‌ی زره‌دارها) ----
             // ZOMBIE_DEFAULT، ZOMBIE_ARMOR1(مخروطی)، ZOMBIE_ARMOR2(سطلی)،
             // ZOMBIE_ARMOR4(بلوکی)، ZOMBIE_DARK_ARMOR3(شوالیه)

@@ -1,9 +1,11 @@
 package model;
 
 import model.entities.Cell;
+import model.entities.CellType;
 import model.entities.Lawnmower;
 import model.entities.Sun;
 import model.entities.SunType;
+import model.entities.plants.PlantTag;
 import model.entities.plants.Explosive;
 import model.entities.plants.Homing;
 import model.entities.plants.Lobber;
@@ -16,8 +18,8 @@ import model.entities.plants.Shooter;
 import model.entities.plants.StrikeThrough;
 import model.entities.plants.SunProducer;
 import model.entities.plants.Wallnut;
-import model.entities.zombies.BasicZombie;
 import model.entities.zombies.Zombie;
+import model.entities.zombies.ZombieFactory;
 import model.entities.zombies.Zombies;
 
 import java.util.ArrayList;
@@ -27,9 +29,6 @@ import java.util.Random;
 /**
  * قلب شبیه‌سازی بازی. کلِ حلقه‌ی گذر زمان، خورشید، موج، نبرد، برد/باخت و تقلب‌ها اینجاست.
  * موتور «محتوا-آگاه» نیست: در هر تیک فقط قلاب‌های polymorphic (onTick) را روی گیاه/زامبی صدا می‌زند.
- *
- * پارامترهای موج (لیست زامبی مجاز، بودجه‌ی پایه، تعداد موج) فعلاً از سازنده گرفته می‌شوند
- * تا زمانی که کلاس Level کامل شود و این‌ها را بدهد.
  */
 public class GameEngine {
 
@@ -40,8 +39,7 @@ public class GameEngine {
     private final ChapterType chapter;
     private final Random rng = new Random();
 
-    // برای سنجش شرط «۷۵٪ جانِ موج قبلی از بین رفته»
-    private double lastWaveInitialHp = 0;
+    private double lastWaveInitialHp = 0;      // برای شرط «۷۵٪ جانِ موج قبلی از بین رفته»
 
     public GameEngine(Game game, List<Zombies> zombiePool, double baseWaveBudget,
                       int waveCount, ChapterType chapter) {
@@ -61,7 +59,6 @@ public class GameEngine {
     //  گذر زمان
     // ======================================================================
 
-    /** بازی را n تیک جلو می‌برد (دستور advance time). */
     public void advance(int ticks) {
         for (int i = 0; i < ticks && !game.isGameOver(); i++) {
             tick();
@@ -69,7 +66,6 @@ public class GameEngine {
         if (!game.isGameOver()) checkWin();
     }
 
-    /** یک تیک کامل بازی. ترتیب مراحل مهم است. */
     private void tick() {
         int t = game.getCurrentTick();
 
@@ -77,9 +73,9 @@ public class GameEngine {
         updateFallingSuns();
         autoDropSun(t);
 
-        for (Plant p : new ArrayList<>(game.getPlants())) p.onTick(game);   // تولید خورشید و ...
+        for (Plant p : new ArrayList<>(game.getPlants())) p.onTick(game);
         maybeStartNextWave();
-        for (Zombie z : new ArrayList<>(game.getZombies())) z.onTick(game); // حرکت/حمله
+        for (Zombie z : new ArrayList<>(game.getZombies())) z.onTick(game);
 
         removeDeadPlants();
         removeDeadZombies();
@@ -92,11 +88,7 @@ public class GameEngine {
     //  خورشید
     // ======================================================================
 
-    /**
-     * فاصله‌ی بین دو سقوط خورشید، برحسب تیک.
-     * فرمول داک بر حسب ثانیه است: max(6 + 0.05·t, 12) و t زمانِ سپری‌شده برحسب ثانیه.
-     * چون ۱۰ تیک = ۱ ثانیه، ورودی و خروجی تبدیل می‌شوند.
-     */
+    /** فاصله‌ی سقوط خورشید (تیک). فرمول داک برحسب ثانیه: max(6+0.05·t, 12)؛ چون ۱۰ تیک=۱ث تبدیل می‌شود. */
     private int sunDropInterval(int currentTick) {
         double tSec = Game.ticksToSeconds(currentTick);
         double xSec = Math.max(6 + 0.05 * tSec, 12);
@@ -121,10 +113,10 @@ public class GameEngine {
         for (Sun sun : game.getSuns()) {
             if (!sun.isFalling()) continue;
             sun.tickFall();
-            if (!sun.isFalling()) { // همین تیک به زمین رسید
+            if (!sun.isFalling()) {
                 System.out.println("Sun reached the ground at position ("
                     + sun.getCol() + ", " + sun.getRow() + ")");
-                // TODO (گام ۸): اگر رادیواکتیو بود، به خورشید معمولی تبدیل شود.
+                // TODO: اگر رادیواکتیو بود، به خورشید معمولی تبدیل شود.
             }
         }
     }
@@ -139,11 +131,11 @@ public class GameEngine {
                 return true;
             }
         }
-        return false; // خورشیدی آنجا نبود
+        return false;
     }
 
     // ======================================================================
-    //  موج‌ها (تولید با weighted-random + بودجه)
+    //  موج‌ها (weighted-random + بودجه)
     // ======================================================================
 
     private void maybeStartNextWave() {
@@ -155,9 +147,9 @@ public class GameEngine {
         }
     }
 
-    /** بودجه‌ی موج i: هر موج ۱.۲۵ برابر قبلی؛ موج آخر (flag) دو برابر مرحله‌ی قبل. */
+    /** بودجه‌ی موج i: هر موج ۱.۲۵× قبلی؛ موج آخر (flag) دو برابر مرحله‌ی قبل. */
     private double waveBudget(int waveIndex) {
-        if (waveIndex == waveCount - 1) {                 // موج پرچم
+        if (waveIndex == waveCount - 1) {
             return baseWaveBudget * Math.pow(1.25, waveIndex - 1) * 2;
         }
         return baseWaveBudget * Math.pow(1.25, waveIndex);
@@ -176,10 +168,11 @@ public class GameEngine {
 
         while (true) {
             Zombies pick = pickWeightedZombie(budget);
-            if (pick == null) break; // دیگر زامبیِ قابل‌خریدی با این بودجه نمانده
+            if (pick == null) break;
 
-            int lane = rng.nextInt(game.getField().getRows());
-            int spawnCol = game.getField().getCols(); // درست بیرونِ لبه‌ی راست
+            int[] spawn = pickSpawn();          // {col, lane} — لبه‌ی راست یا ساحلِ پست
+            int spawnCol = spawn[0];
+            int lane = spawn[1];
             Zombie z = createZombie(pick, lane, spawnCol);
 
             game.getZombies().add(z);
@@ -196,9 +189,23 @@ public class GameEngine {
     }
 
     /**
-     * انتخاب تصادفیِ وزن‌دار فقط از بین زامبی‌هایی که با بودجه‌ی باقی‌مانده قابل‌خریدند.
-     * اگر هیچ زامبیِ قابل‌خریدی نماند null برمی‌گرداند (پایان spawn این موج).
+     * موقعیتِ ظهور: پیش‌فرض لبه‌ی راست؛ در ساحل با احتمال ۳۰٪ از یک خانه‌ی ساحلِ پست ظاهر می‌شود.
+     * خروجی: {col, row}.
      */
+    private int[] pickSpawn() {
+        if (chapter == ChapterType.BIG_WAVE_BEACH) {
+            List<int[]> low = game.getField().getLowGroundCells();
+            if (!low.isEmpty() && rng.nextDouble() < 0.3) {
+                int[] cell = low.get(rng.nextInt(low.size()));
+                System.out.println("A zombie emerged from the low beach at ("
+                    + cell[0] + ", " + cell[1] + ").");
+                return cell;
+            }
+        }
+        return new int[]{ game.getField().getCols(), rng.nextInt(game.getField().getRows()) };
+    }
+
+    /** انتخاب وزن‌دار فقط از بین زامبی‌های قابل‌خرید با بودجه‌ی باقی‌مانده. */
     private Zombies pickWeightedZombie(double budget) {
         if (zombiePool == null || zombiePool.isEmpty()) return null;
         int total = 0;
@@ -214,10 +221,9 @@ public class GameEngine {
         return null;
     }
 
-    /** فعلاً همه با BasicZombie ساخته می‌شوند؛ گام ۸ زیرکلاس‌های خاص را جایگزین می‌کند. */
+    /** ساختِ زامبی از طریق factory (زیرکلاس درست + مقداردهیِ زره). */
     private Zombie createZombie(Zombies data, int lane, int spawnCol) {
-        // TODO (گام ۸): ZombieFactory که بر اساس نوع، زیرکلاس درست (TombRaiser/King/...) بسازد.
-        return new BasicZombie(data, lane, new Vec2(spawnCol, lane), chapter, null);
+        return ZombieFactory.create(data, lane, spawnCol, chapter);
     }
 
     private double aliveZombieHp() {
@@ -231,8 +237,16 @@ public class GameEngine {
     // ======================================================================
 
     private void removeDeadPlants() {
-        game.getPlants().removeIf(Plant::isDead);
-        // TODO (گام ۸): هم‌زمان از Cell مربوطه هم حذف شود + پیام "Plant ... is destroyed."
+        game.getPlants().removeIf(p -> {
+            if (p.isDead()) {
+                Cell c = game.getField().getCell(p.getCol(), p.getRow());
+                if (c != null) c.getPlants().remove(p);
+                System.out.println("Plant " + p.getType().getName()
+                    + " at (" + p.getCol() + ", " + p.getRow() + ") is destroyed.");
+                return true;
+            }
+            return false;
+        });
     }
 
     private void removeDeadZombies() {
@@ -240,7 +254,7 @@ public class GameEngine {
             if (z.isDead()) {
                 System.out.println("Zombie of type " + z.getClass().getSimpleName()
                     + " is dead at (" + z.getCol() + ", " + z.getRow() + ")");
-                // TODO (گام ۸): drop سکه/الماس/گلدان و غذای گیاه (زامبی درخشان).
+                // TODO: drop سکه/الماس/گلدان و غذای گیاه (زامبی درخشان).
                 return true;
             }
             return false;
@@ -259,7 +273,7 @@ public class GameEngine {
                 final int lane = z.getRow();
                 game.getZombies().removeIf(zz -> zz.getRow() == lane);
                 mower.setIsactive(false);
-                // TODO (گام ۸): زامبی‌های رئیس نباید کشته شوند.
+                // TODO: زامبی‌های رئیس نباید کشته شوند.
             } else {
                 System.out.println("The zombie ate your brain; LOSER!!!");
                 game.setWon(false);
@@ -279,14 +293,27 @@ public class GameEngine {
     }
 
     // ======================================================================
-    //  کاشت / برداشت / غذا  (اعتبارسنجی؛ رفتار در onTick گیاه)
+    //  کاشت / برداشت / غذا
     // ======================================================================
 
-    /** کاشت گیاه با بررسی خورشید و cooldown و قابل‌کاشت بودن خانه. */
+    /** کاشت گیاه با بررسی خانه (آب/خشکی)، cooldown و خورشید. */
     public String plantPlant(Plants type, int col, int row) {
         Cell cell = game.getField().getCell(col, row);
         if (cell == null) return "Invalid tile.";
-        if (!cell.isPlantable()) return "You can't plant here.";
+
+        if (cell.getType() == CellType.WATER) {
+            // روی آب فقط گیاهِ آبی/برگ؛ گیاهِ معمولی نیاز به برگِ زیرش دارد
+            boolean aquatic = type.getTags().contains(PlantTag.WATER);
+            boolean isLilyPad = (type == Plants.LILY_PAD);
+            boolean hasLilyPad = cell.getPlants().stream().anyMatch(p -> p.getType() == Plants.LILY_PAD);
+            if (!aquatic && !isLilyPad && !hasLilyPad) {
+                return "This plant needs a lily pad on water.";
+            }
+            if (cell.getPlants().size() >= 2) return "You can't plant here.";
+        } else if (!cell.isPlantable()) {
+            return "You can't plant here.";
+        }
+
         if (game.isOnCooldown(type)) return "Plant is on cooldown.";
         if (game.getSunAmount() < type.getCost()) return "Not enough sun.";
 
@@ -296,7 +323,7 @@ public class GameEngine {
         cell.getPlants().add(plant);
         game.startCooldown(type);
         plant.onPlanted(game);
-        if (game.getBoostedTypes().contains(type)) plant.onPlantFood(game); // اثر boost فوری
+        if (game.getBoostedTypes().contains(type)) plant.onPlantFood(game);
         return "Planted " + type.getName() + " at (" + col + ", " + row + ").";
     }
 
@@ -347,7 +374,6 @@ public class GameEngine {
                 throw new IllegalArgumentException("Unknown category: " + type.getCategory());
         }
     }
-
 
     // ======================================================================
     //  تقلب‌ها

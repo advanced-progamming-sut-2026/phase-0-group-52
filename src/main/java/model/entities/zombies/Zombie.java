@@ -80,22 +80,33 @@ public abstract class Zombie {
         return (best < 1.0) ? closest : null;  // فقط وقتی واقعاً رسیده باشد
     }
 
+    /** رفتارِ پایه: اگر گیاهی جلو است بخور (eatDPS در تیک)، وگرنه حرکت کن. مشترک بین زیرکلاس‌ها. */
+    protected void walkOrEat(Game game) {
+        Plant target = frontPlant(game);
+        if (target != null) {
+            setState(ZombieState.ATTACKING);
+            target.takeDamage(damage / Game.TICKS_PER_SECOND);
+        } else {
+            setState(ZombieState.WALKING);
+            move(game);
+        }
+    }
+
     /** جانِ زره بر اساس نوعِ آن (برای مقداردهیِ اولیه توسط ZombieFactory). */
     public static double armorHpFor(ArmorType t) {
         switch (t) {
             case CONEHEAD:
-                return 370;
+                return 370;    // Cone
             case BUCKETHEAD:
-                return 1100;
+                return 1100;   // Bucket
             case BRICKHEAD:
-                return 2200;
+                return 2200;   // Brick
             case KNIGHT:
-                return 3200; // Shoulder(1600) + Crown(1600)
+                return 3200;   // Shoulder(1600) + Crown(1600)
             default:
                 return 0;
         }
     }
-
 
     /** آسیب‌زدن: اول به زره، سپس به جان. */
     public void takeDamage(double dmg) {
@@ -120,6 +131,13 @@ public abstract class Zombie {
     public int getCol() { return (int) Math.floor(position.x); }
     /** ردیف (y). */
     public int getRow() { return line; }
+
+    /** آسیبِ پرتاب‌کننده‌ها (Lobber). پیش‌فرض مثل takeDamage؛ Snorkel حتی زیر آب می‌پذیردش. */
+    public void takeDamageFromLobber(double dmg) {
+        takeDamage(dmg);
+    }
+
+
 
     // ---------- getter / setter ----------
 

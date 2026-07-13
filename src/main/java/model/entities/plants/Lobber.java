@@ -32,11 +32,11 @@ public class Lobber extends Plant {
             case KERNEL_PULT:
                 if (butterNext) {
                     // کره: آسیب + توقف موقت
-                    target.takeDamage(40);
+                    target.takeDamageFromLobber(40);
                     target.applyStun(Game.secondsToTicks(3));
                 } else {
                     // ذرت
-                    target.takeDamage(getAttackdamage()); // 20
+                    target.takeDamageFromLobber(getAttackdamage()); // 20
                 }
                 butterNext = !butterNext;
                 break;
@@ -55,21 +55,21 @@ public class Lobber extends Plant {
 
             default:
                 // Cabbage-pult: تک‌هدف
-                target.takeDamage(getAttackdamage()); // 40
+                target.takeDamageFromLobber(getAttackdamage()); // 40
                 break;
         }
 
         actionTimer = 0;
     }
 
-
-
     @Override
     public void onPlantFood(Game game) {
         // ساده‌سازی: پرتاب سنگین به همه‌ی زامبی‌های هم‌ردیف
-        for (Zombie z : game.getZombies())
-            if (!z.isDead() && z.getRow() == getRow())
-                z.takeDamage(getAttackdamage() * 2);
+        for (Zombie z : game.getZombies()) {
+            if (!z.isDead() && z.getRow() == getRow()) {
+                z.takeDamageFromLobber(getAttackdamage() * 2);
+            }
+        }
     }
 
     // ---------- کمکی ----------
@@ -81,7 +81,10 @@ public class Lobber extends Plant {
         for (Zombie z : game.getZombies()) {
             if (z.isDead() || z.getRow() != getRow()) continue;
             if (z.getPosition().x < getCol()) continue;       // فقط جلوی گیاه (سمت راست)
-            if (z.getPosition().x < bestX) { bestX = z.getPosition().x; best = z; }
+            if (z.getPosition().x < bestX) {
+                bestX = z.getPosition().x;
+                best = z;
+            }
         }
         return best;
     }
@@ -91,8 +94,9 @@ public class Lobber extends Plant {
         int cc = center.getCol(), cr = center.getRow();
         for (Zombie z : game.getZombies()) {
             if (z.isDead()) continue;
-            if (Math.abs(z.getCol() - cc) <= 1 && Math.abs(z.getRow() - cr) <= 1)
-                z.takeDamage(dmg);
+            if (Math.abs(z.getCol() - cc) <= 1 && Math.abs(z.getRow() - cr) <= 1) {
+                z.takeDamageFromLobber(dmg);
+            }
         }
     }
 
@@ -101,8 +105,9 @@ public class Lobber extends Plant {
         int cc = center.getCol(), cr = center.getRow();
         for (Zombie z : game.getZombies()) {
             if (z.isDead()) continue;
-            if (Math.abs(z.getCol() - cc) <= 1 && Math.abs(z.getRow() - cr) <= 1)
+            if (Math.abs(z.getCol() - cc) <= 1 && Math.abs(z.getRow() - cr) <= 1) {
                 z.applySlow(Game.secondsToTicks(5), 0.5); // ۵ث با نصفِ سرعت
+            }
         }
     }
 }
