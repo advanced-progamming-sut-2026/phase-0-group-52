@@ -5,6 +5,10 @@ import model.Game;
 import model.Vec2;
 import model.entities.plants.Plant;
 
+/**
+ * زامبیِ پایه: فقط راه می‌رود و جلوترین گیاهِ ردیف را می‌خورد.
+ * پوششِ زامبی معمولی و انواع زره‌دار (مخروطی/سطلی/بلوکی/شوالیه) با تنظیم armorHp. دسته‌بندی کاربر.
+ */
 public class BasicZombie extends Zombie {
 
     public BasicZombie(Zombies data, int line, Vec2 position, ChapterType chapter, ZombieType type) {
@@ -23,22 +27,4 @@ public class BasicZombie extends Zombie {
             move(game);
         }
     }
-
-    /** جلوترین گیاهِ خانه‌ای که زامبی روی آن است (همان که جلویش را گرفته). */
-    private Plant frontPlant(Game game) {
-        Plant closest = null;
-        double zx = getPosition().x;            // مختصات دقیقِ (اعشاری) زامبی
-        double best = Double.MAX_VALUE;
-        for (Plant p : game.getPlants()) {
-            if (p.getRow() != getRow()) continue;
-            double dist = zx - p.getCol();      // فاصله تا گیاهِ چپ‌تر یا هم‌محل
-            if (dist >= 0 && dist < best) {
-                best = dist;
-                closest = p;
-            }
-        }
-        // فقط وقتی بخور که واقعاً رسیده باشی (داخل همان خانه) — جلوی «خوردن از دور» را می‌گیرد
-        return (best < 1.0) ? closest : null;
-    }
-
 }

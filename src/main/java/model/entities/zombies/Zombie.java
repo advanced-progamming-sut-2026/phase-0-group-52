@@ -3,6 +3,7 @@ package model.entities.zombies;
 import model.ChapterType;
 import model.Game;
 import model.Vec2;
+import model.entities.plants.Plant;
 
 public abstract class Zombie {
     private double hp;
@@ -41,18 +42,16 @@ public abstract class Zombie {
 
     // ---------- قلاب‌های polymorphic که موتور (GameEngine) صدا می‌زند ----------
 
-    /** هر تیک یک‌بار. هر زیرکلاس رفتار خود را اینجا پیاده می‌کند. */
+    /** هر تیک یک‌بار. هر زیرکلاس رفتار خود را اینجا پیاده می‌کند (حرکت/حمله/قابلیت ویژه). */
     public abstract void onTick(Game game);
 
-    /** حرکت یک‌خانه‌به‌چپ؛ با در نظر گرفتنِ توقف و کندی. */
+    /** حرکت به چپ؛ با در نظر گرفتنِ توقف و کندی. speed بر حسب ثانیه است → تقسیم بر تیک‌درثانیه. */
     public void move(Game game) {
         if (stunTimer > 0) { stunTimer -= 1; return; }     // توقف کامل
         double sp = speed;
         if (slowTimer > 0) { sp *= slowFactor; slowTimer -= 1; }
-        position.x -= sp;
+        position.x -= sp / Game.TICKS_PER_SECOND;
     }
-
-    // ---------- وضعیت‌ها ----------
 
     public void applySlow(double ticks, double factor) {
         this.slowTimer = Math.max(this.slowTimer, ticks);
@@ -65,7 +64,38 @@ public abstract class Zombie {
 
     public boolean isStunned() { return stunTimer > 0; }
 
-    // ---------- آسیب و چرخه‌ی حیات ----------
+    /** نزدیک‌ترین گیاهِ همان ردیف که زامبی به آن رسیده (فاصله < یک خانه). مشترک بین همه‌ی زیرکلاس‌ها. */
+    protected Plant frontPlant(Game game) {
+        Plant closest = null;
+        double zx = position.x;              // مختصات دقیقِ (اعشاری) زامبی
+        double best = Double.MAX_VALUE;
+        for (Plant p : game.getPlants()) {
+            if (p.getRow() != getRow()) continue;
+            double dist = zx - p.getCol();     // فقط گیاهانِ جلو (چپ) یا هم‌محل
+            if (dist >= 0 && dist < best) {
+                best = dist;
+                closest = p;
+            }
+        }
+        return (best < 1.0) ? closest : null;  // فقط وقتی واقعاً رسیده باشد
+    }
+
+    /** جانِ زره بر اساس نوعِ آن (برای مقداردهیِ اولیه توسط ZombieFactory). */
+    public static double armorHpFor(ArmorType t) {
+        switch (t) {
+            case CONEHEAD:
+                return 370;
+            case BUCKETHEAD:
+                return 1100;
+            case BRICKHEAD:
+                return 2200;
+            case KNIGHT:
+                return 3200; // Shoulder(1600) + Crown(1600)
+            default:
+                return 0;
+        }
+    }
+
 
     /** آسیب‌زدن: اول به زره، سپس به جان. */
     public void takeDamage(double dmg) {
@@ -77,7 +107,7 @@ public abstract class Zombie {
         if (dmg > 0) hp -= dmg;
     }
 
-    /** آسیب مستقیم به جان (تیر سمی/بلع؛ زره را نادیده می‌گیرد). */
+    /** آسیب مستقیم به جان (مثل تیر سمی که زره را نادیده می‌گیرد). */
     public void takeDirectDamage(double dmg) {
         hp -= dmg;
     }
