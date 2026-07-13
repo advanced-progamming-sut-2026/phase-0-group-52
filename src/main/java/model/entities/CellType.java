@@ -18,4 +18,9 @@ public enum CellType {
     public boolean isPlantable() {
         return this == NORMAL || this == LOW_GROUND || this == NECROMANCY;
     }
+
+    /** آیا این خانه آب است؟ (برای منطق کاشتِ گیاه آبی و شیرجه‌ی زامبی غواص) */
+    public boolean isWater() {
+        return this == WATER;
+    }
 }

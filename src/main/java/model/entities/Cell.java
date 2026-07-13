@@ -52,4 +52,26 @@ public class Cell {
     public ArrayList<Plant> getPlants() { return plants; }
     public int getRow() { return row; }
     public int getCol() { return col; }
+
+    /** آیا این خانه مانعِ عبورِ تیرِ افقی است؟ (سنگ‌قبر) — گیاهانِ شلیک‌کننده از رویش رد نمی‌شوند. */
+    public boolean isObstacle() {
+        return type == CellType.TOMBSTONE;
+    }
+
+    /**
+     * آسیب به خودِ زمین (سنگ‌قبر). جانش که صفر شود به زمین معمولی تبدیل می‌شود.
+     * @return true اگر تخریب و به NORMAL تبدیل شد.
+     */
+    public boolean damageTerrain(double dmg) {
+        if (type != CellType.TOMBSTONE && type != CellType.FROZEN) return false; // فقط قبر/یخ آسیب‌پذیرند
+        hp -= dmg;
+        if (hp <= 0) {
+            setType(CellType.NORMAL);   // به زمین معمولی برمی‌گردد (hp هم صفر می‌شود)
+            return true;
+        }
+        return false;
+    }
+
+
+
 }
