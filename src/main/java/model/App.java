@@ -17,8 +17,7 @@ public class App {
     private GameEngine gameEngine;
     public Menu currentMenu;
     private ArrayList<User> users = new ArrayList<>();
-    private User currentuser;
-    public static User loggedInUser;
+    private User currentuser;   // کاربرِ واردشده‌ی فعلی (منبعِ واحد)
     private MenuType currentmenu;
     private Minigame minigame;
 
@@ -38,7 +37,7 @@ public class App {
         User rememberedUser = repository.getRememberedUser();
 
         if (rememberedUser != null) {
-            loggedInUser = rememberedUser;
+            currentuser = rememberedUser;
             currentMenu = Menu.MainMenu;
         } else {
             currentMenu = Menu.SignUpMenu;
@@ -53,6 +52,14 @@ public class App {
 
     public User getCurrentuser() { return currentuser; }
     public void setCurrentuser(User currentuser) { this.currentuser = currentuser; }
+
+    /** کاربرِ واردشده را ثبت می‌کند (پس از ورود موفق). هم‌معنیِ setCurrentuser. */
+    public void setLoggedInUser(User user) {
+        this.currentuser = user;
+        if (user != null) user.setLogged(true);
+    }
+
+    public User getLoggedInUser() { return currentuser; }
 
     public MenuType getCurrentmenu() { return currentmenu; }
     public void setCurrentmenu(MenuType currentmenu) { this.currentmenu = currentmenu; }
