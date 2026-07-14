@@ -31,7 +31,6 @@ public class User {
 
 
     private int id;
-    private String answer;
     private int mostMeowPoint;
     private int gamesPlayed;
     private int coins;
@@ -62,29 +61,6 @@ public class User {
         this.securityAnswerHash = securityAnswerHash;
         this.difficultyLevel = 3;
     }
-
-    public User(String username, String password, String nickname, String email, String gender, boolean isLogged, int coinBalance,
-                int diamondBalance, int lastChapter, int lastLevel, int minigamesFinished,
-                int dailyQuestCount, int otherQuestCount, int highScore, Collection collection) {
-        this.username = username;
-        this.password = password;
-        this.nickname = nickname;
-        this.email = email;
-        this.gender = gender;
-        this.isLogged = isLogged;
-        this.coinBalance = coinBalance;
-        this.diamondBalance = diamondBalance;
-        this.lastChapter = lastChapter;
-        this.lastLevel = lastLevel;
-        this.minigamesFinished = minigamesFinished;
-        this.dailyQuestCount = dailyQuestCount;
-        this.otherQuestCount = otherQuestCount;
-        this.highScore = highScore;
-        this.collection = collection;
-        this.difficultyLevel = 3;
-        this.newsList = new NewsList();
-    }
-
 
     public int getPlantFoodNum() {
         return plantFoodNum;
@@ -180,14 +156,6 @@ public class User {
 
     public void setMostMeowPoint(int mostMeowPoint) {
         this.mostMeowPoint = mostMeowPoint;
-    }
-
-    public String getAnswer() {
-        return answer;
-    }
-
-    public void setAnswer(String answer) {
-        this.answer = answer;
     }
 
     public int getId() {

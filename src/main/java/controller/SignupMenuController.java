@@ -32,6 +32,10 @@ public class SignupMenuController {
         this.isRegisterValid = true;
     }
 
+    public boolean isRegisterValid() {
+        return isRegisterValid;
+    }
+
     // ----- متدهای ثبت اطلاعات مرحله‌ای -----
 
     public Result setUsername(String username) {
@@ -141,15 +145,16 @@ public class SignupMenuController {
             isRegisterValid = false;
             return new Result(false, "The answers do not match.\n", null);
         }
+        // پاسخ به‌صورت case-insensitive نرمال و سپس هش می‌شود (بخش امتیازی: عدم ذخیره‌ی پاسخِ خام).
         this.securityQuestionNum = validation.questionNum;
-        this.answer = answer;
+        this.answer = HashUtil.hashPassword(answer.trim().toLowerCase());
 
         if (!allFieldsReady()) {
             isRegisterValid = false;
             return new Result(false, "Some registration fields are missing.\n", null);
         }
 
-        User user = new User(username, email, passwordHash, gender, nickname, securityQuestionNum, answer);
+        User user = new User(username, passwordHash, nickname, email, gender, securityQuestionNum, this.answer);
         boolean success = repository.register(user);
         if (!success) {
             isRegisterValid = false;
@@ -257,7 +262,9 @@ public class SignupMenuController {
             return SignUpCommands.EMAIL_FIRST_PART_REGEX.matches(firstPart);
         }
 
-
+        public boolean isSecondPartEmailValid(String secondPart) {
+            return SignUpCommands.EMAIL_SECOND_PART_REGEX.matches(secondPart);
+        }
 
         public boolean hasInvalidChar(String email) {
             return email.matches("^.*[^a-zA-Z0-9._@-].*$");
