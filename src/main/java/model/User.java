@@ -27,6 +27,7 @@ public class User {
     private  String passwordHash;
     private int securityQuestion;
     private  String securityAnswerHash;
+    private boolean stayLoggedIn;
 
 
     private int id;
@@ -45,6 +46,10 @@ public class User {
     private int plantFoodNum;
 
 
+
+    /** سازنده‌ی بدون‌آرگومان؛ برای بازسازیِ کاربر از فایلِ ذخیره‌سازی (JSON) با setterها. */
+    public User() {
+    }
 
     public User(String username, String passwordHash, String nickname, String email,
                 String gender, int securityQuestion, String securityAnswerHash) {
@@ -201,12 +206,16 @@ public class User {
         this.securityAnswerHash = securityAnswerHash;
     }
 
-    public String getSecurityQuestion() {
+    public int getSecurityQuestion() {
         return securityQuestion;
     }
 
-    public void setSecurityQuestion(String securityQuestion) {
-        this.securityQuestion = securityQuestion;
+    public boolean isStayLoggedIn() {
+        return stayLoggedIn;
+    }
+
+    public void setStayLoggedIn(boolean stayLoggedIn) {
+        this.stayLoggedIn = stayLoggedIn;
     }
 
     public String getPasswordHash() {

@@ -1,6 +1,6 @@
 package model;
 
-import database.DataBaseManager;
+import database.UserRepository;
 import model.enums.Menu;
 import view.AppMenu;
 
@@ -34,8 +34,6 @@ public class App {
 
 
     private App(){
-        DataBaseManager.initializeDatabase();
-
         UserRepository repository = new UserRepository();
         User rememberedUser = repository.getRememberedUser();
 
