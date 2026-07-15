@@ -28,10 +28,18 @@ public class GameMenuController {
         return false;
     }
 
+    private final QuestService questService = new QuestService();
+
     // ---------- گذر زمان و خورشید ----------
     public void advanceTime(int count) {
         if (noGame()) return;
         engine().advance(count);
+        // پایانِ مرحله (برد/باخت) → ارزیابیِ کوئست‌ها، فقط یک‌بار
+        Game g = game();
+        if (g.isGameOver() && !g.isQuestsEvaluated()) {
+            g.setQuestsEvaluated(true);
+            questService.onLevelEnd(g, g.isWon());
+        }
     }
 
     public void collectSun(int x, int y) {
@@ -117,26 +125,16 @@ public class GameMenuController {
     }
 
     private char terrainChar(CellType t) {
-        switch (t) {
-            case NORMAL:
-                return '.';
-            case TOMBSTONE:
-                return 'T';
-            case WATER:
-                return '~';
-            case FROZEN:
-                return '*';
-            case SLIPPERY_UP:
-                return '^';
-            case SLIPPERY_DOWN:
-                return 'v';
-            case LOW_GROUND:
-                return '_';
-            case NECROMANCY:
-                return 'N';
-            default:
-                return '?';
-        }
+        return switch (t) {
+            case NORMAL -> '.';
+            case TOMBSTONE -> 'T';
+            case WATER -> '~';
+            case FROZEN -> '*';
+            case SLIPPERY_UP -> '^';
+            case SLIPPERY_DOWN -> 'v';
+            case LOW_GROUND -> '_';
+            case NECROMANCY -> 'N';
+        };
     }
 
     public void showPlantsStatus() {
