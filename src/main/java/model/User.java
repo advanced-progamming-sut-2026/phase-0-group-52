@@ -18,8 +18,6 @@ public class User {
     private int lastChapter;
     private int lastLevel;
     private int minigamesFinished;
-    private int dailyQuestCount;
-    private int otherQuestCount;
     private int highScore;
     private Collection collection;
     private int difficultyLevel;
@@ -224,22 +222,6 @@ public class User {
 
     public void setHighScore(int highScore) {
         this.highScore = highScore;
-    }
-
-    public int getOtherQuestCount() {
-        return otherQuestCount;
-    }
-
-    public void setOtherQuestCount(int otherQuestCount) {
-        this.otherQuestCount = otherQuestCount;
-    }
-
-    public int getDailyQuestCount() {
-        return dailyQuestCount;
-    }
-
-    public void setDailyQuestCount(int dailyQuestCount) {
-        this.dailyQuestCount = dailyQuestCount;
     }
 
     public int getMinigamesFinished() {

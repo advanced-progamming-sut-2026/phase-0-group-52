@@ -12,16 +12,11 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
-/**
- * نگه‌دارنده‌ی وضعیت یک بازیِ در حال اجرا.
- * منطق شبیه‌سازی در GameEngine است؛ این کلاس فقط state و چند کوئریِ ساده دارد.
- */
+
 public class Game {
     public static final int MAX_PLANT_FOOD = 3;
-    /** نرخِ زمان بازی: ۱۰ تیک = ۱ ثانیه‌ی درون بازی (داک ص۲۳). */
     public static final int TICKS_PER_SECOND = 10;
 
-    /** تبدیل ثانیه ← تیک (برای actionInterval / recharge / سقوط خورشید). */
     public static int secondsToTicks(double seconds) {
         return (int) Math.round(seconds * TICKS_PER_SECOND);
     }
@@ -42,6 +37,8 @@ public class Game {
     private final ArrayList<Zombie> zombies;   // زامبی‌های فعال روی صحنه
     private final ArrayList<Sun> suns;         // خورشیدهای روی زمین و در حال سقوط
     private final ArrayList<Wave> waves;
+
+    private final GameStats stats = new GameStats();
 
     // ---------- وضعیت گذر زمان و موج ----------
     private int currentTick;
@@ -76,7 +73,6 @@ public class Game {
 
     // ---------- کوئری‌های کمکی ----------
 
-    /** گیاه(انِ) روی خانه‌ی (col,row). ممکن است تا دو گیاه باشد (stacking). */
     public ArrayList<Plant> getPlantsAt(int col, int row) {
         ArrayList<Plant> result = new ArrayList<>();
         for (Plant p : plants) {
@@ -85,7 +81,6 @@ public class Game {
         return result;
     }
 
-    /** زامبی‌های فعالِ یک ردیف. */
     public ArrayList<Zombie> getZombiesInRow(int row) {
         ArrayList<Zombie> result = new ArrayList<>();
         for (Zombie z : zombies) {
@@ -146,6 +141,7 @@ public class Game {
     public ArrayList<Zombie> getZombies() { return zombies; }
     public ArrayList<Sun> getSuns() { return suns; }
     public ArrayList<Wave> getWaves() { return waves; }
+    public GameStats getStats() { return stats; }
 
     public int getCurrentTick() { return currentTick; }
     public void setCurrentTick(int currentTick) { this.currentTick = currentTick; }
