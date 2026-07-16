@@ -1,17 +1,24 @@
 package model.entities;
 
+import model.Game;
 import model.Vec2;
 
+/**
+ * یک خورشید روی زمین یا در حال سقوط.
+ * - خورشیدِ گیاه‌زا: روی گیاه می‌ماند تا برداشت شود (falling=false، fromSky=false).
+ * - خورشیدِ آسمانی: ۵۰ تیک (۵ ثانیه) طول می‌کشد تا فرود بیاید (falling=true)، سپس روی زمین قابل برداشت است.
+ */
 public class Sun {
-    public static final int FALL_TICKS = 5;
+    public static final int FALL_TICKS = 5 * Game.TICKS_PER_SECOND;  // ۵ ثانیه × ۱۰ = ۵۰ تیک
 
     private int amount;
-    private SunType type;
-    private Vec2 position;
+    private SunType type;          // فقط برای خورشید آسمانی معنا دارد
+    private Vec2 position;          // (x=col, y=row)
     private boolean falling;
     private int fallTicksRemaining;
     private boolean fromSky;
 
+    /** خورشیدِ تولیدشده توسط یک گیاه (مثلا Sunflower). */
     public Sun(int amount, Vec2 position) {
         this.amount = amount;
         this.position = position;
@@ -21,6 +28,7 @@ public class Sun {
         this.fallTicksRemaining = 0;
     }
 
+    /** خورشیدِ سقوط‌کننده از آسمان روی خانه‌ی (col,row). */
     public Sun(SunType type, Vec2 position) {
         this.type = type;
         this.amount = type.getAmount();
@@ -30,6 +38,7 @@ public class Sun {
         this.fallTicksRemaining = FALL_TICKS;
     }
 
+    /** یک تیک از سقوط می‌گذرد؛ وقتی به صفر برسد، روی زمین می‌نشیند. */
     public void tickFall() {
         if (falling) {
             fallTicksRemaining--;
@@ -38,6 +47,13 @@ public class Sun {
             }
         }
     }
+
+    /** خورشید رادیواکتیو که به زمین رسیده → به خورشید معمولی (۲۵) تبدیل می‌شود. */
+    public void convertToNormal() {
+        this.type = SunType.NORMAL;
+        this.amount = SunType.NORMAL.getAmount();   // 25
+    }
+
 
     public int getCol() { return (int) position.x; }
     public int getRow() { return (int) position.y; }

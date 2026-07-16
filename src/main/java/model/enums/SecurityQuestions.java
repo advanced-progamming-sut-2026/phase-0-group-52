@@ -21,10 +21,6 @@ public enum SecurityQuestions {
         return question;
     }
 
-    public static String getQuestion(int index) {
-        return getQuestionByIndex(index);
-    }
-
     public static String getQuestionByIndex(int index) {
         SecurityQuestions[] questions = values();
         if (index < 1 || index > questions.length) {

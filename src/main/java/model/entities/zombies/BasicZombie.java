@@ -3,17 +3,28 @@ package model.entities.zombies;
 import model.ChapterType;
 import model.Game;
 import model.Vec2;
+import model.entities.plants.Plant;
 
+/**
+ * زامبیِ پایه: فقط راه می‌رود و جلوترین گیاهِ ردیف را می‌خورد.
+ * پوششِ زامبی معمولی و انواع زره‌دار (مخروطی/سطلی/بلوکی/شوالیه) با تنظیم armorHp. دسته‌بندی کاربر.
+ */
 public class BasicZombie extends Zombie {
 
     public BasicZombie(Zombies data, int line, Vec2 position, ChapterType chapter, ZombieType type) {
         super(data.getHp(), data.getSpeed(), data.getEatDPS(), line, position,
-                data.getArmor(), chapter, type, ZombieState.WALKING, null);
+            data.getArmor(), chapter, type, ZombieState.WALKING, null);
     }
 
     @Override
     public void onTick(Game game) {
-
-        move(game);
+        java.util.ArrayList<Plant> here = game.getPlantsAt(getCol(), getRow());
+        if (!here.isEmpty()) {
+            setState(ZombieState.ATTACKING);
+            here.get(here.size() - 1).takeDamage(getDamage());
+        } else {
+            setState(ZombieState.WALKING);
+            move(game);
+        }
     }
 }
