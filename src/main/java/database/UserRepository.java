@@ -1,328 +1,274 @@
 package database;
 
 import model.User;
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
+
+import java.io.IOException;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.util.ArrayList;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
+
+
 public class UserRepository {
 
-    public boolean register(User user) {
-        String sql = "INSERT INTO users (username, email, password_hash, gender, nickname, security_question," +
-            " answer) " +
-            "VALUES (?, ?, ?, ?, ?, ?, ?)";
-        try (Connection conn = DataBaseManager.getConnection();
-             PreparedStatement pstmt = conn.prepareStatement(sql)) {
+    private static final Path FILE = Paths.get("users.json");
 
-            pstmt.setString(1, user.getUsername());
-            pstmt.setString(2, user.getEmail());
-            pstmt.setString(3, user.getPasswordHash());
-            pstmt.setString(4, user.getGender());
-            pstmt.setString(5, user.getNickname());
-            pstmt.setInt(6, user.getSecurityQuestion());
-            pstmt.setString(7, user.getAnswer());
+    // ======================================================================
 
-            pstmt.executeUpdate();
-
-            initializeProgress(user.getUsername());
-            return true;
-        } catch (SQLException e) {
-
-            return false;
-        }
-    }
-    public boolean usernameExists(String username) {
-        String sql = "SELECT 1 FROM users WHERE username = ?";
-
-        try (Connection conn = DataBaseManager.getConnection();
-             PreparedStatement pstmt = conn.prepareStatement(sql)) {
-
-            pstmt.setString(1, username);
-
-            ResultSet rs = pstmt.executeQuery();
-
-            return rs.next();
-
-        } catch (SQLException e) {
-            e.printStackTrace();
-            return false;
-        }
-    }
-    public User getUserByUsername(String username) {
-        String sql = "SELECT * FROM users WHERE username = ?";
-
-        try (Connection conn = DataBaseManager.getConnection();
-             PreparedStatement pstmt = conn.prepareStatement(sql)) {
-
-            pstmt.setString(1, username);
-
-            ResultSet rs = pstmt.executeQuery();
-
-            if (rs.next()) {
-                return new User(
-                    rs.getInt("id"),
-                    rs.getString("username"),
-                    rs.getString("email"),
-                    rs.getString("password_hash"),
-                    rs.getString("gender"),
-                    rs.getString("nickname"),
-                    rs.getInt("security_question"),
-                    rs.getString("answer"),
-                    rs.getInt("coins"),
-                    rs.getInt("gems"),
-                    rs.getInt("seed_packet"),
-                    rs.getInt("plant_food_num"),
-                    rs.getInt("most_meow_point"),
-                    rs.getInt("max_point"),
-                    rs.getInt("games_played"),
-                    rs.getInt("mini_games_played"),
-                    rs.getString("last_won_game"),
-                    rs.getInt("difficulty_level")
-                );
+    public synchronized boolean register(User user) {
+        List<User> users = readAll();
+        for (User u : users) {
+            if (u.getUsername() != null && u.getUsername().equals(user.getUsername())) {
+                return false;
             }
-        } catch (SQLException e) {
-            e.printStackTrace();
         }
+        user.setId(nextId(users));
+        users.add(user);
+        writeAll(users);
+        return true;
+    }
 
+    public synchronized boolean usernameExists(String username) {
+        for (User u : readAll()) {
+            if (u.getUsername() != null && u.getUsername().equals(username)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    public synchronized User getUserByUsername(String username) {
+        for (User u : readAll()) {
+            if (u.getUsername() != null && u.getUsername().equals(username)) {
+                return u;
+            }
+        }
         return null;
     }
 
-    public java.util.List<User> getAllUsers() {
-        java.util.List<User> users = new java.util.ArrayList<User>();
-        String sql = "SELECT * FROM users";
-        try (Connection conn = DataBaseManager.getConnection();
-             PreparedStatement pstmt = conn.prepareStatement(sql)) {
-            ResultSet rs = pstmt.executeQuery();
-            while (rs.next()) {
-                users.add(new User(
-                    rs.getInt("id"),
-                    rs.getString("username"),
-                    rs.getString("email"),
-                    rs.getString("password_hash"),
-                    rs.getString("gender"),
-                    rs.getString("nickname"),
-                    rs.getInt("security_question"),
-                    rs.getString("answer"),
-                    rs.getInt("coins"),
-                    rs.getInt("gems"),
-                    rs.getInt("seed_packet"),
-                    rs.getInt("plant_food_num"),
-                    rs.getInt("most_meow_point"),
-                    rs.getInt("max_point"),
-                    rs.getInt("games_played"),
-                    rs.getInt("mini_games_played"),
-                    rs.getString("last_won_game"),
-                    rs.getInt("difficulty_level")
-                ));
+    public synchronized void setStayLoggedIn(int userId, boolean value) {
+        List<User> users = readAll();
+        for (User u : users) {
+            if (u.getId() == userId) {
+                u.setStayLoggedIn(value);
+            } else if (value) {
+                u.setStayLoggedIn(false);
             }
-        } catch (SQLException e) {
-            e.printStackTrace();
         }
-        return users;
+        writeAll(users);
     }
 
-    public void setStayLoggedIn(int userId, boolean value) {
-        String sql =
-            "UPDATE users SET stay_logged_in = ? WHERE id = ?";
-
-        try (Connection conn = DataBaseManager.getConnection();
-             PreparedStatement pstmt = conn.prepareStatement(sql)) {
-
-            pstmt.setInt(1, value ? 1 : 0);
-            pstmt.setInt(2, userId);
-
-            pstmt.executeUpdate();
-
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-    }
-    public User getRememberedUser() {
-        String sql =
-            "SELECT * FROM users WHERE stay_logged_in = 1 LIMIT 1";
-
-        try (Connection conn = DataBaseManager.getConnection();
-             PreparedStatement pstmt = conn.prepareStatement(sql)) {
-
-            ResultSet rs = pstmt.executeQuery();
-
-            if (rs.next()) {
-                return new User(
-                    rs.getInt("id"),
-                    rs.getString("username"),
-                    rs.getString("email"),
-                    rs.getString("password_hash"),
-                    rs.getString("gender"),
-                    rs.getString("nickname"),
-                    rs.getInt("security_question"),
-                    rs.getString("answer"),
-                    rs.getInt("coins"),
-                    rs.getInt("gems"),
-                    rs.getInt("seed_packet"),
-                    rs.getInt("plant_food_num"),
-                    rs.getInt("most_meow_point"),
-                    rs.getInt("max_point"),
-                    rs.getInt("games_played"),
-                    rs.getInt("mini_games_played"),
-                    rs.getString("last_won_game"),
-                    rs.getInt("difficulty_level")
-                );
+    public synchronized User getRememberedUser() {
+        for (User u : readAll()) {
+            if (u.isStayLoggedIn()) {
+                return u;
             }
-
-        } catch (SQLException e) {
-            e.printStackTrace();
         }
-
         return null;
     }
-    public boolean updateStats(User user) {
-        String sql = "UPDATE users SET coins = ?, gems = ?, seed_packet = ?, plant_food_num = ?, " +
-            "most_meow_point = ?, max_point = ?, games_played = ?, mini_games_played = ? WHERE id = ?";
-        try (Connection conn = DataBaseManager.getConnection();
-             PreparedStatement pstmt = conn.prepareStatement(sql)) {
 
-            pstmt.setInt(1, user.getCoins());
-            pstmt.setInt(2, user.getGems());
-            pstmt.setInt(3, user.getSeedPacket());
-            pstmt.setInt(4, user.getPlantFoodNum());
-            pstmt.setInt(5, user.getMostMeowPoint());
-            pstmt.setInt(6, user.getMaxPoint());
-            pstmt.setInt(7, user.getGamesPlayed());
-            pstmt.setInt(8, user.getMiniGamesPlayed());
-            pstmt.setInt(9, user.getId());
-
-            pstmt.executeUpdate();
-            return true;
-        } catch (SQLException e) {
-            e.printStackTrace();
-            return false;
-        }
-    }
-
-    @SuppressWarnings("CallToPrintStackTrace")
-    private void initializeProgress(String username) {
-        String sql = "INSERT INTO user_progress (user_id, chapter_index, level_index) " +
-            "SELECT id, 1, 1 FROM users WHERE username = ?";
-        try (Connection conn = DataBaseManager.getConnection();
-             PreparedStatement pstmt = conn.prepareStatement(sql)) {
-            pstmt.setString(1, username);
-            pstmt.executeUpdate();
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-    }
-    public void updateUsername(int userId, String newUsername) {
-        String sql = "UPDATE users SET username = ? WHERE id = ?";
-
-        try (Connection conn = DataBaseManager.getConnection();
-             PreparedStatement pstmt = conn.prepareStatement(sql)) {
-
-            pstmt.setString(1, newUsername);
-            pstmt.setInt(2, userId);
-
-            pstmt.executeUpdate();
-
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-    }
-    public void updateNickname(int userId, String newNickname) {
-        String sql = "UPDATE users SET nickname = ? WHERE id = ?";
-
-        try (Connection conn = DataBaseManager.getConnection();
-             PreparedStatement pstmt = conn.prepareStatement(sql)) {
-
-            pstmt.setString(1, newNickname);
-            pstmt.setInt(2, userId);
-
-            pstmt.executeUpdate();
-
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-    }
-    public void updateEmail(int userId, String newEmail) {
-        String sql = "UPDATE users SET email = ? WHERE id = ?";
-
-        try (Connection conn = DataBaseManager.getConnection();
-             PreparedStatement pstmt = conn.prepareStatement(sql)) {
-
-            pstmt.setString(1, newEmail);
-            pstmt.setInt(2, userId);
-
-            pstmt.executeUpdate();
-
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-    }
-
-    public void updatePassword(String username,
-                               String passwordHash) {
-
-        String sql =
-            "UPDATE users SET password_hash = ? WHERE username = ?";
-
-        try (Connection conn = DataBaseManager.getConnection();
-             PreparedStatement pstmt = conn.prepareStatement(sql)) {
-
-            pstmt.setString(1, passwordHash);
-            pstmt.setString(2, username);
-
-            pstmt.executeUpdate();
-
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-    }
-    public void updateDifficulty(String username, int difficultyLevel) {
-
-        String sql =
-            "UPDATE users SET difficulty_level = ? WHERE username = ?";
-
-        try (Connection conn = DataBaseManager.getConnection();
-             PreparedStatement pstmt = conn.prepareStatement(sql)) {
-
-            pstmt.setInt(1, difficultyLevel);
-            pstmt.setString(2, username);
-
-            pstmt.executeUpdate();
-
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-    }
-    private static final int LEVELS_PER_CHAPTER = 4;
-
-    public int getPassedLevels(int userId) {
-
-        String sql =
-            "SELECT chapter_index, level_index " +
-                "FROM user_progress WHERE user_id = ?";
-
-        try (Connection conn = DataBaseManager.getConnection();
-             PreparedStatement pstmt = conn.prepareStatement(sql)) {
-
-            pstmt.setInt(1, userId);
-
-            ResultSet rs = pstmt.executeQuery();
-
-            if (rs.next()) {
-
-                int chapterIndex =
-                    rs.getInt("chapter_index");
-
-                int levelIndex =
-                    rs.getInt("level_index");
-
-                return (chapterIndex - 1) * LEVELS_PER_CHAPTER
-                    + (levelIndex - 1);
+    public synchronized void updatePassword(String username, String passwordHash) {
+        List<User> users = readAll();
+        for (User u : users) {
+            if (u.getUsername() != null && u.getUsername().equals(username)) {
+                u.setPasswordHash(passwordHash);
             }
-
-        } catch (SQLException e) {
-            e.printStackTrace();
         }
-
-        return 0;
+        writeAll(users);
     }
+
+    public synchronized void updateUsername(int userId, String newUsername) {
+        List<User> users = readAll();
+        for (User u : users) {
+            if (u.getId() == userId) {
+                u.setUsername(newUsername);
+            }
+        }
+        writeAll(users);
+    }
+
+    public synchronized void updateNickname(int userId, String newNickname) {
+        List<User> users = readAll();
+        for (User u : users) {
+            if (u.getId() == userId) {
+                u.setNickname(newNickname);
+            }
+        }
+        writeAll(users);
+    }
+
+    public synchronized void updateEmail(int userId, String newEmail) {
+        List<User> users = readAll();
+        for (User u : users) {
+            if (u.getId() == userId) {
+                u.setEmail(newEmail);
+            }
+        }
+        writeAll(users);
+    }
+
+    public synchronized void updateDifficulty(String username, int difficultyLevel) {
+        List<User> users = readAll();
+        for (User u : users) {
+            if (u.getUsername() != null && u.getUsername().equals(username)) {
+                u.setDifficultyLevel(difficultyLevel);
+            }
+        }
+        writeAll(users);
+    }
+
+    public synchronized boolean updateStats(User user) {
+        List<User> users = readAll();
+        for (int i = 0; i < users.size(); i++) {
+            if (users.get(i).getId() == user.getId()) {
+                users.set(i, user);
+                writeAll(users);
+                return true;
+            }
+        }
+        return false;
+    }
+
+    // ======================================================================
+
+
+    private int nextId(List<User> users) {
+        int max = 0;
+        for (User u : users) {
+            max = Math.max(max, u.getId());
+        }
+        return max + 1;
+    }
+
+    private List<User> readAll() {
+        List<User> result = new ArrayList<>();
+        if (!Files.exists(FILE)) {
+            return result;
+        }
+        try {
+            String text = new String(Files.readAllBytes(FILE), StandardCharsets.UTF_8);
+            Object parsed = Json.parse(text);
+            if (parsed instanceof List) {
+                for (Object item : (List<?>) parsed) {
+                    if (item instanceof Map) {
+                        result.add(fromMap((Map<?, ?>) item));
+                    }
+                }
+            }
+        } catch (IOException | RuntimeException e) {
+            System.err.println("Could not read users file: " + e.getMessage());
+        }
+        return result;
+    }
+
+    private void writeAll(List<User> users) {
+        StringBuilder sb = new StringBuilder();
+        sb.append("[\n");
+        for (int i = 0; i < users.size(); i++) {
+            sb.append("  ").append(toJson(users.get(i)));
+            if (i < users.size() - 1) {
+                sb.append(',');
+            }
+            sb.append('\n');
+        }
+        sb.append("]\n");
+        try {
+            Files.write(FILE, sb.toString().getBytes(StandardCharsets.UTF_8));
+        } catch (IOException e) {
+            System.err.println("Could not write users file: " + e.getMessage());
+        }
+    }
+
+    // ======================================================================
+    //  نگاشتِ User ↔ JSON
+    // ======================================================================
+
+    private String toJson(User u) {
+        StringBuilder sb = new StringBuilder();
+        sb.append('{');
+        num(sb, "id", u.getId());
+        str(sb, "username", u.getUsername());
+        str(sb, "passwordHash", u.getPasswordHash());
+        str(sb, "nickname", u.getNickname());
+        str(sb, "email", u.getEmail());
+        str(sb, "gender", u.getGender());
+        num(sb, "securityQuestion", u.getSecurityQuestion());
+        str(sb, "securityAnswerHash", u.getSecurityAnswerHash());
+        num(sb, "coins", u.getCoins());
+        num(sb, "gems", u.getGems());
+        num(sb, "seedPacket", u.getSeedPacket());
+        num(sb, "plantFoodNum", u.getPlantFoodNum());
+        num(sb, "mostMeowPoint", u.getMostMeowPoint());
+        num(sb, "maxPoint", u.getMaxPoint());
+        num(sb, "gamesPlayed", u.getGamesPlayed());
+        num(sb, "miniGamesPlayed", u.getMiniGamesPlayed());
+        num(sb, "questDailyNum", u.getQuestDailyNum());
+        num(sb, "questNonDailyNum", u.getQuestNonDailyNum());
+        str(sb, "lastWonGame", u.getLastWonGame());
+        num(sb, "difficultyLevel", u.getDifficultyLevel());
+        bool(sb, "stayLoggedIn", u.isStayLoggedIn());
+        // حذفِ کاماىِ انتهایی
+        if (sb.charAt(sb.length() - 1) == ',') {
+            sb.setLength(sb.length() - 1);
+        }
+        sb.append('}');
+        return sb.toString();
+    }
+
+    private User fromMap(Map<?, ?> m) {
+        User u = new User();
+        u.setId(intOf(m, "id"));
+        u.setUsername(strOf(m, "username"));
+        u.setPasswordHash(strOf(m, "passwordHash"));
+        u.setNickname(strOf(m, "nickname"));
+        u.setEmail(strOf(m, "email"));
+        u.setGender(strOf(m, "gender"));
+        u.setSecurityQuestion(intOf(m, "securityQuestion"));
+        u.setSecurityAnswerHash(strOf(m, "securityAnswerHash"));
+        u.setCoins(intOf(m, "coins"));
+        u.setGems(intOf(m, "gems"));
+        u.setSeedPacket(intOf(m, "seedPacket"));
+        u.setPlantFoodNum(intOf(m, "plantFoodNum"));
+        u.setMostMeowPoint(intOf(m, "mostMeowPoint"));
+        u.setMaxPoint(intOf(m, "maxPoint"));
+        u.setGamesPlayed(intOf(m, "gamesPlayed"));
+        u.setMiniGamesPlayed(intOf(m, "miniGamesPlayed"));
+        u.setQuestDailyNum(intOf(m, "questDailyNum"));
+        u.setQuestNonDailyNum(intOf(m, "questNonDailyNum"));
+        u.setLastWonGame(strOf(m, "lastWonGame"));
+        u.setDifficultyLevel(intOf(m, "difficultyLevel"));
+        u.setStayLoggedIn(boolOf(m, "stayLoggedIn"));
+        return u;
+    }
+
+    // ---- کمکی‌های نوشتن ----
+
+    private void str(StringBuilder sb, String key, String value) {
+        sb.append('"').append(key).append("\":");
+        if (value == null) {
+            sb.append("null");
+        } else {
+            sb.append('"').append(Json.escape(value)).append('"');
+        }
+        sb.append(',');
+    }
+
+    private void num(StringBuilder sb, String key, int value) {
+        sb.append('"').append(key).append("\":").append(value).append(',');
+    }
+
+    private void bool(StringBuilder sb, String key, boolean value) {
+        sb.append('"').append(key).append("\":").append(value).append(',');
+    }
+
+
+    private static String strOf(Map<?, ?> m, String key) { return Json.str(m, key); }
+
+    private static int intOf(Map<?, ?> m, String key) { return Json.intOf(m, key); }
+
+    private static boolean boolOf(Map<?, ?> m, String key) { return Json.boolOf(m, key); }
 }

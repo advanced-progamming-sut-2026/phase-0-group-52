@@ -12,6 +12,7 @@ public class Result {
         this.object = object;
     }
 
+
     public boolean isSuccess() {
         return success;
     }
@@ -35,6 +36,7 @@ public class Result {
     public void setObject(Object object) {
         this.object = object;
     }
+
 
     public boolean success() {
         return success;

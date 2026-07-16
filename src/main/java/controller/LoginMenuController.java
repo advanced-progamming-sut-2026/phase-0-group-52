@@ -13,7 +13,12 @@ public class LoginMenuController {
     public UserRepository repository;
     public LoginMenuController(){
         this.repository=new UserRepository();
-        waitingForNewPassword=false; ;}
+        waitingForNewPassword=false;
+    }
+
+    public boolean isWaitingForNewPassword() {
+        return waitingForNewPassword;
+    }
     public Result login(String username, String password, boolean stayLoggedIn) {
         User user = repository.getUserByUsername(username);
         if (user == null) {
@@ -41,13 +46,14 @@ public class LoginMenuController {
         }
         resetPasswordUser = user;
         return new Result(true, "Please answer your security question:\n"
-            + SecurityQuestions.getQuestion(user.getSecurityQuestion()), user);
+            + SecurityQuestions.getQuestionByIndex(user.getSecurityQuestion()), user);
     }
     public Result answerQuestion(String answer){
         if (resetPasswordUser == null) {
             return new Result(false, "No forgot password request found.", null);
         }
-        if (!resetPasswordUser.getAnswer().equalsIgnoreCase(answer)) {
+        String answerHash = HashUtil.hashPassword(answer.trim().toLowerCase());
+        if (!resetPasswordUser.getSecurityAnswerHash().equals(answerHash)) {
             resetPasswordUser = null;
             return new Result(false, "Security answer is incorrect.Returning back...\n", null);
         }
@@ -62,13 +68,8 @@ public class LoginMenuController {
 
         return new Result(true, "Password changed successfully.", null);
     }
-    public boolean isWaitingForNewPassword() {
-        return waitingForNewPassword;
-    }
-
     public Result exitMenu(){
         App.getInstance().setCurrentMenu(Menu.SignUpMenu);
-        App.getInstance().setCurrentmenu(view.MenuType.SIGNUP_MENU);
         return new Result(true,"",null);
     }
     public Result showCurrentMenu(){
@@ -79,7 +80,6 @@ public class LoginMenuController {
             return new Result(false,"You can only enter the main menu from the login menu.\n",null);
         }
         App.getInstance().currentMenu = Menu.MainMenu;
-        App.getInstance().setCurrentmenu(view.MenuType.MAIN_MENU);
         return new Result(true,"",null);
 
     }

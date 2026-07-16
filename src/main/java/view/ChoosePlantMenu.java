@@ -13,15 +13,11 @@ public class ChoosePlantMenu implements AppMenu {
         if (line.equals("menu show current")) {
             System.out.println("Current menu: " + App.getInstance().getCurrentmenu());
         } else if (line.startsWith("menu enter ")) {
-            String name = line.substring("menu enter ".length()).trim();
-            try {
-                MenuType target = MenuType.fromName(name);
-                if (target == null) throw new IllegalArgumentException();
-                App.getInstance().setCurrentmenu(target);
-                if (target.toMenu() != null) App.getInstance().setCurrentMenu(target.toMenu());
-            } catch (IllegalArgumentException e) {
-                System.out.println("Error: Unknown menu: " + name);
-            }
+            String target = line.substring("menu enter ".length()).trim();
+            MenuType t = MenuType.fromName(target);
+            if (t == null) { System.out.println("Error: Unknown menu: " + target); return; }
+            App.getInstance().setCurrentmenu(t);
+            if (t.toMenu() != null) App.getInstance().setCurrentMenu(t.toMenu());
         } else {
             invalidCommand();
         }

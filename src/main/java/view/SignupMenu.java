@@ -44,7 +44,7 @@ public class SignupMenu implements AppMenu{
         result=controller.setEmail(email);
         sb.append(result.message());
         String gender = matcher.group("gender");
-        if (controller.isRegisterValid) {
+        if (controller.isRegisterValid()) {
             result = controller.setGender(gender);
             sb.append(result.message());
         }

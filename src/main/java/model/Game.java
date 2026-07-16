@@ -14,6 +14,18 @@ import java.util.Set;
 
 public class Game {
     public static final int MAX_PLANT_FOOD = 3;
+    public static final int TICKS_PER_SECOND = 10;
+
+    public static int secondsToTicks(double seconds) {
+        return (int) Math.round(seconds * TICKS_PER_SECOND);
+    }
+
+    public static double ticksToSeconds(int ticks) {
+        return (double) ticks / TICKS_PER_SECOND;
+    }
+
+    private final GameStats stats = new GameStats();
+    public GameStats getStats() { return stats; }
 
     private App app;
     private Chapter chapter;
