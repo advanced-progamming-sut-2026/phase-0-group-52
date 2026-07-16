@@ -1,7 +1,6 @@
-package pvz.model.entities.plants;
+package model.entities.plants;
 
-
-import pvz.model.Vec2;
+import model.Vec2;
 
 public abstract class PlantTile{
     private CollectionPlant type;

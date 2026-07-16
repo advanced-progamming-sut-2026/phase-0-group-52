@@ -1,4 +1,4 @@
-package pvz.model.entities.plants;
+package model.entities.plants;
 
 public class CollectionPlant{
     private final Plants type;

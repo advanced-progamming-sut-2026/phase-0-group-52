@@ -2,8 +2,8 @@ package model.entities.plants;
 
 import model.Game;
 import model.Vec2;
+import model.entities.zombies.Zombie;
 
-/** شلیک‌کننده‌ی مستقیم (مثل Peashooter). دسته‌بندی تیم. */
 public class Shooter extends Plant {
 
     public Shooter(Plants type, Vec2 position) {
@@ -12,6 +12,27 @@ public class Shooter extends Plant {
 
     @Override
     public void onTick(Game game) {
-        // TODO (تیم): رفتار این دسته را پیاده کن.
+        if (isFrozen()) return;
+        actionTimer += 1;
+        double interval = getType().getActionInterval();
+        if (interval <= 0) interval = 1;
+        while (actionTimer >= interval) {
+            actionTimer -= interval;
+            shoot(game);
+        }
+    }
+
+    protected void shoot(Game game) {
+        Zombie target = PlantCombat.frontmostAhead(game, getRow(), getCol());
+        if (target == null) return;
+        target.takeDamage(shotDamage(game));
+        PlantCombat.removeDeadZombies(game);
+    }
+
+    protected double shotDamage(Game game) {
+        double dmg = getAttackdamage();
+        if (getType().getTags().contains(PlantTag.PEA))
+            dmg *= PlantCombat.torchwoodFactor(game, getRow(), getCol());
+        return dmg;
     }
 }
