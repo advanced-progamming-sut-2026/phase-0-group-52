@@ -1,5 +1,9 @@
 package model.entities;
 
+/**
+ * انواع خورشیدِ سقوط‌کننده از آسمان (صفحه ۲۴ داک).
+ * Normal: ۸۰٪ → ۲۵ | Special: ۱۵٪ → ۱۰۰ | Radioactive: ۵٪ → ۱۵۰ (در حال سقوط منفجر می‌شود).
+ */
 public enum SunType {
     NORMAL(25, 0.80),
     SPECIAL(100, 0.15),
@@ -16,6 +20,7 @@ public enum SunType {
     public int getAmount() { return amount; }
     public double getChance() { return chance; }
 
+    /** انتخاب تصادفیِ نوع خورشید بر اساس احتمال‌ها. */
     public static SunType pickRandom(double roll) {
         if (roll < NORMAL.chance) return NORMAL;
         if (roll < NORMAL.chance + SPECIAL.chance) return SPECIAL;

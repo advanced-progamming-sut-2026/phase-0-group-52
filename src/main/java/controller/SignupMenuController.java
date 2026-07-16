@@ -11,8 +11,9 @@ import model.enums.commands.SignUpCommands;
 
 public class SignupMenuController {
 
+    // ----- فیلدها -----
     private final SignUpValidation validation;
-    public boolean isRegisterValid;
+    private boolean isRegisterValid;
     private String username;
     private String passwordHash;
     private String nickname;
@@ -24,11 +25,18 @@ public class SignupMenuController {
 
     private int securityQuestionNum;
 
+    // ----- سازنده -----
     public SignupMenuController() {
         this.validation = new SignUpValidation();
         this.repository=new UserRepository();
         this.isRegisterValid = true;
     }
+
+    public boolean isRegisterValid() {
+        return isRegisterValid;
+    }
+
+    // ----- متدهای ثبت اطلاعات مرحله‌ای -----
 
     public Result setUsername(String username) {
         isRegisterValid = true;
@@ -137,15 +145,16 @@ public class SignupMenuController {
             isRegisterValid = false;
             return new Result(false, "The answers do not match.\n", null);
         }
+        // پاسخ به‌صورت case-insensitive نرمال و سپس هش می‌شود (بخش امتیازی: عدم ذخیره‌ی پاسخِ خام).
         this.securityQuestionNum = validation.questionNum;
-        this.answer = answer;
+        this.answer = HashUtil.hashPassword(answer.trim().toLowerCase());
 
         if (!allFieldsReady()) {
             isRegisterValid = false;
             return new Result(false, "Some registration fields are missing.\n", null);
         }
 
-        User user = new User(username, passwordHash, nickname, email, gender, securityQuestionNum, answer);
+        User user = new User(username, passwordHash, nickname, email, gender, securityQuestionNum, this.answer);
         boolean success = repository.register(user);
         if (!success) {
             isRegisterValid = false;
@@ -155,6 +164,8 @@ public class SignupMenuController {
         resetFields();
         return new Result(true, "Registration completed successfully.\n", null);
     }
+
+    // ----- متدهای کمکی -----
 
     private boolean allFieldsReady() {
         return validation.isNotBlank(username) &&
@@ -176,6 +187,8 @@ public class SignupMenuController {
         answer = null;
     }
 
+    // ----- متدهای مدیریت منو -----
+
     public Result exitMenu() {
         System.exit(0);
         return null;
@@ -190,9 +203,12 @@ public class SignupMenuController {
             return new Result(false, "You can only enter the login menu from the signup menu.\n", null);
         }
         App.getInstance().setCurrentMenu(Menu.LoginMenu);
-        App.getInstance().setCurrentmenu(view.MenuType.LOGIN_MENU);
         return new Result(true, "", null);
     }
+
+    // ============================================================
+    // کلاس داخلی برای اعتبارسنجی (Validation)
+    // ============================================================
 
     public static class SignUpValidation {
 
@@ -247,8 +263,7 @@ public class SignupMenuController {
         }
 
         public boolean isSecondPartEmailValid(String secondPart) {
-            return secondPart.matches("^[a-zA-Z0-9](?:[a-zA-Z0-9\\-]*[a-zA-Z0-9])?" +
-                "(?:\\.[a-zA-Z0-9](?:[a-zA-Z0-9\\-]*[a-zA-Z0-9])?)*$");
+            return SignUpCommands.EMAIL_SECOND_PART_REGEX.matches(secondPart);
         }
 
         public boolean hasInvalidChar(String email) {

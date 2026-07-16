@@ -27,6 +27,10 @@ import model.entities.zombies.types.SquashZombie;
 
 public abstract class ZombieFactory {
 
+    public static Zombie create(Zombies data, int line, int col, ChapterType chapter) {
+        return create(data, line, new Vec2(col, line), chapter, null);
+    }
+
     public static Zombie create(Zombies data, int line, Vec2 position, ChapterType chapter, ZombieType type) {
         switch (data) {
             case ZOMBIE_GARGANTUAR:        return new Gargantuar(line, position, chapter, type);

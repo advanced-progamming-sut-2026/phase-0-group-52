@@ -1,16 +1,26 @@
 package model.entities;
 
+/**
+ * انواع خانه‌های زمین بازی (صفحه ۲۶ داک).
+ * هر فصل می‌تواند ترکیبی از این‌ها داشته باشد.
+ */
 public enum CellType {
-    NORMAL,
-    TOMBSTONE,
-    WATER,
-    SLIPPERY_UP,
-    SLIPPERY_DOWN,
-    FROZEN,
-    LOW_GROUND,
-    NECROMANCY;
+    NORMAL,        // خانه معمولی قابل کاشت
+    TOMBSTONE,     // سنگ قبر (مصر/قرون وسطی): 700 HP، جلوی تیر افقی، غیرقابل کاشت
+    WATER,         // آب (ساحل): فقط گیاه آبی/برگ
+    SLIPPERY_UP,   // لیز به بالا (غار): زامبی را به ردیف بالا می‌برد، غیرقابل کاشت
+    SLIPPERY_DOWN, // لیز به پایین (غار): زامبی را به ردیف پایین می‌برد، غیرقابل کاشت
+    FROZEN,        // یخ‌زده (غار): 600 HP، با گرما/آتش آب می‌شود، غیرقابل کاشت
+    LOW_GROUND,    // ساحل پست / نکرومنسی: زامبی می‌تواند از زیرش ظاهر شود
+    NECROMANCY;    // زمین نکرومنسی (قرون وسطی): مشابه ساحل پست
 
+    /** آیا روی این خانه می‌توان گیاه کاشت؟ */
     public boolean isPlantable() {
         return this == NORMAL || this == LOW_GROUND || this == NECROMANCY;
+    }
+
+    /** آیا این خانه آب است؟ (برای منطق کاشتِ گیاه آبی و شیرجه‌ی زامبی غواص) */
+    public boolean isWater() {
+        return this == WATER;
     }
 }

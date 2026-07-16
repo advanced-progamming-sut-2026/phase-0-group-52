@@ -42,6 +42,18 @@ public class GameField {
         return lawnmowers[row];
     }
 
+    public java.util.List<int[]> getLowGroundCells() {
+        java.util.List<int[]> result = new java.util.ArrayList<int[]>();
+        for (int r = 0; r < getRows(); r++) {
+            for (int c = 0; c < getCols(); c++) {
+                Cell cell = getCell(c, r);
+                if (cell != null && cell.getType() == CellType.LOW_GROUND)
+                    result.add(new int[]{c, r});
+            }
+        }
+        return result;
+    }
+
     public Cell[][] getGrid() { return grid; }
     public Lawnmower[] getLawnmowers() { return lawnmowers; }
     public ChapterType getChapter() { return chapter; }

@@ -47,6 +47,15 @@ public class User {
     private int plantFoodNum;
     private final Set<Plants> storedBoosts = new HashSet<>();
     private final Map<Plants, Integer> plantLevels = new HashMap<>();
+    private boolean stayLoggedIn;
+
+    public User() {
+        this.difficultyLevel = 3;
+        this.newsList = new NewsList();
+    }
+
+    public boolean isStayLoggedIn() { return stayLoggedIn; }
+    public void setStayLoggedIn(boolean stayLoggedIn) { this.stayLoggedIn = stayLoggedIn; }
 
     public User(String username, String passwordHash, String nickname, String email,
                 String gender, int securityQuestion, String securityAnswerHash) {
