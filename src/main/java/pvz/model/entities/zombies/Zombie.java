@@ -1,24 +1,27 @@
-package model.entities.zombies;
+package pvz.model.entities.zombies;
 
-import model.ChapterType;
-import model.Game;
-import model.Vec2;
+import pvz.model.ChapterType;
+import pvz.model.Game;
+import pvz.model.Vec2;
 
 public abstract class Zombie {
     private double hp;
     private double speed;
-    private double damage;          // معادل EatDPS
-    private int line;               // ردیف (y)
-    private Vec2 position;          // x = ستون (اعشاری چون حرکت پیوسته است)
+    private double damage;
+    private int line;
+    private Vec2 position;
     private ArmorType armorType;
-    private double armorHp;         // جان زره؛ آسیب اول به زره می‌خورد
+    private double armorHp;
     private ChapterType chapter;
     private ZombieType type;
     private ZombieState state;
     private ZombieAbility ability;
 
-    /** شمارنده داخلی برای زمان‌بندی خوردن گیاه. */
     protected double eatTimer = 0;
+
+    private boolean slowed = false;
+
+    private boolean hypnotized = false;
 
     public Zombie(double hp, double speed, double damage, int line, Vec2 position, ArmorType armorType,
                   ChapterType chapter, ZombieType type, ZombieState state, ZombieAbility ability) {
@@ -34,17 +37,14 @@ public abstract class Zombie {
         this.ability = ability;
     }
 
-    // ---------- قلاب‌های polymorphic که موتور (GameEngine) صدا می‌زند ----------
-
-    /** هر تیک یک‌بار. هر زیرکلاس رفتار خود را اینجا پیاده می‌کند (حرکت/حمله/قابلیت ویژه). */
     public abstract void onTick(Game game);
 
-    /** حرکت پیش‌فرض: یک‌خانه‌به‌چپ به اندازه‌ی speed در هر تیک. */
+    public void onDeath(Game game) {}
+
     public void move(Game game) {
         position.x -= speed;
     }
 
-    /** آسیب‌زدن: اول به زره، سپس به جان. */
     public void takeDamage(double dmg) {
         if (armorHp > 0) {
             double absorbed = Math.min(armorHp, dmg);
@@ -54,7 +54,6 @@ public abstract class Zombie {
         if (dmg > 0) hp -= dmg;
     }
 
-    /** آسیب مستقیم به جان (مثل تیر سمی که زره را نادیده می‌گیرد). */
     public void takeDirectDamage(double dmg) {
         hp -= dmg;
     }
@@ -63,12 +62,9 @@ public abstract class Zombie {
         return hp <= 0;
     }
 
-    /** ستون فعلی (x). */
     public int getCol() { return (int) Math.floor(position.x); }
-    /** ردیف (y). */
-    public int getRow() { return line; }
 
-    // ---------- getter / setter ----------
+    public int getRow() { return line; }
 
     public double getHp() { return hp; }
     public void setHp(double hp) { this.hp = hp; }
@@ -102,4 +98,10 @@ public abstract class Zombie {
 
     public ZombieAbility getAbility() { return ability; }
     public void setAbility(ZombieAbility ability) { this.ability = ability; }
+
+    public boolean isSlowed() { return slowed; }
+    public void setSlowed(boolean slowed) { this.slowed = slowed; }
+
+    public boolean isHypnotized() { return hypnotized; }
+    public void setHypnotized(boolean hypnotized) { this.hypnotized = hypnotized; }
 }

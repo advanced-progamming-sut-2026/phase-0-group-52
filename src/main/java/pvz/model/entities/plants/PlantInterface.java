@@ -1,4 +1,4 @@
-package model.entities.plants;
+package pvz.model.entities.plants;
 
 public interface PlantInterface {
 }

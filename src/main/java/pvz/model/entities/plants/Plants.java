@@ -1,13 +1,13 @@
-package model.entities.plants;
+package pvz.model.entities.plants;
 
 import java.util.ArrayList;
-import model.entities.plants.PlantTag;
-import model.entities.plants.PlantsCategory;
+import pvz.model.entities.plants.PlantTag;
+import pvz.model.entities.plants.PlantsCategory;
 
 import java.util.Arrays;
 
 public enum Plants {
-    // ---------- Sun Producers ----------
+
     SUNFLOWER("Sunflower", PlantsCategory.SUN_PRODUCER,
             new ArrayList<>(Arrays.asList(PlantTag.DAY)), 50, 300, 0, 24, 5),
     TWIN_SUNFLOWER("Twin Sunflower", PlantsCategory.SUN_PRODUCER,
@@ -19,7 +19,6 @@ public enum Plants {
     GOLD_BLOOM("Gold Bloom", PlantsCategory.SUN_PRODUCER,
             new ArrayList<>(), 0, 0, 0, 0, 75),
 
-    // ---------- Shooters ----------
     PEASHOOTER("Peashooter", PlantsCategory.SHOOTER,
             new ArrayList<>(Arrays.asList(PlantTag.PEA)), 100, 300, 20, 1.5, 5),
     REPEATER("Repeater", PlantsCategory.SHOOTER,
@@ -51,7 +50,6 @@ public enum Plants {
     PUFF_SHROOM("Puff-shroom", PlantsCategory.SHOOTER,
             new ArrayList<>(Arrays.asList(PlantTag.SHROOM)), 0, 300, 20, 1.5, 5),
 
-    // ---------- Homing ----------
     CAULIPOWER("Caulipower", PlantsCategory.HOMING,
             new ArrayList<>(Arrays.asList(PlantTag.MAGIC, PlantTag.CHARGE)), 250, 300, 9999, 12, 15),
     ELECTRIC_BLUEBERRY("Electric Blueberry", PlantsCategory.HOMING,
@@ -61,13 +59,11 @@ public enum Plants {
     CAT_TAIL("Cat-tail", PlantsCategory.HOMING,
             new ArrayList<>(), 175, 300, 15, 1.5, 20),
 
-    // ---------- Strike-through ----------
     CACTUS("Cactus", PlantsCategory.STRIKE_THROUGH,
             new ArrayList<>(), 175, 300, 30, 1.5, 5),
     FUME_SHROOM("Fume-shroom", PlantsCategory.STRIKE_THROUGH,
             new ArrayList<>(Arrays.asList(PlantTag.SHROOM)), 125, 300, 20, 1.5, 5),
 
-    // ---------- Lobbers ----------
     CABBAGE_PULT("Cabbage-pult", PlantsCategory.LOBBER,
             new ArrayList<>(), 100, 300, 40, 2.9, 5),
     KERNEL_PULT("Kernel-pult", PlantsCategory.LOBBER,
@@ -79,7 +75,6 @@ public enum Plants {
     PEPPER_PULT("Pepper-pult", PlantsCategory.LOBBER,
             new ArrayList<>(Arrays.asList(PlantTag.FIRE, PlantTag.AOE)), 200, 300, 50, 2.9, 5),
 
-    // ---------- Explosives ----------
     POTATO_MINE("Potato Mine", PlantsCategory.EXPLOSIVE,
             new ArrayList<>(Arrays.asList(PlantTag.TRAP, PlantTag.CHARGE)), 25, 300, 1800, 0, 25),
     PRIMAL_POTATO_MINE("Primal Potato Mine", PlantsCategory.EXPLOSIVE,
@@ -105,7 +100,6 @@ public enum Plants {
     GRAVE_BUSTER("Grave Buster", PlantsCategory.EXPLOSIVE,
             new ArrayList<>(), 0, 0, 9999, 0, 10),
 
-    // ---------- Melee ----------
     BONK_CHOY("Bonk Choy", PlantsCategory.MELEE,
             new ArrayList<>(), 150, 300, 15, 0.25, 5),
     PHAT_BEET("Phat Beet", PlantsCategory.MELEE,
@@ -117,7 +111,6 @@ public enum Plants {
     KIWIBEAST("Kiwibeast", PlantsCategory.MELEE,
             new ArrayList<>(Arrays.asList(PlantTag.AOE, PlantTag.RAMP_UP)), 175, 300, 15, 2, 5),
 
-    // ---------- Wall-nuts ----------
     WALL_NUT("Wall-nut", PlantsCategory.WALL_NUT,
             new ArrayList<>(), 50, 4000, 0, 0, 20),
     TALL_NUT("Tall-nut", PlantsCategory.WALL_NUT,
@@ -135,7 +128,6 @@ public enum Plants {
     SUN_BEAN("Sun Bean", PlantsCategory.WALL_NUT,
             new ArrayList<>(Arrays.asList(PlantTag.SUN)), 50, 1000, 0, 0, 20),
 
-    // ---------- Modifiers ----------
     TORCHWOOD("Torchwood", PlantsCategory.MODIFIER,
             new ArrayList<>(Arrays.asList(PlantTag.FIRE)), 175, 300, 0, 0, 5),
     HYPNO_SHROOM("Hypno-shroom", PlantsCategory.MODIFIER,
@@ -145,7 +137,6 @@ public enum Plants {
     LILY_PAD("Lily Pad", PlantsCategory.MODIFIER,
             new ArrayList<>(Arrays.asList(PlantTag.WATER, PlantTag.STACK)), 25, 300, 0, 0, 5),
 
-    // ---------- Mints (category = family) ----------
     ENLIGHTEN_MINT("Enlighten-mint", PlantsCategory.SUN_PRODUCER, new ArrayList<>(), 0, 0, 0, 0, 85),
     APPEASE_MINT("Appease-mint", PlantsCategory.SHOOTER, new ArrayList<>(), 0, 0, 0, 0, 85),
     ARMA_MINT("Arma-mint", PlantsCategory.LOBBER, new ArrayList<>(), 0, 0, 0, 0, 85),
@@ -178,8 +169,8 @@ public enum Plants {
     }
 
     public String getName() { return name; }
-    public model.entities.plants.PlantsCategory getCategory() { return category; }
-    public ArrayList<model.entities.plants.PlantTag> getTags() { return tags; }
+    public PlantsCategory getCategory() { return category; }
+    public ArrayList<PlantTag> getTags() { return tags; }
     public int getCost() { return cost; }
     public int getBaseHP() { return baseHP; }
     public int getDamage() { return damage; }

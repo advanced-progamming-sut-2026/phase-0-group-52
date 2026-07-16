@@ -1,4 +1,4 @@
-package model.enums.commands;
+package pvz.model.enums.commands;
 
 public enum LoginCommands implements Commands{
     LOGIN_REGEX("^\\s*login\\s+-u\\s+(?<username>\\S+)\\s+-p\\s+(?<password>\\S+)(?<stay>\\s+-stay-logged-in)?\\s*$"),

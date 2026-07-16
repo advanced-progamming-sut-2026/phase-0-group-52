@@ -1,19 +1,18 @@
-package controller;
+package pvz.controller;
 
-import database.UserRepository;
-import model.App;
-import model.Result;
-import model.User;
-import model.enums.Menu;
-import model.enums.SecurityQuestions;
+import pvz.database.UserRepository;
+import pvz.model.App;
+import pvz.model.Result;
+import pvz.model.User;
+import pvz.model.enums.Menu;
+import pvz.model.enums.SecurityQuestions;
 
-import model.enums.commands.SignUpCommands;
+import pvz.model.enums.commands.SignUpCommands;
 
 public class SignupMenuController {
 
-    // ----- فیلدها -----
     private final SignUpValidation validation;
-    private boolean isRegisterValid;
+    public boolean isRegisterValid;
     private String username;
     private String passwordHash;
     private String nickname;
@@ -25,14 +24,11 @@ public class SignupMenuController {
 
     private int securityQuestionNum;
 
-    // ----- سازنده -----
     public SignupMenuController() {
         this.validation = new SignUpValidation();
         this.repository=new UserRepository();
         this.isRegisterValid = true;
     }
-
-    // ----- متدهای ثبت اطلاعات مرحله‌ای -----
 
     public Result setUsername(String username) {
         isRegisterValid = true;
@@ -149,7 +145,7 @@ public class SignupMenuController {
             return new Result(false, "Some registration fields are missing.\n", null);
         }
 
-        User user = new User(username, email, passwordHash, gender, nickname, securityQuestionNum, answer);
+        User user = new User(username, passwordHash, nickname, email, gender, securityQuestionNum, answer);
         boolean success = repository.register(user);
         if (!success) {
             isRegisterValid = false;
@@ -159,8 +155,6 @@ public class SignupMenuController {
         resetFields();
         return new Result(true, "Registration completed successfully.\n", null);
     }
-
-    // ----- متدهای کمکی -----
 
     private boolean allFieldsReady() {
         return validation.isNotBlank(username) &&
@@ -182,8 +176,6 @@ public class SignupMenuController {
         answer = null;
     }
 
-    // ----- متدهای مدیریت منو -----
-
     public Result exitMenu() {
         System.exit(0);
         return null;
@@ -198,12 +190,9 @@ public class SignupMenuController {
             return new Result(false, "You can only enter the login menu from the signup menu.\n", null);
         }
         App.getInstance().setCurrentMenu(Menu.LoginMenu);
+        App.getInstance().setCurrentmenu(pvz.view.MenuType.LOGIN_MENU);
         return new Result(true, "", null);
     }
-
-    // ============================================================
-    // کلاس داخلی برای اعتبارسنجی (Validation)
-    // ============================================================
 
     public static class SignUpValidation {
 
@@ -257,7 +246,10 @@ public class SignupMenuController {
             return SignUpCommands.EMAIL_FIRST_PART_REGEX.matches(firstPart);
         }
 
-
+        public boolean isSecondPartEmailValid(String secondPart) {
+            return secondPart.matches("^[a-zA-Z0-9](?:[a-zA-Z0-9\\-]*[a-zA-Z0-9])?" +
+                "(?:\\.[a-zA-Z0-9](?:[a-zA-Z0-9\\-]*[a-zA-Z0-9])?)*$");
+        }
 
         public boolean hasInvalidChar(String email) {
             return email.matches("^.*[^a-zA-Z0-9._@-].*$");

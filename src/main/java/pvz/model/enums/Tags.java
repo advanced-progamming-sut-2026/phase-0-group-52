@@ -1,4 +1,4 @@
-package model.enums;
+package pvz.model.enums;
 
 public enum Tags {
     DAY,NIGHT,SHROOM,WRAMP_UP,PEA,ICE,FIRE,STACK,CHARGE,MAGIC,POSION,WATER,AOE,TRAP,MOVEZOMBIES,SUN,EXPLOSIVE;

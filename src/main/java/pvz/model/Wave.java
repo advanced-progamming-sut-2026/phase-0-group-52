@@ -1,6 +1,6 @@
-package model;
+package pvz.model;
 
-import model.entities.zombies.Zombie;
+import pvz.model.entities.zombies.Zombie;
 
 import java.util.ArrayList;
 

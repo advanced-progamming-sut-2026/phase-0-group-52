@@ -1,4 +1,4 @@
-package controller.menu;
+package pvz.controller.menu;
 
 public class ProfileMenuController {
 }

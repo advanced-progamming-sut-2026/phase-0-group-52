@@ -1,10 +1,10 @@
-package model;
+package pvz.model;
 
-import model.entities.Sun;
-import model.entities.plants.Plant;
-import model.entities.plants.Plants;
-import model.entities.zombies.Zombie;
-import model.level.Level;
+import pvz.model.entities.Sun;
+import pvz.model.entities.plants.Plant;
+import pvz.model.entities.plants.Plants;
+import pvz.model.entities.zombies.Zombie;
+import pvz.model.level.Level;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -12,10 +12,6 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
-/**
- * نگه‌دارنده‌ی وضعیت یک بازیِ در حال اجرا.
- * منطق شبیه‌سازی در GameEngine است؛ این کلاس فقط state و چند کوئریِ ساده دارد.
- */
 public class Game {
     public static final int MAX_PLANT_FOOD = 3;
 
@@ -27,19 +23,21 @@ public class Game {
     private int sunAmount;
     private int plantFoodCount;
 
-    private final ArrayList<Plant> plants;     // گیاهانِ کاشته‌شده روی زمین
-    private final ArrayList<Zombie> zombies;   // زامبی‌های فعال روی صحنه
-    private final ArrayList<Sun> suns;         // خورشیدهای روی زمین و در حال سقوط
+    private final ArrayList<Plant> plants;
+    private final ArrayList<Zombie> zombies;
+    private final ArrayList<Sun> suns;
     private final ArrayList<Wave> waves;
 
-    // ---------- وضعیت گذر زمان و موج ----------
     private int currentTick;
-    private int currentWaveIndex;              // -۱ یعنی هنوز موجی شروع نشده
+    private int currentWaveIndex;
     private int nextSunDropTick;
 
-    // cooldown کاشت برای هر نوع گیاه (تیک‌های باقی‌مانده) و گیاهانِ boost‌شده‌ی این مرحله
     private final Map<Plants, Double> cooldowns = new HashMap<>();
     private final Set<Plants> boostedTypes = new HashSet<>();
+
+    private final ArrayList<Plants> chosenPlants = new ArrayList<>();
+
+    private boolean cooldownsRemoved;
 
     private boolean gameOver;
     private boolean won;
@@ -63,9 +61,6 @@ public class Game {
         this.won = false;
     }
 
-    // ---------- کوئری‌های کمکی ----------
-
-    /** گیاه(انِ) روی خانه‌ی (col,row). ممکن است تا دو گیاه باشد (stacking). */
     public ArrayList<Plant> getPlantsAt(int col, int row) {
         ArrayList<Plant> result = new ArrayList<>();
         for (Plant p : plants) {
@@ -74,7 +69,6 @@ public class Game {
         return result;
     }
 
-    /** زامبی‌های فعالِ یک ردیف. */
     public ArrayList<Zombie> getZombiesInRow(int row) {
         ArrayList<Zombie> result = new ArrayList<>();
         for (Zombie z : zombies) {
@@ -99,6 +93,11 @@ public class Game {
         cooldowns.clear();
     }
 
+    public boolean isCooldownsRemoved() { return cooldownsRemoved; }
+    public void setCooldownsRemoved(boolean cooldownsRemoved) { this.cooldownsRemoved = cooldownsRemoved; }
+
+    public ArrayList<Plants> getChosenPlants() { return chosenPlants; }
+
     public void addSun(int amount) {
         this.sunAmount += amount;
     }
@@ -108,8 +107,6 @@ public class Game {
         sunAmount -= amount;
         return true;
     }
-
-    // ---------- getter / setter ----------
 
     public App getApp() { return app; }
     public void setApp(App app) { this.app = app; }

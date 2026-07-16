@@ -1,7 +1,7 @@
-package model;
+package pvz.model;
 
-import database.DataBaseManager;
-import model.User;
+import pvz.database.DataBaseManager;
+import pvz.model.User;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -28,7 +28,7 @@ public class UserRepository {
             initializeProgress(user.getUsername());
             return true;
         } catch (SQLException e) {
-            // اگر یوزرنیم یا ایمیل تکراری باشد
+
             return false;
         }
     }

@@ -1,6 +1,6 @@
-package model.enums;
+package pvz.model.enums;
 
-import view.*;
+import pvz.view.*;
 
 import java.util.Scanner;
 
@@ -11,6 +11,7 @@ public enum Menu {
     MainMenu(new MainMenu()),
     GameMenu(new GameMenu()),
     SettingMenu(new SettingMenu()),
+    ChapterMenu(new ChapterMenu()),
     NetworkMenu(new NetworkMenu()),
     NewsMenu(new NewsMenu()),
     CollectionMenu(new CollectionMenu()),

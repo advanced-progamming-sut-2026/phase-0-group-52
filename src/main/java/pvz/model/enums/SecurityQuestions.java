@@ -1,4 +1,4 @@
-package model.enums;
+package pvz.model.enums;
 
 public enum SecurityQuestions {
     FAVORITE_MOVIE(1,"What is your favorite movie of all time?"),
@@ -19,6 +19,10 @@ public enum SecurityQuestions {
 
     public String getQuestion() {
         return question;
+    }
+
+    public static String getQuestion(int index) {
+        return getQuestionByIndex(index);
     }
 
     public static String getQuestionByIndex(int index) {

@@ -1,19 +1,19 @@
-package model.entities;
+package pvz.model.entities;
 
-import model.entities.plants.Plant;
+import pvz.model.entities.plants.Plant;
 
 import java.util.ArrayList;
 
-/**
- * یک خانه از زمین بازی.
- * می‌تواند حداکثر دو گیاه روی هم داشته باشد (در صورتی که گیاه زیری/رویی این قابلیت را داشته باشد).
- */
 public class Cell {
     private CellType type;
-    private double hp;                 // فقط برای TOMBSTONE (۷۰۰) و FROZEN (۶۰۰) معنا دارد
-    private final ArrayList<Plant> plants = new ArrayList<>(); // حداکثر ۲
+    private double hp;
+    private final ArrayList<Plant> plants = new ArrayList<>();
     private final int row;
     private final int col;
+
+    private String graveBonus;
+
+    private boolean necromancy;
 
     public Cell(CellType type, int row, int col) {
         this.row = row;
@@ -21,13 +21,17 @@ public class Cell {
         setType(type);
     }
 
-    /** تغییر نوع خانه و تنظیم HP پیش‌فرض متناسب با آن. */
     public void setType(CellType type) {
         this.type = type;
         switch (type) {
-            case TOMBSTONE -> this.hp = 700;
-            case FROZEN -> this.hp = 600;
-            default -> this.hp = 0;
+            case TOMBSTONE:
+                this.hp = 700;
+                break;
+            case FROZEN:
+                this.hp = 600;
+                break;
+            default:
+                this.hp = 0;
         }
     }
 
@@ -45,4 +49,10 @@ public class Cell {
     public ArrayList<Plant> getPlants() { return plants; }
     public int getRow() { return row; }
     public int getCol() { return col; }
+
+    public String getGraveBonus() { return graveBonus; }
+    public void setGraveBonus(String graveBonus) { this.graveBonus = graveBonus; }
+
+    public boolean isNecromancy() { return necromancy; }
+    public void setNecromancy(boolean necromancy) { this.necromancy = necromancy; }
 }
