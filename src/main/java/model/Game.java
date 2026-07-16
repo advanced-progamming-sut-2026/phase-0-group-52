@@ -12,23 +12,20 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
-/**
- * نگه‌دارنده‌ی وضعیت یک بازیِ در حال اجرا.
- * منطق شبیه‌سازی در GameEngine است؛ این کلاس فقط state و چند کوئریِ ساده دارد.
- */
 public class Game {
     public static final int MAX_PLANT_FOOD = 3;
-    /** نرخِ زمان بازی: ۱۰ تیک = ۱ ثانیه‌ی درون بازی (داک ص۲۳). */
     public static final int TICKS_PER_SECOND = 10;
 
-    /** تبدیل ثانیه ← تیک (برای actionInterval / recharge / سقوط خورشید). */
     public static int secondsToTicks(double seconds) {
         return (int) Math.round(seconds * TICKS_PER_SECOND);
     }
 
     public static double ticksToSeconds(int ticks) {
-        return ticks / (double) TICKS_PER_SECOND;
+        return (double) ticks / TICKS_PER_SECOND;
     }
+
+    private final GameStats stats = new GameStats();
+    public GameStats getStats() { return stats; }
 
     private App app;
     private Chapter chapter;
@@ -38,26 +35,24 @@ public class Game {
     private int sunAmount;
     private int plantFoodCount;
 
-    private final ArrayList<Plant> plants;     // گیاهانِ کاشته‌شده روی زمین
-    private final ArrayList<Zombie> zombies;   // زامبی‌های فعال روی صحنه
-    private final ArrayList<Sun> suns;         // خورشیدهای روی زمین و در حال سقوط
+    private final ArrayList<Plant> plants;
+    private final ArrayList<Zombie> zombies;
+    private final ArrayList<Sun> suns;
     private final ArrayList<Wave> waves;
 
-    /** شمارنده‌های این مرحله برای کوئست‌ها؛ موتور با hook پرش می‌کند. */
-    private final GameStats stats = new GameStats();
-
-    // ---------- وضعیت گذر زمان و موج ----------
     private int currentTick;
-    private int currentWaveIndex;              // -۱ یعنی هنوز موجی شروع نشده
+    private int currentWaveIndex;
     private int nextSunDropTick;
 
-    // cooldown کاشت برای هر نوع گیاه (تیک‌های باقی‌مانده) و گیاهانِ boost‌شده‌ی این مرحله
     private final Map<Plants, Double> cooldowns = new HashMap<>();
     private final Set<Plants> boostedTypes = new HashSet<>();
 
+    private final ArrayList<Plants> chosenPlants = new ArrayList<>();
+
+    private boolean cooldownsRemoved;
+
     private boolean gameOver;
     private boolean won;
-    private boolean questsEvaluated;   // تا کوئست‌ها فقط یک‌بار در پایانِ مرحله ارزیابی شوند
 
     public Game(App app, Chapter chapter, Level level, GameField field, int sunAmount,
                 ArrayList<Plant> plants, ArrayList<Wave> waves) {
@@ -78,9 +73,6 @@ public class Game {
         this.won = false;
     }
 
-    // ---------- کوئری‌های کمکی ----------
-
-    /** گیاه(انِ) روی خانه‌ی (col,row). ممکن است تا دو گیاه باشد (stacking). */
     public ArrayList<Plant> getPlantsAt(int col, int row) {
         ArrayList<Plant> result = new ArrayList<>();
         for (Plant p : plants) {
@@ -89,7 +81,6 @@ public class Game {
         return result;
     }
 
-    /** زامبی‌های فعالِ یک ردیف. */
     public ArrayList<Zombie> getZombiesInRow(int row) {
         ArrayList<Zombie> result = new ArrayList<>();
         for (Zombie z : zombies) {
@@ -114,6 +105,11 @@ public class Game {
         cooldowns.clear();
     }
 
+    public boolean isCooldownsRemoved() { return cooldownsRemoved; }
+    public void setCooldownsRemoved(boolean cooldownsRemoved) { this.cooldownsRemoved = cooldownsRemoved; }
+
+    public ArrayList<Plants> getChosenPlants() { return chosenPlants; }
+
     public void addSun(int amount) {
         this.sunAmount += amount;
     }
@@ -123,8 +119,6 @@ public class Game {
         sunAmount -= amount;
         return true;
     }
-
-    // ---------- getter / setter ----------
 
     public App getApp() { return app; }
     public void setApp(App app) { this.app = app; }
@@ -150,7 +144,6 @@ public class Game {
     public ArrayList<Zombie> getZombies() { return zombies; }
     public ArrayList<Sun> getSuns() { return suns; }
     public ArrayList<Wave> getWaves() { return waves; }
-    public GameStats getStats() { return stats; }
 
     public int getCurrentTick() { return currentTick; }
     public void setCurrentTick(int currentTick) { this.currentTick = currentTick; }
@@ -169,7 +162,4 @@ public class Game {
 
     public boolean isWon() { return won; }
     public void setWon(boolean won) { this.won = won; }
-
-    public boolean isQuestsEvaluated() { return questsEvaluated; }
-    public void setQuestsEvaluated(boolean questsEvaluated) { this.questsEvaluated = questsEvaluated; }
 }

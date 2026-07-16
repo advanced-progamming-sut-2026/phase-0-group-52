@@ -1,27 +1,28 @@
 package model;
 
-import database.UserRepository;
+import database.DataBaseManager;
 import model.enums.Menu;
 import view.AppMenu;
 
 import java.util.ArrayList;
 
 import minigame.*;
+import model.greenhouse.Greenhouse;
+import model.shop.Shop;
 import view.MenuType;
 
 public class App {
-//    private static final List<User> users = new ArrayList<>();
 
     private static App instance;
     private Game game;
-    private GameEngine gameEngine;
     public Menu currentMenu;
     private ArrayList<User> users = new ArrayList<>();
-    private User currentuser;   // کاربرِ واردشده‌ی فعلی (منبعِ واحد)
+    private User currentuser;
+    public static User loggedInUser;
     private MenuType currentmenu;
     private Minigame minigame;
-
-
+    private final Greenhouse greenhouse = new Greenhouse();
+    private final Shop shop = new Shop();
 
     public App(Game game, ArrayList<User> users, User currentuser, MenuType currentmenu, Minigame minigame) {
         this.game = game;
@@ -31,39 +32,37 @@ public class App {
         this.minigame = minigame;
     }
 
-
     private App(){
+        DataBaseManager.initializeDatabase();
+
         UserRepository repository = new UserRepository();
         User rememberedUser = repository.getRememberedUser();
 
         if (rememberedUser != null) {
+            loggedInUser = rememberedUser;
             currentuser = rememberedUser;
             currentMenu = Menu.MainMenu;
+            currentmenu = MenuType.MAIN_MENU;
         } else {
             currentMenu = Menu.SignUpMenu;
+            currentmenu = MenuType.SIGNUP_MENU;
         }
     }
 
     public Game getGame() { return game; }
     public void setGame(Game game) { this.game = game; }
 
-    public GameEngine getGameEngine() { return gameEngine; }
-    public void setGameEngine(GameEngine gameEngine) { this.gameEngine = gameEngine; }
-
     public User getCurrentuser() { return currentuser; }
     public void setCurrentuser(User currentuser) { this.currentuser = currentuser; }
-
-    /** کاربرِ واردشده را ثبت می‌کند (پس از ورود موفق). هم‌معنیِ setCurrentuser. */
-    public void setLoggedInUser(User user) {
-        this.currentuser = user;
-        if (user != null) user.setLogged(true);
-    }
-
-    public User getLoggedInUser() { return currentuser; }
 
     public MenuType getCurrentmenu() { return currentmenu; }
     public void setCurrentmenu(MenuType currentmenu) { this.currentmenu = currentmenu; }
 
+    public Greenhouse getGreenhouse() { return greenhouse; }
+    public Shop getShop() { return shop; }
+
+    public User getLoggedInUser() { return loggedInUser; }
+    public void setLoggedInUser(User user) { loggedInUser = user; this.currentuser = user; }
 
     public static App getInstance(){
         if(instance==null){instance = new App ();}
@@ -82,4 +81,3 @@ public class App {
         App.instance = instance;
     }
 }
-

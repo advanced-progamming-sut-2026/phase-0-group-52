@@ -18,10 +18,10 @@ public class BasicZombie extends Zombie {
 
     @Override
     public void onTick(Game game) {
-        Plant target = frontPlant(game);
-        if (target != null) {
+        java.util.ArrayList<Plant> here = game.getPlantsAt(getCol(), getRow());
+        if (!here.isEmpty()) {
             setState(ZombieState.ATTACKING);
-            target.takeDamage(getDamage() / Game.TICKS_PER_SECOND); // eatDPS در هر تیک
+            here.get(here.size() - 1).takeDamage(getDamage());
         } else {
             setState(ZombieState.WALKING);
             move(game);

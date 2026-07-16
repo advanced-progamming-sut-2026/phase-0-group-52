@@ -11,6 +11,6 @@ public class Wallnut extends Plant {
 
     @Override
     public void onTick(Game game) {
-        // TODO  رفتار این دسته را پیاده کن.
+
     }
 }

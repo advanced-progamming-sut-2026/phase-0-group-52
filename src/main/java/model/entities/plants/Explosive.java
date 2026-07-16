@@ -3,7 +3,6 @@ package model.entities.plants;
 import model.Game;
 import model.Vec2;
 
-/** گیاه انفجاری (مثل Cherry Bomb). دسته‌بندی تیم. */
 public class Explosive extends Plant {
 
     public Explosive(Plants type, Vec2 position) {
@@ -12,6 +11,6 @@ public class Explosive extends Plant {
 
     @Override
     public void onTick(Game game) {
-        // TODO (تیم): رفتار این دسته را پیاده کن.
+
     }
 }

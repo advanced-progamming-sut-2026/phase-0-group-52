@@ -218,14 +218,14 @@ public class QuestManager {
     private boolean isBoardSymmetric(Game game) {
         int rows = game.getField().getRows();
         int mid = rows / 2;
-        var plants = game.getPlants();
-        for (var p : plants) {
+        java.util.List<model.entities.plants.Plant> plants = game.getPlants();
+        for (model.entities.plants.Plant p : plants) {
             if (p.getRow() == mid) {
                 continue;
             }
             int mirror = rows - 1 - p.getRow();
             boolean found = false;
-            for (var q : plants) {
+            for (model.entities.plants.Plant q : plants) {
                 if (q.getCol() == p.getCol() && q.getRow() == mirror && q.getType() == p.getType()) {
                     found = true;
                     break;

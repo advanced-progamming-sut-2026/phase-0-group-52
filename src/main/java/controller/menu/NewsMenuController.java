@@ -39,6 +39,10 @@ public class NewsMenuController {
     }
 
     private void handleNews(String[] parts) {
+        if (app.getCurrentuser() == null) {
+            view.showError("No user is logged in.");
+            return;
+        }
         if (parts.length < 3) {
             view.showError("Usage: menu news show-unread  |  menu news show-all");
             return;
@@ -63,8 +67,10 @@ public class NewsMenuController {
             return;
         }
         try {
-            MenuType target = MenuType.valueOf(parts[2].toUpperCase());
+            MenuType target = MenuType.fromName(parts[2]);
+            if (target == null) throw new IllegalArgumentException();
             app.setCurrentmenu(target);
+            if (target.toMenu() != null) app.setCurrentMenu(target.toMenu());
         } catch (IllegalArgumentException e) {
             view.showError("Unknown menu: " + parts[2]);
         }

@@ -4,16 +4,16 @@ import model.entities.plants.Plant;
 
 import java.util.ArrayList;
 
-/**
- * یک خانه از زمین بازی.
- * می‌تواند حداکثر دو گیاه روی هم داشته باشد (در صورتی که گیاه زیری/رویی این قابلیت را داشته باشد).
- */
 public class Cell {
     private CellType type;
-    private double hp;                 // فقط برای TOMBSTONE (۷۰۰) و FROZEN (۶۰۰) معنا دارد
-    private final ArrayList<Plant> plants = new ArrayList<>(); // حداکثر ۲
+    private double hp;
+    private final ArrayList<Plant> plants = new ArrayList<>();
     private final int row;
     private final int col;
+
+    private String graveBonus;
+
+    private boolean necromancy;
 
     public Cell(CellType type, int row, int col) {
         this.row = row;
@@ -21,7 +21,6 @@ public class Cell {
         setType(type);
     }
 
-    /** تغییر نوع خانه و تنظیم HP پیش‌فرض متناسب با آن. */
     public void setType(CellType type) {
         this.type = type;
         switch (type) {
@@ -33,10 +32,8 @@ public class Cell {
                 break;
             default:
                 this.hp = 0;
-                break;
         }
     }
-
 
     public boolean isPlantable() {
         return type.isPlantable() && plants.size() < 2;
@@ -53,25 +50,9 @@ public class Cell {
     public int getRow() { return row; }
     public int getCol() { return col; }
 
-    /** آیا این خانه مانعِ عبورِ تیرِ افقی است؟ (سنگ‌قبر) — گیاهانِ شلیک‌کننده از رویش رد نمی‌شوند. */
-    public boolean isObstacle() {
-        return type == CellType.TOMBSTONE;
-    }
+    public String getGraveBonus() { return graveBonus; }
+    public void setGraveBonus(String graveBonus) { this.graveBonus = graveBonus; }
 
-    /**
-     * آسیب به خودِ زمین (سنگ‌قبر). جانش که صفر شود به زمین معمولی تبدیل می‌شود.
-     * @return true اگر تخریب و به NORMAL تبدیل شد.
-     */
-    public boolean damageTerrain(double dmg) {
-        if (type != CellType.TOMBSTONE && type != CellType.FROZEN) return false; // فقط قبر/یخ آسیب‌پذیرند
-        hp -= dmg;
-        if (hp <= 0) {
-            setType(CellType.NORMAL);   // به زمین معمولی برمی‌گردد (hp هم صفر می‌شود)
-            return true;
-        }
-        return false;
-    }
-
-
-
+    public boolean isNecromancy() { return necromancy; }
+    public void setNecromancy(boolean necromancy) { this.necromancy = necromancy; }
 }

@@ -1,4 +1,3 @@
-
 import view.AppView;
 
 public class Main {

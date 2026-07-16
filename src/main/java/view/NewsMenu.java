@@ -1,10 +1,23 @@
 package view;
 
+import controller.menu.NewsMenuController;
+import model.App;
 import model.news.News;
 
 import java.util.List;
+import java.util.Scanner;
 
 public class NewsMenu implements AppMenu {
+
+    private NewsMenuController controller;
+
+    @Override
+    public void check(Scanner scanner) {
+        if (controller == null) controller = new NewsMenuController(App.getInstance());
+        String line = scanner.nextLine().trim();
+        if (line.isEmpty()) return;
+        controller.handleCommand(line.split("\\s+"));
+    }
 
     public void showNewsList(List<News> list, boolean onlyUnread) {
         if (list.isEmpty()) {
