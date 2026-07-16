@@ -1,10 +1,10 @@
-package controller.menu;
+package pvz.controller.menu;
 
-import model.App;
-import model.ChapterType;
-import model.User;
-import view.ChapterMenu;
-import view.MenuType;
+import pvz.model.App;
+import pvz.model.ChapterType;
+import pvz.model.User;
+import pvz.view.ChapterMenu;
+import pvz.view.MenuType;
 
 public class ChapterMenuController {
 
@@ -32,10 +32,12 @@ public class ChapterMenuController {
                 handleEnter(parts);
                 break;
             case "coin-wallet":
-                view.showCoinWallet(app.getCurrentuser().getCoinBalance());
+                if (app.getCurrentuser() == null) { view.showError("No user is logged in."); break; }
+                view.showCoinWallet(app.getCurrentuser().getCoins());
                 break;
             case "gem-wallet":
-                view.showGemWallet(app.getCurrentuser().getDiamondBalance());
+                if (app.getCurrentuser() == null) { view.showError("No user is logged in."); break; }
+                view.showGemWallet(app.getCurrentuser().getGems());
                 break;
             case "cheat":
                 handleCheat(parts);
@@ -58,8 +60,10 @@ public class ChapterMenuController {
             return;
         }
         try {
-            MenuType target = MenuType.valueOf(parts[2].toUpperCase());
+            MenuType target = MenuType.fromName(parts[2]);
+            if (target == null) throw new IllegalArgumentException();
             app.setCurrentmenu(target);
+            if (target.toMenu() != null) app.setCurrentMenu(target.toMenu());
         } catch (IllegalArgumentException e) {
             view.showError("Unknown menu: " + parts[2]);
         }
@@ -82,6 +86,10 @@ public class ChapterMenuController {
     }
 
     private void handleCheat(String[] parts) {
+        if (app.getCurrentuser() == null) {
+            view.showError("No user is logged in.");
+            return;
+        }
         if (parts.length < 5 || !parts[2].equals("add")) {
             view.showError("Usage: menu cheat add <n> <coin/diamond>");
             return;
@@ -100,12 +108,12 @@ public class ChapterMenuController {
         User user = app.getCurrentuser();
         switch (parts[4].toLowerCase()) {
             case "coin":
-                user.setCoinBalance(user.getCoinBalance() + amount);
-                view.showCheatResult(amount, "coin", user.getCoinBalance());
+                user.setCoins(user.getCoins() + amount);
+                view.showCheatResult(amount, "coin", user.getCoins());
                 break;
             case "diamond":
-                user.setDiamondBalance(user.getDiamondBalance() + amount);
-                view.showCheatResult(amount, "diamond", user.getDiamondBalance());
+                user.setGems(user.getGems() + amount);
+                view.showCheatResult(amount, "diamond", user.getGems());
                 break;
             default:
                 view.showError("Invalid type: " + parts[4] + ". Use 'coin' or 'diamond'.");

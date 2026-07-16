@@ -1,4 +1,4 @@
-package model.entities.zombies;
+package pvz.model.entities.zombies;
 
 public enum FrostbiteCaveZombies implements ZombieType{
     ZOMBIE_ICEAGE_DEFAULT, ZOMBIE_ICEAGE_ARMOR1DEFAULT, ZOMBIE_ICEAGE_ARMOR2DEFAULT,

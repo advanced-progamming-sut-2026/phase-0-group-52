@@ -1,11 +1,11 @@
-package controller;
+package pvz.controller;
 
-import database.UserRepository;
-import model.App;
-import model.Result;
-import model.User;
-import model.enums.Menu;
-import model.enums.SecurityQuestions;
+import pvz.database.UserRepository;
+import pvz.model.App;
+import pvz.model.Result;
+import pvz.model.User;
+import pvz.model.enums.Menu;
+import pvz.model.enums.SecurityQuestions;
 
 public class LoginMenuController {
     private User resetPasswordUser;
@@ -62,8 +62,13 @@ public class LoginMenuController {
 
         return new Result(true, "Password changed successfully.", null);
     }
+    public boolean isWaitingForNewPassword() {
+        return waitingForNewPassword;
+    }
+
     public Result exitMenu(){
         App.getInstance().setCurrentMenu(Menu.SignUpMenu);
+        App.getInstance().setCurrentmenu(pvz.view.MenuType.SIGNUP_MENU);
         return new Result(true,"",null);
     }
     public Result showCurrentMenu(){
@@ -74,6 +79,7 @@ public class LoginMenuController {
             return new Result(false,"You can only enter the main menu from the login menu.\n",null);
         }
         App.getInstance().currentMenu = Menu.MainMenu;
+        App.getInstance().setCurrentmenu(pvz.view.MenuType.MAIN_MENU);
         return new Result(true,"",null);
 
     }

@@ -1,4 +1,4 @@
-package controller;
+package pvz.controller;
 import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
 public class HashUtil {

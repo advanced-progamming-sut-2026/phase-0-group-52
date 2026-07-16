@@ -1,5 +1,6 @@
+package pvz;
 
-import view.AppView;
+import pvz.view.AppView;
 
 public class Main {
     public static void main(String[] args) {

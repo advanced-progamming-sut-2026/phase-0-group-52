@@ -1,4 +1,4 @@
-package model;
+package pvz.model;
 
 public class Result {
 
@@ -11,7 +11,6 @@ public class Result {
         this.message = message;
         this.object = object;
     }
-
 
     public boolean isSuccess() {
         return success;
@@ -36,7 +35,6 @@ public class Result {
     public void setObject(Object object) {
         this.object = object;
     }
-
 
     public boolean success() {
         return success;

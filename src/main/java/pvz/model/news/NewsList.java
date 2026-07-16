@@ -1,4 +1,4 @@
-package model.news;
+package pvz.model.news;
 
 import java.util.ArrayList;
 import java.util.List;

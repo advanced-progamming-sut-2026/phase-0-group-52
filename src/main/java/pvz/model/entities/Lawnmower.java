@@ -1,4 +1,4 @@
-package model.entities;
+package pvz.model.entities;
 
 public class Lawnmower {
     private int line;

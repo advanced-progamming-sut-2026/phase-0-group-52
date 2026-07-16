@@ -1,5 +1,4 @@
-package model.news;
-
+package pvz.model.news;
 
 public class News {
     private String news;

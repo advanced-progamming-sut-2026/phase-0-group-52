@@ -1,4 +1,4 @@
-package view;
+package pvz.view;
 
 import java.util.Scanner;
 

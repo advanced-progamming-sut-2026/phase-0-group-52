@@ -1,7 +1,7 @@
-package model.entities.plants;
+package pvz.model.entities.plants;
 
-import model.Game;
-import model.Vec2;
+import pvz.model.Game;
+import pvz.model.Vec2;
 
 public class Wallnut extends Plant {
 
@@ -11,6 +11,6 @@ public class Wallnut extends Plant {
 
     @Override
     public void onTick(Game game) {
-        // TODO  رفتار این دسته را پیاده کن.
+
     }
 }

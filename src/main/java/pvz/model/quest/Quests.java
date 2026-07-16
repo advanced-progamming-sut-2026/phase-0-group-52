@@ -1,4 +1,4 @@
-package model.quest;
+package pvz.model.quest;
 
 public enum Quests {
     AFTAB_GIRE_ROOZANEH(QuestCategory.DAILY, QuestPriorities.MEDIUM);

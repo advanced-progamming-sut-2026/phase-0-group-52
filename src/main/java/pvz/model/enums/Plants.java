@@ -1,4 +1,4 @@
-package model.enums;
+package pvz.model.enums;
 
 public enum Plants {
     SUNFLOWER("Sunflower",PlantCategory.SUN_PRODUCERS,Tags.DAY,50,300,0,24,5);

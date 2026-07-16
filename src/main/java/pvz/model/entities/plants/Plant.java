@@ -1,8 +1,7 @@
-package model.entities.plants;
+package pvz.model.entities.plants;
 
-
-import model.Game;
-import model.Vec2;
+import pvz.model.Game;
+import pvz.model.Vec2;
 
 public abstract class Plant implements PlantInterface {
     private Plants type;
@@ -11,10 +10,15 @@ public abstract class Plant implements PlantInterface {
     private Vec2 position;
     private double attackdamage;
 
-    /** شمارنده داخلی تیک‌ها برای عمل بعدی (شلیک/تولید خورشید/...). */
     protected double actionTimer = 0;
-    /** آیا این گیاه boost شده (اثر غذای گیاه موقع کاشت). */
+
     protected boolean boosted = false;
+
+    private boolean frozen = false;
+
+    private int freezeLevel = 0;
+
+    private double iceHp = 0;
 
     public Plant(Plants type, double hp, int price, Vec2 position, double attackdamage) {
         this.type = type;
@@ -24,22 +28,17 @@ public abstract class Plant implements PlantInterface {
         this.attackdamage = attackdamage;
     }
 
-    // ---------- قلاب‌های polymorphic که موتور (GameEngine) صدا می‌زند ----------
-
-    /** هر تیک یک‌بار صدا زده می‌شود. هر زیرکلاس رفتار خودش را اینجا پیاده می‌کند. */
     public void onTick(Game game) {}
 
-    /** لحظه‌ی کاشته‌شدن روی زمین. */
     public void onPlanted(Game game) {}
 
-    /** اثر «غذای گیاه» روی این گیاه. */
     public void onPlantFood(Game game) {}
+
+    public void onDeath(Game game) {}
 
     public void boost() {
         this.boosted = true;
     }
-
-    // ---------- چرخه‌ی حیات ----------
 
     public void takeDamage(double dmg) {
         this.hp -= dmg;
@@ -49,12 +48,9 @@ public abstract class Plant implements PlantInterface {
         return hp <= 0;
     }
 
-    /** ستون خانه (x). مختصات گیاه همیشه عدد صحیح است. */
     public int getCol() { return (int) position.x; }
-    /** ردیف خانه (y). */
-    public int getRow() { return (int) position.y; }
 
-    // ---------- getter / setter ----------
+    public int getRow() { return (int) position.y; }
 
     public Plants getType() { return type; }
     public void setType(Plants type) { this.type = type; }
@@ -72,4 +68,31 @@ public abstract class Plant implements PlantInterface {
     public void setAttackdamage(double attackdamage) { this.attackdamage = attackdamage; }
 
     public boolean isBoosted() { return boosted; }
+
+    public boolean isFrozen() { return frozen; }
+    public void setFrozen(boolean frozen) { this.frozen = frozen; }
+
+    public int getFreezeLevel() { return freezeLevel; }
+    public double getIceHp() { return iceHp; }
+
+    public void addFreezeLevel() {
+        if (freezeLevel >= 3) return;
+        freezeLevel++;
+        if (freezeLevel >= 3) {
+            frozen = true;
+            iceHp = 600;
+        }
+    }
+
+    public void damageIce(double dmg) {
+        if (!frozen || iceHp <= 0) return;
+        iceHp -= dmg;
+        if (iceHp <= 0) thaw();
+    }
+
+    public void thaw() {
+        iceHp = 0;
+        freezeLevel = 0;
+        frozen = false;
+    }
 }

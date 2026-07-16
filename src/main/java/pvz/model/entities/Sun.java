@@ -1,23 +1,17 @@
-package model.entities;
+package pvz.model.entities;
 
-import model.Vec2;
+import pvz.model.Vec2;
 
-/**
- * یک خورشید روی زمین یا در حال سقوط.
- * - خورشیدِ گیاه‌زا: روی گیاه می‌ماند تا برداشت شود (falling=false، fromSky=false).
- * - خورشیدِ آسمانی: ۵ تیک طول می‌کشد تا فرود بیاید (falling=true)، سپس روی زمین قابل برداشت است.
- */
 public class Sun {
     public static final int FALL_TICKS = 5;
 
     private int amount;
-    private SunType type;          // فقط برای خورشید آسمانی معنا دارد
-    private Vec2 position;          // (x=col, y=row)
+    private SunType type;
+    private Vec2 position;
     private boolean falling;
     private int fallTicksRemaining;
     private boolean fromSky;
 
-    /** خورشیدِ تولیدشده توسط یک گیاه (مثلا Sunflower). */
     public Sun(int amount, Vec2 position) {
         this.amount = amount;
         this.position = position;
@@ -27,7 +21,6 @@ public class Sun {
         this.fallTicksRemaining = 0;
     }
 
-    /** خورشیدِ سقوط‌کننده از آسمان روی خانه‌ی (col,row). */
     public Sun(SunType type, Vec2 position) {
         this.type = type;
         this.amount = type.getAmount();
@@ -37,7 +30,6 @@ public class Sun {
         this.fallTicksRemaining = FALL_TICKS;
     }
 
-    /** یک تیک از سقوط می‌گذرد؛ وقتی به صفر برسد، روی زمین می‌نشیند. */
     public void tickFall() {
         if (falling) {
             fallTicksRemaining--;

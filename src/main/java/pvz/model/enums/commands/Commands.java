@@ -1,10 +1,9 @@
-package model.enums.commands;
+package pvz.model.enums.commands;
 
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public interface Commands {
-
 
     String getPattern();
     default Matcher getMatcher(String input) {

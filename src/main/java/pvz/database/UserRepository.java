@@ -1,6 +1,6 @@
-package database;
+package pvz.database;
 
-import model.User;
+import pvz.model.User;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -27,7 +27,7 @@ public class UserRepository {
             initializeProgress(user.getUsername());
             return true;
         } catch (SQLException e) {
-            // اگر یوزرنیم یا ایمیل تکراری باشد
+
             return false;
         }
     }
@@ -85,6 +85,40 @@ public class UserRepository {
         }
 
         return null;
+    }
+
+    public java.util.List<User> getAllUsers() {
+        java.util.List<User> users = new java.util.ArrayList<User>();
+        String sql = "SELECT * FROM users";
+        try (Connection conn = DataBaseManager.getConnection();
+             PreparedStatement pstmt = conn.prepareStatement(sql)) {
+            ResultSet rs = pstmt.executeQuery();
+            while (rs.next()) {
+                users.add(new User(
+                    rs.getInt("id"),
+                    rs.getString("username"),
+                    rs.getString("email"),
+                    rs.getString("password_hash"),
+                    rs.getString("gender"),
+                    rs.getString("nickname"),
+                    rs.getInt("security_question"),
+                    rs.getString("answer"),
+                    rs.getInt("coins"),
+                    rs.getInt("gems"),
+                    rs.getInt("seed_packet"),
+                    rs.getInt("plant_food_num"),
+                    rs.getInt("most_meow_point"),
+                    rs.getInt("max_point"),
+                    rs.getInt("games_played"),
+                    rs.getInt("mini_games_played"),
+                    rs.getString("last_won_game"),
+                    rs.getInt("difficulty_level")
+                ));
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return users;
     }
 
     public void setStayLoggedIn(int userId, boolean value) {

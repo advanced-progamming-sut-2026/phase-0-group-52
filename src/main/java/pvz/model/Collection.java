@@ -1,6 +1,6 @@
-package model;
+package pvz.model;
 
-import model.entities.plants.Plants;
+import pvz.model.entities.plants.Plants;
 
 import java.util.ArrayList;
 

@@ -1,19 +1,15 @@
-package model;
+package pvz.model;
 
-import model.entities.Cell;
-import model.entities.CellType;
-import model.entities.Lawnmower;
+import pvz.model.entities.Cell;
+import pvz.model.entities.CellType;
+import pvz.model.entities.Lawnmower;
 
-/**
- * زمین بازی: شبکه ۵×۹ (مگر تنظیمات مرحله طور دیگری بگوید) + یک ماشین چمن‌زنی در ابتدای هر ردیف.
- * مختصات: (x = col, y = row). ردیف‌ها از بالا (۰) به پایین (۴).
- */
 public class GameField {
     public static final int ROWS = 5;
     public static final int COLS = 9;
 
-    private final Cell[][] grid;            // [row][col]
-    private final Lawnmower[] lawnmowers;   // یکی برای هر ردیف
+    private final Cell[][] grid;
+    private final Lawnmower[] lawnmowers;
     private final ChapterType chapter;
 
     public GameField(ChapterType chapter) {
@@ -32,7 +28,6 @@ public class GameField {
         }
     }
 
-    /** آیا (x=col, y=row) داخل محدوده زمین است؟ */
     public boolean inBounds(int col, int row) {
         return row >= 0 && row < grid.length && col >= 0 && col < grid[0].length;
     }

@@ -1,8 +1,8 @@
-package controller.menu;
+package pvz.controller.menu;
 
-import model.App;
-import view.MainMenu;
-import view.MenuType;
+import pvz.model.App;
+import pvz.view.MainMenu;
+import pvz.view.MenuType;
 
 public class MainMenuController {
 
@@ -15,6 +15,8 @@ public class MainMenuController {
     }
 
     public void handleCommand(String[] parts) {
+        if (parts.length == 1 && parts[0].equals("logout"))
+            parts = new String[]{"menu", "logout"};
         if (parts.length < 2) {
             view.showError("Invalid command.");
             return;
@@ -30,14 +32,31 @@ public class MainMenuController {
                 handleEnter(parts);
                 break;
             case "logout":
+                if (app.getCurrentuser() == null) { view.showError("No user is logged in."); break; }
                 app.getCurrentuser().setLogged(false);
                 app.setCurrentuser(null);
                 view.showLoggedOut();
                 app.setCurrentmenu(MenuType.LOGIN_MENU);
+                app.setCurrentMenu(pvz.model.enums.Menu.LoginMenu);
+                break;
+            case "leaderboard":
+                handleLeaderboard(parts);
                 break;
             default:
                 view.showError("Unknown command: " + parts[1]);
         }
+    }
+
+    private void handleLeaderboard(String[] parts) {
+        String column = "score";
+        boolean ascending = false;
+        for (int i = 2; i + 1 < parts.length; i += 2) {
+            if (parts[i].equals("-s")) column = parts[i + 1].toLowerCase();
+            else if (parts[i].equals("-o")) ascending = parts[i + 1].equalsIgnoreCase("asc");
+        }
+        java.util.List<pvz.model.Leaderboard.Entry> entries =
+                new pvz.model.Leaderboard().getEntries(column, ascending);
+        view.showLeaderboard(entries, column, ascending);
     }
 
     private void handleEnter(String[] parts) {
@@ -46,8 +65,10 @@ public class MainMenuController {
             return;
         }
         try {
-            MenuType target = MenuType.valueOf(parts[2].toUpperCase());
+            MenuType target = MenuType.fromName(parts[2]);
+            if (target == null) throw new IllegalArgumentException();
             app.setCurrentmenu(target);
+            if (target.toMenu() != null) app.setCurrentMenu(target.toMenu());
         } catch (IllegalArgumentException e) {
             view.showError("Unknown menu: " + parts[2]);
         }

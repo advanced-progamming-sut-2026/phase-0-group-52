@@ -1,6 +1,5 @@
 package pvz.model.entities.plants;
 
-
 import pvz.model.Vec2;
 
 public abstract class PlantTile{

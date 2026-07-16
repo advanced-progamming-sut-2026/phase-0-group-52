@@ -1,5 +1,4 @@
-package database;
-
+package pvz.database;
 
 import java.io.BufferedReader;
 import java.io.InputStreamReader;

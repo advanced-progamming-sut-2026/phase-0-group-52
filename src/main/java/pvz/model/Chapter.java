@@ -1,4 +1,4 @@
-package model;
+package pvz.model;
 
 public class Chapter {
     private int progress;
