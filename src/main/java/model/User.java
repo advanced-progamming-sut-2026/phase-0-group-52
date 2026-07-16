@@ -1,10 +1,13 @@
 package model;
 
+import model.entities.plants.Plants;
 import model.level.Level;
 import model.news.NewsList;
 
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
+import java.util.Set;
 
 public class User {
     private String username;
@@ -18,6 +21,8 @@ public class User {
     private int lastChapter;
     private int lastLevel;
     private int minigamesFinished;
+    private int dailyQuestCount;
+    private int otherQuestCount;
     private int highScore;
     private Collection collection;
     private int difficultyLevel;
@@ -25,10 +30,9 @@ public class User {
     private  String passwordHash;
     private int securityQuestion;
     private  String securityAnswerHash;
-    private boolean stayLoggedIn;
-
 
     private int id;
+    private String answer;
     private int mostMeowPoint;
     private int gamesPlayed;
     private int coins;
@@ -41,12 +45,17 @@ public class User {
     private int questNonDailyNum;
     private int seedPacket;
     private int plantFoodNum;
+    private final Set<Plants> storedBoosts = new HashSet<>();
+    private final Map<Plants, Integer> plantLevels = new HashMap<>();
+    private boolean stayLoggedIn;
 
-
-
-    /** سازنده‌ی بدون‌آرگومان؛ برای بازسازیِ کاربر از فایلِ ذخیره‌سازی (JSON) با setterها. */
     public User() {
+        this.difficultyLevel = 3;
+        this.newsList = new NewsList();
     }
+
+    public boolean isStayLoggedIn() { return stayLoggedIn; }
+    public void setStayLoggedIn(boolean stayLoggedIn) { this.stayLoggedIn = stayLoggedIn; }
 
     public User(String username, String passwordHash, String nickname, String email,
                 String gender, int securityQuestion, String securityAnswerHash) {
@@ -57,7 +66,73 @@ public class User {
         this.gender = gender;
         this.securityQuestion = securityQuestion;
         this.securityAnswerHash = securityAnswerHash;
+        this.answer = securityAnswerHash;
         this.difficultyLevel = 3;
+        this.newsList = new NewsList();
+    }
+
+    public User(String username, String password, String nickname, String email, String gender, boolean isLogged, int coinBalance,
+                int diamondBalance, int lastChapter, int lastLevel, int minigamesFinished,
+                int dailyQuestCount, int otherQuestCount, int highScore, Collection collection) {
+        this.username = username;
+        this.password = password;
+        this.nickname = nickname;
+        this.email = email;
+        this.gender = gender;
+        this.isLogged = isLogged;
+        this.coinBalance = coinBalance;
+        this.diamondBalance = diamondBalance;
+        this.lastChapter = lastChapter;
+        this.lastLevel = lastLevel;
+        this.minigamesFinished = minigamesFinished;
+        this.dailyQuestCount = dailyQuestCount;
+        this.otherQuestCount = otherQuestCount;
+        this.highScore = highScore;
+        this.collection = collection;
+        this.difficultyLevel = 3;
+        this.newsList = new NewsList();
+    }
+
+    public User(int id, String username, String email, String passwordHash, String gender,
+                String nickname, int securityQuestion, String answer, int coins, int gems,
+                int seedPacket, int plantFoodNum, int mostMeowPoint, int maxPoint,
+                int gamesPlayed, int miniGamesPlayed, String lastWonGame, int difficultyLevel) {
+        this.id = id;
+        this.username = username;
+        this.email = email;
+        this.passwordHash = passwordHash;
+        this.gender = gender;
+        this.nickname = nickname;
+        this.securityQuestion = securityQuestion;
+        this.answer = answer;
+        this.coins = coins;
+        this.gems = gems;
+        this.seedPacket = seedPacket;
+        this.plantFoodNum = plantFoodNum;
+        this.mostMeowPoint = mostMeowPoint;
+        this.maxPoint = maxPoint;
+        this.gamesPlayed = gamesPlayed;
+        this.miniGamesPlayed = miniGamesPlayed;
+        this.lastWonGame = lastWonGame;
+        this.difficultyLevel = difficultyLevel;
+        this.newsList = new NewsList();
+    }
+
+    public Set<Plants> getStoredBoosts() {
+        return storedBoosts;
+    }
+
+    public int getPlantLevel(Plants type) {
+        Integer level = plantLevels.get(type);
+        return level == null ? 1 : level;
+    }
+
+    public void setPlantLevel(Plants type, int level) {
+        plantLevels.put(type, level);
+    }
+
+    public Map<Plants, Integer> getPlantLevels() {
+        return plantLevels;
     }
 
     public int getPlantFoodNum() {
@@ -156,6 +231,14 @@ public class User {
         this.mostMeowPoint = mostMeowPoint;
     }
 
+    public String getAnswer() {
+        return answer;
+    }
+
+    public void setAnswer(String answer) {
+        this.answer = answer;
+    }
+
     public int getId() {
         return id;
     }
@@ -174,14 +257,6 @@ public class User {
 
     public int getSecurityQuestion() {
         return securityQuestion;
-    }
-
-    public boolean isStayLoggedIn() {
-        return stayLoggedIn;
-    }
-
-    public void setStayLoggedIn(boolean stayLoggedIn) {
-        this.stayLoggedIn = stayLoggedIn;
     }
 
     public String getPasswordHash() {
@@ -222,6 +297,22 @@ public class User {
 
     public void setHighScore(int highScore) {
         this.highScore = highScore;
+    }
+
+    public int getOtherQuestCount() {
+        return otherQuestCount;
+    }
+
+    public void setOtherQuestCount(int otherQuestCount) {
+        this.otherQuestCount = otherQuestCount;
+    }
+
+    public int getDailyQuestCount() {
+        return dailyQuestCount;
+    }
+
+    public void setDailyQuestCount(int dailyQuestCount) {
+        this.dailyQuestCount = dailyQuestCount;
     }
 
     public int getMinigamesFinished() {
@@ -315,6 +406,5 @@ public class User {
     public void setSecurityQuestion(int securityQuestion) {
         this.securityQuestion = securityQuestion;
     }
-
 
 }

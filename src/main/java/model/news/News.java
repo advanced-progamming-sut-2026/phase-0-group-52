@@ -1,6 +1,5 @@
 package model.news;
 
-
 public class News {
     private String news;
     private boolean isread;

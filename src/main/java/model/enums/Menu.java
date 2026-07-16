@@ -11,6 +11,7 @@ public enum Menu {
     MainMenu(new MainMenu()),
     GameMenu(new GameMenu()),
     SettingMenu(new SettingMenu()),
+    ChapterMenu(new ChapterMenu()),
     NetworkMenu(new NetworkMenu()),
     NewsMenu(new NewsMenu()),
     CollectionMenu(new CollectionMenu()),
