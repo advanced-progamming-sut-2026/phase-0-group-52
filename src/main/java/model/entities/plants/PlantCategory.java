@@ -1,0 +1,7 @@
+package model.entities.plants;
+
+public enum PlantCategory {
+    SUN_PRODUCERS,SHOOTERS,LOBBERS,EXPLOSIVES,
+    MELEE_ATTACKERS,WALL_NUTS,MODIFIER,STRIKE_THROUGH,HOMING,MINTS;
+
+}
