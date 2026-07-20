@@ -41,10 +41,20 @@ public class GameMenuController {
 
     private final App app;
     private final GameMenu view;
+    private model.GameLoop loop;
+    private Game loopGame;
 
     public GameMenuController(App app) {
         this.app = app;
         this.view = new GameMenu();
+    }
+
+    private model.GameLoop gameLoop(Game game) {
+        if (loop == null || loopGame != game) {
+            loop = new model.GameLoop(game);
+            loopGame = game;
+        }
+        return loop;
     }
 
     public GameMenu getView() { return view; }
@@ -85,8 +95,72 @@ public class GameMenuController {
             case "start":
                 handleStartWaves(command);
                 break;
+            case "tick":
+                handleTick(parts);
+                break;
+            case "collect":
+                handleCollect(parts);
+                break;
             default:
                 view.showError("Unknown command: " + parts[0]);
+        }
+    }
+
+    private void handleTick(String[] parts) {
+        Game game = requireGame();
+        if (game == null) return;
+        if (game.isGameOver()) { view.showError("The level is already over."); return; }
+        int n = 1;
+        if (parts.length >= 2) {
+            try { n = Integer.parseInt(parts[1]); } catch (NumberFormatException ignored) {}
+        }
+        model.GameLoop gl = gameLoop(game);
+        for (int i = 0; i < n && !game.isGameOver(); i++) {
+            String result = gl.step(game);
+            if (result != null) {
+                System.out.println(result);
+                onLevelEnd(game);
+                return;
+            }
+        }
+        System.out.println("Tick " + game.getCurrentTick() + " | Sun: " + game.getSunAmount()
+                + " | Zombies: " + game.getZombies().size()
+                + " | Wave: " + (game.getCurrentWaveIndex() + 1) + "/" + game.getWaves().size());
+    }
+
+    private void onLevelEnd(Game game) {
+        if (game.isWon() && app.getCurrentuser() != null) {
+            model.User u = app.getCurrentuser();
+            u.setCoins(u.getCoins() + 500);
+            int score = game.getStats().getZombiesKilled() * 10 + game.getSunAmount();
+            if (score > u.getMaxPoint()) u.setMaxPoint(score);
+            System.out.println("Reward: 500 coins, score " + score + ". Use 'menu enter chapter_menu' to continue.");
+        } else {
+            System.out.println("Use 'menu enter chapter_menu' to try again.");
+        }
+    }
+
+    private void handleCollect(String[] parts) {
+        Game game = requireGame();
+        if (game == null) return;
+        if (parts.length < 2 || !parts[1].equals("sun")) {
+            view.showError("Usage: collect sun");
+            return;
+        }
+        int total = 0, count = 0;
+        for (int i = game.getSuns().size() - 1; i >= 0; i--) {
+            model.entities.Sun s = game.getSuns().get(i);
+            if (!s.isFalling()) {
+                total += s.getAmount();
+                count++;
+                game.getSuns().remove(i);
+            }
+        }
+        if (count == 0) {
+            System.out.println("No sun on the ground to collect yet.");
+        } else {
+            game.setSunAmount(game.getSunAmount() + total);
+            System.out.println("Collected " + count + " sun (+" + total + "). Total sun: " + game.getSunAmount() + ".");
         }
     }
 
