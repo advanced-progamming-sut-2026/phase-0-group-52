@@ -12,13 +12,12 @@ import static model.quest.RewardType.GEM;
 import static model.quest.RewardType.PLANT_UNLOCK;
 import static model.quest.RewardType.SEED_PACKET;
 
-
 public enum QuestDef {
-    DAILY_SUN         ("Daily Sun Collector",        DAILY, MEDIUM,   COIN,        0,    3000),  // reward = sun/100
+    DAILY_SUN         ("Daily Sun Collector",        DAILY, MEDIUM,   COIN,        0,    3000),
     CHAPTER_HUNTER    ("Chapter Hunter",             MAIN,  HIGH,     SEED_PACKET, 10,   50),
     PLANT_PRO         ("Professional Plant User",    DAILY, HIGH,     PLANT_UNLOCK, 1,   10),
     ONLY_CACTUS       ("Only Cactus",               DAILY, HIGH,     GEM,         20,   10),
-    THRIFTY_HERBIVORE ("Thrifty Herbivore",          MAIN,  HIGH,     SEED_PACKET, 20,   1),     // reward = 20−n
+    THRIFTY_HERBIVORE ("Thrifty Herbivore",          MAIN,  HIGH,     SEED_PACKET, 20,   1),
     DEFENSE_MASTER    ("Defense Master",             EPIC,  CRITICAL, GEM,         200,  1),
     QUICK_KILLS       ("Quick Kills",                MAIN,  MEDIUM,   COIN,        500,  10),
     DEMOLITION_PRO    ("Demolition Pro",             DAILY, LOW,      COIN,        100,  3),

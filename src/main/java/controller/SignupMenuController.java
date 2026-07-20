@@ -11,7 +11,6 @@ import model.enums.commands.SignUpCommands;
 
 public class SignupMenuController {
 
-    // ----- فیلدها -----
     private final SignUpValidation validation;
     private boolean isRegisterValid;
     private String username;
@@ -25,7 +24,6 @@ public class SignupMenuController {
 
     private int securityQuestionNum;
 
-    // ----- سازنده -----
     public SignupMenuController() {
         this.validation = new SignUpValidation();
         this.repository=new UserRepository();
@@ -35,8 +33,6 @@ public class SignupMenuController {
     public boolean isRegisterValid() {
         return isRegisterValid;
     }
-
-    // ----- متدهای ثبت اطلاعات مرحله‌ای -----
 
     public Result setUsername(String username) {
         isRegisterValid = true;
@@ -145,7 +141,7 @@ public class SignupMenuController {
             isRegisterValid = false;
             return new Result(false, "The answers do not match.\n", null);
         }
-        // پاسخ به‌صورت case-insensitive نرمال و سپس هش می‌شود (بخش امتیازی: عدم ذخیره‌ی پاسخِ خام).
+
         this.securityQuestionNum = validation.questionNum;
         this.answer = HashUtil.hashPassword(answer.trim().toLowerCase());
 
@@ -164,8 +160,6 @@ public class SignupMenuController {
         resetFields();
         return new Result(true, "Registration completed successfully.\n", null);
     }
-
-    // ----- متدهای کمکی -----
 
     private boolean allFieldsReady() {
         return validation.isNotBlank(username) &&
@@ -187,8 +181,6 @@ public class SignupMenuController {
         answer = null;
     }
 
-    // ----- متدهای مدیریت منو -----
-
     public Result exitMenu() {
         System.exit(0);
         return null;
@@ -199,16 +191,10 @@ public class SignupMenuController {
     }
 
     public Result enterMenu(String menuName) {
-        if (!menuName.equalsIgnoreCase("login")) {
-            return new Result(false, "You can only enter the login menu from the signup menu.\n", null);
-        }
-        App.getInstance().setCurrentMenu(Menu.LoginMenu);
+        String err = Navigation.enter(App.getInstance(), menuName);
+        if (err != null) return new Result(false, err + "\n", null);
         return new Result(true, "", null);
     }
-
-    // ============================================================
-    // کلاس داخلی برای اعتبارسنجی (Validation)
-    // ============================================================
 
     public static class SignUpValidation {
 
