@@ -2,6 +2,7 @@ package model.enums.commands;
 
 public enum TravelLogCommands implements Commands {
     TRAVEL_LOG_PAGE("^\\s*travel\\s+log\\s+page\\s+(?<page>\\S+)\\s*$"),
+    PLAY_MINIGAME("^\\s*play\\s+(?<name>\\S+)\\s+(?<level>[1-3])\\s*$"),
     SHOW_QUESTS("^\\s*show\\s+quests\\s*$"),
     CURRENT_MENU("^\\s*menu\\s+show\\s+current\\s*$"),
     EXIT_MENU("^\\s*menu\\s+exit\\s*$");
