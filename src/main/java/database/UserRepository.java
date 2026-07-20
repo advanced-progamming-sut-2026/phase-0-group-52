@@ -68,6 +68,21 @@ public class UserRepository {
         return null;
     }
 
+    public synchronized List<User> getAllUsers() {
+        return readAll();
+    }
+
+    public synchronized int getPassedLevels(int userId) {
+        for (User u : readAll()) {
+            if (u.getId() == userId) {
+                int chapter = Math.max(1, u.getLastChapter());
+                int level = Math.max(1, u.getLastLevel());
+                return (chapter - 1) * 4 + (level - 1);
+            }
+        }
+        return 0;
+    }
+
     public synchronized void updatePassword(String username, String passwordHash) {
         List<User> users = readAll();
         for (User u : users) {

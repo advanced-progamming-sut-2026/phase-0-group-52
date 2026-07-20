@@ -1,5 +1,6 @@
 package controller.menu;
 
+import controller.Navigation;
 import model.App;
 import model.User;
 import model.entities.plants.Plants;
@@ -128,10 +129,8 @@ public class ChoosePlantMenuController {
             return;
         }
         if (parts.length >= 3 && parts[1].equals("enter")) {
-            MenuType target = MenuType.fromName(parts[2]);
-            if (target == null) { System.out.println("Error: Unknown menu: " + parts[2]); return; }
-            app.setCurrentmenu(target);
-            if (target.toMenu() != null) app.setCurrentMenu(target.toMenu());
+            String navError = Navigation.enter(app, parts[2]);
+            if (navError != null) System.out.println("Error: " + navError);
             return;
         }
         System.out.println("Error: Usage: menu show current  |  menu enter <menu_name>");

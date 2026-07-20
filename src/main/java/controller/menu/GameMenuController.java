@@ -1,5 +1,6 @@
 package controller.menu;
 
+import controller.Navigation;
 import model.App;
 import model.Game;
 import model.GameField;
@@ -138,6 +139,7 @@ public class GameMenuController {
         } else {
             System.out.println("Use 'menu enter chapter_menu' to try again.");
         }
+        new controller.QuestService().onLevelEnd(game, game.isWon());
     }
 
     private void handleCollect(String[] parts) {
@@ -160,6 +162,7 @@ public class GameMenuController {
             System.out.println("No sun on the ground to collect yet.");
         } else {
             game.setSunAmount(game.getSunAmount() + total);
+            game.getStats().addSunCollected(total);
             System.out.println("Collected " + count + " sun (+" + total + "). Total sun: " + game.getSunAmount() + ".");
         }
     }
@@ -170,14 +173,8 @@ public class GameMenuController {
             return;
         }
         if (parts.length >= 3 && parts[1].equals("enter")) {
-            try {
-                MenuType target = MenuType.fromName(parts[2]);
-                if (target == null) throw new IllegalArgumentException();
-                app.setCurrentmenu(target);
-                if (target.toMenu() != null) app.setCurrentMenu(target.toMenu());
-            } catch (IllegalArgumentException e) {
-                view.showError("Unknown menu: " + parts[2]);
-            }
+            String navError = Navigation.enter(app, parts[2]);
+            if (navError != null) view.showError(navError);
             return;
         }
         view.showError("Usage: menu show current  |  menu enter <menu_name>");
@@ -243,6 +240,7 @@ public class GameMenuController {
         PlantData.applyUpgrades(plant, plantLevel);
         cell.getPlants().add(plant);
         game.getPlants().add(plant);
+        game.getStats().recordPlantPlanted(type, x - 1, y - 1);
         if (!conveyor && !game.isCooldownsRemoved()) game.startCooldown(type);
         plant.onPlanted(game);
         view.showPlanted(type.getName(), x, y);
