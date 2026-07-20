@@ -1,5 +1,6 @@
 package view;
 
+import controller.Navigation;
 import model.App;
 
 import java.util.Scanner;
@@ -13,13 +14,10 @@ public class NetworkMenu implements AppMenu {
         if (line.equals("menu show current")) {
             System.out.println("Current menu: " + App.getInstance().getCurrentmenu());
         } else if (line.startsWith("menu enter ")) {
-            String target = line.substring("menu enter ".length()).trim();
-            MenuType t = MenuType.fromName(target);
-            if (t == null) { System.out.println("Error: Unknown menu: " + target); return; }
-            App.getInstance().setCurrentmenu(t);
-            if (t.toMenu() != null) App.getInstance().setCurrentMenu(t.toMenu());
+            String err = Navigation.enter(App.getInstance(), line.substring("menu enter ".length()).trim());
+            if (err != null) System.out.println("Error: " + err);
         } else {
-            invalidCommand();
+            System.out.println("The network menu will be available in a later phase.");
         }
     }
 }

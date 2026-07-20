@@ -3,11 +3,10 @@ package model.quest;
 import java.util.ArrayList;
 import java.util.List;
 
-/** وضعیتِ کوئستِ یک کاربر: تاریخِ آخرین ریستِ روزانه + لیستِ پیشرفتِ همه‌ی کوئست‌ها. در quests.json ذخیره می‌شود. */
 public class QuestState {
 
     private String username;
-    private String lastResetDate;   // yyyy-MM-dd (برای ریستِ روزانه)
+    private String lastResetDate;
     private List<QuestProgress> quests = new ArrayList<>();
 
     public QuestState() {

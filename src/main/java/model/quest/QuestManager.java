@@ -10,10 +10,9 @@ import model.entities.plants.PlantsCategory;
 
 import java.util.List;
 
-
 public class QuestManager {
 
-    private static final int THIRTY_SECONDS_TICKS = 300;   // ۳۰ث × ۱۰ تیک
+    private static final int THIRTY_SECONDS_TICKS = 300;
     private static final int MAX_DIFFICULTY = 5;
 
     private final RewardService reward = new RewardService();
@@ -27,7 +26,7 @@ public class QuestManager {
             if (evaluate(qp, game, stats, user, won)) {
                 qp.setCompleted(true);
                 reward.grant(user, qp);
-                qp.setClaimed(true);   // پاداشِ خودکار در لحظه‌ی تکمیل
+                qp.setClaimed(true);
                 if (qp.getDef().isDaily()) {
                     user.setQuestDailyNum(user.getQuestDailyNum() + 1);
                 } else {
@@ -39,49 +38,49 @@ public class QuestManager {
 
     private boolean evaluate(QuestProgress qp, Game game, GameStats stats, User user, boolean won) {
         switch (qp.getDef()) {
-            case DAILY_SUN:                 // مجموعِ خورشیدِ برداشت‌شده در طولِ روز
+            case DAILY_SUN:
                 qp.setProgress(qp.getProgress() + stats.getSunCollected());
                 return qp.getProgress() >= qp.getTarget();
 
-            case CHAPTER_HUNTER:            // ۵۰ کشتنِ تجمعی از فصلِ مشخص
+            case CHAPTER_HUNTER:
                 if (chapterMatches(game, qp.getVarStr())) {
                     qp.setProgress(qp.getProgress() + stats.getZombiesKilled());
                 }
                 return qp.getProgress() >= qp.getTarget();
 
-            case PLANT_PRO:                 // ۱۰ کشتن فقط با گیاهِ مشخص
+            case PLANT_PRO:
                 return onlyPlantTypeUsed(stats, Plants.valueOf(qp.getVarStr()))
                     && stats.getZombiesKilled() >= qp.getTarget();
 
-            case ONLY_CACTUS:               // ۱۰ کشتن فقط با کاکتوس
+            case ONLY_CACTUS:
                 return onlyPlantTypeUsed(stats, Plants.CACTUS)
                     && stats.getZombiesKilled() >= qp.getTarget();
 
-            case THRIFTY_HERBIVORE:         // برد با از دست دادنِ حداکثر n گیاه
+            case THRIFTY_HERBIVORE:
                 return won && stats.getPlantsLost() <= qp.getVarInt();
 
-            case DEFENSE_MASTER:            // برد دقیقاً با صفر خورشید
+            case DEFENSE_MASTER:
                 return won && stats.getFinalSun() == 0;
 
-            case QUICK_KILLS:               // ۱۰ کشتن در ۳۰ثِ اولِ موج
+            case QUICK_KILLS:
                 return stats.killsWithinTicksOfFirstWave(THIRTY_SECONDS_TICKS) >= qp.getTarget();
 
-            case DEMOLITION_PRO:            // ۳ گیاهِ انفجاری در یک مرحله
+            case DEMOLITION_PRO:
                 return countCategory(stats, PlantsCategory.EXPLOSIVE) >= qp.getTarget();
 
-            case SYMMETRY:                  // باغچه‌ی نهاییِ متقارن
+            case SYMMETRY:
                 return won && isBoardSymmetric(game);
 
-            case FAMILY_KILL:               // فقط با یک خانواده‌ی گیاهی
+            case FAMILY_KILL:
                 return won && onlyFamilyUsed(stats, qp.getVarStr()) && stats.getZombiesKilled() > 0;
 
-            case BLOOM_LIMITS:              // برد بدونِ استفاده از یک خانواده
+            case BLOOM_LIMITS:
                 return won && familyNotUsed(stats, qp.getVarStr());
 
-            case NIGHT_OR_DAY:              // بردِ مرحله‌ی روز فقط با گیاهانِ شب/قارچ
+            case NIGHT_OR_DAY:
                 return won && isDayLevel(game) && allPlantsNightTagged(stats);
 
-            case WIN_STREAK:                // ۵ بردِ متوالی با بیشترین سختی
+            case WIN_STREAK:
                 if (won && user.getDifficultyLevel() == MAX_DIFFICULTY) {
                     qp.setProgress(qp.getProgress() + 1);
                 } else if (!won) {
@@ -89,32 +88,30 @@ public class QuestManager {
                 }
                 return qp.getProgress() >= qp.getTarget();
 
-            case ALMOST_WON:                // ۱۰ کشتن در ستون‌صفرِ ردیفِ بدونِ چمن‌زن (تجمعیِ روزانه)
+            case ALMOST_WON:
                 qp.setProgress(qp.getProgress() + stats.getKillsAtColZeroNoMower());
                 return qp.getProgress() >= qp.getTarget();
 
-            case OCD:                       // بردِ نامتقارن (به‌جز ردیفِ وسط)
+            case OCD:
                 return won && !isBoardSymmetric(game);
 
-            case CLOUDY_DAY:                // برد فقط با ۳ گیاهِ خورشیدزا
+            case CLOUDY_DAY:
                 return won && allCategory(stats, PlantsCategory.SUN_PRODUCER)
                     && countCategory(stats, PlantsCategory.SUN_PRODUCER) == 3;
 
-            case ONE_COLUMN_LESS:           // برد بدونِ کاشت در ستونِ n
+            case ONE_COLUMN_LESS:
                 return won && columnEmpty(stats, qp.getVarInt());
 
-            case DEFENSELESS_ROW:           // برد بدونِ کاشت در سطرِ n
+            case DEFENSELESS_ROW:
                 return won && rowEmpty(stats, qp.getVarInt());
 
-            case DEFENSELESS_CROSS:         // برد با ستون و سطرِ n خالی
+            case DEFENSELESS_CROSS:
                 return won && columnEmpty(stats, qp.getVarInt()) && rowEmpty(stats, qp.getVarInt());
 
             default:
                 return false;
         }
     }
-
-    // ======================================================================
 
     private boolean chapterMatches(Game game, String chapterName) {
         return chapterName != null && game.getField() != null
@@ -213,7 +210,6 @@ public class QuestManager {
         }
         return true;
     }
-
 
     private boolean isBoardSymmetric(Game game) {
         int rows = game.getField().getRows();
