@@ -1,0 +1,3 @@
+[
+  {"id":1,"username":"datis","passwordHash":"03ac674216f3e15c761ee1a5e255f067953623c8b388b4459e13f978d7c846f4","nickname":"Datis","email":"datis@test.com","gender":"male","securityQuestion":2,"securityAnswerHash":"1366fac71146793a85e98a88ad9bb15adb9aac31da8ac6d73e67059bd5a467a9","coins":0,"gems":0,"seedPacket":0,"plantFoodNum":0,"mostMeowPoint":0,"maxPoint":0,"gamesPlayed":0,"miniGamesPlayed":0,"questDailyNum":0,"questNonDailyNum":0,"lastWonGame":null,"difficultyLevel":3,"stayLoggedIn":false}
+]
