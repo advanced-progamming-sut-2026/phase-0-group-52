@@ -52,6 +52,7 @@ public class GameLoop {
 
         PlantCombat.removeDeadZombies(game);
         spawnWaves(game, tick);
+        if (!game.getZombies().isEmpty()) game.getStats().recordFirstWave(tick);
 
         String defeat = game.getLevel() != null ? game.getLevel().checkDefeat(game) : null;
         if (defeat != null) return end(game, false, defeat);
@@ -101,6 +102,7 @@ public class GameLoop {
     private String end(Game game, boolean won, String message) {
         game.setGameOver(true);
         game.setWon(won);
+        game.getStats().setFinalSun(game.getSunAmount());
         return message;
     }
 }

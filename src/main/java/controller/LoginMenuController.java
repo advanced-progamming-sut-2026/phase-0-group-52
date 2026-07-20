@@ -76,11 +76,8 @@ public class LoginMenuController {
         return new Result(true,"You are now in the login menu.\n",null);
     }
     public Result enterMenu(String menuName){
-        if(!menuName.equalsIgnoreCase("main")){
-            return new Result(false,"You can only enter the main menu from the login menu.\n",null);
-        }
-        App.getInstance().currentMenu = Menu.MainMenu;
-        return new Result(true,"",null);
-
+        String err = Navigation.enter(App.getInstance(), menuName);
+        if (err != null) return new Result(false, err + "\n", null);
+        return new Result(true, "", null);
     }
 }
