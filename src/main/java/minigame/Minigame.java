@@ -29,6 +29,15 @@ public class Minigame {
             case BEGHOULED:
                 new Beghouled(level, user).run(scanner);
                 break;
+            case VASE_BREAKER:
+                new Vasebreaker(level, user).run(scanner);
+                break;
+            case WALLNUT_BOWLING:
+                new WallnutBowling(level, user).run(scanner);
+                break;
+            case I_ZOMBIE:
+                new IZombie(level, user).run(scanner);
+                break;
             default:
                 System.out.println(type + " level " + level
                         + " needs the realtime game engine and will be playable in the next phase.");

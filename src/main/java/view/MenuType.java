@@ -3,7 +3,7 @@ package view;
 import model.enums.Menu;
 
 public enum MenuType {
-    SIGNUP_MENU, GAME_MENU, CHAPTER_MENU, COLLECTION_MENU, GREENHOUSE_MENU, LOGIN_MENU, MAIN_MENU, NETWORK_MENU, NEWS_MENU, PROFILE_MEMU, QUEST_MENU, SETTINGS_MENU, TRAVEL_LOG_MENU;
+    SIGNUP_MENU, GAME_MENU, CHAPTER_MENU, COLLECTION_MENU, GREENHOUSE_MENU, LOGIN_MENU, MAIN_MENU, NETWORK_MENU, NEWS_MENU, PROFILE_MEMU, QUEST_MENU, SETTINGS_MENU, TRAVEL_LOG_MENU, CHOOSE_PLANT_MENU;
 
     public static MenuType fromName(String name) {
         if (name == null) return null;
@@ -14,6 +14,7 @@ public enum MenuType {
         if (n.equals("PROFILE") || n.equals("PROFILE_MENU")) return PROFILE_MEMU;
         if (n.equals("SIGN_UP")) return SIGNUP_MENU;
         if (n.equals("TRAVELLOG")) return TRAVEL_LOG_MENU;
+        if (n.equals("CHOOSEPLANT") || n.equals("CHOOSE_PLANT")) return CHOOSE_PLANT_MENU;
         return null;
     }
 
@@ -31,6 +32,7 @@ public enum MenuType {
             case PROFILE_MEMU:     return Menu.ProfileMenu;
             case SETTINGS_MENU:    return Menu.SettingMenu;
             case TRAVEL_LOG_MENU:  return Menu.TravelLogMenu;
+            case CHOOSE_PLANT_MENU: return Menu.ChoosePlantMenu;
             default:               return null;
         }
     }
