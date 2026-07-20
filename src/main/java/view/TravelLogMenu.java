@@ -1,7 +1,10 @@
 package view;
 
 import controller.TravelLogMenuController;
+import model.App;
 import model.enums.commands.TravelLogCommands;
+import minigame.Minigame;
+import minigame.MinigameType;
 
 import java.util.Scanner;
 import java.util.regex.Matcher;
@@ -17,6 +20,16 @@ public class TravelLogMenu implements AppMenu {
         if (TravelLogCommands.TRAVEL_LOG_PAGE.matches(line)) {
             Matcher m = TravelLogCommands.TRAVEL_LOG_PAGE.getMatcher(line);
             controller.showPage(m.group("page"));
+
+        } else if (TravelLogCommands.PLAY_MINIGAME.matches(line)) {
+            Matcher m = TravelLogCommands.PLAY_MINIGAME.getMatcher(line);
+            MinigameType type = Minigame.findType(m.group("name"));
+            if (type == null) {
+                System.out.println("Unknown minigame: " + m.group("name"));
+            } else {
+                new Minigame(type, Integer.parseInt(m.group("level")))
+                    .start(App.getInstance().getLoggedInUser(), scanner);
+            }
 
         } else if (TravelLogCommands.SHOW_QUESTS.matches(line)) {
             controller.showCurrentPage();
