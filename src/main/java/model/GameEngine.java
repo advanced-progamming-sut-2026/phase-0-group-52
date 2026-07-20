@@ -26,23 +26,15 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
-/**
- * قلب شبیه‌سازی بازی. کلِ حلقه‌ی گذر زمان، خورشید، موج، نبرد، برد/باخت و تقلب‌ها اینجاست.
- * موتور «محتوا-آگاه» نیست: در هر تیک فقط قلاب‌های polymorphic (onTick) را روی گیاه/زامبی صدا می‌زند.
- *
- * پارامترهای موج (لیست زامبی مجاز، بودجه‌ی پایه، تعداد موج) فعلاً از سازنده گرفته می‌شوند
- * تا زمانی که کلاس Level کامل شود و این‌ها را بدهد.
- */
 public class GameEngine {
 
     private final Game game;
-    private final List<Zombies> zombiePool;   // زامبی‌های مجاز این مرحله
-    private final double baseWaveBudget;       // بودجه‌ی موج اول
-    private final int waveCount;               // تعداد کل موج‌ها
+    private final List<Zombies> zombiePool;
+    private final double baseWaveBudget;
+    private final int waveCount;
     private final ChapterType chapter;
     private final Random rng = new Random();
 
-    // برای سنجش شرط «۷۵٪ جانِ موج قبلی از بین رفته»
     private double lastWaveInitialHp = 0;
 
     public GameEngine(Game game, List<Zombies> zombiePool, double baseWaveBudget,
@@ -54,16 +46,10 @@ public class GameEngine {
         this.chapter = chapter;
     }
 
-    /** آماده‌سازی اولیه؛ اولین سقوط خورشید را زمان‌بندی می‌کند. */
     public void start() {
         game.setNextSunDropTick(sunDropInterval(0));
     }
 
-    // ======================================================================
-    //  گذر زمان
-    // ======================================================================
-
-    /** بازی را n تیک جلو می‌برد (دستور advance time). */
     public void advance(int ticks) {
         for (int i = 0; i < ticks && !game.isGameOver(); i++) {
             tick();
@@ -71,7 +57,6 @@ public class GameEngine {
         if (!game.isGameOver()) checkWin();
     }
 
-    /** یک تیک کامل بازی. ترتیب مراحل مهم است. */
     private void tick() {
         int t = game.getCurrentTick();
 
@@ -79,9 +64,9 @@ public class GameEngine {
         updateFallingSuns();
         autoDropSun(t);
 
-        for (Plant p : new ArrayList<>(game.getPlants())) p.onTick(game);   // تولید خورشید و ...
+        for (Plant p : new ArrayList<>(game.getPlants())) p.onTick(game);
         maybeStartNextWave();
-        for (Zombie z : new ArrayList<>(game.getZombies())) z.onTick(game); // حرکت/حمله
+        for (Zombie z : new ArrayList<>(game.getZombies())) z.onTick(game);
 
         removeDeadPlants();
         removeDeadZombies();
@@ -90,15 +75,6 @@ public class GameEngine {
         game.setCurrentTick(t + 1);
     }
 
-    // ======================================================================
-    //  خورشید
-    // ======================================================================
-
-    /**
-     * فاصله‌ی بین دو سقوط خورشید، برحسب تیک.
-     * فرمول داک بر حسب ثانیه است: max(6 + 0.05·t, 12) و t زمانِ سپری‌شده برحسب ثانیه.
-     * چون ۱۰ تیک = ۱ ثانیه، ورودی و خروجی تبدیل می‌شوند.
-     */
     private int sunDropInterval(int currentTick) {
         double tSec = Game.ticksToSeconds(currentTick);
         double xSec = Math.max(6 + 0.05 * tSec, 12);
@@ -123,31 +99,26 @@ public class GameEngine {
         for (Sun sun : game.getSuns()) {
             if (!sun.isFalling()) continue;
             sun.tickFall();
-            if (!sun.isFalling()) { // همین تیک به زمین رسید
+            if (!sun.isFalling()) {
                 System.out.println("Sun reached the ground at position ("
                     + sun.getCol() + ", " + sun.getRow() + ")");
-                // TODO (گام ۸): اگر رادیواکتیو بود، به خورشید معمولی تبدیل شود.
+
             }
         }
     }
 
-    /** برداشت خورشید از یک خانه (دستور collect sun). */
     public boolean collectSun(int col, int row) {
         for (int i = 0; i < game.getSuns().size(); i++) {
             Sun sun = game.getSuns().get(i);
             if (sun.getCol() == col && sun.getRow() == row && !sun.isFalling()) {
                 game.addSun(sun.getAmount());
-                game.getStats().addSunCollected(sun.getAmount());   // hook کوئست
+                game.getStats().addSunCollected(sun.getAmount());
                 game.getSuns().remove(i);
                 return true;
             }
         }
-        return false; // خورشیدی آنجا نبود
+        return false;
     }
-
-    // ======================================================================
-    //  موج‌ها (تولید با weighted-random + بودجه)
-    // ======================================================================
 
     private void maybeStartNextWave() {
         boolean firstWave = game.getCurrentWaveIndex() < 0;
@@ -158,9 +129,8 @@ public class GameEngine {
         }
     }
 
-    /** بودجه‌ی موج i: هر موج ۱.۲۵ برابر قبلی؛ موج آخر (flag) دو برابر مرحله‌ی قبل. */
     private double waveBudget(int waveIndex) {
-        if (waveIndex == waveCount - 1) {                 // موج پرچم
+        if (waveIndex == waveCount - 1) {
             return baseWaveBudget * Math.pow(1.25, waveIndex - 1) * 2;
         }
         return baseWaveBudget * Math.pow(1.25, waveIndex);
@@ -168,7 +138,7 @@ public class GameEngine {
 
     private void spawnWave(int waveIndex) {
         game.setCurrentWaveIndex(waveIndex);
-        game.getStats().recordFirstWave(game.getCurrentTick());   // hook کوئست (فقط بارِ اول ثبت می‌شود)
+        game.getStats().recordFirstWave(game.getCurrentTick());
         int waveNumber = waveIndex + 1;
 
         if (waveIndex == waveCount - 1) System.out.println("The final wave has come.");
@@ -180,9 +150,9 @@ public class GameEngine {
 
         while (true) {
             Zombies pick = pickWeightedZombie(budget);
-            if (pick == null) break; // دیگر زامبیِ قابل‌خریدی با این بودجه نمانده
+            if (pick == null) break;
 
-            int[] spawn = pickSpawn();          // {col, lane} — لبه‌ی راست یا ساحلِ پست
+            int[] spawn = pickSpawn();
             int spawnCol = spawn[0];
             int lane = spawn[1];
             Zombie z = createZombie(pick, lane, spawnCol);
@@ -200,10 +170,6 @@ public class GameEngine {
         game.getWaves().add(new Wave(waveZombies, waveNumber, 0));
     }
 
-    /**
-     * موقعیتِ ظهور: پیش‌فرض لبه‌ی راست؛ در ساحل با احتمال ۳۰٪ از یک خانه‌ی ساحلِ پست ظاهر می‌شود.
-     * خروجی: {col, row}.
-     */
     private int[] pickSpawn() {
         if (chapter == ChapterType.BIG_WAVE_BEACH) {
             List<int[]> low = game.getField().getLowGroundCells();
@@ -217,10 +183,6 @@ public class GameEngine {
         return new int[]{ game.getField().getCols(), rng.nextInt(game.getField().getRows()) };
     }
 
-    /**
-     * انتخاب تصادفیِ وزن‌دار فقط از بین زامبی‌هایی که با بودجه‌ی باقی‌مانده قابل‌خریدند.
-     * اگر هیچ زامبیِ قابل‌خریدی نماند null برمی‌گرداند (پایان spawn این موج).
-     */
     private Zombies pickWeightedZombie(double budget) {
         if (zombiePool == null || zombiePool.isEmpty()) return null;
         int total = 0;
@@ -236,7 +198,6 @@ public class GameEngine {
         return null;
     }
 
-    /** ساختِ زامبی از طریق factory (زیرکلاس درست + مقداردهیِ زره). */
     private Zombie createZombie(Zombies data, int lane, int spawnCol) {
         return ZombieFactory.create(data, lane, spawnCol, chapter);
     }
@@ -247,16 +208,12 @@ public class GameEngine {
         return sum;
     }
 
-    // ======================================================================
-    //  حذف مرده‌ها، چمن‌زن و باخت
-    // ======================================================================
-
     private void removeDeadPlants() {
         game.getPlants().removeIf(p -> {
             if (p.isDead()) {
                 Cell c = game.getField().getCell(p.getCol(), p.getRow());
                 if (c != null) c.getPlants().remove(p);
-                game.getStats().recordPlantLost();   // hook کوئست
+                game.getStats().recordPlantLost();
                 System.out.println("Plant " + p.getType().getName()
                     + " at (" + p.getCol() + ", " + p.getRow() + ") is destroyed.");
                 return true;
@@ -268,7 +225,7 @@ public class GameEngine {
     private void removeDeadZombies() {
         game.getZombies().removeIf(z -> {
             if (z.isDead()) {
-                game.getStats().recordKill(game.getCurrentTick());   // hook کوئست
+                game.getStats().recordKill(game.getCurrentTick());
                 if (z.getCol() <= 0) {
                     Lawnmower mower = game.getField().getLawnmower(z.getRow());
                     if (mower == null || !mower.isIsactive()) {
@@ -277,14 +234,13 @@ public class GameEngine {
                 }
                 System.out.println("Zombie of type " + z.getClass().getSimpleName()
                     + " is dead at (" + z.getCol() + ", " + z.getRow() + ")");
-                // TODO (گام ۸): drop سکه/الماس/گلدان و غذای گیاه (زامبی درخشان).
+
                 return true;
             }
             return false;
         });
     }
 
-    /** زامبی‌ای که از ستون ۰ رد شد: بارِ اول چمن‌زن، بارِ دوم باخت. */
     private void handleLawnmowersAndLoss() {
         for (Zombie z : new ArrayList<>(game.getZombies())) {
             if (z.getPosition().x >= 0) continue;
@@ -296,7 +252,7 @@ public class GameEngine {
                 final int lane = z.getRow();
                 game.getZombies().removeIf(zz -> zz.getRow() == lane);
                 mower.setIsactive(false);
-                // TODO (گام ۸): زامبی‌های رئیس نباید کشته شوند.
+
             } else {
                 System.out.println("The zombie ate your brain; LOSER!!!");
                 game.setWon(false);
@@ -309,24 +265,19 @@ public class GameEngine {
     private void checkWin() {
         boolean allWavesSpawned = game.getCurrentWaveIndex() >= waveCount - 1;
         if (allWavesSpawned && game.getZombies().isEmpty()) {
-            game.getStats().setFinalSun(game.getSunAmount());   // hook کوئست (خورشیدِ لحظه‌ی برد)
+            game.getStats().setFinalSun(game.getSunAmount());
             System.out.println("Dear humanz, zis is not done yet; we will come back to eat your brainz, humanz.");
             game.setWon(true);
             game.setGameOver(true);
         }
     }
 
-    // ======================================================================
-    //  کاشت / برداشت / غذا  (اعتبارسنجی؛ رفتار در onTick گیاه)
-    // ======================================================================
-
-    /** کاشت گیاه با بررسی خورشید و cooldown و قابل‌کاشت بودن خانه. */
     public String plantPlant(Plants type, int col, int row) {
         Cell cell = game.getField().getCell(col, row);
         if (cell == null) return "Invalid tile.";
 
         if (cell.getType() == CellType.WATER) {
-            // روی آب فقط گیاهِ آبی/برگ؛ گیاهِ معمولی نیاز به برگِ زیرش دارد
+
             boolean aquatic = type.getTags().contains(PlantTag.WATER);
             boolean isLilyPad = (type == Plants.LILY_PAD);
             boolean hasLilyPad = cell.getPlants().stream().anyMatch(p -> p.getType() == Plants.LILY_PAD);
@@ -345,14 +296,13 @@ public class GameEngine {
         game.spendSun(type.getCost());
         game.getPlants().add(plant);
         cell.getPlants().add(plant);
-        game.getStats().recordPlantPlanted(type, col, row);   // hook کوئست
+        game.getStats().recordPlantPlanted(type, col, row);
         game.startCooldown(type);
         plant.onPlanted(game);
-        if (game.getBoostedTypes().contains(type)) plant.onPlantFood(game); // اثر boost فوری
+        if (game.getBoostedTypes().contains(type)) plant.onPlantFood(game);
         return "Planted " + type.getName() + " at (" + col + ", " + row + ").";
     }
 
-    /** برداشتن گیاه از یک خانه. */
     public String pluckPlant(int col, int row) {
         Cell cell = game.getField().getCell(col, row);
         if (cell == null || cell.getPlants().isEmpty()) return "No plant here.";
@@ -361,7 +311,6 @@ public class GameEngine {
         return "Plucked.";
     }
 
-    /** استفاده از غذای گیاه روی خانه. */
     public String feedPlant(int col, int row) {
         Cell cell = game.getField().getCell(col, row);
         if (cell == null || cell.getPlants().isEmpty()) return "No plant here.";
@@ -399,15 +348,10 @@ public class GameEngine {
         }
     }
 
-    // ======================================================================
-    //  تقلب‌ها
-    // ======================================================================
-
     public void cheatAddSun(int n)    { game.addSun(n); }
     public void cheatRemoveCooldown() { game.clearAllCooldowns(); }
     public void cheatAddPlantFood()   { game.setPlantFoodCount(game.getPlantFoodCount() + 1); }
 
-    /** دستور release the nuke: کشتن همه‌ی زامبی‌های نقشه. */
     public void releaseNuke() {
         for (Zombie z : game.getZombies()) {
             System.out.println("Zombie of type " + z.getClass().getSimpleName()

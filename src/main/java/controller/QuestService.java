@@ -8,7 +8,6 @@ import model.User;
 import model.quest.QuestManager;
 import model.quest.QuestState;
 
-
 public class QuestService {
 
     private final QuestRepository questRepo = new QuestRepository();
@@ -18,7 +17,7 @@ public class QuestService {
     public void onLevelEnd(Game game, boolean won) {
         User user = App.getInstance().getLoggedInUser();
         if (user == null || user.getUsername() == null) {
-            return;   
+            return;
         }
         QuestState state = questRepo.load(user.getUsername());
         manager.onLevelEnd(user, state.getQuests(), game, won);

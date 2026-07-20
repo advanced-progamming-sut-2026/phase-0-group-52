@@ -4,17 +4,10 @@ import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
-/**
- * ساختِ لیستِ کوئستِ یک کاربر و تخصیصِ «متغیر»ها، و ریستِ روزانه.
- *
- * <p>مقادیرِ متغیر فعلاً ثابت‌اند (برای تعیّن و تست‌پذیری)؛ در صورتِ نیاز به تنوعِ روزانه می‌توان
- * در {@link #assignVariable} تصادفی‌سازی کرد.</p>
- */
 public final class QuestFactory {
 
     private QuestFactory() {}
 
-    /** لیستِ کاملِ ۱۹ کوئست برای یک کاربرِ جدید (با متغیرهای تخصیص‌یافته و تاریخِ امروز). */
     public static QuestState buildDefault(String username) {
         List<QuestProgress> list = new ArrayList<>();
         for (QuestDef def : QuestDef.values()) {
@@ -25,7 +18,6 @@ public final class QuestFactory {
         return new QuestState(username, LocalDate.now().toString(), list);
     }
 
-    /** تخصیصِ «متغیر»ِ نمونه به کوئست‌های متغیر‌دار. */
     public static void assignVariable(QuestProgress qp) {
         switch (qp.getDef()) {
             case DAILY_SUN:
@@ -55,12 +47,11 @@ public final class QuestFactory {
                 qp.setVarInt(2);
                 break;
             default:
-                // بدونِ متغیر
+
                 break;
         }
     }
 
-    /** ریستِ روزانه: کوئست‌های DAILY صفر و متغیرشان دوباره تخصیص می‌شود؛ MAIN/EPIC دست‌نخورده می‌مانند. */
     public static void resetDaily(QuestState state) {
         for (QuestProgress qp : state.getQuests()) {
             if (qp.getDef().isDaily()) {
