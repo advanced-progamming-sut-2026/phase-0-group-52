@@ -5,10 +5,6 @@ import model.Game;
 import model.Vec2;
 import model.entities.plants.Plant;
 
-/**
- * زامبیِ پایه: فقط راه می‌رود و جلوترین گیاهِ ردیف را می‌خورد.
- * پوششِ زامبی معمولی و انواع زره‌دار (مخروطی/سطلی/بلوکی/شوالیه) با تنظیم armorHp. دسته‌بندی کاربر.
- */
 public class BasicZombie extends Zombie {
 
     public BasicZombie(Zombies data, int line, Vec2 position, ChapterType chapter, ZombieType type) {

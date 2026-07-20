@@ -15,18 +15,10 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-/**
- * مخزنِ وضعیتِ کوئستِ کاربران در فایلِ خارجیِ {@code quests.json} (هم‌الگو با {@link UserRepository}).
- * stateless: هر متد فایل را تازه می‌خواند/می‌نویسد.
- */
 public class QuestRepository {
 
     private static final Path FILE = Paths.get("quests.json");
 
-    /**
-     * وضعیتِ کوئستِ کاربر را برمی‌گرداند؛ اگر وجود نداشت می‌سازد و ذخیره می‌کند، و در صورتِ عوض‌شدنِ
-     * روز، ریستِ روزانه را اعمال و ذخیره می‌کند.
-     */
     public synchronized QuestState load(String username) {
         List<QuestState> all = readAll();
         QuestState found = null;
@@ -65,10 +57,6 @@ public class QuestRepository {
         }
         writeAll(all);
     }
-
-    // ======================================================================
-    //  خواندن/نوشتنِ فایل
-    // ======================================================================
 
     private List<QuestState> readAll() {
         List<QuestState> result = new ArrayList<>();
@@ -109,10 +97,6 @@ public class QuestRepository {
         }
     }
 
-    // ======================================================================
-    //  نگاشتِ QuestState ↔ JSON
-    // ======================================================================
-
     private QuestState fromMap(Map<?, ?> m) {
         QuestState state = new QuestState();
         state.setUsername(Json.str(m, "username"));
@@ -139,7 +123,7 @@ public class QuestRepository {
         try {
             def = QuestDef.valueOf(defName);
         } catch (IllegalArgumentException | NullPointerException e) {
-            return null;   // کوئستِ ناشناخته (نسخه‌ی قدیمی) → نادیده
+            return null;
         }
         QuestProgress qp = new QuestProgress(def);
         qp.setProgress(Json.doubleOf(m, "progress"));

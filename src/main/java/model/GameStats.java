@@ -5,7 +5,6 @@ import model.entities.plants.Plants;
 import java.util.ArrayList;
 import java.util.List;
 
-
 public class GameStats {
 
     public static final class PlantPlacement {
@@ -33,8 +32,6 @@ public class GameStats {
 
     private final List<PlantPlacement> plantsPlanted = new ArrayList<>();
     private final List<Integer> killTicks = new ArrayList<>();
-
-    // ======================================================================
 
     public void recordKill(int tick) {
         zombiesKilled++;
@@ -66,8 +63,6 @@ public class GameStats {
     public void setFinalSun(int finalSun) {
         this.finalSun = finalSun;
     }
-
-    // ======================================================================
 
     public int getZombiesKilled() { return zombiesKilled; }
     public int getSunCollected() { return sunCollected; }
