@@ -13,7 +13,6 @@ import model.quest.RewardService;
 import java.util.ArrayList;
 import java.util.List;
 
-
 public class TravelLogMenuController {
 
     private final QuestRepository repository = new QuestRepository();
@@ -31,8 +30,6 @@ public class TravelLogMenuController {
         }
         return false;
     }
-
-
 
     public void showPage(String page) {
         this.currentPage = page.trim().toLowerCase();
@@ -86,7 +83,6 @@ public class TravelLogMenuController {
             System.out.println("- " + m.name());
         }
     }
-
 
     public void showCurrentMenu() {
         System.out.println("You are now in the Travel Log menu. Current page: " + currentPage);

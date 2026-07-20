@@ -2,7 +2,6 @@ package model.quest;
 
 import model.User;
 
-
 public class RewardService {
 
     public void grant(User user, QuestProgress qp) {
@@ -29,10 +28,10 @@ public class RewardService {
         int amount;
         switch (qp.getDef()) {
             case DAILY_SUN:
-                amount = qp.getTarget() / 100;                 // sun/۱۰۰
+                amount = qp.getTarget() / 100;
                 break;
             case THRIFTY_HERBIVORE:
-                amount = Math.max(0, 20 - qp.getVarInt());     // ۲۰−n
+                amount = Math.max(0, 20 - qp.getVarInt());
                 break;
             default:
                 amount = qp.getDef().getRewardAmount();
@@ -41,10 +40,6 @@ public class RewardService {
         return amount;
     }
 
-    /**
-     * بازکردنِ یک گیاهِ تصادفی (پاداشِ Unlockable).
-     * TODO(تیم): وابسته به سیستمِ آنلاکِ کالکشن؛ پس از آماده‌شدن، اینجا صدا زده و یک خبر در NewsList ثبت شود.
-     */
     private void unlockRandomPlant(User user) {
     }
 }

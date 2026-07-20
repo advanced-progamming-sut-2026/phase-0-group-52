@@ -1,6 +1,5 @@
 package model.quest;
 
-
 public class QuestProgress {
 
     private QuestDef def;
