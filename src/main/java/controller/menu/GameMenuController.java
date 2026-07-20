@@ -388,6 +388,14 @@ public class GameMenuController {
             case "spawn-zombie":
                 handleSpawnZombie(game, command);
                 break;
+            case "sun":
+                int amount = 100;
+                if (parts.length >= 3) {
+                    try { amount = Integer.parseInt(parts[2]); } catch (NumberFormatException ignored) {}
+                }
+                game.setSunAmount(game.getSunAmount() + amount);
+                System.out.println("Added " + amount + " sun. Total sun: " + game.getSunAmount() + ".");
+                break;
             default:
                 view.showError("Unknown cheat: " + parts[1]);
         }
