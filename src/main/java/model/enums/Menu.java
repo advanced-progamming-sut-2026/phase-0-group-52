@@ -16,7 +16,8 @@ public enum Menu {
     NewsMenu(new NewsMenu()),
     CollectionMenu(new CollectionMenu()),
     GreenhouseMenu(new GreenhouseMenu()),
-    TravelLogMenu(new TravelLogMenu());
+    TravelLogMenu(new TravelLogMenu()),
+    ChoosePlantMenu(new ChoosePlantMenu());
     private final AppMenu menu;
     Menu(AppMenu menu){
         this.menu = menu;
