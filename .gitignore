@@ -188,3 +188,7 @@ failsafe-reports/
 # - checkstyle.xml
 
 # - pmd-ruleset.xml
+
+users.json
+pvz_database.db
+*.db

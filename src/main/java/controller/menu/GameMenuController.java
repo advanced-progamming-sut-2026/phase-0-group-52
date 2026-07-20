@@ -1,5 +1,6 @@
 package controller.menu;
 
+import controller.Navigation;
 import model.App;
 import model.Game;
 import model.GameField;
@@ -41,10 +42,20 @@ public class GameMenuController {
 
     private final App app;
     private final GameMenu view;
+    private model.GameLoop loop;
+    private Game loopGame;
 
     public GameMenuController(App app) {
         this.app = app;
         this.view = new GameMenu();
+    }
+
+    private model.GameLoop gameLoop(Game game) {
+        if (loop == null || loopGame != game) {
+            loop = new model.GameLoop(game);
+            loopGame = game;
+        }
+        return loop;
     }
 
     public GameMenu getView() { return view; }
@@ -85,8 +96,74 @@ public class GameMenuController {
             case "start":
                 handleStartWaves(command);
                 break;
+            case "tick":
+                handleTick(parts);
+                break;
+            case "collect":
+                handleCollect(parts);
+                break;
             default:
                 view.showError("Unknown command: " + parts[0]);
+        }
+    }
+
+    private void handleTick(String[] parts) {
+        Game game = requireGame();
+        if (game == null) return;
+        if (game.isGameOver()) { view.showError("The level is already over."); return; }
+        int n = 1;
+        if (parts.length >= 2) {
+            try { n = Integer.parseInt(parts[1]); } catch (NumberFormatException ignored) {}
+        }
+        model.GameLoop gl = gameLoop(game);
+        for (int i = 0; i < n && !game.isGameOver(); i++) {
+            String result = gl.step(game);
+            if (result != null) {
+                System.out.println(result);
+                onLevelEnd(game);
+                return;
+            }
+        }
+        System.out.println("Tick " + game.getCurrentTick() + " | Sun: " + game.getSunAmount()
+                + " | Zombies: " + game.getZombies().size()
+                + " | Wave: " + (game.getCurrentWaveIndex() + 1) + "/" + game.getWaves().size());
+    }
+
+    private void onLevelEnd(Game game) {
+        if (game.isWon() && app.getCurrentuser() != null) {
+            model.User u = app.getCurrentuser();
+            u.setCoins(u.getCoins() + 500);
+            int score = game.getStats().getZombiesKilled() * 10 + game.getSunAmount();
+            if (score > u.getMaxPoint()) u.setMaxPoint(score);
+            System.out.println("Reward: 500 coins, score " + score + ". Use 'menu enter chapter_menu' to continue.");
+        } else {
+            System.out.println("Use 'menu enter chapter_menu' to try again.");
+        }
+        new controller.QuestService().onLevelEnd(game, game.isWon());
+    }
+
+    private void handleCollect(String[] parts) {
+        Game game = requireGame();
+        if (game == null) return;
+        if (parts.length < 2 || !parts[1].equals("sun")) {
+            view.showError("Usage: collect sun");
+            return;
+        }
+        int total = 0, count = 0;
+        for (int i = game.getSuns().size() - 1; i >= 0; i--) {
+            model.entities.Sun s = game.getSuns().get(i);
+            if (!s.isFalling()) {
+                total += s.getAmount();
+                count++;
+                game.getSuns().remove(i);
+            }
+        }
+        if (count == 0) {
+            System.out.println("No sun on the ground to collect yet.");
+        } else {
+            game.setSunAmount(game.getSunAmount() + total);
+            game.getStats().addSunCollected(total);
+            System.out.println("Collected " + count + " sun (+" + total + "). Total sun: " + game.getSunAmount() + ".");
         }
     }
 
@@ -96,14 +173,8 @@ public class GameMenuController {
             return;
         }
         if (parts.length >= 3 && parts[1].equals("enter")) {
-            try {
-                MenuType target = MenuType.fromName(parts[2]);
-                if (target == null) throw new IllegalArgumentException();
-                app.setCurrentmenu(target);
-                if (target.toMenu() != null) app.setCurrentMenu(target.toMenu());
-            } catch (IllegalArgumentException e) {
-                view.showError("Unknown menu: " + parts[2]);
-            }
+            String navError = Navigation.enter(app, parts[2]);
+            if (navError != null) view.showError(navError);
             return;
         }
         view.showError("Usage: menu show current  |  menu enter <menu_name>");
@@ -169,6 +240,7 @@ public class GameMenuController {
         PlantData.applyUpgrades(plant, plantLevel);
         cell.getPlants().add(plant);
         game.getPlants().add(plant);
+        game.getStats().recordPlantPlanted(type, x - 1, y - 1);
         if (!conveyor && !game.isCooldownsRemoved()) game.startCooldown(type);
         plant.onPlanted(game);
         view.showPlanted(type.getName(), x, y);
@@ -313,6 +385,14 @@ public class GameMenuController {
                 break;
             case "spawn-zombie":
                 handleSpawnZombie(game, command);
+                break;
+            case "sun":
+                int amount = 100;
+                if (parts.length >= 3) {
+                    try { amount = Integer.parseInt(parts[2]); } catch (NumberFormatException ignored) {}
+                }
+                game.setSunAmount(game.getSunAmount() + amount);
+                System.out.println("Added " + amount + " sun. Total sun: " + game.getSunAmount() + ".");
                 break;
             default:
                 view.showError("Unknown cheat: " + parts[1]);

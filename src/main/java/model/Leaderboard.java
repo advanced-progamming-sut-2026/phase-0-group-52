@@ -1,6 +1,6 @@
 package model;
 
-import model.UserRepository;
+import database.UserRepository;
 
 import java.util.ArrayList;
 import java.util.Collections;

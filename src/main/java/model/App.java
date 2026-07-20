@@ -1,6 +1,6 @@
 package model;
 
-import database.DataBaseManager;
+import database.UserRepository;
 import model.enums.Menu;
 import view.AppMenu;
 
@@ -23,6 +23,8 @@ public class App {
     private Minigame minigame;
     private final Greenhouse greenhouse = new Greenhouse();
     private final Shop shop = new Shop();
+    private final java.util.List<model.entities.plants.Plants> plantSelection = new ArrayList<>();
+    private final java.util.Set<model.entities.plants.Plants> boostedSelection = new java.util.HashSet<>();
 
     public App(Game game, ArrayList<User> users, User currentuser, MenuType currentmenu, Minigame minigame) {
         this.game = game;
@@ -33,8 +35,6 @@ public class App {
     }
 
     private App(){
-        DataBaseManager.initializeDatabase();
-
         UserRepository repository = new UserRepository();
         User rememberedUser = repository.getRememberedUser();
 
@@ -60,6 +60,8 @@ public class App {
 
     public Greenhouse getGreenhouse() { return greenhouse; }
     public Shop getShop() { return shop; }
+    public java.util.List<model.entities.plants.Plants> getPlantSelection() { return plantSelection; }
+    public java.util.Set<model.entities.plants.Plants> getBoostedSelection() { return boostedSelection; }
 
     public User getLoggedInUser() { return loggedInUser; }
     public void setLoggedInUser(User user) { loggedInUser = user; this.currentuser = user; }

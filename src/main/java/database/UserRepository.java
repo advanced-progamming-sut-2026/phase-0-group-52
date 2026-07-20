@@ -12,12 +12,9 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
-
 public class UserRepository {
 
     private static final Path FILE = Paths.get("users.json");
-
-    // ======================================================================
 
     public synchronized boolean register(User user) {
         List<User> users = readAll();
@@ -69,6 +66,21 @@ public class UserRepository {
             }
         }
         return null;
+    }
+
+    public synchronized List<User> getAllUsers() {
+        return readAll();
+    }
+
+    public synchronized int getPassedLevels(int userId) {
+        for (User u : readAll()) {
+            if (u.getId() == userId) {
+                int chapter = Math.max(1, u.getLastChapter());
+                int level = Math.max(1, u.getLastLevel());
+                return (chapter - 1) * 4 + (level - 1);
+            }
+        }
+        return 0;
     }
 
     public synchronized void updatePassword(String username, String passwordHash) {
@@ -133,9 +145,6 @@ public class UserRepository {
         return false;
     }
 
-    // ======================================================================
-
-
     private int nextId(List<User> users) {
         int max = 0;
         for (User u : users) {
@@ -183,10 +192,6 @@ public class UserRepository {
         }
     }
 
-    // ======================================================================
-    //  نگاشتِ User ↔ JSON
-    // ======================================================================
-
     private String toJson(User u) {
         StringBuilder sb = new StringBuilder();
         sb.append('{');
@@ -211,7 +216,7 @@ public class UserRepository {
         str(sb, "lastWonGame", u.getLastWonGame());
         num(sb, "difficultyLevel", u.getDifficultyLevel());
         bool(sb, "stayLoggedIn", u.isStayLoggedIn());
-        // حذفِ کاماىِ انتهایی
+
         if (sb.charAt(sb.length() - 1) == ',') {
             sb.setLength(sb.length() - 1);
         }
@@ -245,8 +250,6 @@ public class UserRepository {
         return u;
     }
 
-    // ---- کمکی‌های نوشتن ----
-
     private void str(StringBuilder sb, String key, String value) {
         sb.append('"').append(key).append("\":");
         if (value == null) {
@@ -264,7 +267,6 @@ public class UserRepository {
     private void bool(StringBuilder sb, String key, boolean value) {
         sb.append('"').append(key).append("\":").append(value).append(',');
     }
-
 
     private static String strOf(Map<?, ?> m, String key) { return Json.str(m, key); }
 

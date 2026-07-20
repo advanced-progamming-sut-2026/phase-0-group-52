@@ -1,5 +1,6 @@
 package controller.menu;
 
+import controller.Navigation;
 import model.App;
 import model.news.NewsList;
 import view.MenuType;
@@ -66,13 +67,7 @@ public class NewsMenuController {
             view.showError("Usage: menu enter <menu_name>");
             return;
         }
-        try {
-            MenuType target = MenuType.fromName(parts[2]);
-            if (target == null) throw new IllegalArgumentException();
-            app.setCurrentmenu(target);
-            if (target.toMenu() != null) app.setCurrentMenu(target.toMenu());
-        } catch (IllegalArgumentException e) {
-            view.showError("Unknown menu: " + parts[2]);
-        }
+        String navError = Navigation.enter(app, parts[2]);
+        if (navError != null) view.showError(navError);
     }
 }

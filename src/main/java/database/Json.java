@@ -5,20 +5,14 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
-/**
- * ابزارِ کوچکِ JSON بدونِ وابستگیِ خارجی — مشترک بین مخزن‌های فایل‌محور (User/Quest).
- * از subsetِ استاندارد پشتیبانی می‌کند: object / array / string / number / true / false / null.
- */
 public final class Json {
 
     private Json() {}
 
-    /** رشته‌ی JSON را به ساختارِ Map/List/String/Double/Boolean/null تبدیل می‌کند. */
     public static Object parse(String text) {
         return new Parser(text).parseValue();
     }
 
-    /** فرارگذاریِ کاراکترهای خاصِ یک رشته برای نوشتن داخلِ JSON. */
     public static String escape(String s) {
         StringBuilder b = new StringBuilder();
         for (int i = 0; i < s.length(); i++) {
@@ -40,8 +34,6 @@ public final class Json {
         return b.toString();
     }
 
-    // ---- helperهای خواندن از Map ----
-
     public static String str(Map<?, ?> m, String key) {
         Object v = m.get(key);
         return (v == null) ? null : v.toString();
@@ -61,10 +53,6 @@ public final class Json {
         Object v = m.get(key);
         return (v instanceof Boolean) && (Boolean) v;
     }
-
-    // ======================================================================
-    //  پارسرِ recursive-descent
-    // ======================================================================
 
     private static final class Parser {
         private final String src;
@@ -97,7 +85,7 @@ public final class Json {
                 skipWhitespace();
                 String key = parseString();
                 skipWhitespace();
-                pos++;                       // ':'
+                pos++;
                 map.put(key, parseValue());
                 skipWhitespace();
                 char c = src.charAt(pos++);
@@ -122,7 +110,7 @@ public final class Json {
 
         private String parseString() {
             StringBuilder b = new StringBuilder();
-            pos++;                           // '"' آغازین
+            pos++;
             while (true) {
                 char c = src.charAt(pos++);
                 if (c == '"') { break; }
