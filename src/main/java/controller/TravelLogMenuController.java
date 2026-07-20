@@ -32,7 +32,12 @@ public class TravelLogMenuController {
     }
 
     public void showPage(String page) {
-        this.currentPage = page.trim().toLowerCase();
+        String p = page.trim().toLowerCase();
+        if (!p.equals("daily") && !p.equals("main") && !p.equals("epic") && !p.equals("minigame")) {
+            System.out.println("Error: Unknown page: " + page + ". Pages: daily, main, epic, minigame.");
+            return;
+        }
+        this.currentPage = p;
         showCurrentPage();
     }
 

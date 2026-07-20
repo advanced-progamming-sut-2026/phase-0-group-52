@@ -191,10 +191,8 @@ public class SignupMenuController {
     }
 
     public Result enterMenu(String menuName) {
-        if (!menuName.equalsIgnoreCase("login")) {
-            return new Result(false, "You can only enter the login menu from the signup menu.\n", null);
-        }
-        App.getInstance().setCurrentMenu(Menu.LoginMenu);
+        String err = Navigation.enter(App.getInstance(), menuName);
+        if (err != null) return new Result(false, err + "\n", null);
         return new Result(true, "", null);
     }
 

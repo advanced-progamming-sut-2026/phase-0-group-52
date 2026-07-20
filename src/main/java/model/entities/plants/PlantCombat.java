@@ -96,13 +96,24 @@ public final class PlantCombat {
         for (int i = game.getZombies().size() - 1; i >= 0; i--) {
             Zombie z = game.getZombies().get(i);
             if (z.isDead()) {
+                game.getStats().recordKill(game.getCurrentTick());
+                if (z.getCol() <= 0 && !hasActiveMower(game, z.getRow()))
+                    game.getStats().recordKillAtColZeroNoMower();
                 z.onDeath(game);
                 game.getZombies().remove(i);
             }
         }
     }
 
+    private static boolean hasActiveMower(Game game, int row) {
+        if (game.getField() == null) return false;
+        for (model.entities.Lawnmower lm : game.getField().getLawnmowers())
+            if (lm.getLine() == row && lm.isIsactive()) return true;
+        return false;
+    }
+
     public static void removePlant(Game game, Plant plant) {
+        game.getStats().recordPlantLost();
         game.getPlants().remove(plant);
         if (game.getField() != null) {
             Cell cell = game.getField().getCell(plant.getCol(), plant.getRow());
