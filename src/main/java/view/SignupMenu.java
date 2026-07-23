@@ -1,6 +1,6 @@
 package view;
 
-import controller.SignupMenuController;
+import controller.menu.SignupMenuController;
 import model.Result;
 import model.enums.commands.SignUpCommands;
 

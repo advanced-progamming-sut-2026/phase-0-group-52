@@ -20,7 +20,7 @@ public class PianistZombie extends WalkingZombie {
 
     @Override
     public void onTick(Game game) {
-        shuffleTimer += 1;
+        shuffleTimer += model.Game.SECONDS_PER_TICK;
         if (shuffleTimer >= SHUFFLE_INTERVAL) {
             shuffleTimer = 0;
             shuffleZombies(game);

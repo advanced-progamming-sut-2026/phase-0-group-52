@@ -1,6 +1,6 @@
 package view;
 
-import controller.LoginMenuController;
+import controller.menu.LoginMenuController;
 import model.Result;
 import model.enums.commands.LoginCommands;
 import java.util.Scanner;

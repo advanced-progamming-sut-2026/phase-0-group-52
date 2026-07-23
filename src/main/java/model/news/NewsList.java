@@ -8,6 +8,11 @@ public class NewsList {
 
     public NewsList() {
         this.newslist = new ArrayList<>();
+        addNews("Welcome to Plants vs. Zombies! Defend your lawn against the zombie horde.");
+        addNews("The Travel Log now tracks daily, main, and epic quests with rewards.");
+        addNews("Tip: upgrade your plants in the greenhouse to boost damage, health, and speed.");
+        addNews("Five minigames are available: Beghouled, Vasebreaker, Wallnut Bowling, I-Zombie, and Zombotany.");
+        addNews("Special levels unlocked: Conveyor Belt, Save Our Seeds, Dead Line, Timed War, and more.");
     }
 
     public void addNews(String content) {

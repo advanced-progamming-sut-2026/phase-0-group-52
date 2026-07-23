@@ -22,7 +22,7 @@ public class PeashooterZombie extends WalkingZombie {
     @Override
     public void onTick(Game game) {
         if (!isHypnotized()) {
-            shotTimer += 1;
+            shotTimer += model.Game.SECONDS_PER_TICK;
             while (shotTimer >= SHOT_INTERVAL) {
                 shotTimer -= SHOT_INTERVAL;
                 shoot(game);

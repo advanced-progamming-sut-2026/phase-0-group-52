@@ -1,5 +1,7 @@
-package controller;
+package controller.menu;
 
+import controller.HashUtil;
+import controller.Navigation;
 import database.UserRepository;
 import model.App;
 import model.Result;

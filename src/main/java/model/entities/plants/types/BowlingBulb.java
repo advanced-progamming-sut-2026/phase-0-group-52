@@ -23,7 +23,7 @@ public class BowlingBulb extends Shooter {
     @Override
     public void onTick(Game game) {
         if (isFrozen()) return;
-        actionTimer += 1;
+        actionTimer += model.Game.SECONDS_PER_TICK;
         if (actionTimer < DELAY[nextBulb]) return;
         Zombie target = PlantCombat.frontmostAhead(game, getRow(), getCol());
         if (target == null) return;

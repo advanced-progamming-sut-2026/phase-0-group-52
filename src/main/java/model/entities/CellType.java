@@ -8,7 +8,8 @@ public enum CellType {
     SLIPPERY_DOWN,
     FROZEN,
     LOW_GROUND,
-    NECROMANCY;
+    NECROMANCY,
+    CRATER;
 
     public boolean isPlantable() {
         return this == NORMAL || this == LOW_GROUND || this == NECROMANCY;

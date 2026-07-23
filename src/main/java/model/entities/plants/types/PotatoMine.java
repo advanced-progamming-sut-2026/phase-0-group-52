@@ -25,7 +25,7 @@ public class PotatoMine extends Explosive {
     public void onTick(Game game) {
         if (isFrozen()) return;
         if (!isArmed()) {
-            armTimer += 1;
+            armTimer += model.Game.SECONDS_PER_TICK;
             return;
         }
         if (!PlantCombat.zombiesOnCell(game, getCol(), getRow()).isEmpty()) {
