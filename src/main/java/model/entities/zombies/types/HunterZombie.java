@@ -20,7 +20,7 @@ public class HunterZombie extends WalkingZombie {
     @Override
     public void onTick(Game game) {
         if (!isHypnotized()) {
-            throwTimer += 1;
+            throwTimer += model.Game.SECONDS_PER_TICK;
             if (throwTimer >= THROW_INTERVAL) {
                 throwTimer = 0;
                 throwIce(game);

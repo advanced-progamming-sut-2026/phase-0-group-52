@@ -39,6 +39,8 @@ public class GameMenuController {
             Pattern.compile("^show\\s+tile\\s+status\\s+-l\\s*\\(\\s*(\\d+)\\s*,\\s*(\\d+)\\s*\\)$");
     private static final Pattern SPAWN_CMD =
             Pattern.compile("^cheat\\s+spawn-zombie\\s+-t\\s+(\\S+)\\s+-l\\s*\\(?\\s*(\\d+)\\s*,\\s*(\\d+)\\s*\\)?$");
+    private static final Pattern COLLECT_LOC =
+            Pattern.compile("^collect\\s+sun\\s+-l\\s*\\(\\s*(\\d+)\\s*,\\s*(\\d+)\\s*\\)$");
 
     private final App app;
     private final GameMenu view;
@@ -99,6 +101,9 @@ public class GameMenuController {
             case "tick":
                 handleTick(parts);
                 break;
+            case "advance":
+                handleAdvanceTime(parts);
+                break;
             case "collect":
                 handleCollect(parts);
                 break;
@@ -108,13 +113,26 @@ public class GameMenuController {
     }
 
     private void handleTick(String[] parts) {
-        Game game = requireGame();
-        if (game == null) return;
-        if (game.isGameOver()) { view.showError("The level is already over."); return; }
         int n = 1;
         if (parts.length >= 2) {
             try { n = Integer.parseInt(parts[1]); } catch (NumberFormatException ignored) {}
         }
+        advanceTicks(n);
+    }
+
+    private void handleAdvanceTime(String[] parts) {
+        int n = 1;
+        for (int i = 1; i + 1 < parts.length; i++)
+            if (parts[i].equals("-t")) {
+                try { n = Integer.parseInt(parts[i + 1]); } catch (NumberFormatException ignored) {}
+            }
+        advanceTicks(n);
+    }
+
+    private void advanceTicks(int n) {
+        Game game = requireGame();
+        if (game == null) return;
+        if (game.isGameOver()) { view.showError("The level is already over."); return; }
         model.GameLoop gl = gameLoop(game);
         for (int i = 0; i < n && !game.isGameOver(); i++) {
             String result = gl.step(game);
@@ -146,7 +164,12 @@ public class GameMenuController {
         Game game = requireGame();
         if (game == null) return;
         if (parts.length < 2 || !parts[1].equals("sun")) {
-            view.showError("Usage: collect sun");
+            view.showError("Usage: collect sun  |  collect sun -l (<x>, <y>)");
+            return;
+        }
+        Matcher m = COLLECT_LOC.matcher(String.join(" ", parts));
+        if (m.matches()) {
+            collectAt(game, Integer.parseInt(m.group(1)), Integer.parseInt(m.group(2)));
             return;
         }
         int total = 0, count = 0;
@@ -165,6 +188,37 @@ public class GameMenuController {
             game.getStats().addSunCollected(total);
             System.out.println("Collected " + count + " sun (+" + total + "). Total sun: " + game.getSunAmount() + ".");
         }
+    }
+
+    private void collectAt(Game game, int x, int y) {
+        int col = x - 1, row = y - 1;
+        for (int i = game.getSuns().size() - 1; i >= 0; i--) {
+            model.entities.Sun s = game.getSuns().get(i);
+            if (s.getCol() == col && s.getRow() == row) {
+                if (s.isFalling() && s.getType() == model.entities.SunType.RADIOACTIVE) {
+                    game.getSuns().remove(i);
+                    detonateRadioactive(game, col, row);
+                    return;
+                }
+                game.getSuns().remove(i);
+                game.setSunAmount(game.getSunAmount() + s.getAmount());
+                game.getStats().addSunCollected(s.getAmount());
+                System.out.println("Collected sun (+" + s.getAmount() + "). Total sun: " + game.getSunAmount() + ".");
+                return;
+            }
+        }
+        System.out.println("No sun at (" + x + ", " + y + ").");
+    }
+
+    private void detonateRadioactive(Game game, int col, int row) {
+        for (Zombie z : model.entities.plants.PlantCombat.zombiesInArea(game, col, row, 2))
+            z.takeDamage(150);
+        model.entities.plants.PlantCombat.removeDeadZombies(game);
+        if (game.getField() != null)
+            for (Plant p : new ArrayList<Plant>(game.getPlants()))
+                if (Math.abs(p.getCol() - col) <= 1 && Math.abs(p.getRow() - row) <= 1)
+                    p.takeDamage(80);
+        System.out.println("Radioactive sun exploded at (" + (col + 1) + ", " + (row + 1) + ")!");
     }
 
     private void handleMenu(String[] parts) {
@@ -195,6 +249,10 @@ public class GameMenuController {
         }
         if (game.getLevel() != null && !game.getLevel().isPlantAllowed(type)) {
             view.showError(type.getName() + " is not available in this level.");
+            return;
+        }
+        if (!game.getChosenPlants().isEmpty() && !game.getChosenPlants().contains(type)) {
+            view.showError(type.getName() + " was not in your chosen plants for this level.");
             return;
         }
         int x = Integer.parseInt(m.group(2));
@@ -241,7 +299,8 @@ public class GameMenuController {
         cell.getPlants().add(plant);
         game.getPlants().add(plant);
         game.getStats().recordPlantPlanted(type, x - 1, y - 1);
-        if (!conveyor && !game.isCooldownsRemoved()) game.startCooldown(type);
+        if (!conveyor && !game.isCooldownsRemoved())
+            game.startCooldown(type, PlantData.effectiveRecharge(type, plantLevel));
         plant.onPlanted(game);
         view.showPlanted(type.getName(), x, y);
         if (app.getCurrentuser() != null && app.getCurrentuser().getStoredBoosts().remove(type)) {
@@ -386,6 +445,15 @@ public class GameMenuController {
             case "spawn-zombie":
                 handleSpawnZombie(game, command);
                 break;
+            case "add":
+                int suns = 100;
+                for (int i = 2; i + 1 < parts.length; i++)
+                    if (parts[i].equals("-n")) {
+                        try { suns = Integer.parseInt(parts[i + 1]); } catch (NumberFormatException ignored) {}
+                    }
+                game.setSunAmount(game.getSunAmount() + suns);
+                System.out.println("Added " + suns + " sun. Total sun: " + game.getSunAmount() + ".");
+                break;
             case "sun":
                 int amount = 100;
                 if (parts.length >= 3) {
@@ -442,6 +510,11 @@ public class GameMenuController {
             view.showMap(game);
             return;
         }
+        if (parts.length >= 2 && parts[1].equals("sun")) {
+            System.out.println("Sun: " + game.getSunAmount()
+                    + " | Plant food: " + game.getPlantFoodCount() + "/" + Game.MAX_PLANT_FOOD);
+            return;
+        }
         if (parts.length >= 3 && parts[1].equals("plants") && parts[2].equals("status")) {
             List<Plants> types = game.getChosenPlants().isEmpty()
                     ? Arrays.asList(Plants.values())
@@ -461,7 +534,7 @@ public class GameMenuController {
             view.showTileStatus(cell, zombiesHere, x, y);
             return;
         }
-        view.showError("Usage: show map  |  show plants status  |  show tile status -l (<x>, <y>)");
+        view.showError("Usage: show map  |  show sun  |  show plants status  |  show tile status -l (<x>, <y>)");
     }
 
     private void handleStartWaves(String command) {

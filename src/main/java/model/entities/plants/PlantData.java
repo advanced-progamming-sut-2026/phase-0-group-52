@@ -88,7 +88,17 @@ public final class PlantData {
                 plant.setHp(plant.getHp() + upgrade.getValue());
             else if (upgrade.getType().equals("BUFF_DAMAGE"))
                 plant.setAttackdamage(plant.getAttackdamage() + upgrade.getValue());
+            else if (upgrade.getType().equals("BUFF_ACTION_INTERVAL"))
+                plant.setActionInterval(Math.max(0.1, plant.getActionInterval() + upgrade.getValue()));
         }
+    }
+
+    public static int effectiveRecharge(Plants type, int level) {
+        double recharge = type.getRecharge();
+        for (PlantUpgrade upgrade : getUpgrades(type))
+            if (upgrade.getLevel() <= level && upgrade.getType().equals("BUFF_RECHARGE"))
+                recharge += upgrade.getValue();
+        return (int) Math.max(0, recharge);
     }
 
     public static String upgrade(User user, Plants type) {

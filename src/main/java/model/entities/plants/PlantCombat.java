@@ -99,6 +99,8 @@ public final class PlantCombat {
                 game.getStats().recordKill(game.getCurrentTick());
                 if (z.getCol() <= 0 && !hasActiveMower(game, z.getRow()))
                     game.getStats().recordKillAtColZeroNoMower();
+                if (game.getLevel() instanceof model.level.TimedWar)
+                    ((model.level.TimedWar) game.getLevel()).onZombieKilled();
                 z.onDeath(game);
                 game.getZombies().remove(i);
             }
@@ -114,6 +116,10 @@ public final class PlantCombat {
 
     public static void removePlant(Game game, Plant plant) {
         game.getStats().recordPlantLost();
+        if (game.getLevel() instanceof model.level.LoveYourPlants)
+            ((model.level.LoveYourPlants) game.getLevel()).onPlantLost();
+        System.out.println("Plant " + plant.getType().getName() + " at ("
+                + (plant.getCol() + 1) + ", " + (plant.getRow() + 1) + ") is destroyed.");
         game.getPlants().remove(plant);
         if (game.getField() != null) {
             Cell cell = game.getField().getCell(plant.getCol(), plant.getRow());

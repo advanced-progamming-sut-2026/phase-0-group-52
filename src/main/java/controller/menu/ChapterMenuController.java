@@ -25,7 +25,8 @@ public class ChapterMenuController {
     public void handleCommand(String[] parts) {
         if (parts.length == 0) return;
         if (parts[0].equals("start")) {
-            handleStartLevel(parts);
+            if (parts.length >= 2 && parts[1].equals("special")) handleStartSpecial(parts);
+            else handleStartLevel(parts);
             return;
         }
         if (!parts[0].equals("menu")) {
@@ -58,7 +59,7 @@ public class ChapterMenuController {
                 handleCheat(parts);
                 break;
             case "leaderboard":
-                System.out.println("Leaderboard: (no records yet)");
+                handleLeaderboard(parts);
                 break;
             default:
                 view.showError("Unknown command: " + parts[1]);
@@ -92,8 +93,17 @@ public class ChapterMenuController {
             return;
         }
         currentChapter = chapter;
+        int level = 1;
+        for (int i = 5; i + 1 < parts.length; i++)
+            if (parts[i].equals("-l")) {
+                try { level = Integer.parseInt(parts[i + 1]); } catch (NumberFormatException ignored) {}
+            }
+        app.setSelectedLevel(level);
+        app.setSelectedChapter(chapter);
         view.showEnteredChapter(chapter.name());
-        System.out.println("Use 'start level [-l <number>]' to begin, or first pick plants in choose_plant_menu.");
+        System.out.println("Level " + level + " selected. Now pick your deck: 'menu enter choose_plant_menu'"
+                + " (up to " + (level <= 1 ? ChoosePlantMenuController.FIRST_LEVEL_SLOTS
+                : ChoosePlantMenuController.OTHER_LEVEL_SLOTS) + " plants), then 'start' there.");
     }
 
     private void handleStartLevel(String[] parts) {
@@ -102,8 +112,8 @@ public class ChapterMenuController {
             return;
         }
         ChapterType chapter = currentChapter;
-        int levelNumber = 1;
-        for (int i = 1; i + 1 < parts.length; i += 2) {
+        int levelNumber = app.getSelectedLevel();
+        for (int i = 1; i + 1 < parts.length; i++) {
             if (parts[i].equals("-c")) {
                 try { chapter = ChapterType.valueOf(parts[i + 1].toUpperCase()); }
                 catch (IllegalArgumentException e) { view.showError("Invalid chapter: " + parts[i + 1]); return; }
@@ -111,8 +121,14 @@ public class ChapterMenuController {
                 try { levelNumber = Integer.parseInt(parts[i + 1]); } catch (NumberFormatException ignored) {}
             }
         }
+        app.setSelectedLevel(levelNumber);
         if (chapter == null) {
             view.showError("Enter a chapter first: menu enter chapter -c <chapter>");
+            return;
+        }
+        if (app.getPlantSelection().isEmpty()) {
+            view.showError("Pick your plant deck first: 'menu enter choose_plant_menu', "
+                    + "choose plants, then 'start'.");
             return;
         }
         Game game = LevelBuilder.build(app, chapter, levelNumber);
@@ -126,7 +142,69 @@ public class ChapterMenuController {
         System.out.println("Level started in " + chapter + " (level " + levelNumber
                 + "). Starting sun: " + game.getSunAmount() + ".");
         System.out.println("Commands: plant plant -t <type> -l (x, y) | collect sun | tick [n]"
-                + " | show map | show plants status | feed | cheat | zombies info | menu enter <menu>");
+                + " | show sun | show map | show plants status | feed | cheat | zombies info | menu enter <menu>");
+    }
+
+    private void handleLeaderboard(String[] parts) {
+        String column = "score";
+        boolean ascending = false;
+        for (int i = 2; i < parts.length; i++) {
+            if (parts[i].equals("-s") && i + 1 < parts.length) column = parts[i + 1].toLowerCase();
+            else if (parts[i].equals("-a")) ascending = true;
+            else if (parts[i].equals("-d")) ascending = false;
+        }
+        java.util.List<model.Leaderboard.Entry> entries = new model.Leaderboard().getEntries(column, ascending);
+        System.out.println("== Leaderboard (by " + column + (ascending ? ", asc" : ", desc") + ") ==");
+        System.out.printf("%-4s %-16s %-7s %-18s %-10s %-7s%n",
+                "#", "Username", "Score", "Progress", "Minigames", "Quests");
+        int rank = 1;
+        for (model.Leaderboard.Entry e : entries) {
+            User u = e.getUser();
+            System.out.printf("%-4d %-16s %-7d %-18s %-10d %-7d%n", rank++, u.getUsername(),
+                    u.getMaxPoint(), e.getProgressText(), u.getMiniGamesPlayed(), u.getQuestNonDailyNum());
+        }
+        if (entries.isEmpty()) System.out.println("(no players yet)");
+        System.out.println("Sort: menu leaderboard -s <score|level|minigames|daily|quests> [-a|-d]");
+    }
+
+    private void handleStartSpecial(String[] parts) {
+        if (app.getCurrentuser() == null) {
+            view.showError("No user is logged in.");
+            return;
+        }
+        ChapterType chapter = currentChapter;
+        int levelNumber = app.getSelectedLevel();
+        String special = null;
+        for (int i = 2; i + 1 < parts.length; i++) {
+            if (parts[i].equals("-t")) special = parts[i + 1];
+            else if (parts[i].equals("-c")) {
+                try { chapter = ChapterType.valueOf(parts[i + 1].toUpperCase()); }
+                catch (IllegalArgumentException e) { view.showError("Invalid chapter: " + parts[i + 1]); return; }
+            } else if (parts[i].equals("-l")) {
+                try { levelNumber = Integer.parseInt(parts[i + 1]); } catch (NumberFormatException ignored) {}
+            }
+        }
+        if (chapter == null) {
+            view.showError("Enter a chapter first: menu enter chapter -c <chapter>");
+            return;
+        }
+        if (special == null) {
+            view.showError("Usage: start special -t <type>. Types: " + LevelBuilder.specialTypes());
+            return;
+        }
+        Game game = LevelBuilder.buildSpecial(app, chapter, levelNumber, special);
+        if (game == null) {
+            view.showError("Unknown special level: " + special + ". Types: " + LevelBuilder.specialTypes());
+            return;
+        }
+        game.setApp(app);
+        app.setGame(game);
+        app.setCurrentmenu(MenuType.GAME_MENU);
+        app.setCurrentMenu(Menu.GameMenu);
+        System.out.println("Special level '" + special + "' started in " + chapter
+                + ". Starting sun: " + game.getSunAmount() + ".");
+        System.out.println("Commands: plant plant -t <type> -l (x, y) | collect sun | tick [n]"
+                + " | show map | start zombie waves | menu enter <menu>");
     }
 
     private void handleCheat(String[] parts) {
