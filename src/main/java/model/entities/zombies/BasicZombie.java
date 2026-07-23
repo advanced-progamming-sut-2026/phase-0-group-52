@@ -17,7 +17,12 @@ public class BasicZombie extends Zombie {
         java.util.ArrayList<Plant> here = game.getPlantsAt(getCol(), getRow());
         if (!here.isEmpty()) {
             setState(ZombieState.ATTACKING);
-            here.get(here.size() - 1).takeDamage(getDamage());
+            Plant target = here.get(here.size() - 1);
+            target.takeDamage(getDamage() * model.Game.SECONDS_PER_TICK);
+            if (target.isDead()) {
+                target.onDeath(game);
+                model.entities.plants.PlantCombat.removePlant(game, target);
+            }
         } else {
             setState(ZombieState.WALKING);
             move(game);

@@ -15,6 +15,7 @@ import java.util.Set;
 public class Game {
     public static final int MAX_PLANT_FOOD = 3;
     public static final int TICKS_PER_SECOND = 10;
+    public static final double SECONDS_PER_TICK = 1.0 / TICKS_PER_SECOND;
 
     public static int secondsToTicks(double seconds) {
         return (int) Math.round(seconds * TICKS_PER_SECOND);
@@ -99,6 +100,10 @@ public class Game {
 
     public void startCooldown(Plants type) {
         cooldowns.put(type, (double) type.getRecharge());
+    }
+
+    public void startCooldown(Plants type, double seconds) {
+        cooldowns.put(type, seconds);
     }
 
     public void clearAllCooldowns() {

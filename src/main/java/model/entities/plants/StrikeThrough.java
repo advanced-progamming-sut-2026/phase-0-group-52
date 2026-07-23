@@ -13,8 +13,8 @@ public class StrikeThrough extends Plant {
     @Override
     public void onTick(Game game) {
         if (isFrozen()) return;
-        actionTimer += 1;
-        double interval = getType().getActionInterval();
+        actionTimer += model.Game.SECONDS_PER_TICK;
+        double interval = getActionInterval();
         if (interval <= 0) interval = 1;
         while (actionTimer >= interval) {
             actionTimer -= interval;

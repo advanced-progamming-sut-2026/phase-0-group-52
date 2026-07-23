@@ -42,7 +42,7 @@ public abstract class WalkingZombie extends Zombie {
     }
 
     protected void eat(Game game, Plant target) {
-        target.takeDamage(getDamage());
+        target.takeDamage(getDamage() * model.Game.SECONDS_PER_TICK);
         if (target.isDead()) {
             target.onDeath(game);
             PlantCombat.removePlant(game, target);

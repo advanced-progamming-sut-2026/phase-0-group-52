@@ -28,7 +28,7 @@ public class TurquoiseZombie extends WalkingZombie {
     public void onTick(Game game) {
         if (!lasered && !isHypnotized() && seesPlant(game)) {
             if (stealTimer < STEAL_DURATION) {
-                stealTimer += 1;
+                stealTimer += model.Game.SECONDS_PER_TICK;
                 int take = Math.min(STEAL_PER_SECOND, game.getSunAmount());
                 game.setSunAmount(game.getSunAmount() - take);
                 stolenSun += take;
