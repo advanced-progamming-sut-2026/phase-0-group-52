@@ -14,8 +14,7 @@ import java.util.Map;
 
 public class GameLoop {
 
-    public static final int WAVE_INTERVAL = 30;
-    public static final int SKY_SUN_INTERVAL = 100;
+    public static final int WAVE_INTERVAL = 15 * Game.TICKS_PER_SECOND;
 
     private final ChapterMechanics mechanics;
     private int skySunTimer = 0;
@@ -32,12 +31,20 @@ public class GameLoop {
 
         if (skyEnabled(game)) {
             skySunTimer++;
-            if (skySunTimer >= SKY_SUN_INTERVAL) {
+            if (skySunTimer >= skyIntervalTicks(game)) {
                 skySunTimer = 0;
                 dropSkySun(game);
             }
         }
-        for (Sun s : game.getSuns()) s.tickFall();
+        for (Sun s : game.getSuns()) {
+            boolean wasFalling = s.isFalling();
+            s.tickFall();
+            if (wasFalling && !s.isFalling()) {
+                if (s.getType() == SunType.RADIOACTIVE) s.convertToNormal();
+                System.out.println("Sun reached the ground at position ("
+                        + (s.getCol() + 1) + ", " + (s.getRow() + 1) + ")");
+            }
+        }
 
         for (Plant p : new ArrayList<Plant>(game.getPlants())) p.onTick(game);
         for (Zombie z : new ArrayList<Zombie>(game.getZombies())) z.onTick(game);
@@ -48,7 +55,7 @@ public class GameLoop {
             for (Lawnmower lm : game.getField().getLawnmowers()) lm.triggerIfZombieAtHouse(game);
 
         for (Map.Entry<Plants, Double> e : game.getCooldowns().entrySet())
-            if (e.getValue() > 0) e.setValue(Math.max(0, e.getValue() - 1));
+            if (e.getValue() > 0) e.setValue(Math.max(0, e.getValue() - Game.SECONDS_PER_TICK));
 
         PlantCombat.removeDeadZombies(game);
         spawnWaves(game, tick);
@@ -71,12 +78,19 @@ public class GameLoop {
         return true;
     }
 
+    private double skyIntervalTicks(Game game) {
+        double t = game.getCurrentTick() * Game.SECONDS_PER_TICK;
+        double x = Math.max(6 + 0.05 * t, 12);
+        return x * Game.TICKS_PER_SECOND;
+    }
+
     private void dropSkySun(Game game) {
         SunType type = SunType.pickRandom(PlantCombat.RANDOM.nextDouble());
         int col = PlantCombat.RANDOM.nextInt(GameField.COLS);
         int row = PlantCombat.RANDOM.nextInt(GameField.ROWS);
         game.getSuns().add(new Sun(type, new Vec2(col, row)));
-        System.out.println("A " + (type == SunType.NORMAL ? "" : type + " ") + "sun is falling from the sky.");
+        System.out.println("New " + type + " sun is dropping at position ("
+                + (col + 1) + ", " + (row + 1) + ")");
     }
 
     private void spawnWaves(Game game, int tick) {

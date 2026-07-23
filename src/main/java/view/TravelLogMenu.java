@@ -1,6 +1,6 @@
 package view;
 
-import controller.TravelLogMenuController;
+import controller.menu.TravelLogMenuController;
 import model.App;
 import model.enums.commands.TravelLogCommands;
 import minigame.Minigame;

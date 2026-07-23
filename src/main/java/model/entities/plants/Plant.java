@@ -9,6 +9,7 @@ public abstract class Plant implements PlantInterface {
     private int price;
     private Vec2 position;
     private double attackdamage;
+    private double actionInterval;
 
     protected double actionTimer = 0;
 
@@ -26,7 +27,11 @@ public abstract class Plant implements PlantInterface {
         this.price = price;
         this.position = position;
         this.attackdamage = attackdamage;
+        this.actionInterval = type.getActionInterval();
     }
+
+    public double getActionInterval() { return actionInterval; }
+    public void setActionInterval(double actionInterval) { this.actionInterval = actionInterval; }
 
     public void onTick(Game game) {}
 

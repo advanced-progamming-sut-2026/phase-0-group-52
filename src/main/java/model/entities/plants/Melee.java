@@ -13,8 +13,9 @@ public class Melee extends Plant {
     @Override
     public void onTick(Game game) {
         if (isFrozen()) return;
-        actionTimer += 1;
-        double interval = getType().getActionInterval();
+        if (getType() == Plants.CHOMPER) { chomp(game); return; }
+        actionTimer += model.Game.SECONDS_PER_TICK;
+        double interval = getActionInterval();
         if (interval <= 0) interval = 1;
         while (actionTimer >= interval) {
             actionTimer -= interval;
@@ -22,14 +23,45 @@ public class Melee extends Plant {
         }
     }
 
+    private void chomp(Game game) {
+        if (actionTimer > 0) {
+            actionTimer -= model.Game.SECONDS_PER_TICK;
+            return;
+        }
+        Zombie front = null;
+        for (Zombie z : game.getZombies()) {
+            if (z.isDead() || z.getRow() != getRow()) continue;
+            double dx = z.getPosition().x - getCol();
+            if (dx >= 0 && dx <= 1.5 && (front == null || z.getPosition().x < front.getPosition().x))
+                front = z;
+        }
+        if (front != null) {
+            front.takeDamage(getAttackdamage());
+            PlantCombat.removeDeadZombies(game);
+            actionTimer = getActionInterval();
+        }
+    }
+
     private void strike(Game game) {
+        if (getType() == Plants.WASABI_WHIP && game.getField() != null)
+            PlantCombat.meltFrozenInRow(game, getRow(), 0);
+        if (getType() == Plants.KIWIBEAST && getAttackdamage() < getType().getDamage() * 3)
+            setAttackdamage(getAttackdamage() + getType().getDamage() * 0.5);
         boolean aoe = getType().getTags().contains(PlantTag.AOE);
-        int radius = aoe ? 1 : 0;
         boolean hit = false;
-        for (Zombie z : PlantCombat.zombiesInArea(game, getCol(), getRow(), radius)) {
-            if (!aoe && Math.abs(z.getPosition().x - getCol()) > 1) continue;
-            z.takeDamage(getAttackdamage());
-            hit = true;
+        if (aoe) {
+            for (Zombie z : PlantCombat.zombiesInArea(game, getCol(), getRow(), 1)) {
+                z.takeDamage(getAttackdamage());
+                hit = true;
+            }
+        } else {
+            for (Zombie z : game.getZombies()) {
+                if (z.isDead() || z.getRow() != getRow()) continue;
+                if (Math.abs(z.getCol() - getCol()) <= 1) {
+                    z.takeDamage(getAttackdamage());
+                    hit = true;
+                }
+            }
         }
         if (hit) PlantCombat.removeDeadZombies(game);
     }

@@ -25,7 +25,7 @@ public class ProspectorZombie extends WalkingZombie {
     @Override
     public void onTick(Game game) {
         if (!reversed && !dynamiteDoused) {
-            fuseTimer += 1;
+            fuseTimer += model.Game.SECONDS_PER_TICK;
             if (fuseTimer >= FUSE_TIME) {
                 reversed = true;
                 getPosition().x = 0;
