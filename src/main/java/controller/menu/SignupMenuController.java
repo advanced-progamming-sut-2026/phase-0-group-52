@@ -1,10 +1,11 @@
-package controller;
+package controller.menu;
 
+import controller.HashUtil;
+import controller.Navigation;
 import database.UserRepository;
 import model.App;
 import model.Result;
 import model.User;
-import model.enums.Menu;
 import model.enums.SecurityQuestions;
 
 import model.enums.commands.SignUpCommands;

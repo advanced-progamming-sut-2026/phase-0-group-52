@@ -24,7 +24,7 @@ public class JalapenoZombie extends WalkingZombie {
     @Override
     public void onTick(Game game) {
         if (!exploded && !isHypnotized()) {
-            fuseTimer += 1;
+            fuseTimer += model.Game.SECONDS_PER_TICK;
             if (fuseTimer >= FUSE_TIME) {
                 exploded = true;
                 for (Plant p : new ArrayList<Plant>(game.getPlants())) {

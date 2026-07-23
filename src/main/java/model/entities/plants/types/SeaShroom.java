@@ -24,7 +24,7 @@ public class SeaShroom extends Shooter {
     @Override
     public void onTick(Game game) {
         if (isFrozen()) return;
-        lifeTimer += 1;
+        lifeTimer += model.Game.SECONDS_PER_TICK;
         if (lifeTimer >= LIFESPAN) {
             setHp(0);
             PlantCombat.removePlant(game, this);

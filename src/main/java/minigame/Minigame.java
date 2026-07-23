@@ -38,6 +38,9 @@ public class Minigame {
             case I_ZOMBIE:
                 new IZombie(level, user).run(scanner);
                 break;
+            case ZOMBOTANY:
+                new Zombotany(level, user).run(scanner);
+                break;
             default:
                 System.out.println(type + " level " + level
                         + " needs the realtime game engine and will be playable in the next phase.");

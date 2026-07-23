@@ -22,7 +22,7 @@ public class PrimalPotatoMine extends Explosive {
     public void onTick(Game game) {
         if (isFrozen()) return;
         if (armTimer < ARM_TIME) {
-            armTimer += 1;
+            armTimer += model.Game.SECONDS_PER_TICK;
             return;
         }
         if (!PlantCombat.zombiesOnCell(game, getCol(), getRow()).isEmpty()) {

@@ -2,8 +2,12 @@ package controller.menu;
 
 import controller.Navigation;
 import model.App;
+import model.ChapterType;
+import model.Game;
+import model.LevelBuilder;
 import model.User;
 import model.entities.plants.Plants;
+import model.enums.Menu;
 import view.MenuType;
 
 import java.util.List;
@@ -12,7 +16,12 @@ import java.util.regex.Pattern;
 
 public class ChoosePlantMenuController {
 
-    public static final int MAX_SLOTS = 7;
+    public static final int FIRST_LEVEL_SLOTS = 5;
+    public static final int OTHER_LEVEL_SLOTS = 8;
+
+    private int maxSlots() {
+        return app.getSelectedLevel() <= 1 ? FIRST_LEVEL_SLOTS : OTHER_LEVEL_SLOTS;
+    }
 
     private static final Pattern CHOOSE = Pattern.compile("^choose\\s+-t\\s+(.+)$");
     private static final Pattern REMOVE = Pattern.compile("^remove\\s+-t\\s+(.+)$");
@@ -46,13 +55,39 @@ public class ChoosePlantMenuController {
             app.getPlantSelection().clear();
             app.getBoostedSelection().clear();
             System.out.println("Selection cleared.");
+        } else if (command.equals("start") || command.equals("start level")) {
+            startLevel();
         } else {
             System.out.println("invalid command");
         }
     }
 
+    private void startLevel() {
+        if (app.getCurrentuser() == null) { System.out.println("Error: No user is logged in."); return; }
+        ChapterType chapter = app.getSelectedChapter();
+        if (chapter == null) {
+            System.out.println("Error: Enter a chapter first (chapter_menu).");
+            return;
+        }
+        if (app.getPlantSelection().isEmpty()) {
+            System.out.println("Error: Choose at least one plant before starting.");
+            return;
+        }
+        int levelNumber = app.getSelectedLevel();
+        Game game = LevelBuilder.build(app, chapter, levelNumber);
+        for (Plants p : app.getBoostedSelection())
+            app.getCurrentuser().getStoredBoosts().add(p);
+        app.getBoostedSelection().clear();
+        game.setApp(app);
+        app.setGame(game);
+        app.setCurrentmenu(MenuType.GAME_MENU);
+        app.setCurrentMenu(Menu.GameMenu);
+        System.out.println("Level started in " + chapter + " (level " + levelNumber
+                + ") with " + app.getPlantSelection().size() + " plant(s). Starting sun: " + game.getSunAmount() + ".");
+    }
+
     private void showAvailable() {
-        System.out.println("Available plants (choose up to " + MAX_SLOTS + "):");
+        System.out.println("Available plants (choose up to " + maxSlots() + "):");
         List<Plants> selection = app.getPlantSelection();
         for (Plants p : Plants.values()) {
             String mark = selection.contains(p) ? " [chosen]" : "";
@@ -66,7 +101,7 @@ public class ChoosePlantMenuController {
             System.out.println("No plants chosen yet. (use: choose -t <plant>)");
             return;
         }
-        System.out.println("Chosen plants (" + selection.size() + "/" + MAX_SLOTS + "):");
+        System.out.println("Chosen plants (" + selection.size() + "/" + maxSlots() + "):");
         for (Plants p : selection) {
             boolean boosted = app.getBoostedSelection().contains(p);
             System.out.println("  " + p.getName() + (boosted ? " [boosted]" : ""));
@@ -78,12 +113,12 @@ public class ChoosePlantMenuController {
         if (type == null) { System.out.println("Error: Unknown plant: " + name); return; }
         List<Plants> selection = app.getPlantSelection();
         if (selection.contains(type)) { System.out.println(type.getName() + " is already chosen."); return; }
-        if (selection.size() >= MAX_SLOTS) {
-            System.out.println("Error: All " + MAX_SLOTS + " slots are full. Remove one first.");
+        if (selection.size() >= maxSlots()) {
+            System.out.println("Error: All " + maxSlots() + " slots are full. Remove one first.");
             return;
         }
         selection.add(type);
-        System.out.println("Chose " + type.getName() + " (" + selection.size() + "/" + MAX_SLOTS + ").");
+        System.out.println("Chose " + type.getName() + " (" + selection.size() + "/" + maxSlots() + ").");
     }
 
     private void remove(String name) {

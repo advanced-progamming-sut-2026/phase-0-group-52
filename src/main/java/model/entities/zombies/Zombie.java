@@ -42,7 +42,7 @@ public abstract class Zombie {
     public void onDeath(Game game) {}
 
     public void move(Game game) {
-        position.x -= speed;
+        position.x -= speed * model.Game.SECONDS_PER_TICK;
     }
 
     public void takeDamage(double dmg) {
