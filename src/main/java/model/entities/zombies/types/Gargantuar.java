@@ -19,8 +19,8 @@ public class Gargantuar extends WalkingZombie {
     public void onTick(Game game) {
         if (!impThrown && getHp() <= Zombies.ZOMBIE_GARGANTUAR.getHp() / 2) {
             impThrown = true;
-
             game.getZombies().add(new Imp(getRow(), new Vec2(2, getRow()), getChapter(), getType()));
+            System.out.println("The Gargantuar threw an Imp into row " + (getRow() + 1) + "!");
         }
         super.onTick(game);
     }

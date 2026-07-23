@@ -28,7 +28,7 @@ public class WizardZombie extends WalkingZombie {
             super.onTick(game);
             return;
         }
-        castTimer += 1;
+        castTimer += model.Game.SECONDS_PER_TICK;
         if (castTimer >= CAST_INTERVAL) {
             castTimer = 0;
             castOnRandomPlant(game);
