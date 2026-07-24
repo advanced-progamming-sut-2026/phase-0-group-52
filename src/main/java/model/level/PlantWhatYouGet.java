@@ -12,18 +12,30 @@ public class PlantWhatYouGet extends Level {
     private boolean wavesStarted = false;
 
     public PlantWhatYouGet(int levelnumber, ChapterType chaptertype,
-            ArrayList<Plants> allowedplants, AttackPattern attackPattern) {
+                           ArrayList<Plants> allowedplants, AttackPattern attackPattern) {
         super(levelnumber, chaptertype, allowedplants, attackPattern);
     }
 
-    public int getStartingSun() { return startingSun; }
-    public void setStartingSun(int startingSun) { this.startingSun = startingSun; }
+    public int getStartingSun() {
+        return startingSun;
+    }
 
-    public boolean isWavesStarted() { return wavesStarted; }
-    public void startWaves() { wavesStarted = true; }
+    public void setStartingSun(int startingSun) {
+        this.startingSun = startingSun;
+    }
+
+    public boolean isWavesStarted() {
+        return wavesStarted;
+    }
+
+    public void startWaves() {
+        wavesStarted = true;
+    }
 
     @Override
-    public boolean isSkySunEnabled() { return false; }
+    public boolean isSkySunEnabled() {
+        return false;
+    }
 
     @Override
     public boolean isPlantAllowed(Plants type) {

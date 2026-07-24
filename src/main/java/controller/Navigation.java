@@ -5,7 +5,8 @@ import view.MenuType;
 
 public final class Navigation {
 
-    private Navigation() {}
+    private Navigation() {
+    }
 
     public static String enter(App app, String targetName) {
         MenuType target = MenuType.fromName(targetName);

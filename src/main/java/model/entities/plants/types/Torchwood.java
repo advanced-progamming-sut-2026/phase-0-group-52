@@ -13,7 +13,9 @@ public class Torchwood extends Modifier {
         super(Plants.TORCHWOOD, position);
     }
 
-    public boolean isBlueFlame() { return blueFlame; }
+    public boolean isBlueFlame() {
+        return blueFlame;
+    }
 
     @Override
     public void onPlantFood(Game game) {

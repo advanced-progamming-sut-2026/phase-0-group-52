@@ -14,21 +14,38 @@ public class PlantUpgrade {
         this.specialTag = specialTag;
     }
 
-    public int getLevel() { return level; }
-    public String getType() { return type; }
-    public double getValue() { return value; }
-    public String getSpecialTag() { return specialTag; }
+    public int getLevel() {
+        return level;
+    }
+
+    public String getType() {
+        return type;
+    }
+
+    public double getValue() {
+        return value;
+    }
+
+    public String getSpecialTag() {
+        return specialTag;
+    }
 
     public String describe() {
         String amount = value == Math.floor(value)
                 ? String.valueOf((long) value) : String.valueOf(value);
         switch (type) {
-            case "BUFF_HP":              return "+" + amount + " HP";
-            case "BUFF_DAMAGE":          return "+" + amount + " damage";
-            case "BUFF_COST":            return amount + " sun cost";
-            case "BUFF_RECHARGE":        return amount + "s recharge";
-            case "BUFF_ACTION_INTERVAL": return amount + "s action interval";
-            default:                     return specialTag.isEmpty() ? type : specialTag;
+            case "BUFF_HP":
+                return "+" + amount + " HP";
+            case "BUFF_DAMAGE":
+                return "+" + amount + " damage";
+            case "BUFF_COST":
+                return amount + " sun cost";
+            case "BUFF_RECHARGE":
+                return amount + "s recharge";
+            case "BUFF_ACTION_INTERVAL":
+                return amount + "s action interval";
+            default:
+                return specialTag.isEmpty() ? type : specialTag;
         }
     }
 }

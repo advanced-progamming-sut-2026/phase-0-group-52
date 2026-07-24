@@ -15,7 +15,8 @@ public final class PlantCombat {
 
     public static final Random RANDOM = new Random();
 
-    private PlantCombat() {}
+    private PlantCombat() {
+    }
 
     public static Zombie frontmostAhead(Game game, int row, double fromX) {
         Zombie best = null;

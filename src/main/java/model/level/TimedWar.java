@@ -15,18 +15,33 @@ public class TimedWar extends Level {
     private int kills = 0;
 
     public TimedWar(int levelnumber, ChapterType chaptertype,
-            ArrayList<Plants> allowedplants, AttackPattern attackPattern) {
+                    ArrayList<Plants> allowedplants, AttackPattern attackPattern) {
         super(levelnumber, chaptertype, allowedplants, attackPattern);
     }
 
-    public void setDuration(double duration) { this.duration = duration; }
-    public void setTargetKills(int targetKills) { this.targetKills = targetKills; }
-    public void setTargetSun(int targetSun) { this.targetSun = targetSun; }
+    public void setDuration(double duration) {
+        this.duration = duration;
+    }
 
-    public double getRemainingTime() { return Math.max(0, duration - elapsed); }
-    public int getKills() { return kills; }
+    public void setTargetKills(int targetKills) {
+        this.targetKills = targetKills;
+    }
 
-    public void onZombieKilled() { kills++; }
+    public void setTargetSun(int targetSun) {
+        this.targetSun = targetSun;
+    }
+
+    public double getRemainingTime() {
+        return Math.max(0, duration - elapsed);
+    }
+
+    public int getKills() {
+        return kills;
+    }
+
+    public void onZombieKilled() {
+        kills++;
+    }
 
     @Override
     public void onTick(Game game) {

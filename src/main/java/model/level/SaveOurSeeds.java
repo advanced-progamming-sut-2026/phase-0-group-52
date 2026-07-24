@@ -13,13 +13,17 @@ public class SaveOurSeeds extends Level {
     private final List<Plant> protectedPlants = new ArrayList<Plant>();
 
     public SaveOurSeeds(int levelnumber, ChapterType chaptertype,
-            ArrayList<Plants> allowedplants, AttackPattern attackPattern) {
+                        ArrayList<Plants> allowedplants, AttackPattern attackPattern) {
         super(levelnumber, chaptertype, allowedplants, attackPattern);
     }
 
-    public List<Plant> getProtectedPlants() { return protectedPlants; }
+    public List<Plant> getProtectedPlants() {
+        return protectedPlants;
+    }
 
-    public void protectPlant(Plant plant) { protectedPlants.add(plant); }
+    public void protectPlant(Plant plant) {
+        protectedPlants.add(plant);
+    }
 
     @Override
     public String checkDefeat(Game game) {

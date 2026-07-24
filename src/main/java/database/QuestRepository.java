@@ -19,6 +19,10 @@ public class QuestRepository {
 
     private static final Path FILE = Paths.get("quests.json");
 
+    private static String quote(String value) {
+        return (value == null) ? "null" : "\"" + Json.escape(value) + "\"";
+    }
+
     public synchronized QuestState load(String username) {
         List<QuestState> all = readAll();
         QuestState found = null;
@@ -153,20 +157,15 @@ public class QuestRepository {
     }
 
     private String questJson(QuestProgress qp) {
-        StringBuilder sb = new StringBuilder();
-        sb.append('{');
-        sb.append("\"def\":").append(quote(qp.getDef().name())).append(',');
-        sb.append("\"progress\":").append(qp.getProgress()).append(',');
-        sb.append("\"target\":").append(qp.getTarget()).append(',');
-        sb.append("\"completed\":").append(qp.isCompleted()).append(',');
-        sb.append("\"claimed\":").append(qp.isClaimed()).append(',');
-        sb.append("\"varInt\":").append(qp.getVarInt()).append(',');
-        sb.append("\"varStr\":").append(quote(qp.getVarStr()));
-        sb.append('}');
-        return sb.toString();
-    }
-
-    private static String quote(String value) {
-        return (value == null) ? "null" : "\"" + Json.escape(value) + "\"";
+        String sb = '{' +
+                "\"def\":" + quote(qp.getDef().name()) + ',' +
+                "\"progress\":" + qp.getProgress() + ',' +
+                "\"target\":" + qp.getTarget() + ',' +
+                "\"completed\":" + qp.isCompleted() + ',' +
+                "\"claimed\":" + qp.isClaimed() + ',' +
+                "\"varInt\":" + qp.getVarInt() + ',' +
+                "\"varStr\":" + quote(qp.getVarStr()) +
+                '}';
+        return sb;
     }
 }

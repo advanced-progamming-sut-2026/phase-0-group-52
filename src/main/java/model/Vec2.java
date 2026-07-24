@@ -9,8 +9,8 @@ public class Vec2 {
         this.y = y;
     }
 
-    public Vec2 addVec(Vec2 a, Vec2 b){
-        return new Vec2(a.x+b.x, a.y+b.y);
+    public Vec2 addVec(Vec2 a, Vec2 b) {
+        return new Vec2(a.x + b.x, a.y + b.y);
 
     }
 

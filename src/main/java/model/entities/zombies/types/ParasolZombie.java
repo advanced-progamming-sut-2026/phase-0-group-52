@@ -11,5 +11,7 @@ public class ParasolZombie extends WalkingZombie {
         super(Zombies.ZOMBIE_LOST_CITY_JANE, line, position, chapter, type);
     }
 
-    public boolean deflectsLobbers() { return true; }
+    public boolean deflectsLobbers() {
+        return true;
+    }
 }

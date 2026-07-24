@@ -12,13 +12,17 @@ public class LockedPlantsLevel extends Level {
     private final Set<Plants> lockedPlants = new HashSet<Plants>();
 
     public LockedPlantsLevel(int levelnumber, ChapterType chaptertype,
-            ArrayList<Plants> allowedplants, AttackPattern attackPattern) {
+                             ArrayList<Plants> allowedplants, AttackPattern attackPattern) {
         super(levelnumber, chaptertype, allowedplants, attackPattern);
     }
 
-    public Set<Plants> getLockedPlants() { return lockedPlants; }
+    public Set<Plants> getLockedPlants() {
+        return lockedPlants;
+    }
 
-    public void lockPlant(Plants plant) { lockedPlants.add(plant); }
+    public void lockPlant(Plants plant) {
+        lockedPlants.add(plant);
+    }
 
     @Override
     public boolean isPlantAllowed(Plants type) {

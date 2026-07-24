@@ -2,7 +2,7 @@ package model.entities.plants;
 
 import model.Vec2;
 
-public abstract class PlantTile{
+public abstract class PlantTile {
     private CollectionPlant type;
     private double hp;
     private int price;
@@ -17,7 +17,7 @@ public abstract class PlantTile{
         this.attackdamage = attackdamage;
     }
 
-    public void boost(){
+    public void boost() {
 
     }
 

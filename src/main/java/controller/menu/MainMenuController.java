@@ -33,7 +33,10 @@ public class MainMenuController {
                 handleEnter(parts);
                 break;
             case "logout":
-                if (app.getCurrentuser() == null) { view.showError("No user is logged in."); break; }
+                if (app.getCurrentuser() == null) {
+                    view.showError("No user is logged in.");
+                    break;
+                }
                 app.getCurrentuser().setLogged(false);
                 app.setCurrentuser(null);
                 view.showLoggedOut();

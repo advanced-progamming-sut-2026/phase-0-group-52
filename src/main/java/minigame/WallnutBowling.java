@@ -3,11 +3,7 @@ package minigame;
 import model.User;
 import model.entities.plants.PlantCombat;
 
-import java.util.ArrayList;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Queue;
-import java.util.Scanner;
+import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -17,19 +13,11 @@ public class WallnutBowling {
     public static final int COLS = 9;
     public static final int PLANT_ZONE = 3;
     public static final double ZOMBIE_HP = 190;
-
-    private enum Nut { BOWLING, EXPLODE }
-
     private static final Pattern PLANT =
             Pattern.compile("^plant\\s+-l\\s*\\(\\s*(\\d+)\\s*,\\s*(\\d+)\\s*\\)$");
-
-    private static class Zombie { int row; double x; double hp; }
-    private static class Ball { int row; double x; int dir; Nut kind; }
-
     private final List<Zombie> zombies = new ArrayList<Zombie>();
     private final List<Ball> balls = new ArrayList<Ball>();
     private final Queue<Nut> conveyor = new LinkedList<Nut>();
-
     private final User user;
     private final int level;
     private final int targetKills;
@@ -37,7 +25,6 @@ public class WallnutBowling {
     private int spawnTimer;
     private int conveyorTimer;
     private boolean over, won;
-
     public WallnutBowling(int level, User user) {
         this.level = Math.max(1, Math.min(3, level));
         this.user = user;
@@ -56,8 +43,10 @@ public class WallnutBowling {
             if (!scanner.hasNextLine()) return;
             String line = scanner.nextLine().trim();
             if (line.isEmpty()) continue;
-            if (line.equals("exit")) { System.out.println("Left Wallnut Bowling."); return; }
-            else if (line.equals("show")) render();
+            if (line.equals("exit")) {
+                System.out.println("Left Wallnut Bowling.");
+                return;
+            } else if (line.equals("show")) render();
             else if (line.equals("tick")) tick();
             else {
                 Matcher m = PLANT.matcher(line);
@@ -80,10 +69,16 @@ public class WallnutBowling {
             System.out.println("Error: You can only plant in columns 1-" + PLANT_ZONE + ".");
             return;
         }
-        if (conveyor.isEmpty()) { System.out.println("Error: The conveyor is empty. Wait (tick) for a nut."); return; }
+        if (conveyor.isEmpty()) {
+            System.out.println("Error: The conveyor is empty. Wait (tick) for a nut.");
+            return;
+        }
         Nut kind = conveyor.poll();
         Ball b = new Ball();
-        b.row = r; b.x = c; b.dir = 0; b.kind = kind;
+        b.row = r;
+        b.x = c;
+        b.dir = 0;
+        b.kind = kind;
         balls.add(b);
         System.out.println((kind == Nut.BOWLING ? "Bowling Wall-nut" : "Explode-o-nut")
                 + " rolled onto row " + y + ".");
@@ -99,14 +94,25 @@ public class WallnutBowling {
         if (spawnTimer >= 3) {
             spawnTimer = 0;
             Zombie z = new Zombie();
-            z.row = PlantCombat.RANDOM.nextInt(ROWS); z.x = COLS - 1; z.hp = ZOMBIE_HP;
+            z.row = PlantCombat.RANDOM.nextInt(ROWS);
+            z.x = COLS - 1;
+            z.hp = ZOMBIE_HP;
             zombies.add(z);
         }
         for (Ball b : new ArrayList<Ball>(balls)) moveBall(b);
         for (Zombie z : zombies) z.x -= 0.4;
         removeDead();
-        for (Zombie z : zombies) if (z.x <= 0) { over = true; won = false; return; }
-        if (kills >= targetKills) { over = true; won = true; return; }
+        for (Zombie z : zombies)
+            if (z.x <= 0) {
+                over = true;
+                won = false;
+                return;
+            }
+        if (kills >= targetKills) {
+            over = true;
+            won = true;
+            return;
+        }
         render();
     }
 
@@ -119,13 +125,18 @@ public class WallnutBowling {
         if (hit != null) {
             if (b.kind == Nut.EXPLODE) {
                 for (Zombie z : new ArrayList<Zombie>(zombies))
-                    if (Math.abs(z.row - b.row) <= 1 && Math.abs(z.x - b.x) <= 1) { z.hp = 0; }
+                    if (Math.abs(z.row - b.row) <= 1 && Math.abs(z.x - b.x) <= 1) {
+                        z.hp = 0;
+                    }
                 balls.remove(b);
                 removeDead();
                 return;
             }
             hit.hp -= ZOMBIE_HP;
-            if (hit.hp <= 0) { zombies.remove(hit); kills++; }
+            if (hit.hp <= 0) {
+                zombies.remove(hit);
+                kills++;
+            }
             b.dir = (b.dir == 0) ? (PlantCombat.RANDOM.nextBoolean() ? 1 : -1) : -b.dir;
             b.row += b.dir;
             if (b.row < 0) b.row = 1;
@@ -136,7 +147,10 @@ public class WallnutBowling {
 
     private void removeDead() {
         for (int i = zombies.size() - 1; i >= 0; i--)
-            if (zombies.get(i).hp <= 0) { zombies.remove(i); kills++; }
+            if (zombies.get(i).hp <= 0) {
+                zombies.remove(i);
+                kills++;
+            }
     }
 
     private void render() {
@@ -146,12 +160,32 @@ public class WallnutBowling {
             StringBuilder sb = new StringBuilder("  ");
             for (int c = 0; c < COLS; c++) {
                 char ch = (c < PLANT_ZONE) ? '_' : '.';
-                for (Ball b : balls) if (b.row == r && (int) Math.round(b.x) == c) ch = (b.kind == Nut.EXPLODE) ? 'X' : 'O';
-                for (Zombie z : zombies) if (z.row == r && (int) Math.round(z.x) == c) ch = 'Z';
+                for (Ball b : balls)
+                    if (b.row == r && (int) Math.round(b.x) == c) ch = (b.kind == Nut.EXPLODE) ? 'X' : 'O';
+                for (Zombie z : zombies)
+                    if (z.row == r && (int) Math.round(z.x) == c) {
+                        ch = 'Z';
+                        break;
+                    }
                 sb.append(ch).append(' ');
             }
-            System.out.println(sb.toString());
+            System.out.println(sb);
         }
         System.out.println("  _=plant zone  O=bowling nut  X=explode nut  Z=zombie");
+    }
+
+    private enum Nut {BOWLING, EXPLODE}
+
+    private static class Zombie {
+        int row;
+        double x;
+        double hp;
+    }
+
+    private static class Ball {
+        int row;
+        double x;
+        int dir;
+        Nut kind;
     }
 }

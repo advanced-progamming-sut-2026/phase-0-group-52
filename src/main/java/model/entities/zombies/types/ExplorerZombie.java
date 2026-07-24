@@ -18,11 +18,17 @@ public class ExplorerZombie extends WalkingZombie {
         super(Zombies.ZOMBIE_EXPLORER, line, position, chapter, type);
     }
 
-    public boolean isTorchLit() { return torchLit; }
+    public boolean isTorchLit() {
+        return torchLit;
+    }
 
-    public void douseTorch() { torchLit = false; }
+    public void douseTorch() {
+        torchLit = false;
+    }
 
-    public void lightTorch() { torchLit = true; }
+    public void lightTorch() {
+        torchLit = true;
+    }
 
     @Override
     public void onTick(Game game) {

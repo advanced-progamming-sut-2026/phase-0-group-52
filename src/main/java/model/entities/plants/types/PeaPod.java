@@ -17,7 +17,9 @@ public class PeaPod extends Shooter {
         super(Plants.PEA_POD, position);
     }
 
-    public int getHeads() { return heads; }
+    public int getHeads() {
+        return heads;
+    }
 
     public boolean addHead() {
         if (heads >= MAX_HEADS) return false;

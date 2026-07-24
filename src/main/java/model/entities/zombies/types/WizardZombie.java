@@ -14,9 +14,8 @@ import java.util.List;
 public class WizardZombie extends WalkingZombie {
 
     private static final double CAST_INTERVAL = 5;
-
-    private double castTimer = 0;
     private final List<Plant> transformed = new ArrayList<Plant>();
+    private double castTimer = 0;
 
     public WizardZombie(int line, Vec2 position, ChapterType chapter, ZombieType type) {
         super(Zombies.ZOMBIE_WIZARD, line, position, chapter, type);

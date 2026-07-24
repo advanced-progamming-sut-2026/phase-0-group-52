@@ -20,20 +20,34 @@ public enum MenuType {
 
     public Menu toMenu() {
         switch (this) {
-            case SIGNUP_MENU:      return Menu.SignUpMenu;
-            case GAME_MENU:        return Menu.GameMenu;
-            case CHAPTER_MENU:     return Menu.ChapterMenu;
-            case COLLECTION_MENU:  return Menu.CollectionMenu;
-            case GREENHOUSE_MENU:  return Menu.GreenhouseMenu;
-            case LOGIN_MENU:       return Menu.LoginMenu;
-            case MAIN_MENU:        return Menu.MainMenu;
-            case NETWORK_MENU:     return Menu.NetworkMenu;
-            case NEWS_MENU:        return Menu.NewsMenu;
-            case PROFILE_MEMU:     return Menu.ProfileMenu;
-            case SETTINGS_MENU:    return Menu.SettingMenu;
-            case TRAVEL_LOG_MENU:  return Menu.TravelLogMenu;
-            case CHOOSE_PLANT_MENU: return Menu.ChoosePlantMenu;
-            default:               return null;
+            case SIGNUP_MENU:
+                return Menu.SignUpMenu;
+            case GAME_MENU:
+                return Menu.GameMenu;
+            case CHAPTER_MENU:
+                return Menu.ChapterMenu;
+            case COLLECTION_MENU:
+                return Menu.CollectionMenu;
+            case GREENHOUSE_MENU:
+                return Menu.GreenhouseMenu;
+            case LOGIN_MENU:
+                return Menu.LoginMenu;
+            case MAIN_MENU:
+                return Menu.MainMenu;
+            case NETWORK_MENU:
+                return Menu.NetworkMenu;
+            case NEWS_MENU:
+                return Menu.NewsMenu;
+            case PROFILE_MEMU:
+                return Menu.ProfileMenu;
+            case SETTINGS_MENU:
+                return Menu.SettingMenu;
+            case TRAVEL_LOG_MENU:
+                return Menu.TravelLogMenu;
+            case CHOOSE_PLANT_MENU:
+                return Menu.ChoosePlantMenu;
+            default:
+                return null;
         }
     }
 }

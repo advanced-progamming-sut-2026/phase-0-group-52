@@ -19,7 +19,9 @@ public class SeaShroom extends Shooter {
         super(Plants.SEA_SHROOM, position);
     }
 
-    public void resetLife() { lifeTimer = 0; }
+    public void resetLife() {
+        lifeTimer = 0;
+    }
 
     @Override
     public void onTick(Game game) {

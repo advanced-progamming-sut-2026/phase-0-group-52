@@ -14,14 +14,19 @@ public class Minigame {
         this.level = Math.max(1, Math.min(3, level));
     }
 
-    public MinigameType getType() { return type; }
-    public int getLevel() { return level; }
-
     public static MinigameType findType(String name) {
         String normalized = name.replace("_", "").replace("-", "");
         for (MinigameType type : MinigameType.values())
             if (type.name().replace("_", "").equalsIgnoreCase(normalized)) return type;
         return null;
+    }
+
+    public MinigameType getType() {
+        return type;
+    }
+
+    public int getLevel() {
+        return level;
     }
 
     public void start(User user, Scanner scanner) {

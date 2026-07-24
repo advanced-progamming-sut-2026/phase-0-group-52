@@ -1,23 +1,7 @@
 package model;
 
-import model.entities.Cell;
-import model.entities.CellType;
-import model.entities.Lawnmower;
-import model.entities.Sun;
-import model.entities.SunType;
-import model.entities.plants.PlantTag;
-import model.entities.plants.Explosive;
-import model.entities.plants.Homing;
-import model.entities.plants.Lobber;
-import model.entities.plants.Melee;
-import model.entities.plants.Mint;
-import model.entities.plants.Modifier;
-import model.entities.plants.Plant;
-import model.entities.plants.Plants;
-import model.entities.plants.Shooter;
-import model.entities.plants.StrikeThrough;
-import model.entities.plants.SunProducer;
-import model.entities.plants.Wallnut;
+import model.entities.*;
+import model.entities.plants.*;
 import model.entities.zombies.Zombie;
 import model.entities.zombies.ZombieFactory;
 import model.entities.zombies.Zombies;
@@ -90,7 +74,7 @@ public class GameEngine {
         game.getSuns().add(new Sun(type, new Vec2(col, row)));
 
         System.out.println("New " + type.name().toLowerCase()
-            + " sun is dropping at position (" + col + ", " + row + ")");
+                + " sun is dropping at position (" + col + ", " + row + ")");
 
         game.setNextSunDropTick(t + sunDropInterval(t));
     }
@@ -101,7 +85,7 @@ public class GameEngine {
             sun.tickFall();
             if (!sun.isFalling()) {
                 System.out.println("Sun reached the ground at position ("
-                    + sun.getCol() + ", " + sun.getRow() + ")");
+                        + sun.getCol() + ", " + sun.getRow() + ")");
 
             }
         }
@@ -163,7 +147,7 @@ public class GameEngine {
             spawnedHp += pick.getHp();
 
             System.out.println("Zombie " + pick.getName() + " spawned at wave " + waveNumber
-                + " in lane " + lane + " which costed " + pick.getWaveCost() + ".");
+                    + " in lane " + lane + " which costed " + pick.getWaveCost() + ".");
         }
 
         lastWaveInitialHp = spawnedHp;
@@ -176,11 +160,11 @@ public class GameEngine {
             if (!low.isEmpty() && rng.nextDouble() < 0.3) {
                 int[] cell = low.get(rng.nextInt(low.size()));
                 System.out.println("A zombie emerged from the low beach at ("
-                    + cell[0] + ", " + cell[1] + ").");
+                        + cell[0] + ", " + cell[1] + ").");
                 return cell;
             }
         }
-        return new int[]{ game.getField().getCols(), rng.nextInt(game.getField().getRows()) };
+        return new int[]{game.getField().getCols(), rng.nextInt(game.getField().getRows())};
     }
 
     private Zombies pickWeightedZombie(double budget) {
@@ -215,7 +199,7 @@ public class GameEngine {
                 if (c != null) c.getPlants().remove(p);
                 game.getStats().recordPlantLost();
                 System.out.println("Plant " + p.getType().getName()
-                    + " at (" + p.getCol() + ", " + p.getRow() + ") is destroyed.");
+                        + " at (" + p.getCol() + ", " + p.getRow() + ") is destroyed.");
                 return true;
             }
             return false;
@@ -233,7 +217,7 @@ public class GameEngine {
                     }
                 }
                 System.out.println("Zombie of type " + z.getClass().getSimpleName()
-                    + " is dead at (" + z.getCol() + ", " + z.getRow() + ")");
+                        + " is dead at (" + z.getCol() + ", " + z.getRow() + ")");
 
                 return true;
             }
@@ -248,7 +232,7 @@ public class GameEngine {
             Lawnmower mower = game.getField().getLawnmower(z.getRow());
             if (mower != null && mower.isIsactive()) {
                 System.out.println("The lawn mower in the row " + z.getRow()
-                    + " is triggered and killed these zombies:");
+                        + " is triggered and killed these zombies:");
                 final int lane = z.getRow();
                 game.getZombies().removeIf(zz -> zz.getRow() == lane);
                 mower.setIsactive(false);
@@ -348,14 +332,22 @@ public class GameEngine {
         }
     }
 
-    public void cheatAddSun(int n)    { game.addSun(n); }
-    public void cheatRemoveCooldown() { game.clearAllCooldowns(); }
-    public void cheatAddPlantFood()   { game.setPlantFoodCount(game.getPlantFoodCount() + 1); }
+    public void cheatAddSun(int n) {
+        game.addSun(n);
+    }
+
+    public void cheatRemoveCooldown() {
+        game.clearAllCooldowns();
+    }
+
+    public void cheatAddPlantFood() {
+        game.setPlantFoodCount(game.getPlantFoodCount() + 1);
+    }
 
     public void releaseNuke() {
         for (Zombie z : game.getZombies()) {
             System.out.println("Zombie of type " + z.getClass().getSimpleName()
-                + " is dead at (" + z.getCol() + ", " + z.getRow() + ")");
+                    + " is dead at (" + z.getCol() + ", " + z.getRow() + ")");
         }
         game.getZombies().clear();
     }

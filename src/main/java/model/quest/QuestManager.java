@@ -50,11 +50,11 @@ public class QuestManager {
 
             case PLANT_PRO:
                 return onlyPlantTypeUsed(stats, Plants.valueOf(qp.getVarStr()))
-                    && stats.getZombiesKilled() >= qp.getTarget();
+                        && stats.getZombiesKilled() >= qp.getTarget();
 
             case ONLY_CACTUS:
                 return onlyPlantTypeUsed(stats, Plants.CACTUS)
-                    && stats.getZombiesKilled() >= qp.getTarget();
+                        && stats.getZombiesKilled() >= qp.getTarget();
 
             case THRIFTY_HERBIVORE:
                 return won && stats.getPlantsLost() <= qp.getVarInt();
@@ -97,7 +97,7 @@ public class QuestManager {
 
             case CLOUDY_DAY:
                 return won && allCategory(stats, PlantsCategory.SUN_PRODUCER)
-                    && countCategory(stats, PlantsCategory.SUN_PRODUCER) == 3;
+                        && countCategory(stats, PlantsCategory.SUN_PRODUCER) == 3;
 
             case ONE_COLUMN_LESS:
                 return won && columnEmpty(stats, qp.getVarInt());
@@ -114,8 +114,8 @@ public class QuestManager {
     }
 
     private boolean chapterMatches(Game game, String chapterName) {
-        return chapterName != null && game.getField() != null
-            && game.getField().getChapter().name().equalsIgnoreCase(chapterName);
+        return game.getField() != null
+                && game.getField().getChapter().name().equalsIgnoreCase(chapterName);
     }
 
     private boolean isDayLevel(Game game) {

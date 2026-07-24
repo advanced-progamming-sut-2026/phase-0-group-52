@@ -9,23 +9,6 @@ import java.util.List;
 
 public class Leaderboard {
 
-    public static class Entry {
-        private final User user;
-        private final int passedLevels;
-
-        Entry(User user, int passedLevels) {
-            this.user = user;
-            this.passedLevels = passedLevels;
-        }
-
-        public User getUser() { return user; }
-        public int getPassedLevels() { return passedLevels; }
-
-        public String getProgressText() {
-            return "chapter " + (passedLevels / 4 + 1) + " level " + (passedLevels % 4 + 1);
-        }
-    }
-
     private final UserRepository repository = new UserRepository();
 
     public List<Entry> getEntries(String column, boolean ascending) {
@@ -57,5 +40,27 @@ public class Leaderboard {
                 }
             }
         };
+    }
+
+    public static class Entry {
+        private final User user;
+        private final int passedLevels;
+
+        Entry(User user, int passedLevels) {
+            this.user = user;
+            this.passedLevels = passedLevels;
+        }
+
+        public User getUser() {
+            return user;
+        }
+
+        public int getPassedLevels() {
+            return passedLevels;
+        }
+
+        public String getProgressText() {
+            return "chapter " + (passedLevels / 4 + 1) + " level " + (passedLevels % 4 + 1);
+        }
     }
 }

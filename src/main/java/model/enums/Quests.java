@@ -1,13 +1,11 @@
 package model.enums;
 
-import model.enums.*;
-
 public enum Quests {
-    AFTABGIR_ROOZANEH("aftab gir roozaneh",QuestCategory.DAILY,Priority.MEDIUM);
+    AFTABGIR_ROOZANEH("aftab gir roozaneh", QuestCategory.DAILY, Priority.MEDIUM);
 
-    private String name;
-    private QuestCategory category;
-    private Priority priority;
+    private final String name;
+    private final QuestCategory category;
+    private final Priority priority;
 
     Quests(String name, QuestCategory category, Priority priority) {
         this.name = name;

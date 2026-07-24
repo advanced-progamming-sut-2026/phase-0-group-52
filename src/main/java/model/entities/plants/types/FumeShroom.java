@@ -16,7 +16,9 @@ public class FumeShroom extends StrikeThrough {
     }
 
     @Override
-    protected double maxRange() { return RANGE; }
+    protected double maxRange() {
+        return RANGE;
+    }
 
     @Override
     public void onPlantFood(Game game) {

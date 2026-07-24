@@ -11,7 +11,7 @@ public class Sun {
     private Vec2 position;
     private boolean falling;
     private int fallTicksRemaining;
-    private boolean fromSky;
+    private final boolean fromSky;
 
     public Sun(int amount, Vec2 position) {
         this.amount = amount;
@@ -45,17 +45,43 @@ public class Sun {
         this.amount = SunType.NORMAL.getAmount();
     }
 
-    public int getCol() { return (int) position.x; }
-    public int getRow() { return (int) position.y; }
+    public int getCol() {
+        return (int) position.x;
+    }
 
-    public int getAmount() { return amount; }
-    public void setAmount(int amount) { this.amount = amount; }
+    public int getRow() {
+        return (int) position.y;
+    }
 
-    public SunType getType() { return type; }
-    public Vec2 getPosition() { return position; }
-    public void setPosition(Vec2 position) { this.position = position; }
+    public int getAmount() {
+        return amount;
+    }
 
-    public boolean isFalling() { return falling; }
-    public int getFallTicksRemaining() { return fallTicksRemaining; }
-    public boolean isFromSky() { return fromSky; }
+    public void setAmount(int amount) {
+        this.amount = amount;
+    }
+
+    public SunType getType() {
+        return type;
+    }
+
+    public Vec2 getPosition() {
+        return position;
+    }
+
+    public void setPosition(Vec2 position) {
+        this.position = position;
+    }
+
+    public boolean isFalling() {
+        return falling;
+    }
+
+    public int getFallTicksRemaining() {
+        return fallTicksRemaining;
+    }
+
+    public boolean isFromSky() {
+        return fromSky;
+    }
 }

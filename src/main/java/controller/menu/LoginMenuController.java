@@ -10,21 +10,24 @@ import model.enums.Menu;
 import model.enums.SecurityQuestions;
 
 public class LoginMenuController {
-    private User resetPasswordUser;
-    private boolean waitingForNewPassword ;
     public UserRepository repository;
-    public LoginMenuController(){
-        this.repository=new UserRepository();
-        waitingForNewPassword=false;
+    private User resetPasswordUser;
+    private boolean waitingForNewPassword;
+
+    public LoginMenuController() {
+        this.repository = new UserRepository();
+        waitingForNewPassword = false;
     }
 
     public boolean isWaitingForNewPassword() {
         return waitingForNewPassword;
     }
+
     public Result login(String username, String password, boolean stayLoggedIn) {
         User user = repository.getUserByUsername(username);
         if (user == null) {
-            return new Result(false, "Username does not exist.\n", null);}
+            return new Result(false, "Username does not exist.\n", null);
+        }
 
         String passwordHash = HashUtil.hashPassword(password);
 
@@ -38,19 +41,20 @@ public class LoginMenuController {
         return new Result(true, "Login successful.\n", user);
     }
 
-    public Result forgetPassword(String username , String email){
+    public Result forgetPassword(String username, String email) {
         User user = repository.getUserByUsername(username);
-        if(user == null){
-            return new Result(false,"Username does not exist",null);
+        if (user == null) {
+            return new Result(false, "Username does not exist", null);
         }
-        if(!user.getEmail().equals(email)){
-            return new Result(false,"Email is incorrect.",null);
+        if (!user.getEmail().equals(email)) {
+            return new Result(false, "Email is incorrect.", null);
         }
         resetPasswordUser = user;
         return new Result(true, "Please answer your security question:\n"
-            + SecurityQuestions.getQuestionByIndex(user.getSecurityQuestion()), user);
+                + SecurityQuestions.getQuestionByIndex(user.getSecurityQuestion()), user);
     }
-    public Result answerQuestion(String answer){
+
+    public Result answerQuestion(String answer) {
         if (resetPasswordUser == null) {
             return new Result(false, "No forgot password request found.", null);
         }
@@ -62,7 +66,8 @@ public class LoginMenuController {
         waitingForNewPassword = true;
         return new Result(true, "Enter your new password:", null);
     }
-    public Result setNewPassword(String newPass){
+
+    public Result setNewPassword(String newPass) {
         String hash = HashUtil.hashPassword(newPass);
         repository.updatePassword(resetPasswordUser.getUsername(), hash);
         waitingForNewPassword = false;
@@ -70,14 +75,17 @@ public class LoginMenuController {
 
         return new Result(true, "Password changed successfully.", null);
     }
-    public Result exitMenu(){
+
+    public Result exitMenu() {
         App.getInstance().setCurrentMenu(Menu.SignUpMenu);
-        return new Result(true,"",null);
+        return new Result(true, "", null);
     }
-    public Result showCurrentMenu(){
-        return new Result(true,"You are now in the login menu.\n",null);
+
+    public Result showCurrentMenu() {
+        return new Result(true, "You are now in the login menu.\n", null);
     }
-    public Result enterMenu(String menuName){
+
+    public Result enterMenu(String menuName) {
         String err = Navigation.enter(App.getInstance(), menuName);
         if (err != null) return new Result(false, err + "\n", null);
         return new Result(true, "", null);

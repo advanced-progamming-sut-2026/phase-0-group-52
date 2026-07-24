@@ -10,6 +10,8 @@ import java.util.Map;
 import java.util.Set;
 
 public class User {
+    private final Set<Plants> storedBoosts = new HashSet<>();
+    private final Map<Plants, Integer> plantLevels = new HashMap<>();
     private String username;
     private String password;
     private String nickname;
@@ -27,10 +29,9 @@ public class User {
     private Collection collection;
     private int difficultyLevel;
     private NewsList newsList;
-    private  String passwordHash;
+    private String passwordHash;
     private int securityQuestion;
-    private  String securityAnswerHash;
-
+    private String securityAnswerHash;
     private int id;
     private String answer;
     private int mostMeowPoint;
@@ -45,17 +46,12 @@ public class User {
     private int questNonDailyNum;
     private int seedPacket;
     private int plantFoodNum;
-    private final Set<Plants> storedBoosts = new HashSet<>();
-    private final Map<Plants, Integer> plantLevels = new HashMap<>();
     private boolean stayLoggedIn;
 
     public User() {
         this.difficultyLevel = 3;
         this.newsList = new NewsList();
     }
-
-    public boolean isStayLoggedIn() { return stayLoggedIn; }
-    public void setStayLoggedIn(boolean stayLoggedIn) { this.stayLoggedIn = stayLoggedIn; }
 
     public User(String username, String passwordHash, String nickname, String email,
                 String gender, int securityQuestion, String securityAnswerHash) {
@@ -116,6 +112,14 @@ public class User {
         this.lastWonGame = lastWonGame;
         this.difficultyLevel = difficultyLevel;
         this.newsList = new NewsList();
+    }
+
+    public boolean isStayLoggedIn() {
+        return stayLoggedIn;
+    }
+
+    public void setStayLoggedIn(boolean stayLoggedIn) {
+        this.stayLoggedIn = stayLoggedIn;
     }
 
     public Set<Plants> getStoredBoosts() {
@@ -257,6 +261,10 @@ public class User {
 
     public int getSecurityQuestion() {
         return securityQuestion;
+    }
+
+    public void setSecurityQuestion(int securityQuestion) {
+        this.securityQuestion = securityQuestion;
     }
 
     public String getPasswordHash() {
@@ -401,10 +409,6 @@ public class User {
 
     public void setUsername(String username) {
         this.username = username;
-    }
-
-    public void setSecurityQuestion(int securityQuestion) {
-        this.securityQuestion = securityQuestion;
     }
 
 }

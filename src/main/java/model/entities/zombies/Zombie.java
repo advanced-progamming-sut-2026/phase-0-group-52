@@ -5,6 +5,7 @@ import model.Game;
 import model.Vec2;
 
 public abstract class Zombie {
+    protected double eatTimer = 0;
     private double hp;
     private double speed;
     private double damage;
@@ -16,9 +17,6 @@ public abstract class Zombie {
     private ZombieType type;
     private ZombieState state;
     private ZombieAbility ability;
-
-    protected double eatTimer = 0;
-
     private boolean slowed = false;
 
     private boolean hypnotized = false;
@@ -39,7 +37,8 @@ public abstract class Zombie {
 
     public abstract void onTick(Game game);
 
-    public void onDeath(Game game) {}
+    public void onDeath(Game game) {
+    }
 
     public void move(Game game) {
         position.x -= speed * model.Game.SECONDS_PER_TICK;
@@ -62,46 +61,115 @@ public abstract class Zombie {
         return hp <= 0;
     }
 
-    public int getCol() { return (int) Math.floor(position.x); }
+    public int getCol() {
+        return (int) Math.floor(position.x);
+    }
 
-    public int getRow() { return line; }
+    public int getRow() {
+        return line;
+    }
 
-    public double getHp() { return hp; }
-    public void setHp(double hp) { this.hp = hp; }
+    public double getHp() {
+        return hp;
+    }
 
-    public double getSpeed() { return speed; }
-    public void setSpeed(double speed) { this.speed = speed; }
+    public void setHp(double hp) {
+        this.hp = hp;
+    }
 
-    public double getDamage() { return damage; }
-    public void setDamage(double damage) { this.damage = damage; }
+    public double getSpeed() {
+        return speed;
+    }
 
-    public int getLine() { return line; }
-    public void setLine(int line) { this.line = line; }
+    public void setSpeed(double speed) {
+        this.speed = speed;
+    }
 
-    public Vec2 getPosition() { return position; }
-    public void setPosition(Vec2 position) { this.position = position; }
+    public double getDamage() {
+        return damage;
+    }
 
-    public double getArmorHp() { return armorHp; }
-    public void setArmorHp(double armorHp) { this.armorHp = armorHp; }
+    public void setDamage(double damage) {
+        this.damage = damage;
+    }
 
-    public ArmorType getArmorType() { return armorType; }
-    public void setArmorType(ArmorType armorType) { this.armorType = armorType; }
+    public int getLine() {
+        return line;
+    }
 
-    public ChapterType getChapter() { return chapter; }
-    public void setChapter(ChapterType chapter) { this.chapter = chapter; }
+    public void setLine(int line) {
+        this.line = line;
+    }
 
-    public ZombieType getType() { return type; }
-    public void setType(ZombieType type) { this.type = type; }
+    public Vec2 getPosition() {
+        return position;
+    }
 
-    public ZombieState getState() { return state; }
-    public void setState(ZombieState state) { this.state = state; }
+    public void setPosition(Vec2 position) {
+        this.position = position;
+    }
 
-    public ZombieAbility getAbility() { return ability; }
-    public void setAbility(ZombieAbility ability) { this.ability = ability; }
+    public double getArmorHp() {
+        return armorHp;
+    }
 
-    public boolean isSlowed() { return slowed; }
-    public void setSlowed(boolean slowed) { this.slowed = slowed; }
+    public void setArmorHp(double armorHp) {
+        this.armorHp = armorHp;
+    }
 
-    public boolean isHypnotized() { return hypnotized; }
-    public void setHypnotized(boolean hypnotized) { this.hypnotized = hypnotized; }
+    public ArmorType getArmorType() {
+        return armorType;
+    }
+
+    public void setArmorType(ArmorType armorType) {
+        this.armorType = armorType;
+    }
+
+    public ChapterType getChapter() {
+        return chapter;
+    }
+
+    public void setChapter(ChapterType chapter) {
+        this.chapter = chapter;
+    }
+
+    public ZombieType getType() {
+        return type;
+    }
+
+    public void setType(ZombieType type) {
+        this.type = type;
+    }
+
+    public ZombieState getState() {
+        return state;
+    }
+
+    public void setState(ZombieState state) {
+        this.state = state;
+    }
+
+    public ZombieAbility getAbility() {
+        return ability;
+    }
+
+    public void setAbility(ZombieAbility ability) {
+        this.ability = ability;
+    }
+
+    public boolean isSlowed() {
+        return slowed;
+    }
+
+    public void setSlowed(boolean slowed) {
+        this.slowed = slowed;
+    }
+
+    public boolean isHypnotized() {
+        return hypnotized;
+    }
+
+    public void setHypnotized(boolean hypnotized) {
+        this.hypnotized = hypnotized;
+    }
 }

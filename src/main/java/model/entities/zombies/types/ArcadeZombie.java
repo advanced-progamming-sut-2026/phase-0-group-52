@@ -17,7 +17,9 @@ public class ArcadeZombie extends WalkingZombie {
         setArmorHp(MACHINE_HP);
     }
 
-    public boolean hasMachine() { return getArmorHp() > 0; }
+    public boolean hasMachine() {
+        return getArmorHp() > 0;
+    }
 
     @Override
     public void onTick(Game game) {

@@ -13,12 +13,17 @@ public enum SunType {
         this.chance = chance;
     }
 
-    public int getAmount() { return amount; }
-    public double getChance() { return chance; }
-
     public static SunType pickRandom(double roll) {
         if (roll < NORMAL.chance) return NORMAL;
         if (roll < NORMAL.chance + SPECIAL.chance) return SPECIAL;
         return RADIOACTIVE;
+    }
+
+    public int getAmount() {
+        return amount;
+    }
+
+    public double getChance() {
+        return chance;
     }
 }

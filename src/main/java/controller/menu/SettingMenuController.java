@@ -2,7 +2,6 @@ package controller.menu;
 
 import controller.Navigation;
 import model.App;
-import view.MenuType;
 import view.SettingMenu;
 
 public class SettingMenuController {

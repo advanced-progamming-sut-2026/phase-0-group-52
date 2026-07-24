@@ -54,9 +54,23 @@ public class GameField {
         return result;
     }
 
-    public Cell[][] getGrid() { return grid; }
-    public Lawnmower[] getLawnmowers() { return lawnmowers; }
-    public ChapterType getChapter() { return chapter; }
-    public int getRows() { return grid.length; }
-    public int getCols() { return grid[0].length; }
+    public Cell[][] getGrid() {
+        return grid;
+    }
+
+    public Lawnmower[] getLawnmowers() {
+        return lawnmowers;
+    }
+
+    public ChapterType getChapter() {
+        return chapter;
+    }
+
+    public int getRows() {
+        return grid.length;
+    }
+
+    public int getCols() {
+        return grid[0].length;
+    }
 }

@@ -80,7 +80,7 @@ public class GameMenu implements AppMenu {
                 char zc = zombieCount == 0 ? '-' : (char) ('0' + Math.min(zombieCount, 9));
                 sb.append(' ').append(tile).append(plant).append(zc);
             }
-            System.out.println(sb.toString());
+            System.out.println(sb);
         }
         System.out.println("Cell format: <tile><plant><zombies> | [M] = lawnmower available");
         System.out.println("Tiles: . normal  T tombstone  $ sun-grave  & food-grave  ~ water  # frozen  ^ slip-up  v slip-down  _ low-ground  N necromancy");
@@ -102,14 +102,22 @@ public class GameMenu implements AppMenu {
         if (type == CellType.TOMBSTONE && cell.getGraveBonus() != null)
             return cell.getGraveBonus().equals("sun") ? '$' : '&';
         switch (type) {
-            case TOMBSTONE:     return 'T';
-            case WATER:         return '~';
-            case FROZEN:        return '#';
-            case SLIPPERY_UP:   return '^';
-            case SLIPPERY_DOWN: return 'v';
-            case LOW_GROUND:    return '_';
-            case NECROMANCY:    return 'N';
-            default:            return '.';
+            case TOMBSTONE:
+                return 'T';
+            case WATER:
+                return '~';
+            case FROZEN:
+                return '#';
+            case SLIPPERY_UP:
+                return '^';
+            case SLIPPERY_DOWN:
+                return 'v';
+            case LOW_GROUND:
+                return '_';
+            case NECROMANCY:
+                return 'N';
+            default:
+                return '.';
         }
     }
 
@@ -178,12 +186,18 @@ public class GameMenu implements AppMenu {
 
     private String armorName(ArmorType type) {
         switch (type) {
-            case CONEHEAD:   return "cone";
-            case BUCKETHEAD: return "bucket";
-            case BRICKHEAD:  return "block";
-            case KNIGHT:     return "crown";
-            case ICEBLOCK:   return "ice";
-            default:         return "armor";
+            case CONEHEAD:
+                return "cone";
+            case BUCKETHEAD:
+                return "bucket";
+            case BRICKHEAD:
+                return "block";
+            case KNIGHT:
+                return "crown";
+            case ICEBLOCK:
+                return "ice";
+            default:
+                return "armor";
         }
     }
 

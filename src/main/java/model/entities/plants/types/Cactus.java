@@ -12,7 +12,9 @@ public class Cactus extends StrikeThrough {
     }
 
     @Override
-    protected int maxTargets() { return 3; }
+    protected int maxTargets() {
+        return 3;
+    }
 
     @Override
     public void onPlantFood(Game game) {

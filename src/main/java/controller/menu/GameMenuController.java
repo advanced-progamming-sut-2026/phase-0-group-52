@@ -7,11 +7,7 @@ import model.GameField;
 import model.Vec2;
 import model.entities.Cell;
 import model.entities.CellType;
-import model.entities.plants.Plant;
-import model.entities.plants.PlantData;
-import model.entities.plants.PlantFactory;
-import model.entities.plants.PlantTag;
-import model.entities.plants.Plants;
+import model.entities.plants.*;
 import model.entities.plants.types.PeaPod;
 import model.entities.zombies.Zombie;
 import model.entities.zombies.ZombieFactory;
@@ -19,7 +15,6 @@ import model.entities.zombies.Zombies;
 import model.level.ConveyorBeltLevel;
 import model.level.PlantWhatYouGet;
 import view.GameMenu;
-import view.MenuType;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -60,7 +55,9 @@ public class GameMenuController {
         return loop;
     }
 
-    public GameMenu getView() { return view; }
+    public GameMenu getView() {
+        return view;
+    }
 
     public void handleCommand(String[] parts) {
         if (parts == null || parts.length == 0) {
@@ -115,7 +112,10 @@ public class GameMenuController {
     private void handleTick(String[] parts) {
         int n = 1;
         if (parts.length >= 2) {
-            try { n = Integer.parseInt(parts[1]); } catch (NumberFormatException ignored) {}
+            try {
+                n = Integer.parseInt(parts[1]);
+            } catch (NumberFormatException ignored) {
+            }
         }
         advanceTicks(n);
     }
@@ -124,7 +124,10 @@ public class GameMenuController {
         int n = 1;
         for (int i = 1; i + 1 < parts.length; i++)
             if (parts[i].equals("-t")) {
-                try { n = Integer.parseInt(parts[i + 1]); } catch (NumberFormatException ignored) {}
+                try {
+                    n = Integer.parseInt(parts[i + 1]);
+                } catch (NumberFormatException ignored) {
+                }
             }
         advanceTicks(n);
     }
@@ -132,7 +135,10 @@ public class GameMenuController {
     private void advanceTicks(int n) {
         Game game = requireGame();
         if (game == null) return;
-        if (game.isGameOver()) { view.showError("The level is already over."); return; }
+        if (game.isGameOver()) {
+            view.showError("The level is already over.");
+            return;
+        }
         model.GameLoop gl = gameLoop(game);
         for (int i = 0; i < n && !game.isGameOver(); i++) {
             String result = gl.step(game);
@@ -449,7 +455,10 @@ public class GameMenuController {
                 int suns = 100;
                 for (int i = 2; i + 1 < parts.length; i++)
                     if (parts[i].equals("-n")) {
-                        try { suns = Integer.parseInt(parts[i + 1]); } catch (NumberFormatException ignored) {}
+                        try {
+                            suns = Integer.parseInt(parts[i + 1]);
+                        } catch (NumberFormatException ignored) {
+                        }
                     }
                 game.setSunAmount(game.getSunAmount() + suns);
                 System.out.println("Added " + suns + " sun. Total sun: " + game.getSunAmount() + ".");
@@ -457,7 +466,10 @@ public class GameMenuController {
             case "sun":
                 int amount = 100;
                 if (parts.length >= 3) {
-                    try { amount = Integer.parseInt(parts[2]); } catch (NumberFormatException ignored) {}
+                    try {
+                        amount = Integer.parseInt(parts[2]);
+                    } catch (NumberFormatException ignored) {
+                    }
                 }
                 game.setSunAmount(game.getSunAmount() + amount);
                 System.out.println("Added " + amount + " sun. Total sun: " + game.getSunAmount() + ".");

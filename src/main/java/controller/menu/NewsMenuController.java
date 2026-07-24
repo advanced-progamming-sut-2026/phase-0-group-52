@@ -3,7 +3,6 @@ package controller.menu;
 import controller.Navigation;
 import model.App;
 import model.news.NewsList;
-import view.MenuType;
 import view.NewsMenu;
 
 public class NewsMenuController {

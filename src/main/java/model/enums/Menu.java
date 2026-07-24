@@ -19,11 +19,12 @@ public enum Menu {
     TravelLogMenu(new TravelLogMenu()),
     ChoosePlantMenu(new ChoosePlantMenu());
     private final AppMenu menu;
-    Menu(AppMenu menu){
+
+    Menu(AppMenu menu) {
         this.menu = menu;
     }
 
-    public void checkCommand(Scanner scanner){
+    public void checkCommand(Scanner scanner) {
         this.menu.check(scanner);
     }
 }

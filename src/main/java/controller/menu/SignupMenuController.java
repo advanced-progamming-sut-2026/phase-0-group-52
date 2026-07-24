@@ -7,12 +7,12 @@ import model.App;
 import model.Result;
 import model.User;
 import model.enums.SecurityQuestions;
-
 import model.enums.commands.SignUpCommands;
 
 public class SignupMenuController {
 
     private final SignUpValidation validation;
+    public UserRepository repository;
     private boolean isRegisterValid;
     private String username;
     private String passwordHash;
@@ -20,14 +20,11 @@ public class SignupMenuController {
     private String email;
     private String gender;
     private String answer;
-
-    public UserRepository repository;
-
     private int securityQuestionNum;
 
     public SignupMenuController() {
         this.validation = new SignUpValidation();
-        this.repository=new UserRepository();
+        this.repository = new UserRepository();
         this.isRegisterValid = true;
     }
 
@@ -40,7 +37,7 @@ public class SignupMenuController {
         if (!validation.isUsernameValid(username)) {
             isRegisterValid = false;
             return new Result(false,
-                "Username can only contain A-Za-z letters, numbers, and the symbol -.\n", null);
+                    "Username can only contain A-Za-z letters, numbers, and the symbol -.\n", null);
         }
         if (repository.usernameExists(username)) {
             isRegisterValid = false;
@@ -54,7 +51,7 @@ public class SignupMenuController {
         if (!validation.isPasswordValid(pass)) {
             isRegisterValid = false;
             return new Result(false,
-                "Password can only contain A-Za-z letters, numbers, and special symbols.\n", null);
+                    "Password can only contain A-Za-z letters, numbers, and special symbols.\n", null);
         }
         if (!validation.isPasswordStrong(pass)) {
             isRegisterValid = false;
@@ -109,14 +106,14 @@ public class SignupMenuController {
         if (!validation.isFirstPartEmailValid(parts[0])) {
             isRegisterValid = false;
             return new Result(false,
-                "The first part of email must start and end with a letter or digit, " +
-                    "may only contain letters, digits, '_', '-' and '.' (not consecutive)\n", null);
+                    "The first part of email must start and end with a letter or digit, " +
+                            "may only contain letters, digits, '_', '-' and '.' (not consecutive)\n", null);
         }
         if (!validation.isSecondPartEmailValid(parts[1])) {
             isRegisterValid = false;
             return new Result(false,
-                "The second part of email must start and end with a letter or digit " +
-                    "and be separated by dots.\n", null);
+                    "The second part of email must start and end with a letter or digit " +
+                            "and be separated by dots.\n", null);
         }
         this.email = email;
         return new Result(true, "", null);
@@ -129,8 +126,8 @@ public class SignupMenuController {
         }
         this.gender = gender;
         return new Result(true,
-            "Please choose a security question and enter an answer without spaces.\n"
-                + SecurityQuestions.listOfSecurityQuestions(), null);
+                "Please choose a security question and enter an answer without spaces.\n"
+                        + SecurityQuestions.listOfSecurityQuestions(), null);
     }
 
     public Result setQuestion(String questionNum, String answer, String answerConfirm) {
@@ -164,11 +161,11 @@ public class SignupMenuController {
 
     private boolean allFieldsReady() {
         return validation.isNotBlank(username) &&
-            validation.isNotBlank(passwordHash) &&
-            validation.isNotBlank(nickname) &&
-            validation.isNotBlank(email) &&
-            validation.isNotBlank(gender) &&
-            validation.isNotBlank(answer);
+                validation.isNotBlank(passwordHash) &&
+                validation.isNotBlank(nickname) &&
+                validation.isNotBlank(email) &&
+                validation.isNotBlank(gender) &&
+                validation.isNotBlank(answer);
     }
 
     private void resetFields() {

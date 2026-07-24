@@ -1,8 +1,8 @@
 package model;
 
 public class Chapter {
-    private int progress;
-    private String specialproperties;
+    private final int progress;
+    private final String specialproperties;
 
     public Chapter(int progress, String specialproperties) {
         this.progress = progress;

@@ -74,8 +74,7 @@ public class GameLoop {
 
     private boolean skyEnabled(Game game) {
         if (game.getField() != null && game.getField().getChapter() == ChapterType.DARK_AGES) return false;
-        if (game.getLevel() != null && !game.getLevel().isSkySunEnabled()) return false;
-        return true;
+        return game.getLevel() == null || game.getLevel().isSkySunEnabled();
     }
 
     private double skyIntervalTicks(Game game) {

@@ -8,13 +8,24 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
-import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
 public class UserRepository {
 
     private static final Path FILE = Paths.get("users.json");
+
+    private static String strOf(Map<?, ?> m, String key) {
+        return Json.str(m, key);
+    }
+
+    private static int intOf(Map<?, ?> m, String key) {
+        return Json.intOf(m, key);
+    }
+
+    private static boolean boolOf(Map<?, ?> m, String key) {
+        return Json.boolOf(m, key);
+    }
 
     public synchronized boolean register(User user) {
         List<User> users = readAll();
@@ -267,10 +278,4 @@ public class UserRepository {
     private void bool(StringBuilder sb, String key, boolean value) {
         sb.append('"').append(key).append("\":").append(value).append(',');
     }
-
-    private static String strOf(Map<?, ?> m, String key) { return Json.str(m, key); }
-
-    private static int intOf(Map<?, ?> m, String key) { return Json.intOf(m, key); }
-
-    private static boolean boolOf(Map<?, ?> m, String key) { return Json.boolOf(m, key); }
 }

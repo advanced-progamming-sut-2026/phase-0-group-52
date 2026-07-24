@@ -18,9 +18,13 @@ public class ProspectorZombie extends WalkingZombie {
         super(Zombies.ZOMBIE_PROSPECTOR, line, position, chapter, type);
     }
 
-    public boolean isReversed() { return reversed; }
+    public boolean isReversed() {
+        return reversed;
+    }
 
-    public void douseDynamite() { dynamiteDoused = true; }
+    public void douseDynamite() {
+        dynamiteDoused = true;
+    }
 
     @Override
     public void onTick(Game game) {

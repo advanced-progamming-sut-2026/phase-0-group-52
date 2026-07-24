@@ -1,11 +1,7 @@
 package controller.menu;
 
 import controller.Navigation;
-import model.App;
-import model.ChapterType;
-import model.Game;
-import model.LevelBuilder;
-import model.User;
+import model.*;
 import model.entities.plants.Plants;
 import model.enums.Menu;
 import view.ChapterMenu;
@@ -48,11 +44,17 @@ public class ChapterMenuController {
                 handleEnter(parts);
                 break;
             case "coin-wallet":
-                if (app.getCurrentuser() == null) { view.showError("No user is logged in."); break; }
+                if (app.getCurrentuser() == null) {
+                    view.showError("No user is logged in.");
+                    break;
+                }
                 view.showCoinWallet(app.getCurrentuser().getCoins());
                 break;
             case "gem-wallet":
-                if (app.getCurrentuser() == null) { view.showError("No user is logged in."); break; }
+                if (app.getCurrentuser() == null) {
+                    view.showError("No user is logged in.");
+                    break;
+                }
                 view.showGemWallet(app.getCurrentuser().getGems());
                 break;
             case "cheat":
@@ -96,7 +98,10 @@ public class ChapterMenuController {
         int level = 1;
         for (int i = 5; i + 1 < parts.length; i++)
             if (parts[i].equals("-l")) {
-                try { level = Integer.parseInt(parts[i + 1]); } catch (NumberFormatException ignored) {}
+                try {
+                    level = Integer.parseInt(parts[i + 1]);
+                } catch (NumberFormatException ignored) {
+                }
             }
         app.setSelectedLevel(level);
         app.setSelectedChapter(chapter);
@@ -115,10 +120,17 @@ public class ChapterMenuController {
         int levelNumber = app.getSelectedLevel();
         for (int i = 1; i + 1 < parts.length; i++) {
             if (parts[i].equals("-c")) {
-                try { chapter = ChapterType.valueOf(parts[i + 1].toUpperCase()); }
-                catch (IllegalArgumentException e) { view.showError("Invalid chapter: " + parts[i + 1]); return; }
+                try {
+                    chapter = ChapterType.valueOf(parts[i + 1].toUpperCase());
+                } catch (IllegalArgumentException e) {
+                    view.showError("Invalid chapter: " + parts[i + 1]);
+                    return;
+                }
             } else if (parts[i].equals("-l")) {
-                try { levelNumber = Integer.parseInt(parts[i + 1]); } catch (NumberFormatException ignored) {}
+                try {
+                    levelNumber = Integer.parseInt(parts[i + 1]);
+                } catch (NumberFormatException ignored) {
+                }
             }
         }
         app.setSelectedLevel(levelNumber);
@@ -178,10 +190,17 @@ public class ChapterMenuController {
         for (int i = 2; i + 1 < parts.length; i++) {
             if (parts[i].equals("-t")) special = parts[i + 1];
             else if (parts[i].equals("-c")) {
-                try { chapter = ChapterType.valueOf(parts[i + 1].toUpperCase()); }
-                catch (IllegalArgumentException e) { view.showError("Invalid chapter: " + parts[i + 1]); return; }
+                try {
+                    chapter = ChapterType.valueOf(parts[i + 1].toUpperCase());
+                } catch (IllegalArgumentException e) {
+                    view.showError("Invalid chapter: " + parts[i + 1]);
+                    return;
+                }
             } else if (parts[i].equals("-l")) {
-                try { levelNumber = Integer.parseInt(parts[i + 1]); } catch (NumberFormatException ignored) {}
+                try {
+                    levelNumber = Integer.parseInt(parts[i + 1]);
+                } catch (NumberFormatException ignored) {
+                }
             }
         }
         if (chapter == null) {

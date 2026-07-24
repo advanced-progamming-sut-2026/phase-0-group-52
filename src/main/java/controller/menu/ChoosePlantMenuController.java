@@ -1,11 +1,7 @@
 package controller.menu;
 
 import controller.Navigation;
-import model.App;
-import model.ChapterType;
-import model.Game;
-import model.LevelBuilder;
-import model.User;
+import model.*;
 import model.entities.plants.Plants;
 import model.enums.Menu;
 import view.MenuType;
@@ -18,19 +14,17 @@ public class ChoosePlantMenuController {
 
     public static final int FIRST_LEVEL_SLOTS = 5;
     public static final int OTHER_LEVEL_SLOTS = 8;
-
-    private int maxSlots() {
-        return app.getSelectedLevel() <= 1 ? FIRST_LEVEL_SLOTS : OTHER_LEVEL_SLOTS;
-    }
-
     private static final Pattern CHOOSE = Pattern.compile("^choose\\s+-t\\s+(.+)$");
     private static final Pattern REMOVE = Pattern.compile("^remove\\s+-t\\s+(.+)$");
     private static final Pattern BOOST = Pattern.compile("^boost\\s+-t\\s+(.+)$");
-
     private final App app;
 
     public ChoosePlantMenuController(App app) {
         this.app = app;
+    }
+
+    private int maxSlots() {
+        return app.getSelectedLevel() <= 1 ? FIRST_LEVEL_SLOTS : OTHER_LEVEL_SLOTS;
     }
 
     public void handleCommand(String line) {
@@ -63,7 +57,10 @@ public class ChoosePlantMenuController {
     }
 
     private void startLevel() {
-        if (app.getCurrentuser() == null) { System.out.println("Error: No user is logged in."); return; }
+        if (app.getCurrentuser() == null) {
+            System.out.println("Error: No user is logged in.");
+            return;
+        }
         ChapterType chapter = app.getSelectedChapter();
         if (chapter == null) {
             System.out.println("Error: Enter a chapter first (chapter_menu).");
@@ -110,9 +107,15 @@ public class ChoosePlantMenuController {
 
     private void choose(String name) {
         Plants type = findPlant(name);
-        if (type == null) { System.out.println("Error: Unknown plant: " + name); return; }
+        if (type == null) {
+            System.out.println("Error: Unknown plant: " + name);
+            return;
+        }
         List<Plants> selection = app.getPlantSelection();
-        if (selection.contains(type)) { System.out.println(type.getName() + " is already chosen."); return; }
+        if (selection.contains(type)) {
+            System.out.println(type.getName() + " is already chosen.");
+            return;
+        }
         if (selection.size() >= maxSlots()) {
             System.out.println("Error: All " + maxSlots() + " slots are full. Remove one first.");
             return;
@@ -123,7 +126,10 @@ public class ChoosePlantMenuController {
 
     private void remove(String name) {
         Plants type = findPlant(name);
-        if (type == null) { System.out.println("Error: Unknown plant: " + name); return; }
+        if (type == null) {
+            System.out.println("Error: Unknown plant: " + name);
+            return;
+        }
         if (app.getPlantSelection().remove(type)) {
             app.getBoostedSelection().remove(type);
             System.out.println("Removed " + type.getName() + " from the selection.");
@@ -134,9 +140,15 @@ public class ChoosePlantMenuController {
 
     private void boost(String name) {
         User user = app.getCurrentuser();
-        if (user == null) { System.out.println("Error: No user is logged in."); return; }
+        if (user == null) {
+            System.out.println("Error: No user is logged in.");
+            return;
+        }
         Plants type = findPlant(name);
-        if (type == null) { System.out.println("Error: Unknown plant: " + name); return; }
+        if (type == null) {
+            System.out.println("Error: Unknown plant: " + name);
+            return;
+        }
         if (!app.getPlantSelection().contains(type)) {
             System.out.println("Error: Choose " + type.getName() + " before boosting it.");
             return;

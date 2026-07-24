@@ -18,12 +18,27 @@ public class QuestState {
         this.quests = (quests != null) ? quests : new ArrayList<>();
     }
 
-    public String getUsername() { return username; }
-    public void setUsername(String username) { this.username = username; }
+    public String getUsername() {
+        return username;
+    }
 
-    public String getLastResetDate() { return lastResetDate; }
-    public void setLastResetDate(String lastResetDate) { this.lastResetDate = lastResetDate; }
+    public void setUsername(String username) {
+        this.username = username;
+    }
 
-    public List<QuestProgress> getQuests() { return quests; }
-    public void setQuests(List<QuestProgress> quests) { this.quests = quests; }
+    public String getLastResetDate() {
+        return lastResetDate;
+    }
+
+    public void setLastResetDate(String lastResetDate) {
+        this.lastResetDate = lastResetDate;
+    }
+
+    public List<QuestProgress> getQuests() {
+        return quests;
+    }
+
+    public void setQuests(List<QuestProgress> quests) {
+        this.quests = quests;
+    }
 }

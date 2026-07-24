@@ -21,23 +21,17 @@ public class IZombie {
             Zombies.ZOMBIE_DEFAULT, Zombies.ZOMBIE_ARMOR1, Zombies.ZOMBIE_ARMOR2,
             Zombies.ZOMBIE_IMP, Zombies.ZOMBIE_GARGANTUAR
     };
-    private static final int[] COST = { 50, 75, 125, 25, 150 };
+    private static final int[] COST = {50, 75, 125, 25, 150};
 
     private static final Pattern PLACE =
             Pattern.compile("^place\\s+-t\\s+(\\S+)\\s+-l\\s*\\(\\s*(\\d+)\\s*,\\s*(\\d+)\\s*\\)$");
-
-    private static class Plant { int row, col; Plants type; double hp; }
-    private static class Zombie { int row; double x; double hp; double dmg; }
-
     private final List<Plant> plants = new ArrayList<Plant>();
     private final List<Zombie> zombies = new ArrayList<Zombie>();
     private final boolean[] brainEaten = new boolean[ROWS];
-
     private final User user;
     private final int level;
     private int sun = 150;
     private boolean over, won;
-
     public IZombie(int level, User user) {
         this.level = Math.max(1, Math.min(3, level));
         this.user = user;
@@ -45,13 +39,15 @@ public class IZombie {
     }
 
     private void setupPlants() {
-        Plants[] pool = { Plants.PEASHOOTER, Plants.WALL_NUT, Plants.SNOW_PEA };
+        Plants[] pool = {Plants.PEASHOOTER, Plants.WALL_NUT, Plants.SNOW_PEA};
         int count = 4 + level;
         for (int i = 0; i < count; i++) {
             int r = PlantCombat.RANDOM.nextInt(ROWS);
             int c = PlantCombat.RANDOM.nextInt(RED_LINE);
             Plant p = new Plant();
-            p.row = r; p.col = c; p.type = pool[PlantCombat.RANDOM.nextInt(pool.length)];
+            p.row = r;
+            p.col = c;
+            p.type = pool[PlantCombat.RANDOM.nextInt(pool.length)];
             p.hp = p.type.getBaseHP();
             plants.add(p);
         }
@@ -69,8 +65,10 @@ public class IZombie {
             if (!scanner.hasNextLine()) return;
             String line = scanner.nextLine().trim();
             if (line.isEmpty()) continue;
-            if (line.equals("exit")) { System.out.println("Left I, Zombie."); return; }
-            else if (line.equals("show")) render();
+            if (line.equals("exit")) {
+                System.out.println("Left I, Zombie.");
+                return;
+            } else if (line.equals("show")) render();
             else if (line.equals("tick")) tick();
             else {
                 Matcher m = PLACE.matcher(line);
@@ -88,17 +86,26 @@ public class IZombie {
 
     private void place(String name, int x, int y) {
         int idx = rosterIndex(name);
-        if (idx < 0) { System.out.println("Error: Unknown zombie: " + name); return; }
+        if (idx < 0) {
+            System.out.println("Error: Unknown zombie: " + name);
+            return;
+        }
         int c = x - 1, r = y - 1;
         if (r < 0 || r >= ROWS || c < RED_LINE || c >= COLS) {
             System.out.println("Error: Place zombies right of the red line (column " + (RED_LINE + 1) + "+).");
             return;
         }
-        if (sun < COST[idx]) { System.out.println("Error: Not enough sun (need " + COST[idx] + ")."); return; }
+        if (sun < COST[idx]) {
+            System.out.println("Error: Not enough sun (need " + COST[idx] + ").");
+            return;
+        }
         sun -= COST[idx];
         Zombies data = ROSTER[idx];
         Zombie z = new Zombie();
-        z.row = r; z.x = c; z.hp = data.getHp() + data.getArmor().ordinal() * 200; z.dmg = 100;
+        z.row = r;
+        z.x = c;
+        z.hp = data.getHp() + data.getArmor().ordinal() * 200;
+        z.dmg = 100;
         zombies.add(z);
         System.out.println("Placed " + data.getName() + " at (" + x + ", " + y + "). Sun: " + sun);
     }
@@ -127,9 +134,21 @@ public class IZombie {
             }
         }
         boolean allEaten = true;
-        for (int r = 0; r < ROWS; r++) if (!brainEaten[r]) allEaten = false;
-        if (allEaten) { over = true; won = true; return; }
-        if (zombies.isEmpty() && sun < minCost()) { over = true; won = false; return; }
+        for (int r = 0; r < ROWS; r++)
+            if (!brainEaten[r]) {
+                allEaten = false;
+                break;
+            }
+        if (allEaten) {
+            over = true;
+            won = true;
+            return;
+        }
+        if (zombies.isEmpty() && sun < minCost()) {
+            over = true;
+            won = false;
+            return;
+        }
         render();
     }
 
@@ -145,12 +164,18 @@ public class IZombie {
 
     private int rosterIndex(String name) {
         switch (name.toLowerCase()) {
-            case "default": return 0;
-            case "armor1": return 1;
-            case "armor2": return 2;
-            case "imp": return 3;
-            case "gargantuar": return 4;
-            default: return -1;
+            case "default":
+                return 0;
+            case "armor1":
+                return 1;
+            case "armor2":
+                return 2;
+            case "imp":
+                return 3;
+            case "gargantuar":
+                return 4;
+            default:
+                return -1;
         }
     }
 
@@ -162,11 +187,16 @@ public class IZombie {
             sb.append(brainEaten[r] ? ' ' : 'B').append('|');
             for (int c = 0; c < COLS; c++) {
                 char ch = (c == RED_LINE) ? ':' : '.';
-                for (Plant p : plants) if (p.row == r && p.col == c) ch = Character.toUpperCase(p.type.getName().charAt(0));
-                for (Zombie z : zombies) if (z.row == r && (int) Math.round(z.x) == c) ch = 'Z';
+                for (Plant p : plants)
+                    if (p.row == r && p.col == c) ch = Character.toUpperCase(p.type.getName().charAt(0));
+                for (Zombie z : zombies)
+                    if (z.row == r && (int) Math.round(z.x) == c) {
+                        ch = 'Z';
+                        break;
+                    }
                 sb.append(ch).append(' ');
             }
-            System.out.println(sb.toString());
+            System.out.println(sb);
         }
         System.out.println("  B=brain  :=red line  Z=zombie  letters=plants");
     }
@@ -175,5 +205,18 @@ public class IZombie {
         int n = 0;
         for (boolean b : brainEaten) if (!b) n++;
         return n;
+    }
+
+    private static class Plant {
+        int row, col;
+        Plants type;
+        double hp;
+    }
+
+    private static class Zombie {
+        int row;
+        double x;
+        double hp;
+        double dmg;
     }
 }

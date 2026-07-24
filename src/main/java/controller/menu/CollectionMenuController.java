@@ -6,7 +6,6 @@ import model.User;
 import model.entities.plants.PlantData;
 import model.entities.plants.Plants;
 import model.entities.zombies.Zombies;
-import view.MenuType;
 
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -40,9 +39,15 @@ public class CollectionMenuController {
             showZombies();
         } else if ((m = UPGRADE.matcher(command)).matches()) {
             User user = app.getCurrentuser();
-            if (user == null) { System.out.println("Error: No user is logged in."); return; }
+            if (user == null) {
+                System.out.println("Error: No user is logged in.");
+                return;
+            }
             Plants type = findPlant(m.group(1));
-            if (type == null) { System.out.println("Error: Unknown plant: " + m.group(1)); return; }
+            if (type == null) {
+                System.out.println("Error: Unknown plant: " + m.group(1));
+                return;
+            }
             System.out.println(PlantData.upgrade(user, type));
         } else if ((m = BUY.matcher(command)).matches()) {
             buyPlant(m.group(1));
@@ -74,9 +79,15 @@ public class CollectionMenuController {
 
     private void buyPlant(String name) {
         User user = app.getCurrentuser();
-        if (user == null) { System.out.println("Error: No user is logged in."); return; }
+        if (user == null) {
+            System.out.println("Error: No user is logged in.");
+            return;
+        }
         Plants type = findPlant(name);
-        if (type == null) { System.out.println("Error: Unknown plant: " + name); return; }
+        if (type == null) {
+            System.out.println("Error: Unknown plant: " + name);
+            return;
+        }
         int cost = Math.max(50, type.getCost() * BUY_COST_PER_SUN);
         if (user.getCoins() < cost) {
             System.out.println("Error: Not enough coins. " + type.getName() + " costs " + cost + " coins.");

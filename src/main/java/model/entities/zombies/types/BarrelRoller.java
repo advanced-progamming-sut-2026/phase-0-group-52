@@ -19,7 +19,9 @@ public class BarrelRoller extends WalkingZombie {
         setArmorHp(BARREL_HP);
     }
 
-    public boolean hasBarrel() { return hadBarrel && getArmorHp() > 0; }
+    public boolean hasBarrel() {
+        return hadBarrel && getArmorHp() > 0;
+    }
 
     @Override
     public void onTick(Game game) {

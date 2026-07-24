@@ -12,12 +12,17 @@ public class DeadLine extends Level {
     private int deadlineCol = 2;
 
     public DeadLine(int levelnumber, ChapterType chaptertype,
-            ArrayList<Plants> allowedplants, AttackPattern attackPattern) {
+                    ArrayList<Plants> allowedplants, AttackPattern attackPattern) {
         super(levelnumber, chaptertype, allowedplants, attackPattern);
     }
 
-    public int getDeadlineCol() { return deadlineCol; }
-    public void setDeadlineCol(int deadlineCol) { this.deadlineCol = deadlineCol; }
+    public int getDeadlineCol() {
+        return deadlineCol;
+    }
+
+    public void setDeadlineCol(int deadlineCol) {
+        this.deadlineCol = deadlineCol;
+    }
 
     @Override
     public String checkDefeat(Game game) {

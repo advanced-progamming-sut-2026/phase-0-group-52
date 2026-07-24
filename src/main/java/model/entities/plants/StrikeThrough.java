@@ -22,9 +22,13 @@ public class StrikeThrough extends Plant {
         }
     }
 
-    protected int maxTargets() { return Integer.MAX_VALUE; }
+    protected int maxTargets() {
+        return Integer.MAX_VALUE;
+    }
 
-    protected double maxRange() { return Double.MAX_VALUE; }
+    protected double maxRange() {
+        return Double.MAX_VALUE;
+    }
 
     protected void pierce(Game game, int targets, double range, double dmg) {
         int hitCount = 0;

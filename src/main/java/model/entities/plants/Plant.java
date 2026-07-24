@@ -4,17 +4,14 @@ import model.Game;
 import model.Vec2;
 
 public abstract class Plant implements PlantInterface {
+    protected double actionTimer = 0;
+    protected boolean boosted = false;
     private Plants type;
     private double hp;
     private int price;
     private Vec2 position;
     private double attackdamage;
     private double actionInterval;
-
-    protected double actionTimer = 0;
-
-    protected boolean boosted = false;
-
     private boolean frozen = false;
 
     private int freezeLevel = 0;
@@ -30,16 +27,25 @@ public abstract class Plant implements PlantInterface {
         this.actionInterval = type.getActionInterval();
     }
 
-    public double getActionInterval() { return actionInterval; }
-    public void setActionInterval(double actionInterval) { this.actionInterval = actionInterval; }
+    public double getActionInterval() {
+        return actionInterval;
+    }
 
-    public void onTick(Game game) {}
+    public void setActionInterval(double actionInterval) {
+        this.actionInterval = actionInterval;
+    }
 
-    public void onPlanted(Game game) {}
+    public void onTick(Game game) {
+    }
 
-    public void onPlantFood(Game game) {}
+    public void onPlanted(Game game) {
+    }
 
-    public void onDeath(Game game) {}
+    public void onPlantFood(Game game) {
+    }
+
+    public void onDeath(Game game) {
+    }
 
     public void boost() {
         this.boosted = true;
@@ -53,32 +59,73 @@ public abstract class Plant implements PlantInterface {
         return hp <= 0;
     }
 
-    public int getCol() { return (int) position.x; }
+    public int getCol() {
+        return (int) position.x;
+    }
 
-    public int getRow() { return (int) position.y; }
+    public int getRow() {
+        return (int) position.y;
+    }
 
-    public Plants getType() { return type; }
-    public void setType(Plants type) { this.type = type; }
+    public Plants getType() {
+        return type;
+    }
 
-    public double getHp() { return hp; }
-    public void setHp(double hp) { this.hp = hp; }
+    public void setType(Plants type) {
+        this.type = type;
+    }
 
-    public int getPrice() { return price; }
-    public void setPrice(int price) { this.price = price; }
+    public double getHp() {
+        return hp;
+    }
 
-    public Vec2 getPosition() { return position; }
-    public void setPosition(Vec2 position) { this.position = position; }
+    public void setHp(double hp) {
+        this.hp = hp;
+    }
 
-    public double getAttackdamage() { return attackdamage; }
-    public void setAttackdamage(double attackdamage) { this.attackdamage = attackdamage; }
+    public int getPrice() {
+        return price;
+    }
 
-    public boolean isBoosted() { return boosted; }
+    public void setPrice(int price) {
+        this.price = price;
+    }
 
-    public boolean isFrozen() { return frozen; }
-    public void setFrozen(boolean frozen) { this.frozen = frozen; }
+    public Vec2 getPosition() {
+        return position;
+    }
 
-    public int getFreezeLevel() { return freezeLevel; }
-    public double getIceHp() { return iceHp; }
+    public void setPosition(Vec2 position) {
+        this.position = position;
+    }
+
+    public double getAttackdamage() {
+        return attackdamage;
+    }
+
+    public void setAttackdamage(double attackdamage) {
+        this.attackdamage = attackdamage;
+    }
+
+    public boolean isBoosted() {
+        return boosted;
+    }
+
+    public boolean isFrozen() {
+        return frozen;
+    }
+
+    public void setFrozen(boolean frozen) {
+        this.frozen = frozen;
+    }
+
+    public int getFreezeLevel() {
+        return freezeLevel;
+    }
+
+    public double getIceHp() {
+        return iceHp;
+    }
 
     public void addFreezeLevel() {
         if (freezeLevel >= 3) return;

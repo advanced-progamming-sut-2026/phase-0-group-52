@@ -22,20 +22,20 @@ public class MainMenu implements AppMenu {
     }
 
     public void showLeaderboard(java.util.List<model.Leaderboard.Entry> entries,
-            String column, boolean ascending) {
+                                String column, boolean ascending) {
         if (entries.isEmpty()) {
             System.out.println("Leaderboard: no registered players yet.");
             return;
         }
         System.out.println("Leaderboard (sorted by " + column + (ascending ? " asc" : " desc") + "):");
-        System.out.println(String.format("%-4s %-15s %-18s %-10s %-13s %-13s %s",
-                "#", "Username", "Progress", "Minigames", "DailyQuests", "OtherQuests", "HighScore"));
+        System.out.printf("%-4s %-15s %-18s %-10s %-13s %-13s %s%n",
+                "#", "Username", "Progress", "Minigames", "DailyQuests", "OtherQuests", "HighScore");
         int rank = 1;
         for (model.Leaderboard.Entry entry : entries) {
-            System.out.println(String.format("%-4d %-15s %-18s %-10d %-13d %-13d %d",
+            System.out.printf("%-4d %-15s %-18s %-10d %-13d %-13d %d%n",
                     rank++, entry.getUser().getUsername(), entry.getProgressText(),
                     entry.getUser().getMiniGamesPlayed(), entry.getUser().getQuestDailyNum(),
-                    entry.getUser().getQuestNonDailyNum(), entry.getUser().getMaxPoint()));
+                    entry.getUser().getQuestNonDailyNum(), entry.getUser().getMaxPoint());
         }
     }
 

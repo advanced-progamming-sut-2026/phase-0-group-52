@@ -6,6 +6,7 @@ import java.util.regex.Pattern;
 public interface Commands {
 
     String getPattern();
+
     default Matcher getMatcher(String input) {
         Matcher matcher = Pattern.compile(getPattern()).matcher(input);
         if (matcher.matches()) {
@@ -13,9 +14,11 @@ public interface Commands {
         }
         return null;
     }
+
     default boolean matches(String input) {
         return Pattern.compile(getPattern()).matcher(input).matches();
     }
+
     default String getGroup(String input, String group) {
         return getMatcher(input).group(group);
     }

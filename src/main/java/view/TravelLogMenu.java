@@ -1,10 +1,10 @@
 package view;
 
 import controller.menu.TravelLogMenuController;
-import model.App;
-import model.enums.commands.TravelLogCommands;
 import minigame.Minigame;
 import minigame.MinigameType;
+import model.App;
+import model.enums.commands.TravelLogCommands;
 
 import java.util.Scanner;
 import java.util.regex.Matcher;
@@ -28,7 +28,7 @@ public class TravelLogMenu implements AppMenu {
                 System.out.println("Unknown minigame: " + m.group("name"));
             } else {
                 new Minigame(type, Integer.parseInt(m.group("level")))
-                    .start(App.getInstance().getLoggedInUser(), scanner);
+                        .start(App.getInstance().getLoggedInUser(), scanner);
             }
 
         } else if (TravelLogCommands.SHOW_QUESTS.matches(line)) {

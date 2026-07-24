@@ -37,11 +37,16 @@ public class SunProducer extends Plant {
 
     private int sunAmount() {
         switch (getType()) {
-            case TWIN_SUNFLOWER:   return 100;
-            case PRIMAL_SUNFLOWER: return 75;
-            case SUNFLOWER:        return 50;
-            case SUN_SHROOM:       return productions <= 1 ? 25 : (productions == 2 ? 50 : 75);
-            default:               return 25;
+            case TWIN_SUNFLOWER:
+                return 100;
+            case PRIMAL_SUNFLOWER:
+                return 75;
+            case SUNFLOWER:
+                return 50;
+            case SUN_SHROOM:
+                return productions <= 1 ? 25 : (productions == 2 ? 50 : 75);
+            default:
+                return 25;
         }
     }
 

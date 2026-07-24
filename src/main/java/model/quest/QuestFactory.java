@@ -6,7 +6,8 @@ import java.util.List;
 
 public final class QuestFactory {
 
-    private QuestFactory() {}
+    private QuestFactory() {
+    }
 
     public static QuestState buildDefault(String username) {
         List<QuestProgress> list = new ArrayList<>();

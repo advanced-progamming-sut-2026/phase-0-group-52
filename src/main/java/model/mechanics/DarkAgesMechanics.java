@@ -14,7 +14,9 @@ public class DarkAgesMechanics implements ChapterMechanics {
 
     private static final int GRAVE_SUN_BONUS = 50;
 
-    public boolean isSkySunDisabled() { return true; }
+    public boolean isSkySunDisabled() {
+        return true;
+    }
 
     @Override
     public void onWaveStart(Game game) {

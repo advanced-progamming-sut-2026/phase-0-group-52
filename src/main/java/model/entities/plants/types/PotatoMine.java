@@ -17,9 +17,13 @@ public class PotatoMine extends Explosive {
         super(Plants.POTATO_MINE, position);
     }
 
-    protected boolean isArmed() { return armTimer >= armTime; }
+    protected boolean isArmed() {
+        return armTimer >= armTime;
+    }
 
-    protected int blastRadius() { return 0; }
+    protected int blastRadius() {
+        return 0;
+    }
 
     @Override
     public void onTick(Game game) {

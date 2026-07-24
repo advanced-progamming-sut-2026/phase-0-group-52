@@ -18,7 +18,7 @@ public class ConveyorBeltLevel extends Level {
     private boolean firstDelivered = false;
 
     public ConveyorBeltLevel(int levelnumber, ChapterType chaptertype,
-            ArrayList<Plants> allowedplants, AttackPattern attackPattern) {
+                             ArrayList<Plants> allowedplants, AttackPattern attackPattern) {
         super(levelnumber, chaptertype, allowedplants, attackPattern);
     }
 
@@ -44,9 +44,15 @@ public class ConveyorBeltLevel extends Level {
         System.out.println("The conveyor belt delivered a " + plant.getName() + ".");
     }
 
-    public Queue<Plants> getBelt() { return belt; }
+    public Queue<Plants> getBelt() {
+        return belt;
+    }
 
-    public boolean hasOnBelt(Plants type) { return belt.contains(type); }
+    public boolean hasOnBelt(Plants type) {
+        return belt.contains(type);
+    }
 
-    public boolean takeFromBelt(Plants type) { return belt.remove(type); }
+    public boolean takeFromBelt(Plants type) {
+        return belt.remove(type);
+    }
 }

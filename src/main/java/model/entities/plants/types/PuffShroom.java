@@ -19,7 +19,9 @@ public class PuffShroom extends Shooter {
         super(Plants.PUFF_SHROOM, position);
     }
 
-    public void resetLife() { lifeTimer = 0; }
+    public void resetLife() {
+        lifeTimer = 0;
+    }
 
     @Override
     public void onTick(Game game) {

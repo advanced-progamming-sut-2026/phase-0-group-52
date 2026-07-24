@@ -7,7 +7,8 @@ import java.util.Map;
 
 public final class Json {
 
-    private Json() {}
+    private Json() {
+    }
 
     public static Object parse(String text) {
         return new Parser(text).parseValue();
@@ -18,11 +19,21 @@ public final class Json {
         for (int i = 0; i < s.length(); i++) {
             char c = s.charAt(i);
             switch (c) {
-                case '"':  b.append("\\\""); break;
-                case '\\': b.append("\\\\"); break;
-                case '\n': b.append("\\n");  break;
-                case '\r': b.append("\\r");  break;
-                case '\t': b.append("\\t");  break;
+                case '"':
+                    b.append("\\\"");
+                    break;
+                case '\\':
+                    b.append("\\\\");
+                    break;
+                case '\n':
+                    b.append("\\n");
+                    break;
+                case '\r':
+                    b.append("\\r");
+                    break;
+                case '\t':
+                    b.append("\\t");
+                    break;
                 default:
                     if (c < 0x20) {
                         b.append(String.format("\\u%04x", (int) c));
@@ -66,13 +77,23 @@ public final class Json {
             skipWhitespace();
             char c = src.charAt(pos);
             switch (c) {
-                case '{': return parseObject();
-                case '[': return parseArray();
-                case '"': return parseString();
-                case 't': pos += 4; return Boolean.TRUE;
-                case 'f': pos += 5; return Boolean.FALSE;
-                case 'n': pos += 4; return null;
-                default:  return parseNumber();
+                case '{':
+                    return parseObject();
+                case '[':
+                    return parseArray();
+                case '"':
+                    return parseString();
+                case 't':
+                    pos += 4;
+                    return Boolean.TRUE;
+                case 'f':
+                    pos += 5;
+                    return Boolean.FALSE;
+                case 'n':
+                    pos += 4;
+                    return null;
+                default:
+                    return parseNumber();
             }
         }
 
@@ -80,7 +101,10 @@ public final class Json {
             Map<String, Object> map = new LinkedHashMap<>();
             pos++;
             skipWhitespace();
-            if (src.charAt(pos) == '}') { pos++; return map; }
+            if (src.charAt(pos) == '}') {
+                pos++;
+                return map;
+            }
             while (true) {
                 skipWhitespace();
                 String key = parseString();
@@ -89,7 +113,9 @@ public final class Json {
                 map.put(key, parseValue());
                 skipWhitespace();
                 char c = src.charAt(pos++);
-                if (c == '}') { break; }
+                if (c == '}') {
+                    break;
+                }
             }
             return map;
         }
@@ -98,12 +124,17 @@ public final class Json {
             List<Object> list = new ArrayList<>();
             pos++;
             skipWhitespace();
-            if (src.charAt(pos) == ']') { pos++; return list; }
+            if (src.charAt(pos) == ']') {
+                pos++;
+                return list;
+            }
             while (true) {
                 list.add(parseValue());
                 skipWhitespace();
                 char c = src.charAt(pos++);
-                if (c == ']') { break; }
+                if (c == ']') {
+                    break;
+                }
             }
             return list;
         }
@@ -113,23 +144,42 @@ public final class Json {
             pos++;
             while (true) {
                 char c = src.charAt(pos++);
-                if (c == '"') { break; }
+                if (c == '"') {
+                    break;
+                }
                 if (c == '\\') {
                     char e = src.charAt(pos++);
                     switch (e) {
-                        case '"':  b.append('"');  break;
-                        case '\\': b.append('\\'); break;
-                        case '/':  b.append('/');  break;
-                        case 'n':  b.append('\n'); break;
-                        case 't':  b.append('\t'); break;
-                        case 'r':  b.append('\r'); break;
-                        case 'b':  b.append('\b'); break;
-                        case 'f':  b.append('\f'); break;
+                        case '"':
+                            b.append('"');
+                            break;
+                        case '\\':
+                            b.append('\\');
+                            break;
+                        case '/':
+                            b.append('/');
+                            break;
+                        case 'n':
+                            b.append('\n');
+                            break;
+                        case 't':
+                            b.append('\t');
+                            break;
+                        case 'r':
+                            b.append('\r');
+                            break;
+                        case 'b':
+                            b.append('\b');
+                            break;
+                        case 'f':
+                            b.append('\f');
+                            break;
                         case 'u':
                             b.append((char) Integer.parseInt(src.substring(pos, pos + 4), 16));
                             pos += 4;
                             break;
-                        default:   b.append(e);
+                        default:
+                            b.append(e);
                     }
                 } else {
                     b.append(c);

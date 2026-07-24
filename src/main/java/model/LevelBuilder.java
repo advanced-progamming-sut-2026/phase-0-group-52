@@ -9,22 +9,15 @@ import model.entities.plants.Plants;
 import model.entities.zombies.Zombie;
 import model.entities.zombies.ZombieFactory;
 import model.entities.zombies.Zombies;
-import model.level.ConveyorBeltLevel;
-import model.level.DeadLine;
-import model.level.Level;
-import model.level.LockedPlantsLevel;
-import model.level.LoveYourPlants;
-import model.level.NightOps;
-import model.level.PlantWhatYouGet;
-import model.level.SaveOurSeeds;
-import model.level.TimedWar;
+import model.level.*;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 
 public final class LevelBuilder {
 
-    private LevelBuilder() {}
+    private LevelBuilder() {
+    }
 
     public static Game build(App app, ChapterType chapter, int levelNumber) {
         GameField field = new GameField(chapter);
@@ -49,22 +42,26 @@ public final class LevelBuilder {
         String key = special.toLowerCase().replace("-", "").replace("_", "");
         Level level;
         switch (key) {
-            case "conveyor": case "conveyorbelt":
+            case "conveyor":
+            case "conveyorbelt":
                 level = new ConveyorBeltLevel(levelNumber, chapter, pool, null);
                 break;
-            case "plantwhatyouget": case "pwyg":
+            case "plantwhatyouget":
+            case "pwyg":
                 PlantWhatYouGet pwyg = new PlantWhatYouGet(levelNumber, chapter, null, null);
                 game.setSunAmount(pwyg.getStartingSun());
                 level = pwyg;
                 break;
-            case "lockedplants": case "locked":
+            case "lockedplants":
+            case "locked":
                 LockedPlantsLevel locked = new LockedPlantsLevel(levelNumber, chapter, null, null);
                 locked.lockPlant(Plants.CHERRY_BOMB);
                 locked.lockPlant(Plants.JALAPENO);
                 locked.lockPlant(Plants.SQUASH);
                 level = locked;
                 break;
-            case "saveourseeds": case "sos":
+            case "saveourseeds":
+            case "sos":
                 SaveOurSeeds sos = new SaveOurSeeds(levelNumber, chapter, null, null);
                 for (int r = 0; r < field.getRows(); r++) {
                     Plant guard = PlantFactory.create(Plants.SUNFLOWER, new Vec2(0, r));
@@ -78,13 +75,16 @@ public final class LevelBuilder {
             case "deadline":
                 level = new DeadLine(levelNumber, chapter, null, null);
                 break;
-            case "loveyourplants": case "love":
+            case "loveyourplants":
+            case "love":
                 level = new LoveYourPlants(levelNumber, chapter, null, null);
                 break;
-            case "nightops": case "night":
+            case "nightops":
+            case "night":
                 level = new NightOps(levelNumber, chapter, null, null);
                 break;
-            case "timedwar": case "timed":
+            case "timedwar":
+            case "timed":
                 TimedWar tw = new TimedWar(levelNumber, chapter, null, null);
                 tw.setDuration(60);
                 tw.setTargetKills(5 + 3 * levelNumber);
@@ -128,7 +128,7 @@ public final class LevelBuilder {
         ArrayList<Wave> waves = new ArrayList<Wave>();
         int waveCount = 3 + levelNumber;
         Zombies[] pool = (levelNumber <= 1)
-                ? new Zombies[]{ Zombies.ZOMBIE_DEFAULT }
+                ? new Zombies[]{Zombies.ZOMBIE_DEFAULT}
                 : poolFor(chapter);
         for (int w = 0; w < waveCount; w++) {
             ArrayList<Zombie> zs = new ArrayList<Zombie>();
@@ -146,19 +146,19 @@ public final class LevelBuilder {
     private static Zombies[] poolFor(ChapterType chapter) {
         switch (chapter) {
             case ANCIENT_EGYPT:
-                return new Zombies[]{ Zombies.ZOMBIE_DEFAULT, Zombies.ZOMBIE_ARMOR1,
-                        Zombies.ZOMBIE_RA, Zombies.ZOMBIE_EXPLORER, Zombies.ZOMBIE_TOMB_RAISER };
+                return new Zombies[]{Zombies.ZOMBIE_DEFAULT, Zombies.ZOMBIE_ARMOR1,
+                        Zombies.ZOMBIE_RA, Zombies.ZOMBIE_EXPLORER, Zombies.ZOMBIE_TOMB_RAISER};
             case FROSTBITE_CAVES:
-                return new Zombies[]{ Zombies.ZOMBIE_DEFAULT, Zombies.ZOMBIE_ICE_AGE_DODO,
-                        Zombies.ZOMBIE_ICE_AGE_HUNTER, Zombies.ZOMBIE_ICE_AGE_TROGLOBITE };
+                return new Zombies[]{Zombies.ZOMBIE_DEFAULT, Zombies.ZOMBIE_ICE_AGE_DODO,
+                        Zombies.ZOMBIE_ICE_AGE_HUNTER, Zombies.ZOMBIE_ICE_AGE_TROGLOBITE};
             case BIG_WAVE_BEACH:
-                return new Zombies[]{ Zombies.ZOMBIE_DEFAULT, Zombies.ZOMBIE_BEACH_FISHERMAN,
-                        Zombies.ZOMBIE_BEACH_OCTOPUS, Zombies.ZOMBIE_BEACH_SNORKEL };
+                return new Zombies[]{Zombies.ZOMBIE_DEFAULT, Zombies.ZOMBIE_BEACH_FISHERMAN,
+                        Zombies.ZOMBIE_BEACH_OCTOPUS, Zombies.ZOMBIE_BEACH_SNORKEL};
             case DARK_AGES:
-                return new Zombies[]{ Zombies.ZOMBIE_DARK_ARMOR3, Zombies.ZOMBIE_DARK_JUGGLER,
-                        Zombies.ZOMBIE_WIZARD, Zombies.ZOMBIE_DARK_IMP_DRAGON };
+                return new Zombies[]{Zombies.ZOMBIE_DARK_ARMOR3, Zombies.ZOMBIE_DARK_JUGGLER,
+                        Zombies.ZOMBIE_WIZARD, Zombies.ZOMBIE_DARK_IMP_DRAGON};
             default:
-                return new Zombies[]{ Zombies.ZOMBIE_DEFAULT, Zombies.ZOMBIE_ARMOR1, Zombies.ZOMBIE_ARMOR2 };
+                return new Zombies[]{Zombies.ZOMBIE_DEFAULT, Zombies.ZOMBIE_ARMOR1, Zombies.ZOMBIE_ARMOR2};
         }
     }
 }

@@ -13,7 +13,10 @@ public class Melee extends Plant {
     @Override
     public void onTick(Game game) {
         if (isFrozen()) return;
-        if (getType() == Plants.CHOMPER) { chomp(game); return; }
+        if (getType() == Plants.CHOMPER) {
+            chomp(game);
+            return;
+        }
         actionTimer += model.Game.SECONDS_PER_TICK;
         double interval = getActionInterval();
         if (interval <= 0) interval = 1;

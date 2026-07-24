@@ -3,8 +3,8 @@ package model.quest;
 public enum Quests {
     AFTAB_GIRE_ROOZANEH(QuestCategory.DAILY, QuestPriorities.MEDIUM);
 
-    private QuestCategory category;
-    private QuestPriorities priority;
+    private final QuestCategory category;
+    private final QuestPriorities priority;
 
     Quests(QuestCategory category, QuestPriorities priority) {
         this.category = category;

@@ -4,6 +4,11 @@ public class Lawnmower {
     private int line;
     private boolean isactive;
 
+    public Lawnmower(int line, boolean isactive) {
+        this.line = line;
+        this.isactive = isactive;
+    }
+
     public void destroyZombies(model.Game game) {
         if (!isactive || game == null) return;
         for (model.entities.zombies.Zombie z
@@ -24,11 +29,6 @@ public class Lawnmower {
             }
         }
         return false;
-    }
-
-    public Lawnmower(int line, boolean isactive) {
-        this.line = line;
-        this.isactive = isactive;
     }
 
     public int getLine() {

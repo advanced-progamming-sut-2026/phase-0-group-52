@@ -18,24 +18,59 @@ public class QuestProgress {
         this.target = def.getTarget();
     }
 
-    public QuestDef getDef() { return def; }
-    public void setDef(QuestDef def) { this.def = def; }
+    public QuestDef getDef() {
+        return def;
+    }
 
-    public double getProgress() { return progress; }
-    public void setProgress(double progress) { this.progress = progress; }
+    public void setDef(QuestDef def) {
+        this.def = def;
+    }
 
-    public int getTarget() { return target; }
-    public void setTarget(int target) { this.target = target; }
+    public double getProgress() {
+        return progress;
+    }
 
-    public boolean isCompleted() { return completed; }
-    public void setCompleted(boolean completed) { this.completed = completed; }
+    public void setProgress(double progress) {
+        this.progress = progress;
+    }
 
-    public boolean isClaimed() { return claimed; }
-    public void setClaimed(boolean claimed) { this.claimed = claimed; }
+    public int getTarget() {
+        return target;
+    }
 
-    public int getVarInt() { return varInt; }
-    public void setVarInt(int varInt) { this.varInt = varInt; }
+    public void setTarget(int target) {
+        this.target = target;
+    }
 
-    public String getVarStr() { return varStr; }
-    public void setVarStr(String varStr) { this.varStr = varStr; }
+    public boolean isCompleted() {
+        return completed;
+    }
+
+    public void setCompleted(boolean completed) {
+        this.completed = completed;
+    }
+
+    public boolean isClaimed() {
+        return claimed;
+    }
+
+    public void setClaimed(boolean claimed) {
+        this.claimed = claimed;
+    }
+
+    public int getVarInt() {
+        return varInt;
+    }
+
+    public void setVarInt(int varInt) {
+        this.varInt = varInt;
+    }
+
+    public String getVarStr() {
+        return varStr;
+    }
+
+    public void setVarStr(String varStr) {
+        this.varStr = varStr;
+    }
 }

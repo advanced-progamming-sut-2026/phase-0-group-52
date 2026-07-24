@@ -5,12 +5,11 @@ import model.entities.plants.Plant;
 import java.util.ArrayList;
 
 public class Cell {
-    private CellType type;
-    private double hp;
     private final ArrayList<Plant> plants = new ArrayList<>();
     private final int row;
     private final int col;
-
+    private CellType type;
+    private double hp;
     private String graveBonus;
 
     private boolean necromancy;
@@ -19,6 +18,18 @@ public class Cell {
         this.row = row;
         this.col = col;
         setType(type);
+    }
+
+    public boolean isPlantable() {
+        return type.isPlantable() && plants.size() < 2;
+    }
+
+    public boolean isEmpty() {
+        return plants.isEmpty();
+    }
+
+    public CellType getType() {
+        return type;
     }
 
     public void setType(CellType type) {
@@ -35,24 +46,39 @@ public class Cell {
         }
     }
 
-    public boolean isPlantable() {
-        return type.isPlantable() && plants.size() < 2;
+    public double getHp() {
+        return hp;
     }
 
-    public boolean isEmpty() {
-        return plants.isEmpty();
+    public void setHp(double hp) {
+        this.hp = hp;
     }
 
-    public CellType getType() { return type; }
-    public double getHp() { return hp; }
-    public void setHp(double hp) { this.hp = hp; }
-    public ArrayList<Plant> getPlants() { return plants; }
-    public int getRow() { return row; }
-    public int getCol() { return col; }
+    public ArrayList<Plant> getPlants() {
+        return plants;
+    }
 
-    public String getGraveBonus() { return graveBonus; }
-    public void setGraveBonus(String graveBonus) { this.graveBonus = graveBonus; }
+    public int getRow() {
+        return row;
+    }
 
-    public boolean isNecromancy() { return necromancy; }
-    public void setNecromancy(boolean necromancy) { this.necromancy = necromancy; }
+    public int getCol() {
+        return col;
+    }
+
+    public String getGraveBonus() {
+        return graveBonus;
+    }
+
+    public void setGraveBonus(String graveBonus) {
+        this.graveBonus = graveBonus;
+    }
+
+    public boolean isNecromancy() {
+        return necromancy;
+    }
+
+    public void setNecromancy(boolean necromancy) {
+        this.necromancy = necromancy;
+    }
 }

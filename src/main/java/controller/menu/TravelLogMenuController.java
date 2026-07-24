@@ -57,8 +57,8 @@ public class TravelLogMenuController {
             return;
         }
         onPage.sort((a, b) -> Integer.compare(
-            b.getDef().getPriority().getPrioritynum(),
-            a.getDef().getPriority().getPrioritynum()));
+                b.getDef().getPriority().getPrioritynum(),
+                a.getDef().getPriority().getPrioritynum()));
         for (QuestProgress qp : onPage) {
             printQuest(qp);
         }
@@ -78,9 +78,9 @@ public class TravelLogMenuController {
         QuestDef def = qp.getDef();
         String status = qp.isCompleted() ? (qp.isClaimed() ? "claimed" : "completed") : "in progress";
         System.out.printf("[%-8s] %-24s progress: %d/%d | reward: %d %s | %s%n",
-            def.getPriority(), def.getDisplayName(),
-            (long) qp.getProgress(), qp.getTarget(),
-            rewardService.amountFor(qp), def.getRewardType(), status);
+                def.getPriority(), def.getDisplayName(),
+                (long) qp.getProgress(), qp.getTarget(),
+                rewardService.amountFor(qp), def.getRewardType(), status);
     }
 
     private void showMinigames() {

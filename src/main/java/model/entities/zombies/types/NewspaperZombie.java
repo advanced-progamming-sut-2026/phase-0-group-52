@@ -18,7 +18,9 @@ public class NewspaperZombie extends WalkingZombie {
         setArmorHp(NEWSPAPER_HP);
     }
 
-    public boolean isEnraged() { return enraged; }
+    public boolean isEnraged() {
+        return enraged;
+    }
 
     @Override
     public void onTick(Game game) {

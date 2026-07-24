@@ -19,7 +19,9 @@ public class Troglobite extends WalkingZombie {
         setArmorHp(ICE_HP);
     }
 
-    public boolean hasIceBlock() { return getArmorHp() > 0; }
+    public boolean hasIceBlock() {
+        return getArmorHp() > 0;
+    }
 
     @Override
     public void onTick(Game game) {

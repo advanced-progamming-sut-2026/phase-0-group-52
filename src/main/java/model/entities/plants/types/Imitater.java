@@ -12,6 +12,11 @@ public class Imitater extends Modifier {
         super(Plants.IMITATER, position);
     }
 
-    public Plants getCopiedType() { return copiedType; }
-    public void setCopiedType(Plants copiedType) { this.copiedType = copiedType; }
+    public Plants getCopiedType() {
+        return copiedType;
+    }
+
+    public void setCopiedType(Plants copiedType) {
+        this.copiedType = copiedType;
+    }
 }

@@ -6,11 +6,11 @@ import java.util.List;
 public class SecurityQuestion {
 
     private static final List<String> QUESTIONS = Arrays.asList(
-        "What was the name of your first pet?",
-        "What city were you born in?",
-        "What was the name of your best childhood friend?",
-        "What was the model of your first car?",
-        "What is your favorite food?"
+            "What was the name of your first pet?",
+            "What city were you born in?",
+            "What was the name of your best childhood friend?",
+            "What was the model of your first car?",
+            "What is your favorite food?"
     );
 
     public static List<String> getQuestions() {

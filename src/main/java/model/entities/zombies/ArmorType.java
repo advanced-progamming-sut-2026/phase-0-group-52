@@ -1,6 +1,6 @@
 package model.entities.zombies;
 
 public enum ArmorType {
-    CONEHEAD, BUCKETHEAD, BRICKHEAD, KNIGHT, ICEBLOCK, DEFAULT;
+    CONEHEAD, BUCKETHEAD, BRICKHEAD, KNIGHT, ICEBLOCK, DEFAULT
 
 }

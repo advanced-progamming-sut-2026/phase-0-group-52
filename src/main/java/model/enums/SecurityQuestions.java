@@ -1,24 +1,20 @@
 package model.enums;
 
 public enum SecurityQuestions {
-    FAVORITE_MOVIE(1,"What is your favorite movie of all time?"),
-    DREAM_JOB(2,"What job did you dream of as a child?"),
-    BEST_VACATION(3,"Where did you go on your best vacation?"),
-    FAVORITE_BOOK(4,"What is your favorite book?"),
-    FIRST_CONCERT(5,"Who was the first artist you saw in concert?"),
-    CHILDHOOD_HERO(6,"Who was your childhood hero?"),
-    FAVORITE_FOOD(7,"What is your favorite food to cook?");
+    FAVORITE_MOVIE(1, "What is your favorite movie of all time?"),
+    DREAM_JOB(2, "What job did you dream of as a child?"),
+    BEST_VACATION(3, "Where did you go on your best vacation?"),
+    FAVORITE_BOOK(4, "What is your favorite book?"),
+    FIRST_CONCERT(5, "Who was the first artist you saw in concert?"),
+    CHILDHOOD_HERO(6, "Who was your childhood hero?"),
+    FAVORITE_FOOD(7, "What is your favorite food to cook?");
 
     private final int num;
     private final String question;
 
-    SecurityQuestions(int num,String question){
-        this.num=num;
-        this.question=question;
-    }
-
-    public String getQuestion() {
-        return question;
+    SecurityQuestions(int num, String question) {
+        this.num = num;
+        this.question = question;
     }
 
     public static String getQuestionByIndex(int index) {
@@ -37,9 +33,9 @@ public enum SecurityQuestions {
         return questions[index - 1];
     }
 
-    public static String listOfSecurityQuestions(){
+    public static String listOfSecurityQuestions() {
         StringBuilder sb = new StringBuilder();
-        for(SecurityQuestions sq: SecurityQuestions.values()){
+        for (SecurityQuestions sq : SecurityQuestions.values()) {
             sb.append(sq.num).append(".").append(sq.question).append("\n");
         }
         return sb.toString();
@@ -56,5 +52,9 @@ public enum SecurityQuestions {
             result[i] = questions[i].getQuestion();
         }
         return result;
+    }
+
+    public String getQuestion() {
+        return question;
     }
 }

@@ -18,13 +18,33 @@ public class Pot {
         this.unlocked = unlocked;
     }
 
-    public int getX() { return x; }
-    public int getY() { return y; }
-    public boolean isUnlocked() { return unlocked; }
-    public void setUnlocked(boolean unlocked) { this.unlocked = unlocked; }
-    public boolean isOccupied() { return occupied; }
-    public boolean isMarigold() { return marigold; }
-    public Plants getPlantType() { return plantType; }
+    public int getX() {
+        return x;
+    }
+
+    public int getY() {
+        return y;
+    }
+
+    public boolean isUnlocked() {
+        return unlocked;
+    }
+
+    public void setUnlocked(boolean unlocked) {
+        this.unlocked = unlocked;
+    }
+
+    public boolean isOccupied() {
+        return occupied;
+    }
+
+    public boolean isMarigold() {
+        return marigold;
+    }
+
+    public Plants getPlantType() {
+        return plantType;
+    }
 
     public void plantMarigold() {
         occupied = true;

@@ -343,10 +343,13 @@ public class Beghouled {
                 else ch = symbol(board[r][c]);
                 boolean zombieHere = false;
                 for (double[] z : zombies)
-                    if ((int) z[0] == r && (int) z[1] == c) zombieHere = true;
+                    if ((int) z[0] == r && (int) z[1] == c) {
+                        zombieHere = true;
+                        break;
+                    }
                 sb.append(ch).append(zombieHere ? '!' : ' ').append(' ');
             }
-            System.out.println(sb.toString());
+            System.out.println(sb);
         }
         System.out.println("  P=Peashooter R=Repeater G=MegaGatling W=Wall-nut T=Tall-nut"
                 + " U=Puff-shroom F=Fume-shroom C=Cabbage M=Melon I=WinterMelon S=SnowPea # crater ! zombie");
@@ -354,18 +357,30 @@ public class Beghouled {
 
     private char symbol(Plants type) {
         switch (type) {
-            case PEASHOOTER:       return 'P';
-            case REPEATER:         return 'R';
-            case MEGA_GATLING_PEA: return 'G';
-            case WALL_NUT:         return 'W';
-            case TALL_NUT:         return 'T';
-            case PUFF_SHROOM:      return 'U';
-            case FUME_SHROOM:      return 'F';
-            case CABBAGE_PULT:     return 'C';
-            case MELON_PULT:       return 'M';
-            case WINTER_MELON:     return 'I';
-            case SNOW_PEA:         return 'S';
-            default:               return '?';
+            case PEASHOOTER:
+                return 'P';
+            case REPEATER:
+                return 'R';
+            case MEGA_GATLING_PEA:
+                return 'G';
+            case WALL_NUT:
+                return 'W';
+            case TALL_NUT:
+                return 'T';
+            case PUFF_SHROOM:
+                return 'U';
+            case FUME_SHROOM:
+                return 'F';
+            case CABBAGE_PULT:
+                return 'C';
+            case MELON_PULT:
+                return 'M';
+            case WINTER_MELON:
+                return 'I';
+            case SNOW_PEA:
+                return 'S';
+            default:
+                return '?';
         }
     }
 }

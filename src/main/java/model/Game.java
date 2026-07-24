@@ -6,52 +6,30 @@ import model.entities.plants.Plants;
 import model.entities.zombies.Zombie;
 import model.level.Level;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
 public class Game {
     public static final int MAX_PLANT_FOOD = 3;
     public static final int TICKS_PER_SECOND = 10;
     public static final double SECONDS_PER_TICK = 1.0 / TICKS_PER_SECOND;
-
-    public static int secondsToTicks(double seconds) {
-        return (int) Math.round(seconds * TICKS_PER_SECOND);
-    }
-
-    public static double ticksToSeconds(int ticks) {
-        return (double) ticks / TICKS_PER_SECOND;
-    }
-
     private final GameStats stats = new GameStats();
-    public GameStats getStats() { return stats; }
-
-    private App app;
-    private Chapter chapter;
-    private Level level;
-    private GameField field;
-
-    private int sunAmount;
-    private int plantFoodCount;
-
     private final ArrayList<Plant> plants;
     private final ArrayList<Zombie> zombies;
     private final ArrayList<Sun> suns;
     private final ArrayList<Wave> waves;
-
+    private final Map<Plants, Double> cooldowns = new HashMap<>();
+    private final Set<Plants> boostedTypes = new HashSet<>();
+    private final ArrayList<Plants> chosenPlants = new ArrayList<>();
+    private App app;
+    private Chapter chapter;
+    private Level level;
+    private GameField field;
+    private int sunAmount;
+    private int plantFoodCount;
     private int currentTick;
     private int currentWaveIndex;
     private int nextSunDropTick;
-
-    private final Map<Plants, Double> cooldowns = new HashMap<>();
-    private final Set<Plants> boostedTypes = new HashSet<>();
-
-    private final ArrayList<Plants> chosenPlants = new ArrayList<>();
-
     private boolean cooldownsRemoved;
-
     private boolean gameOver;
     private boolean won;
 
@@ -72,6 +50,18 @@ public class Game {
         this.plantFoodCount = 0;
         this.gameOver = false;
         this.won = false;
+    }
+
+    public static int secondsToTicks(double seconds) {
+        return (int) Math.round(seconds * TICKS_PER_SECOND);
+    }
+
+    public static double ticksToSeconds(int ticks) {
+        return (double) ticks / TICKS_PER_SECOND;
+    }
+
+    public GameStats getStats() {
+        return stats;
     }
 
     public ArrayList<Plant> getPlantsAt(int col, int row) {
@@ -110,10 +100,17 @@ public class Game {
         cooldowns.clear();
     }
 
-    public boolean isCooldownsRemoved() { return cooldownsRemoved; }
-    public void setCooldownsRemoved(boolean cooldownsRemoved) { this.cooldownsRemoved = cooldownsRemoved; }
+    public boolean isCooldownsRemoved() {
+        return cooldownsRemoved;
+    }
 
-    public ArrayList<Plants> getChosenPlants() { return chosenPlants; }
+    public void setCooldownsRemoved(boolean cooldownsRemoved) {
+        this.cooldownsRemoved = cooldownsRemoved;
+    }
+
+    public ArrayList<Plants> getChosenPlants() {
+        return chosenPlants;
+    }
 
     public void addSun(int amount) {
         this.sunAmount += amount;
@@ -125,46 +122,115 @@ public class Game {
         return true;
     }
 
-    public App getApp() { return app; }
-    public void setApp(App app) { this.app = app; }
+    public App getApp() {
+        return app;
+    }
 
-    public Chapter getChapter() { return chapter; }
-    public void setChapter(Chapter chapter) { this.chapter = chapter; }
+    public void setApp(App app) {
+        this.app = app;
+    }
 
-    public Level getLevel() { return level; }
-    public void setLevel(Level level) { this.level = level; }
+    public Chapter getChapter() {
+        return chapter;
+    }
 
-    public GameField getField() { return field; }
-    public void setField(GameField field) { this.field = field; }
+    public void setChapter(Chapter chapter) {
+        this.chapter = chapter;
+    }
 
-    public int getSunAmount() { return sunAmount; }
-    public void setSunAmount(int sunAmount) { this.sunAmount = sunAmount; }
+    public Level getLevel() {
+        return level;
+    }
 
-    public int getPlantFoodCount() { return plantFoodCount; }
+    public void setLevel(Level level) {
+        this.level = level;
+    }
+
+    public GameField getField() {
+        return field;
+    }
+
+    public void setField(GameField field) {
+        this.field = field;
+    }
+
+    public int getSunAmount() {
+        return sunAmount;
+    }
+
+    public void setSunAmount(int sunAmount) {
+        this.sunAmount = sunAmount;
+    }
+
+    public int getPlantFoodCount() {
+        return plantFoodCount;
+    }
+
     public void setPlantFoodCount(int plantFoodCount) {
         this.plantFoodCount = Math.min(plantFoodCount, MAX_PLANT_FOOD);
     }
 
-    public ArrayList<Plant> getPlants() { return plants; }
-    public ArrayList<Zombie> getZombies() { return zombies; }
-    public ArrayList<Sun> getSuns() { return suns; }
-    public ArrayList<Wave> getWaves() { return waves; }
+    public ArrayList<Plant> getPlants() {
+        return plants;
+    }
 
-    public int getCurrentTick() { return currentTick; }
-    public void setCurrentTick(int currentTick) { this.currentTick = currentTick; }
+    public ArrayList<Zombie> getZombies() {
+        return zombies;
+    }
 
-    public int getCurrentWaveIndex() { return currentWaveIndex; }
-    public void setCurrentWaveIndex(int currentWaveIndex) { this.currentWaveIndex = currentWaveIndex; }
+    public ArrayList<Sun> getSuns() {
+        return suns;
+    }
 
-    public int getNextSunDropTick() { return nextSunDropTick; }
-    public void setNextSunDropTick(int nextSunDropTick) { this.nextSunDropTick = nextSunDropTick; }
+    public ArrayList<Wave> getWaves() {
+        return waves;
+    }
 
-    public Map<Plants, Double> getCooldowns() { return cooldowns; }
-    public Set<Plants> getBoostedTypes() { return boostedTypes; }
+    public int getCurrentTick() {
+        return currentTick;
+    }
 
-    public boolean isGameOver() { return gameOver; }
-    public void setGameOver(boolean gameOver) { this.gameOver = gameOver; }
+    public void setCurrentTick(int currentTick) {
+        this.currentTick = currentTick;
+    }
 
-    public boolean isWon() { return won; }
-    public void setWon(boolean won) { this.won = won; }
+    public int getCurrentWaveIndex() {
+        return currentWaveIndex;
+    }
+
+    public void setCurrentWaveIndex(int currentWaveIndex) {
+        this.currentWaveIndex = currentWaveIndex;
+    }
+
+    public int getNextSunDropTick() {
+        return nextSunDropTick;
+    }
+
+    public void setNextSunDropTick(int nextSunDropTick) {
+        this.nextSunDropTick = nextSunDropTick;
+    }
+
+    public Map<Plants, Double> getCooldowns() {
+        return cooldowns;
+    }
+
+    public Set<Plants> getBoostedTypes() {
+        return boostedTypes;
+    }
+
+    public boolean isGameOver() {
+        return gameOver;
+    }
+
+    public void setGameOver(boolean gameOver) {
+        this.gameOver = gameOver;
+    }
+
+    public boolean isWon() {
+        return won;
+    }
+
+    public void setWon(boolean won) {
+        this.won = won;
+    }
 }

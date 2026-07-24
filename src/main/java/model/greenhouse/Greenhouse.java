@@ -98,7 +98,7 @@ public class Greenhouse {
                         .append(getPot(x, y).describe());
                 if (x < COLS) sb.append("  |  ");
             }
-            System.out.println(sb.toString());
+            System.out.println(sb);
         }
     }
 }

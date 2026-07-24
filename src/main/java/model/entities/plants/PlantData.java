@@ -6,11 +6,7 @@ import java.io.BufferedReader;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.nio.charset.StandardCharsets;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -28,7 +24,8 @@ public final class PlantData {
 
     private static Map<Plants, List<PlantUpgrade>> upgrades;
 
-    private PlantData() {}
+    private PlantData() {
+    }
 
     private static synchronized Map<Plants, List<PlantUpgrade>> upgrades() {
         if (upgrades == null) {
@@ -70,7 +67,7 @@ public final class PlantData {
 
     public static List<PlantUpgrade> getUpgrades(Plants type) {
         List<PlantUpgrade> list = upgrades().get(type);
-        return list == null ? Collections.<PlantUpgrade>emptyList() : list;
+        return list == null ? Collections.emptyList() : list;
     }
 
     public static int effectiveCost(Plants type, int level) {

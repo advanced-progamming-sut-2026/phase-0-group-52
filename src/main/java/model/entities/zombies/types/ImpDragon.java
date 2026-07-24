@@ -11,5 +11,7 @@ public class ImpDragon extends WalkingZombie {
         super(Zombies.ZOMBIE_DARK_IMP_DRAGON, line, position, chapter, type);
     }
 
-    public boolean isFireImmune() { return true; }
+    public boolean isFireImmune() {
+        return true;
+    }
 }
