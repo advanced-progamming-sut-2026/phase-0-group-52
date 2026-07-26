@@ -153,11 +153,29 @@ public class GameMenuController {
             u.setCoins(u.getCoins() + 500);
             int score = game.getStats().getZombiesKilled() * 10 + game.getSunAmount();
             if (score > u.getMaxPoint()) u.setMaxPoint(score);
+            advanceProgress(u, game);
             System.out.println("Reward: 500 coins, score " + score + ". Use 'menu enter chapter_menu' to continue.");
         } else {
             System.out.println("Use 'menu enter chapter_menu' to try again.");
         }
         new controller.QuestService().onLevelEnd(game, game.isWon());
+    }
+
+    private void advanceProgress(model.User u, Game game) {
+        int levelsPerChapter = 4;
+        int chapterNum = 1;
+        if (game.getField() != null && game.getField().getChapter() != null)
+            chapterNum = game.getField().getChapter().ordinal() + 1;
+        int levelNum = app.getSelectedLevel();
+        int completed = (chapterNum - 1) * levelsPerChapter + levelNum;
+        int curChapter = Math.max(1, u.getLastChapter());
+        int curLevel = Math.max(1, u.getLastLevel());
+        int currentPassed = (curChapter - 1) * levelsPerChapter + (curLevel - 1);
+        if (completed > currentPassed) {
+            u.setLastChapter(completed / levelsPerChapter + 1);
+            u.setLastLevel(completed % levelsPerChapter + 1);
+            System.out.println("Progress saved: chapter " + u.getLastChapter() + ", level " + u.getLastLevel() + " unlocked.");
+        }
     }
 
     private void handleCollect(String[] parts) {

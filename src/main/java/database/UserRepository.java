@@ -209,6 +209,8 @@ public class UserRepository {
         num(sb, "plantFoodNum", u.getPlantFoodNum());
         num(sb, "mostMeowPoint", u.getMostMeowPoint());
         num(sb, "maxPoint", u.getMaxPoint());
+        num(sb, "lastChapter", u.getLastChapter());
+        num(sb, "lastLevel", u.getLastLevel());
         num(sb, "gamesPlayed", u.getGamesPlayed());
         num(sb, "miniGamesPlayed", u.getMiniGamesPlayed());
         num(sb, "questDailyNum", u.getQuestDailyNum());
@@ -240,6 +242,8 @@ public class UserRepository {
         u.setPlantFoodNum(intOf(m, "plantFoodNum"));
         u.setMostMeowPoint(intOf(m, "mostMeowPoint"));
         u.setMaxPoint(intOf(m, "maxPoint"));
+        u.setLastChapter(intOf(m, "lastChapter"));
+        u.setLastLevel(intOf(m, "lastLevel"));
         u.setGamesPlayed(intOf(m, "gamesPlayed"));
         u.setMiniGamesPlayed(intOf(m, "miniGamesPlayed"));
         u.setQuestDailyNum(intOf(m, "questDailyNum"));
