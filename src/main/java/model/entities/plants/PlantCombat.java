@@ -67,13 +67,18 @@ public final class PlantCombat {
         }
     }
 
+    public static final int FREEZE_TICKS = 10 * model.Game.TICKS_PER_SECOND;
+
     public static void freeze(Zombie z) {
         if (z.getChapter() == model.ChapterType.FROSTBITE_CAVES) {
             slow(z);
             return;
         }
-        z.setSpeed(0);
-        z.setState(ZombieState.DISABLED);
+        boolean wasFrozen = z.isFrozenSolid();
+        z.freezeFor(FREEZE_TICKS);
+        if (!wasFrozen)
+            System.out.println("A zombie in row " + (z.getRow() + 1) + " was frozen solid for "
+                    + (FREEZE_TICKS / model.Game.TICKS_PER_SECOND) + " seconds.");
     }
 
     public static void explode(Game game, int col, int row, int radius, double dmg) {
@@ -101,9 +106,30 @@ public final class PlantCombat {
                     game.getStats().recordKillAtColZeroNoMower();
                 if (game.getLevel() instanceof model.level.TimedWar)
                     ((model.level.TimedWar) game.getLevel()).onZombieKilled();
+                rollLoot(game);
                 z.onDeath(game);
                 game.getZombies().remove(i);
             }
+        }
+    }
+
+    private static void rollLoot(Game game) {
+        if (game.getApp() == null) return;
+        model.User u = game.getApp().getCurrentuser();
+        if (u == null || RANDOM.nextDouble() >= 0.10) return;
+        int pick = RANDOM.nextInt(3);
+        if (pick == 0) {
+            u.setGems(u.getGems() + 1);
+            System.out.println("A zombie dropeed a diamond; you have " + u.getGems() + " diamonds now.");
+        } else if (pick == 1) {
+            u.setCoins(u.getCoins() + 50);
+            System.out.println("A zombie dropeed a coin; you have " + u.getCoins() + " coins now.");
+        } else if (game.getApp().getGreenhouse() != null && game.getApp().getGreenhouse().unlockNextPot()) {
+            System.out.println("A zombie dropeed a pot; you have "
+                    + game.getApp().getGreenhouse().unlockedPotCount() + " pots now.");
+        } else {
+            u.setCoins(u.getCoins() + 50);
+            System.out.println("A zombie dropeed a coin; you have " + u.getCoins() + " coins now.");
         }
     }
 

@@ -71,7 +71,8 @@ public class User {
         this.newsList = new NewsList();
     }
 
-    public User(String username, String password, String nickname, String email, String gender, boolean isLogged, int coinBalance,
+    public User(String username, String password, String nickname,
+                String email, String gender, boolean isLogged, int coinBalance,
                 int diamondBalance, int lastChapter, int lastLevel, int minigamesFinished,
                 int dailyQuestCount, int otherQuestCount, int highScore, Collection collection) {
         this.username = username;

@@ -42,7 +42,8 @@ public class Zombotany {
     public void run(Scanner scanner) {
         System.out.println("Zombotany level " + level + " started. Destroy " + targetKills
                 + " plant-headed zombies. Plant defenders in columns 1-" + PLANT_ZONE + ".");
-        System.out.println("Zombies: Peashooter (shoots), Wall-nut (tanky), Jalapeno (blasts its row), Squash (crushes).");
+        System.out.println("Zombies: Peashooter (shoots), Wall-nut (tanky), Jalapeno (blasts its row)," +
+                " Squash (crushes).");
         System.out.println("Commands: plant -t <peashooter|wallnut> -l (x, y) | tick | show | exit");
         render();
         while (!over) {
@@ -52,7 +53,13 @@ public class Zombotany {
             if (line.isEmpty()) continue;
             if (line.equals("exit")) { System.out.println("Left Zombotany."); return; }
             else if (line.equals("show")) render();
-            else if (line.equals("tick")) tick();
+            else if (line.equals("tick") || line.startsWith("tick ")) {
+                int n = 1;
+                String[] tp = line.split("\\s+");
+                if (tp.length >= 2)
+                { try { n = Math.max(1, Integer.parseInt(tp[1])); } catch (NumberFormatException ignored) {} }
+                for (int ti = 0; ti < n && !over; ti++) tick();
+            }
             else {
                 Matcher m = PLANT.matcher(line);
                 if (m.matches()) plant(m.group(1), Integer.parseInt(m.group(2)), Integer.parseInt(m.group(3)));
@@ -74,7 +81,8 @@ public class Zombotany {
             System.out.println("Error: You can only plant in columns 1-" + PLANT_ZONE + ".");
             return;
         }
-        for (Plant p : plants) if (p.row == r && p.col == c) { System.out.println("Error: That tile is occupied."); return; }
+        for (Plant p : plants)
+            if (p.row == r && p.col == c) { System.out.println("Error: That tile is occupied."); return; }
         boolean shooter = type.equalsIgnoreCase("peashooter");
         if (!shooter && !type.equalsIgnoreCase("wallnut")) {
             System.out.println("Error: Choose peashooter or wallnut.");

@@ -13,6 +13,7 @@ public interface ChapterMechanics {
         switch (chapter) {
             case FROSTBITE_CAVES: return new FrostbiteCavesMechanics();
             case DARK_AGES:       return new DarkAgesMechanics();
+            case BIG_WAVE_BEACH:  return new BigWaveBeachMechanics();
             default:              return null;
         }
     }

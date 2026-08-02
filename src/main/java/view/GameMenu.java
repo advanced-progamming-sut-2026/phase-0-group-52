@@ -61,34 +61,43 @@ public class GameMenu implements AppMenu {
         System.out.println("Wave: " + waveNo + "/" + game.getWaves().size()
                 + " | Sun: " + game.getSunAmount()
                 + " | Plant food: " + game.getPlantFoodCount() + "/" + Game.MAX_PLANT_FOOD);
-
+        if (game.getLevel() instanceof model.level.TimedWar) {
+            model.level.TimedWar tw = (model.level.TimedWar) game.getLevel();
+            System.out.println("[TIMED WAR]  Time left: "
+                    + String.format("%.1f", tw.getRemainingTime() / (double) Game.TICKS_PER_SECOND)
+                    + "s  |  Kills: " + tw.getKills());}
+        int deadCol = -1;
+        if (game.getLevel() instanceof model.level.DeadLine) {
+            deadCol = ((model.level.DeadLine) game.getLevel()).getDeadlineCol();
+            System.out.println("[DEAD LINE]  Do not let a zombie cross the '|' at column " + (deadCol + 1) + "!");}
         for (int r = 0; r < field.getRows(); r++) {
             StringBuilder sb = new StringBuilder();
             Lawnmower mower = field.getLawnmower(r);
             sb.append(mower != null && mower.isIsactive() ? "[M]" : "[ ]");
             for (int c = 0; c < field.getCols(); c++) {
+                if (c == deadCol) sb.append(" |");
                 Cell cell = field.getCell(c, r);
                 char tile = tileChar(cell);
                 char plant = '-';
                 if (!cell.getPlants().isEmpty()) {
                     Plant top = cell.getPlants().get(cell.getPlants().size() - 1);
-                    plant = Character.toUpperCase(top.getType().getName().charAt(0));
-                }
+                    plant = Character.toUpperCase(top.getType().getName().charAt(0));}
                 int zombieCount = 0;
                 for (Zombie z : game.getZombies())
                     if (z.getRow() == r && z.getCol() == c) zombieCount++;
-                char zc = zombieCount == 0 ? '-' : (char) ('0' + Math.min(zombieCount, 9));
-                sb.append(' ').append(tile).append(plant).append(zc);
-            }
+                char zc = zombieCount == 0 ? '-'
+                        : (zombieCount == 1 ? 'Z' : (char) ('0' + Math.min(zombieCount, 9)));
+                sb.append(' ').append(tile).append(plant).append(zc);}
             System.out.println(sb.toString());
         }
-        System.out.println("Cell format: <tile><plant><zombies> | [M] = lawnmower available");
-        System.out.println("Tiles: . normal  T tombstone  $ sun-grave  & food-grave  ~ water  # frozen  ^ slip-up  v slip-down  _ low-ground  N necromancy");
-
+        System.out.println("Cell format: <tile><plant><zombies> " +
+                " (Z = a zombie, digit = that many zombies) | [M] = lawnmower available");
+        System.out.println("Tiles: . normal  T tombstone  $ sun-grave  & food-grave " +
+                " ~ water  # frozen  ^ slip-up  v slip-down  _ low-ground  N necromancy");
         if (!game.getZombies().isEmpty()) {
             System.out.println("Zombies:");
             for (Zombie z : game.getZombies()) {
-                System.out.println("  " + z.getType() + " | row " + (z.getRow() + 1)
+                System.out.println("  " + z.getClass().getSimpleName() + " | row " + (z.getRow() + 1)
                         + " | x=" + String.format("%.2f", z.getPosition().x)
                         + " | hp=" + (int) z.getHp()
                         + (z.getArmorHp() > 0 ? " | armor=" + (int) z.getArmorHp() : ""));
@@ -149,9 +158,9 @@ public class GameMenu implements AppMenu {
         } else {
             System.out.println("  Zombies:");
             for (Zombie z : zombies) {
-                System.out.println("    " + z.getType()
+                System.out.println("    " + z.getClass().getSimpleName()
                         + " | hp: " + (int) z.getHp()
-                        + " | armor: " + z.getArmorType() + (z.getArmorHp() > 0 ? " (" + (int) z.getArmorHp() + ")" : "")
+                        + " | armor: " + z.getArmorType()+(z.getArmorHp() > 0 ? " (" + (int) z.getArmorHp() + ")" : "")
                         + " | x=" + String.format("%.2f", z.getPosition().x)
                         + " | state: " + z.getState());
             }

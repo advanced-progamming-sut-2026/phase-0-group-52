@@ -28,7 +28,6 @@ public class GameLoop {
         if (game.isGameOver()) return null;
         int tick = game.getCurrentTick() + 1;
         game.setCurrentTick(tick);
-
         if (skyEnabled(game)) {
             skySunTimer++;
             if (skySunTimer >= skyIntervalTicks(game)) {
@@ -47,7 +46,11 @@ public class GameLoop {
         }
 
         for (Plant p : new ArrayList<Plant>(game.getPlants())) p.onTick(game);
-        for (Zombie z : new ArrayList<Zombie>(game.getZombies())) z.onTick(game);
+        for (Zombie z : new ArrayList<Zombie>(game.getZombies())) {
+            z.advanceFreeze();
+            if (z.isFrozenSolid()) continue;
+            z.onTick(game);
+        }
         if (mechanics != null) mechanics.onTick(game);
         if (game.getLevel() != null) game.getLevel().onTick(game);
 
@@ -94,8 +97,15 @@ public class GameLoop {
     }
 
     private void spawnWaves(Game game, int tick) {
+        model.level.Level level = game.getLevel();
+
+        if (level != null && level.areWavesHeld()) return;
         int nextWave = game.getCurrentWaveIndex() + 1;
-        if (nextWave < game.getWaves().size() && tick >= (nextWave + 1) * WAVE_INTERVAL) {
+
+        boolean ready = (level != null && level.manualWaves())
+                ? (tick - level.getWaveStartTick()) >= nextWave * WAVE_INTERVAL
+                : tick >= (nextWave + 1) * WAVE_INTERVAL;
+        if (nextWave < game.getWaves().size() && ready) {
             game.setCurrentWaveIndex(nextWave);
             Wave w = game.getWaves().get(nextWave);
             game.getZombies().addAll(w.getZombies());

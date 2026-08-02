@@ -23,6 +23,28 @@ public abstract class Zombie {
 
     private boolean hypnotized = false;
 
+    private int frozenTicks = 0;
+    private double preFreezeSpeed = 0;
+
+    public boolean isFrozenSolid() { return frozenTicks > 0; }
+
+    public void freezeFor(int ticks) {
+        if (frozenTicks <= 0) preFreezeSpeed = speed;
+        frozenTicks = Math.max(frozenTicks, ticks);
+        speed = 0;
+        state = ZombieState.DISABLED;
+    }
+
+    public void advanceFreeze() {
+        if (frozenTicks > 0) {
+            frozenTicks--;
+            if (frozenTicks == 0) {
+                speed = preFreezeSpeed;
+                state = ZombieState.WALKING;
+            }
+        }
+    }
+
     public Zombie(double hp, double speed, double damage, int line, Vec2 position, ArmorType armorType,
                   ChapterType chapter, ZombieType type, ZombieState state, ZombieAbility ability) {
         this.hp = hp;

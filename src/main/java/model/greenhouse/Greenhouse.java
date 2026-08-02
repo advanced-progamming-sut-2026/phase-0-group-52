@@ -24,6 +24,14 @@ public class Greenhouse {
         return pots[y - 1][x - 1];
     }
 
+    public int unlockedPotCount() {
+        int n = 0;
+        for (int y = 0; y < ROWS; y++)
+            for (int x = 0; x < COLS; x++)
+                if (pots[y][x].isUnlocked()) n++;
+        return n;
+    }
+
     public boolean unlockNextPot() {
         for (int y = 0; y < ROWS; y++)
             for (int x = 0; x < COLS; x++)

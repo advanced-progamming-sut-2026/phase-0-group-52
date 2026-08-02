@@ -35,14 +35,15 @@ public final class LevelBuilder {
     }
 
     public static String specialTypes() {
-        return "conveyor, plant_what_you_get, locked_plants, save_our_seeds, deadline, love_your_plants, night_ops, timed_war";
+        return "conveyor, plant_what_you_get, locked_plants, save_our_seeds, deadline," +
+                " love_your_plants, night_ops, timed_war";
     }
 
     public static Game buildSpecial(App app, ChapterType chapter, int levelNumber, String special) {
         GameField field = new GameField(chapter);
         applyTerrain(field, chapter);
         int startSun = 150;
-        Game game = new Game(app, null, null, field, startSun, new ArrayList<Plant>(), buildWaves(chapter, levelNumber));
+        Game game = new Game(app, null, null, field, startSun, new ArrayList<Plant>(), buildWaves(chapter,levelNumber));
         if (app != null) game.getChosenPlants().addAll(app.getPlantSelection());
         ArrayList<Plants> pool = new ArrayList<Plants>(Arrays.asList(
                 Plants.PEASHOOTER, Plants.SUNFLOWER, Plants.WALL_NUT, Plants.SNOW_PEA, Plants.CHERRY_BOMB));
@@ -50,20 +51,20 @@ public final class LevelBuilder {
         Level level;
         switch (key) {
             case "conveyor": case "conveyorbelt":
-                level = new ConveyorBeltLevel(levelNumber, chapter, pool, null);
-                break;
+                level = new ConveyorBeltLevel(levelNumber, chapter, pool, null);break;
             case "plantwhatyouget": case "pwyg":
-                PlantWhatYouGet pwyg = new PlantWhatYouGet(levelNumber, chapter, null, null);
-                game.setSunAmount(pwyg.getStartingSun());
-                level = pwyg;
-                break;
+                ArrayList<Plants> pwygPool = new ArrayList<Plants>(Arrays.asList(
+                        Plants.PEASHOOTER, Plants.SUNFLOWER, Plants.WALL_NUT, Plants.SNOW_PEA,
+                        Plants.CHERRY_BOMB, Plants.REPEATER, Plants.SQUASH, Plants.POTATO_MINE));
+                game.setSunAmount(0);
+                level = new PlantWhatYouGet(levelNumber, chapter, pwygPool, null);break;
             case "lockedplants": case "locked":
                 LockedPlantsLevel locked = new LockedPlantsLevel(levelNumber, chapter, null, null);
-                locked.lockPlant(Plants.CHERRY_BOMB);
-                locked.lockPlant(Plants.JALAPENO);
-                locked.lockPlant(Plants.SQUASH);
-                level = locked;
-                break;
+                if (app != null && !app.getLockedPlants().isEmpty())
+                    for (Plants lp : app.getLockedPlants()) locked.lockPlant(lp);
+                else { locked.lockPlant(Plants.CHERRY_BOMB);
+                    locked.lockPlant(Plants.JALAPENO); locked.lockPlant(Plants.SQUASH);}
+                level = locked;break;
             case "saveourseeds": case "sos":
                 SaveOurSeeds sos = new SaveOurSeeds(levelNumber, chapter, null, null);
                 for (int r = 0; r < field.getRows(); r++) {
@@ -71,30 +72,21 @@ public final class LevelBuilder {
                     Cell cell = field.getCell(0, r);
                     if (cell != null) cell.getPlants().add(guard);
                     game.getPlants().add(guard);
-                    sos.protectPlant(guard);
-                }
-                level = sos;
-                break;
+                    sos.protectPlant(guard);}
+                level = sos;break;
             case "deadline":
-                level = new DeadLine(levelNumber, chapter, null, null);
-                break;
+                level = new DeadLine(levelNumber, chapter, null, null);break;
             case "loveyourplants": case "love":
-                level = new LoveYourPlants(levelNumber, chapter, null, null);
-                break;
+                level = new LoveYourPlants(levelNumber, chapter, null, null);break;
             case "nightops": case "night":
-                level = new NightOps(levelNumber, chapter, null, null);
-                break;
+                level = new NightOps(levelNumber, chapter, null, null);break;
             case "timedwar": case "timed":
                 TimedWar tw = new TimedWar(levelNumber, chapter, null, null);
-                tw.setDuration(60);
+                tw.setDuration(60 * model.Game.TICKS_PER_SECOND);
                 tw.setTargetKills(5 + 3 * levelNumber);
-                level = tw;
-                break;
-            default:
-                return null;
-        }
-        game.setLevel(level);
-        return game;
+                level = tw;break;
+            default: return null;}
+        game.setLevel(level);return game;
     }
 
     private static void applyTerrain(GameField field, ChapterType chapter) {

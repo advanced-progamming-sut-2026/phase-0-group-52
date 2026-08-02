@@ -2,13 +2,16 @@ package model.mechanics;
 
 import model.Game;
 import model.GameField;
+import model.Vec2;
 import model.entities.Cell;
 import model.entities.CellType;
 import model.entities.plants.Plant;
 import model.entities.plants.PlantCombat;
 import model.entities.plants.PlantTag;
 import model.entities.zombies.Zombie;
+import model.entities.zombies.ZombieFactory;
 import model.entities.zombies.ZombieState;
+import model.entities.zombies.Zombies;
 import model.entities.zombies.types.DodoRider;
 
 import java.util.HashMap;
@@ -17,8 +20,11 @@ import java.util.Map;
 public class FrostbiteCavesMechanics implements ChapterMechanics {
 
     private static final double MELT_RATE = 60;
+    private static final int START_FREEZE_TICKS = 8 * Game.TICKS_PER_SECOND;
 
     private final Map<Zombie, Double> frozenZombies = new HashMap<Zombie, Double>();
+    private final Map<Zombie, Integer> startThaw = new HashMap<Zombie, Integer>();
+    private boolean started = false;
 
     public void freezeZombieAtStart(Game game, Zombie zombie) {
         GameField field = game.getField();
@@ -49,9 +55,47 @@ public class FrostbiteCavesMechanics implements ChapterMechanics {
 
     @Override
     public void onTick(Game game) {
+        if (!started) {
+            started = true;
+            spawnFrozenAtStart(game);
+        }
         meltNearFire(game);
+        tickStartThaw(game);
         releaseThawedZombies(game);
         applySlipperyTiles(game);
+    }
+
+    private void spawnFrozenAtStart(Game game) {
+        GameField field = game.getField();
+        if (field == null) return;
+        int rows = field.getRows();
+        int startCol = field.getCols() - 1;
+        int count = 1 + PlantCombat.RANDOM.nextInt(2);
+        for (int i = 0; i < count; i++) {
+            int row = PlantCombat.RANDOM.nextInt(rows);
+            Zombie z = ZombieFactory.create(Zombies.ZOMBIE_DEFAULT, row, GameField.COLS, field.getChapter());
+            z.setPosition(new Vec2(startCol, row));
+            game.getZombies().add(z);
+            freezeZombieAtStart(game, z);
+            startThaw.put(z, START_FREEZE_TICKS);
+            System.out.println("A zombie is frozen solid in row " + (row + 1) + " as the level begins!");
+        }
+    }
+
+    private void tickStartThaw(Game game) {
+        GameField field = game.getField();
+        if (field == null) return;
+        for (Map.Entry<Zombie, Integer> entry : new HashMap<Zombie, Integer>(startThaw).entrySet()) {
+            Zombie z = entry.getKey();
+            int left = entry.getValue() - 1;
+            if (left <= 0 || !frozenZombies.containsKey(z)) {
+                Cell cell = field.getCell(z.getCol(), z.getRow());
+                if (cell != null && cell.getType() == CellType.FROZEN) cell.setType(CellType.NORMAL);
+                startThaw.remove(z);
+            } else {
+                startThaw.put(z, left);
+            }
+        }
     }
 
     private void meltNearFire(Game game) {
