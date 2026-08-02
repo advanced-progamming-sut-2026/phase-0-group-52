@@ -47,6 +47,8 @@ public class User {
     private int plantFoodNum;
     private final Set<Plants> storedBoosts = new HashSet<>();
     private final Map<Plants, Integer> plantLevels = new HashMap<>();
+    private final Set<String> seenZombies = new HashSet<>();
+    private final Set<String> unlockedMinigames = new HashSet<>();
     private boolean stayLoggedIn;
 
     public User() {
@@ -270,6 +272,14 @@ public class User {
 
     public NewsList getNewsList() {
         return newsList;
+    }
+
+    public boolean markZombieSeen(String zombieName) {
+        return seenZombies.add(zombieName);
+    }
+
+    public boolean markMinigameUnlocked(String minigameName) {
+        return unlockedMinigames.add(minigameName);
     }
 
     public void setNewsList(NewsList newsList) {

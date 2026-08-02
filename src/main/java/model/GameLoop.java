@@ -62,6 +62,7 @@ public class GameLoop {
 
         PlantCombat.removeDeadZombies(game);
         spawnWaves(game, tick);
+        recordSeenZombies(game);
         if (!game.getZombies().isEmpty()) game.getStats().recordFirstWave(tick);
 
         String defeat = game.getLevel() != null ? game.getLevel().checkDefeat(game) : null;
@@ -111,6 +112,16 @@ public class GameLoop {
             game.getZombies().addAll(w.getZombies());
             System.out.println("Wave " + (nextWave + 1) + " incoming! " + w.getZombies().size() + " zombie(s).");
             if (mechanics != null) mechanics.onWaveStart(game);
+        }
+    }
+
+    private void recordSeenZombies(Game game) {
+        model.User user = (game.getApp() != null) ? game.getApp().getCurrentuser() : null;
+        if (user == null) return;
+        for (Zombie z : game.getZombies()) {
+            String name = z.getDisplayName();
+            if (user.markZombieSeen(name))
+                user.getNewsList().addNews("A new zombie appeared in battle: " + name + "!");
         }
     }
 

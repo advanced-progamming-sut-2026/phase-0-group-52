@@ -155,6 +155,12 @@ public class GameMenuController {
             int score = game.getStats().getZombiesKilled() * 10 + game.getSunAmount();
             if (score > u.getMaxPoint()) u.setMaxPoint(score);
             System.out.println("Reward: 500 coins, score " + score + ". Use 'menu enter chapter_menu' to continue.");
+            int clearedLevel = game.getLevel() != null ? game.getLevel().getLevelnumber() : u.getLastLevel();
+            if (clearedLevel >= u.getLastLevel()) {
+                u.setLastLevel(clearedLevel + 1);
+                u.getNewsList().addNews("New level unlocked: level " + (clearedLevel + 1)
+                        + "! A tougher wave awaits.");
+            }
         } else {
             System.out.println("Use 'menu enter chapter_menu' to try again.");
         }

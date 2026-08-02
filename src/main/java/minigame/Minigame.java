@@ -25,6 +25,8 @@ public class Minigame {
     }
 
     public void start(User user, Scanner scanner) {
+        if (user != null && user.markMinigameUnlocked(type.name()))
+            user.getNewsList().addNews("New minigame unlocked: " + type.name() + "!");
         switch (type) {
             case BEGHOULED:
                 new Beghouled(level, user).run(scanner);

@@ -109,6 +109,27 @@ public abstract class Zombie {
     public ArmorType getArmorType() { return armorType; }
     public void setArmorType(ArmorType armorType) { this.armorType = armorType; }
 
+    public String getDisplayName() {
+        if (armorType != null && armorType != ArmorType.DEFAULT) {
+            switch (armorType) {
+                case CONEHEAD:   return "Conehead Zombie";
+                case BUCKETHEAD: return "Buckethead Zombie";
+                case BRICKHEAD:  return "Brickhead Zombie";
+                case KNIGHT:     return "Knight Zombie";
+                case ICEBLOCK:   return "Iceblock Zombie";
+                default:         break;
+            }
+        }
+        String s = getClass().getSimpleName();
+        StringBuilder b = new StringBuilder();
+        for (int i = 0; i < s.length(); i++) {
+            char c = s.charAt(i);
+            if (i > 0 && Character.isUpperCase(c) && !Character.isUpperCase(s.charAt(i - 1))) b.append(' ');
+            b.append(c);
+        }
+        return b.toString();
+    }
+
     public ChapterType getChapter() { return chapter; }
     public void setChapter(ChapterType chapter) { this.chapter = chapter; }
 

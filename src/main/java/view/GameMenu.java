@@ -97,7 +97,7 @@ public class GameMenu implements AppMenu {
         if (!game.getZombies().isEmpty()) {
             System.out.println("Zombies:");
             for (Zombie z : game.getZombies()) {
-                System.out.println("  " + z.getClass().getSimpleName() + " | row " + (z.getRow() + 1)
+                System.out.println("  " + z.getDisplayName() + " | row " + (z.getRow() + 1)
                         + " | x=" + String.format("%.2f", z.getPosition().x)
                         + " | hp=" + (int) z.getHp()
                         + (z.getArmorHp() > 0 ? " | armor=" + (int) z.getArmorHp() : ""));
@@ -158,7 +158,7 @@ public class GameMenu implements AppMenu {
         } else {
             System.out.println("  Zombies:");
             for (Zombie z : zombies) {
-                System.out.println("    " + z.getClass().getSimpleName()
+                System.out.println("    " + z.getDisplayName()
                         + " | hp: " + (int) z.getHp()
                         + " | armor: " + z.getArmorType()+(z.getArmorHp() > 0 ? " (" + (int) z.getArmorHp() + ")" : "")
                         + " | x=" + String.format("%.2f", z.getPosition().x)
@@ -173,7 +173,7 @@ public class GameMenu implements AppMenu {
             return;
         }
         for (Zombie z : zombies) {
-            System.out.println(z.getClass().getSimpleName() + ":");
+            System.out.println(z.getDisplayName() + ":");
             System.out.println("position: " + (z.getCol() + 1) + ", " + (z.getRow() + 1));
             System.out.println("health: " + (int) z.getHp());
             System.out.println("armor:");
