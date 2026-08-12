@@ -12,7 +12,7 @@ public abstract class Level extends AttackPattern {
     private ArrayList<Plants> allowedplants;
     private AttackPattern attackPattern;
 
-    public Level(int levelnumber, ChapterType chaptertype, ArrayList<Plants> allowedplants, AttackPattern attackPattern) {
+    public Level(int levelnumber, ChapterType chaptertype,ArrayList<Plants> allowedplants,AttackPattern attackPattern) {
         this.levelnumber = levelnumber;
         this.chaptertype = chaptertype;
         this.allowedplants = allowedplants;
@@ -25,6 +25,12 @@ public abstract class Level extends AttackPattern {
     public AttackPattern getAttackPattern() { return attackPattern; }
 
     public boolean isSkySunEnabled() { return true; }
+
+    public boolean areWavesHeld() { return false; }
+
+    public boolean manualWaves() { return false; }
+
+    public int getWaveStartTick() { return 0; }
 
     public boolean isPlantAllowed(Plants type) {
         return allowedplants == null || allowedplants.isEmpty() || allowedplants.contains(type);

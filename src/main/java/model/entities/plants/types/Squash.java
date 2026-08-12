@@ -18,15 +18,23 @@ public class Squash extends Explosive {
     @Override
     public void onTick(Game game) {
         if (isFrozen()) return;
+        Zombie target = null;
+        for (Zombie z : PlantCombat.zombiesInRow(game, getRow()))
+            if (Math.abs(z.getPosition().x - getCol()) <= 1
+                    && (target == null || z.getPosition().x < target.getPosition().x))
+                target = z;
+        if (target == null) return;
+        int col = (int) Math.round(target.getPosition().x);
         for (Zombie z : PlantCombat.zombiesInRow(game, getRow())) {
-            if (Math.abs(z.getPosition().x - getCol()) <= 1) {
-                z.takeDamage(getAttackdamage());
-                PlantCombat.removeDeadZombies(game);
-                setHp(0);
-                PlantCombat.removePlant(game, this);
-                return;
+            if ((int) Math.round(z.getPosition().x) == col) {
+                z.setArmorHp(0);
+                z.setHp(0);
             }
         }
+        System.out.println("Squash crushed the zombie(s) at column " + (col + 1) + "!");
+        PlantCombat.removeDeadZombies(game);
+        setHp(0);
+        PlantCombat.removePlant(game, this);
     }
 
     @Override

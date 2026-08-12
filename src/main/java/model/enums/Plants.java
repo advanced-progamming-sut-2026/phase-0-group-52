@@ -12,7 +12,8 @@ public enum Plants {
     private int actionInterval;
     private int recharge;
 
-    Plants(String name, PlantCategory category, Tags tag, int cost, int baseHP, int damage, int actionInterval, int recharge) {
+    Plants(String name, PlantCategory category, Tags tag, int cost, int baseHP, int damage,
+           int actionInterval, int recharge) {
         this.name = name;
         this.category = category;
         this.tag = tag;

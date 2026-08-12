@@ -43,6 +43,17 @@ public class MainMenuController {
             case "leaderboard":
                 handleLeaderboard(parts);
                 break;
+            case "greenhouse": {
+                String e = Navigation.enter(app, "greenhouse_menu");
+                if (e != null) view.showError(e);
+                break;
+            }
+            case "travel-log":
+            case "travel_log": {
+                String e = Navigation.enter(app, "travel_log_menu");
+                if (e != null) view.showError(e);
+                break;
+            }
             default:
                 view.showError("Unknown command: " + parts[1]);
         }

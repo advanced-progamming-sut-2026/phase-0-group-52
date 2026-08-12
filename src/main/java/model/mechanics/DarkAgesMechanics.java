@@ -43,8 +43,11 @@ public class DarkAgesMechanics implements ChapterMechanics {
             if (PlantCombat.RANDOM.nextInt(100) < 40)
                 bonus = PlantCombat.RANDOM.nextBoolean() ? "sun" : "plant food";
             cell.setGraveBonus(bonus);
+            boolean necromancy = PlantCombat.RANDOM.nextInt(100) < 45;
+            cell.setNecromancy(necromancy);
             System.out.println("A grave rose at (" + (c + 1) + ", " + (r + 1) + ")"
-                    + (bonus != null ? " containing " + bonus : "") + "!");
+                    + (bonus != null ? " containing " + bonus : "")
+                    + (necromancy ? " [necromancy]" : "") + "!");
             count--;
         }
     }
@@ -58,7 +61,9 @@ public class DarkAgesMechanics implements ChapterMechanics {
                 if (cell != null && cell.isNecromancy() && cell.getType() == CellType.TOMBSTONE) {
                     game.getZombies().add(ZombieFactory.create(Zombies.ZOMBIE_DEFAULT,
                             r, new Vec2(c, r), ChapterType.DARK_AGES, null));
-                    System.out.println("A zombie rose from the grave at (" + (c + 1) + ", " + (r + 1) + ")!");
+                    cell.setNecromancy(false);
+                    System.out.println("Necromancy! A zombie rose from the grave at ("
+                            + (c + 1) + ", " + (r + 1) + ")!");
                 }
             }
         }

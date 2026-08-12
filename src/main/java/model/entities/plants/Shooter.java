@@ -25,8 +25,32 @@ public class Shooter extends Plant {
     protected void shoot(Game game) {
         Zombie target = PlantCombat.frontmostAhead(game, getRow(), getCol());
         if (target == null) return;
+        int graveCol = tombstoneAhead(game, getRow(), getCol(), target.getPosition().x);
+        if (graveCol >= 0) {
+            model.entities.Cell cell = game.getField().getCell(graveCol, getRow());
+            if (cell != null) {
+                cell.setHp(cell.getHp() - shotDamage(game));
+                if (cell.getHp() <= 0) {
+                    cell.setType(model.entities.CellType.NORMAL);
+                    System.out.println("A grave at (" + (graveCol + 1) + ", " + (getRow() + 1)
+                            + ") was destroyed by plant fire.");
+                }
+            }
+            return;
+        }
         target.takeDamage(shotDamage(game));
         PlantCombat.removeDeadZombies(game);
+    }
+
+    private int tombstoneAhead(Game game, int row, int fromCol, double targetX) {
+        model.GameField field = game.getField();
+        if (field == null) return -1;
+        for (int c = fromCol + 1; c < field.getCols(); c++) {
+            model.entities.Cell cell = field.getCell(c, row);
+            if (cell != null && cell.getType() == model.entities.CellType.TOMBSTONE)
+                return c < targetX ? c : -1;
+        }
+        return -1;
     }
 
     protected double shotDamage(Game game) {

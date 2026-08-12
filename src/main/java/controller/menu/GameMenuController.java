@@ -148,16 +148,54 @@ public class GameMenuController {
     }
 
     private void onLevelEnd(Game game) {
-        if (game.isWon() && app.getCurrentuser() != null) {
-            model.User u = app.getCurrentuser();
+        model.User u = app.getCurrentuser();
+        if (game.isWon() && u != null) {
+            System.out.println("Dear humanz, zis is not done yet; we will come back to eat your brainz, humanz.");
             u.setCoins(u.getCoins() + 500);
             int score = game.getStats().getZombiesKilled() * 10 + game.getSunAmount();
             if (score > u.getMaxPoint()) u.setMaxPoint(score);
             System.out.println("Reward: 500 coins, score " + score + ". Use 'menu enter chapter_menu' to continue.");
+            int clearedLevel = game.getLevel() != null ? game.getLevel().getLevelnumber() : u.getLastLevel();
+            if (clearedLevel >= u.getLastLevel()) {
+                u.setLastLevel(clearedLevel + 1);
+                u.getNewsList().addNews("New level unlocked: level " + (clearedLevel + 1)
+                        + "! A tougher wave awaits.");
+            }
         } else {
             System.out.println("Use 'menu enter chapter_menu' to try again.");
         }
+        if (u != null) awardMeowPoints(game, u);
         new controller.QuestService().onLevelEnd(game, game.isWon());
+        app.getPlantSelection().clear();
+        app.getBoostedSelection().clear();
+        app.setImitatedPlant(null);
+        app.setAwaitingImitate(false);
+        app.setPendingSpecial(null);
+        app.getLockedPlants().clear();
+        System.out.println("Your plant deck was reset. Pick a new deck in choose_plant_menu for the next level.");
+    }
+
+    private void awardMeowPoints(Game game, model.User u) {
+        model.mechanics.MeowPointTracker meow = new model.mechanics.MeowPointTracker();
+        model.GameStats s = game.getStats();
+        java.util.Map<Integer, Integer> perTick = new java.util.HashMap<Integer, Integer>();
+        for (int t : s.getKillTicks()) {
+            Integer c = perTick.get(t);
+            perTick.put(t, c == null ? 1 : c + 1);
+        }
+        for (int cnt : perTick.values())
+            if (cnt > 1) meow.onSimultaneousKills(cnt);
+        int fast = s.killsWithinTicksOfFirstWave(300);
+        for (int i = 0; i < fast; i++) meow.onFastKill();
+        if (game.isWon()) {
+            if (s.getPlantsLost() == 0) meow.onPerfectDefense();
+            if (s.getFirstWaveTick() >= 0 && game.getCurrentTick() - s.getFirstWaveTick() <= 600)
+                meow.onWaveClearedQuickly();
+        }
+        int earned = meow.getPoints();
+        meow.applyTo(u);
+        System.out.println("Meow points earned this level: " + earned
+                + " (best Meow Points: " + u.getMostMeowPoint() + ").");
     }
 
     private void handleCollect(String[] parts) {
@@ -239,59 +277,36 @@ public class GameMenuController {
         if (game == null) return;
         Matcher m = PLANT_CMD.matcher(command);
         if (!m.matches()) {
-            view.showError("Usage: plant plant -t <type> -l (<x>, <y>)");
-            return;
-        }
-        Plants type = findPlantType(m.group(1));
-        if (type == null) {
-            view.showError("Unknown plant: " + m.group(1));
-            return;
-        }
+            view.showError("Usage: plant plant -t <type> -l (<x>, <y>)");return;}
+        Plants requested = findPlantType(m.group(1));if (requested == null) {
+            view.showError("Unknown plant: " + m.group(1));return;}
+        Plants type = requested;
+        if (requested == Plants.IMITATER) {if (app.getImitatedPlant() == null) {
+            view.showError("The Imitater has nothing to copy. Pick a plant to imitate in choose_plant_menu.");return;}
+            type = app.getImitatedPlant();}
         if (game.getLevel() != null && !game.getLevel().isPlantAllowed(type)) {
-            view.showError(type.getName() + " is not available in this level.");
-            return;
-        }
-        if (!game.getChosenPlants().isEmpty() && !game.getChosenPlants().contains(type)) {
-            view.showError(type.getName() + " was not in your chosen plants for this level.");
-            return;
-        }
-        int x = Integer.parseInt(m.group(2));
-        int y = Integer.parseInt(m.group(3));
+            view.showError(type.getName() + " is not available in this level.");return;}
+        if (!game.getChosenPlants().isEmpty()
+                && !game.getChosenPlants().contains(requested) && !game.getChosenPlants().contains(type)) {
+            view.showError(type.getName() + " was not in your chosen plants for this level.");return;}
+        int x = Integer.parseInt(m.group(2));int y = Integer.parseInt(m.group(3));
         Cell cell = cellAt(game, x, y);
-        if (cell == null) return;
-
-        if (type == Plants.PEA_POD) {
-            for (Plant p : cell.getPlants()) {
-                if (p instanceof PeaPod) {
-                    handlePeaPodHead(game, (PeaPod) p, x, y);
-                    return;
-                }
-            }
-        }
-
+        if (cell == null) return;if (type == Plants.PEA_POD) {
+            for (Plant p : cell.getPlants()) {if (p instanceof PeaPod) {
+                    handlePeaPodHead(game, (PeaPod) p, x, y);return;}}}
         String plantError = plantError(cell, type);
-        if (plantError != null) {
-            view.showError(plantError);
-            return;
-        }
+        if (plantError != null) {view.showError(plantError);return;}
         boolean conveyor = game.getLevel() instanceof ConveyorBeltLevel;
         int plantLevel = app.getCurrentuser() != null ? app.getCurrentuser().getPlantLevel(type) : 1;
         int cost = PlantData.effectiveCost(type, plantLevel);
         if (conveyor && !((ConveyorBeltLevel) game.getLevel()).hasOnBelt(type)) {
-            view.showError(type.getName() + " is not on the conveyor belt.");
-            return;
-        }
+            view.showError(type.getName() + " is not on the conveyor belt.");return;}
         if (!conveyor && !game.isCooldownsRemoved() && game.isOnCooldown(type)) {
             view.showError(type.getName() + " is recharging; ready in "
-                    + String.format("%.1f", game.getRemainingCooldown(type)) + "s.");
-            return;
-        }
+                    + String.format("%.1f", game.getRemainingCooldown(type)) + "s.");return;}
         if (!conveyor && game.getSunAmount() < cost) {
             view.showError("Not enough sun. Need " + cost
-                    + ", have " + game.getSunAmount() + ".");
-            return;
-        }
-
+                    + ", have " + game.getSunAmount() + ".");return;}
         if (conveyor) ((ConveyorBeltLevel) game.getLevel()).takeFromBelt(type);
         else game.spendSun(cost);
         Plant plant = PlantFactory.create(type, new Vec2(x - 1, y - 1));
@@ -303,12 +318,10 @@ public class GameMenuController {
             game.startCooldown(type, PlantData.effectiveRecharge(type, plantLevel));
         plant.onPlanted(game);
         view.showPlanted(type.getName(), x, y);
-        if (app.getCurrentuser() != null && app.getCurrentuser().getStoredBoosts().remove(type)) {
+        if (app.getCurrentuser() != null && app.getCurrentuser().getStoredBoosts().remove(type)){
             plant.boost();
             plant.onPlantFood(game);
-            System.out.println(type.getName() + " was boosted by your greenhouse harvest!");
-        }
-    }
+            System.out.println(type.getName() + " was boosted by your greenhouse harvest!");}}
 
     private void handlePeaPodHead(Game game, PeaPod pod, int x, int y) {
         Plants type = Plants.PEA_POD;
@@ -344,28 +357,27 @@ public class GameMenuController {
             return cellType == CellType.TOMBSTONE
                     ? null : "Grave Buster can only be planted on a tombstone.";
 
-        if (cell.getPlants().size() >= 2)
-            return "This tile is full.";
+        if (!cell.getPlants().isEmpty()) {
+            boolean hasLilyPad = false;
+            for (Plant p : cell.getPlants())
+                if (p.getType() == Plants.LILY_PAD) hasLilyPad = true;
+
+            if (hasLilyPad && type != Plants.LILY_PAD && !type.getTags().contains(PlantTag.WATER)) {
+                if (cell.getPlants().size() >= 2)
+                    return "This Lily Pad already holds a plant.";
+                return null;
+            }
+            return "This tile already has a plant.";
+        }
 
         if (cellType == CellType.WATER) {
             boolean isWaterPlant = type.getTags().contains(PlantTag.WATER);
-            if (cell.getPlants().isEmpty())
-                return isWaterPlant ? null : "Only water plants can be planted on water; plant a Lily Pad first.";
-            return canStack(cell.getPlants().get(0), type)
-                    ? null : "Cannot plant " + type.getName() + " on top of "
-                    + cell.getPlants().get(0).getType().getName() + ".";
+            return isWaterPlant ? null
+                    : "Only water plants can be planted on water. Place a Lily Pad first.";
         }
         if (!cellType.isPlantable())
             return "Cannot plant on this tile (" + cellType + ").";
-        if (cell.getPlants().isEmpty())
-            return null;
-        return canStack(cell.getPlants().get(0), type)
-                ? null : "Cannot plant two plants on this tile.";
-    }
-
-    private boolean canStack(Plant below, Plants above) {
-        return below.getType().getTags().contains(PlantTag.STACK)
-                || above.getTags().contains(PlantTag.STACK);
+        return null;
     }
 
     private Plants findPlantType(String input) {
@@ -429,7 +441,8 @@ public class GameMenuController {
         Game game = requireGame();
         if (game == null) return;
         if (parts.length < 2) {
-            view.showError("Usage: cheat remove-cooldown  |  cheat add-plant-food  |  cheat spawn-zombie -t <type> -l <x, y>");
+            view.showError("Usage: cheat remove-cooldown  |  cheat add-plant-food  |" +
+                    "  cheat spawn-zombie -t <type> -l <x, y>");
             return;
         }
         switch (parts[1]) {
@@ -553,8 +566,17 @@ public class GameMenuController {
             view.showError("Zombie waves have already started.");
             return;
         }
-        level.startWaves();
-        System.out.println("Zombie waves started!");
+        level.startWaves(game.getCurrentTick());
+
+        if (!game.getWaves().isEmpty()) {
+            game.setCurrentWaveIndex(0);
+            model.Wave first = game.getWaves().get(0);
+            game.getZombies().addAll(first.getZombies());
+            System.out.println("Zombie waves started! Wave 1 incoming! "
+                    + first.getZombies().size() + " zombie(s).");
+        } else {
+            System.out.println("Zombie waves started!");
+        }
     }
 
     private Game requireGame() {

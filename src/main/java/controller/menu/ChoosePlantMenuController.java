@@ -23,9 +23,9 @@ public class ChoosePlantMenuController {
         return app.getSelectedLevel() <= 1 ? FIRST_LEVEL_SLOTS : OTHER_LEVEL_SLOTS;
     }
 
-    private static final Pattern CHOOSE = Pattern.compile("^choose\\s+-t\\s+(.+)$");
-    private static final Pattern REMOVE = Pattern.compile("^remove\\s+-t\\s+(.+)$");
-    private static final Pattern BOOST = Pattern.compile("^boost\\s+-t\\s+(.+)$");
+    private static final Pattern CHOOSE = Pattern.compile("^(?:choose|add\\s+plant)\\s+-t\\s+(.+)$");
+    private static final Pattern REMOVE = Pattern.compile("^remove(?:\\s+plant)?\\s+-t\\s+(.+)$");
+    private static final Pattern BOOST = Pattern.compile("^boost(?:\\s+plant)?\\s+-t\\s+(.+)$");
 
     private final App app;
 
@@ -41,7 +41,8 @@ public class ChoosePlantMenuController {
             return;
         }
         Matcher m;
-        if (command.equals("show plants")) {
+        if (command.equals("show plants") || command.equals("show all plants")
+                || command.equals("show available plants")) {
             showAvailable();
         } else if (command.equals("show selection")) {
             showSelection();
@@ -54,15 +55,18 @@ public class ChoosePlantMenuController {
         } else if (command.equals("clear selection")) {
             app.getPlantSelection().clear();
             app.getBoostedSelection().clear();
+            app.setImitatedPlant(null);
+            app.setAwaitingImitate(false);
             System.out.println("Selection cleared.");
-        } else if (command.equals("start") || command.equals("start level")) {
-            startLevel();
+        } else if (command.equals("start") || command.startsWith("start level")
+                || command.startsWith("start -l")) {
+            startLevel(parts);
         } else {
             System.out.println("invalid command");
         }
     }
 
-    private void startLevel() {
+    private void startLevel(String[] parts) {
         if (app.getCurrentuser() == null) { System.out.println("Error: No user is logged in."); return; }
         ChapterType chapter = app.getSelectedChapter();
         if (chapter == null) {
@@ -74,7 +78,19 @@ public class ChoosePlantMenuController {
             return;
         }
         int levelNumber = app.getSelectedLevel();
-        Game game = LevelBuilder.build(app, chapter, levelNumber);
+        for (int i = 1; i + 1 < parts.length; i++)
+            if (parts[i].equals("-l")) {
+                try { levelNumber = Integer.parseInt(parts[i + 1]); app.setSelectedLevel(levelNumber); }
+                catch (NumberFormatException ignored) {}
+            }
+        String special = app.getPendingSpecial();
+        Game game;
+        if (special != null) {
+            game = LevelBuilder.buildSpecial(app, chapter, levelNumber, special);
+            app.setPendingSpecial(null);
+            if (game == null) { System.out.println("Error: Could not start the special level '" + special + "'.");
+                return; }
+        } else {game = LevelBuilder.build(app, chapter, levelNumber);}
         for (Plants p : app.getBoostedSelection())
             app.getCurrentuser().getStoredBoosts().add(p);
         app.getBoostedSelection().clear();
@@ -82,15 +98,23 @@ public class ChoosePlantMenuController {
         app.setGame(game);
         app.setCurrentmenu(MenuType.GAME_MENU);
         app.setCurrentMenu(Menu.GameMenu);
-        System.out.println("Level started in " + chapter + " (level " + levelNumber
-                + ") with " + app.getPlantSelection().size() + " plant(s). Starting sun: " + game.getSunAmount() + ".");
+        if (special != null) {
+            System.out.println("Special level '" + special + "' started in " + chapter + " (level "
+                    + levelNumber + ") with " + app.getPlantSelection().size()
+                    + " plant(s). Starting sun: " + game.getSunAmount() + ".");
+        } else {
+            System.out.println("Level started in " + chapter + " (level " + levelNumber
+                    + ") with " + app.getPlantSelection().size() + " plant(s). Starting sun: "
+                    + game.getSunAmount() + ".");
+        }
     }
 
     private void showAvailable() {
         System.out.println("Available plants (choose up to " + maxSlots() + "):");
         List<Plants> selection = app.getPlantSelection();
         for (Plants p : Plants.values()) {
-            String mark = selection.contains(p) ? " [chosen]" : "";
+            String mark = app.getLockedPlants().contains(p) ? " [LOCKED]"
+                    : (selection.contains(p) ? " [chosen]" : "");
             System.out.println("  " + p.getName() + " | cost: " + p.getCost() + " sun" + mark);
         }
     }
@@ -111,6 +135,20 @@ public class ChoosePlantMenuController {
     private void choose(String name) {
         Plants type = findPlant(name);
         if (type == null) { System.out.println("Error: Unknown plant: " + name); return; }
+        if (app.isAwaitingImitate()) {
+            if (type == Plants.IMITATER) {
+                System.out.println("Error: The Imitater cannot copy itself. Choose a different plant.");
+                return;
+            }
+            app.setImitatedPlant(type);
+            app.setAwaitingImitate(false);
+            System.out.println("The Imitater will copy " + type.getName() + " this level.");
+            return;
+        }
+        if (app.getLockedPlants().contains(type)) {
+            System.out.println("Error: " + type.getName() + " is locked this level.");
+            return;
+        }
         List<Plants> selection = app.getPlantSelection();
         if (selection.contains(type)) { System.out.println(type.getName() + " is already chosen."); return; }
         if (selection.size() >= maxSlots()) {
@@ -119,6 +157,10 @@ public class ChoosePlantMenuController {
         }
         selection.add(type);
         System.out.println("Chose " + type.getName() + " (" + selection.size() + "/" + maxSlots() + ").");
+        if (type == Plants.IMITATER) {
+            app.setAwaitingImitate(true);
+            System.out.println("Now choose the plant for the Imitater to copy: 'add plant -t <plant>'.");
+        }
     }
 
     private void remove(String name) {

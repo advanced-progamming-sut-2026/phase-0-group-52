@@ -34,14 +34,10 @@ public class GreenhouseMenuController {
         String command = line.trim();
         String[] parts = command.split("\\s+");
         if (parts[0].equals("menu")) {
-            handleMenu(parts);
-            return;
-        }
+            handleMenu(parts);return;}
         User user = app.getCurrentuser();
         if (user == null) {
-            System.out.println("Error: No user is logged in.");
-            return;
-        }
+            System.out.println("Error: No user is logged in.");return;}
         Greenhouse greenhouse = app.getGreenhouse();
         Shop shop = app.getShop();
         Matcher m;
@@ -55,8 +51,7 @@ public class GreenhouseMenuController {
             System.out.println(greenhouse.grow(Integer.parseInt(m.group(1)), Integer.parseInt(m.group(2)), user));
         } else if (command.equals("enter shop")) {
             System.out.println("Entered the shop. Coins: " + user.getCoins() + " | Diamonds: " + user.getGems());
-            shop.printList();
-            shop.printDaily();
+            shop.printList();shop.printDaily();
         } else if (command.equals("shop list")) {
             shop.printList();
         } else if (command.equals("shop daily")) {
@@ -64,29 +59,21 @@ public class GreenhouseMenuController {
         } else if ((m = UPGRADE_PLANT.matcher(command)).matches()) {
             Plants type = findPlant(m.group(1));
             if (type == null) {
-                System.out.println("Error: Unknown plant: " + m.group(1));
-                return;
-            }
+                System.out.println("Error: Unknown plant: " + m.group(1));return;}
             System.out.println(PlantData.upgrade(user, type));
         } else if (command.equals("show plant levels")) {
             boolean any = false;
             for (Plants type : Plants.values()) {
-                int level = user.getPlantLevel(type);
-                if (level > 1) {
+                int level = user.getPlantLevel(type);if (level > 1) {
                     System.out.println("  " + type.getName() + " | level " + level);
-                    any = true;
-                }
-            }
+                    any = true;}}
             if (!any) System.out.println("All plants are at level 1.");
         } else if ((m = BUY.matcher(command)).matches()) {
             Plants type = null;
             if (m.group(3) != null) {
                 type = findPlant(m.group(3));
                 if (type == null) {
-                    System.out.println("Error: Unknown plant: " + m.group(3));
-                    return;
-                }
-            }
+                    System.out.println("Error: Unknown plant: " + m.group(3));return;}}
             System.out.println(shop.buy(user, greenhouse,
                     Integer.parseInt(m.group(1)), Integer.parseInt(m.group(2)), type));
         } else {

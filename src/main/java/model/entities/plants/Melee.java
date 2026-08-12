@@ -42,6 +42,38 @@ public class Melee extends Plant {
         }
     }
 
+    @Override
+    public void onPlantFood(Game game) {
+        if (getType() == Plants.CHOMPER) {
+            java.util.List<Zombie> ahead = new java.util.ArrayList<Zombie>();
+            for (Zombie z : game.getZombies())
+                if (!z.isDead() && z.getRow() == getRow() && z.getPosition().x >= getCol())
+                    ahead.add(z);
+            ahead.sort(new java.util.Comparator<Zombie>() {
+                public int compare(Zombie a, Zombie b) {
+                    return Double.compare(a.getPosition().x, b.getPosition().x);
+                }
+            });
+            int eaten = 0;
+            for (Zombie z : ahead) {
+                z.setArmorHp(0);
+                z.setHp(0);
+                if (++eaten >= 3) break;
+            }
+            PlantCombat.removeDeadZombies(game);
+            actionTimer = 0;
+            System.out.println("Chomper devoured " + eaten + " zombie(s) whole!");
+            return;
+        }
+        int hits = 0;
+        for (Zombie z : PlantCombat.zombiesInArea(game, getCol(), getRow(), 1)) {
+            z.takeDamage(getAttackdamage() * 10);
+            hits++;
+        }
+        PlantCombat.removeDeadZombies(game);
+        System.out.println(getType().getName() + " unleashed a 3x3 flurry, hitting " + hits + " zombie(s)!");
+    }
+
     private void strike(Game game) {
         if (getType() == Plants.WASABI_WHIP && game.getField() != null)
             PlantCombat.meltFrozenInRow(game, getRow(), 0);

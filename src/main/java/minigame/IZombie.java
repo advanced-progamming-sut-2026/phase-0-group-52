@@ -71,7 +71,13 @@ public class IZombie {
             if (line.isEmpty()) continue;
             if (line.equals("exit")) { System.out.println("Left I, Zombie."); return; }
             else if (line.equals("show")) render();
-            else if (line.equals("tick")) tick();
+            else if (line.equals("tick") || line.startsWith("tick ")) {
+                int n = 1;
+                String[] tp = line.split("\\s+");
+                if (tp.length >= 2) { try { n = Math.max(1, Integer.parseInt(tp[1])); }
+                catch (NumberFormatException ignored){}}
+                for (int ti = 0; ti < n && !over; ti++) tick();
+            }
             else {
                 Matcher m = PLACE.matcher(line);
                 if (m.matches()) place(m.group(1), Integer.parseInt(m.group(2)), Integer.parseInt(m.group(3)));
@@ -162,7 +168,8 @@ public class IZombie {
             sb.append(brainEaten[r] ? ' ' : 'B').append('|');
             for (int c = 0; c < COLS; c++) {
                 char ch = (c == RED_LINE) ? ':' : '.';
-                for (Plant p : plants) if (p.row == r && p.col == c) ch = Character.toUpperCase(p.type.getName().charAt(0));
+                for (Plant p : plants)
+                    if (p.row == r && p.col == c) ch = Character.toUpperCase(p.type.getName().charAt(0));
                 for (Zombie z : zombies) if (z.row == r && (int) Math.round(z.x) == c) ch = 'Z';
                 sb.append(ch).append(' ');
             }

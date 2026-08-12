@@ -47,7 +47,6 @@ public abstract class PlantFactory {
 
     public static Plant create(Plants type, Vec2 position) {
         switch (type) {
-
             case PEASHOOTER:        return new Peashooter(position);
             case REPEATER:          return new Repeater(position);
             case THREEPEATER:       return new Threepeater(position);
@@ -63,15 +62,12 @@ public abstract class PlantFactory {
             case MEGA_GATLING_PEA:  return new MegaGatlingPea(position);
             case SEA_SHROOM:        return new SeaShroom(position);
             case PUFF_SHROOM:       return new PuffShroom(position);
-
             case CACTUS:            return new Cactus(position);
             case FUME_SHROOM:       return new FumeShroom(position);
-
             case TORCHWOOD:         return new Torchwood(position);
             case HYPNO_SHROOM:      return new HypnoShroom(position);
             case IMITATER:          return new Imitater(position);
             case LILY_PAD:          return new LilyPad(position);
-
             case POTATO_MINE:       return new PotatoMine(position);
             case PRIMAL_POTATO_MINE:return new PrimalPotatoMine(position);
             case CHERRY_BOMB:       return new CherryBomb(position);
