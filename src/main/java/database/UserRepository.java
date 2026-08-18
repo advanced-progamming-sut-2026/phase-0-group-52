@@ -14,7 +14,7 @@ import java.util.Map;
 
 public class UserRepository {
 
-    private static final Path FILE = Paths.get("users.json");
+    private static final Path FILE = Paths.get("database", "users.json");
 
     public synchronized boolean register(User user) {
         List<User> users = readAll();
@@ -186,6 +186,7 @@ public class UserRepository {
         }
         sb.append("]\n");
         try {
+            Files.createDirectories(FILE.getParent());
             Files.write(FILE, sb.toString().getBytes(StandardCharsets.UTF_8));
         } catch (IOException e) {
             System.err.println("Could not write users file: " + e.getMessage());

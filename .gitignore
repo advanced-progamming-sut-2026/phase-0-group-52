@@ -15,18 +15,7 @@ build/
 out/
 bin/
 
-# Maven
-
-.mvn/timing.properties
-.mvn/wrapper/maven-wrapper.jar
-dependency-reduced-pom.xml
-pom.xml.tag
-pom.xml.releaseBackup
-pom.xml.versionsBackup
-pom.xml.next
-release.properties
-
-# Gradle (kept in case the project later switches build tools)
+# Gradle
 
 .gradle/
 !gradle/wrapper/gradle-wrapper.jar
@@ -133,6 +122,13 @@ id_ed25519.pub
 assets/save/*
 !assets/save/.gitkeep
 
+# UserRepository/QuestRepository write here (users.json, quests.json); any
+# leftover SQLite file would also land here. Keep the folder, not its contents.
+
+database/*
+!database/.gitkeep
+*.db
+
 # Add additional generated save locations here if needed:
 
 # src/main/resources/save/*
@@ -169,6 +165,16 @@ failsafe-reports/
 
 # ============================================================
 
+# Downloaded/exported clutter (browser shortcuts, saved-webpage assets)
+
+# ============================================================
+
+*.url
+*.lnk
+*_files/
+
+# ============================================================
+
 # Keep intentionally tracked project files
 
 # ============================================================
@@ -177,7 +183,11 @@ failsafe-reports/
 
 # - README.md
 
-# - pom.xml
+# - build.gradle
+
+# - settings.gradle
+
+# - gradlew / gradlew.bat / gradle/wrapper/
 
 # - docs/
 
@@ -188,7 +198,3 @@ failsafe-reports/
 # - checkstyle.xml
 
 # - pmd-ruleset.xml
-
-users.json
-pvz_database.db
-*.db
