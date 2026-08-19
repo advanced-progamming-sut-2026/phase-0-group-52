@@ -1,5 +1,6 @@
 package view.gui;
 
+import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.utils.Align;
@@ -7,10 +8,14 @@ import controller.menu.ChapterMenuController;
 import model.User;
 
 public final class TopBar extends Table {
+    public static final float BUTTON = 52f;
+
     private final GameContext context;
     private final Label coinLabel;
     private final Label gemLabel;
     private final Table cheatGroup;
+    private final Table leftSlots = new Table();
+    private final Table rightSlots = new Table();
 
     private int lastCoins = Integer.MIN_VALUE;
     private int lastGems = Integer.MIN_VALUE;
@@ -22,7 +27,9 @@ public final class TopBar extends Table {
         setBackground(ui.primitives().flat(Theme.darken(Theme.OUTLINE, 0.25f)));
         pad(Theme.PAD_SMALL, Theme.PAD, Theme.PAD_SMALL, Theme.PAD);
 
-        Label title = new Label(screenTitle, ui.skin(), "titleOnDark");
+        add(leftSlots).left();
+
+        Label title = new Label(screenTitle == null ? "" : screenTitle, ui.skin(), "titleOnDark");
         title.setAlignment(Align.left);
         add(title).left().expandX().padLeft(Theme.PAD);
 
@@ -30,7 +37,7 @@ public final class TopBar extends Table {
         gemLabel = new Label("0", ui.skin(), "onDark");
 
         add(wallet(ui, Theme.COIN, coinLabel)).right().padRight(Theme.PAD);
-        add(wallet(ui, Theme.GEM, gemLabel)).right();
+        add(wallet(ui, Theme.GEM, gemLabel)).right().padRight(Theme.PAD);
 
         cheatGroup = new Table();
         cheatGroup.add(ui.styledButton("+500", "secondary", new Runnable() {
@@ -47,13 +54,30 @@ public final class TopBar extends Table {
         })).padLeft(Theme.PAD_SMALL);
         add(cheatGroup).right();
 
+        add(rightSlots).right().padLeft(Theme.PAD_SMALL);
+
         refresh();
     }
 
-    private Table wallet(UiKit ui, com.badlogic.gdx.graphics.Color color, Label amount) {
+    public TopBar addLeftButton(Icons.Icon icon, String text, Color face, Runnable action) {
+        leftSlots.add(context.ui().iconButton(icon, text, face, action))
+                .size(BUTTON).padRight(Theme.PAD_SMALL);
+        return this;
+    }
+
+    public TopBar addRightButton(Icons.Icon icon, String text, Color face, Runnable action) {
+        rightSlots.add(context.ui().iconButton(icon, text, face, action))
+                .size(BUTTON).padLeft(Theme.PAD_SMALL);
+        return this;
+    }
+
+    private Table wallet(UiKit ui, Color color, Label amount) {
         Table group = new Table();
-        group.add(ui.token(20, color)).size(20f).padRight(Theme.PAD_SMALL);
-        group.add(amount);
+        group.setBackground(ui.primitives().rounded(Theme.RADIUS,
+                Theme.darken(Theme.OUTLINE, 0.45f), Theme.OUTLINE_SOFT, 2));
+        group.pad(2f, Theme.PAD_SMALL, 2f, Theme.PAD);
+        group.add(ui.token(22, color)).size(22f).padRight(Theme.PAD_SMALL);
+        group.add(amount).minWidth(52f).left();
         return group;
     }
 

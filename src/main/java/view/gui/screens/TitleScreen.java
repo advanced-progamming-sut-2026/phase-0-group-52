@@ -85,8 +85,7 @@ public final class TitleScreen implements Screen {
 
     private Table playerBadge() {
         Table badge = new Table();
-        badge.setBackground(ui.primitives().rounded(Theme.RADIUS + 6,
-                Theme.lighten(Theme.PANEL, 0.35f), Theme.OUTLINE, Theme.BORDER));
+        badge.setBackground(ui.drawable("nameField"));
         playerName = new Label("", ui.skin(), "title");
         playerName.setAlignment(Align.center);
         badge.add(playerName).expandX().center().padLeft(34f);
@@ -104,9 +103,7 @@ public final class TitleScreen implements Screen {
 
     private Table playButton() {
         Table button = new Table();
-        button.setBackground(ui.primitives().rounded(Theme.RADIUS + 6,
-                Theme.plantFamily("MODIFIER"), Theme.darken(Theme.plantFamily("MODIFIER"), 0.35f),
-                Theme.BORDER + 1));
+        button.setBackground(ui.buttonFace("green", Theme.plantFamily("MODIFIER")));
         Label label = new Label("Play", ui.skin(), "hugeOnDark");
         label.setAlignment(Align.center);
         button.add(label).expand().center();
@@ -123,7 +120,7 @@ public final class TitleScreen implements Screen {
 
     private Table bottomRow() {
         Table row = new Table();
-        row.add(iconButton("X", Theme.RED, new Runnable() {
+        row.add(ui.iconButton(view.gui.Icons.QUIT_GAME, "Quit", Theme.RED, new Runnable() {
             @Override
             public void run() {
                 Gdx.app.exit();
@@ -132,32 +129,14 @@ public final class TitleScreen implements Screen {
 
         row.add(new Table()).expandX();
 
-        row.add(iconButton("Players", Theme.BLUE, new Runnable() {
-            @Override
-            public void run() {
-                openPlayers();
-            }
-        })).height(58f).width(120f).padRight(Theme.PAD_SMALL);
-
-        row.add(iconButton("Settings", Theme.plantFamily("WALL_NUT"), new Runnable() {
-            @Override
-            public void run() {
-                openSettings();
-            }
-        })).height(58f).width(120f);
+        row.add(ui.iconButton(view.gui.Icons.SETTINGS, "Settings",
+                Theme.plantFamily("WALL_NUT"), new Runnable() {
+                    @Override
+                    public void run() {
+                        openSettings();
+                    }
+                })).size(58f);
         return row;
-    }
-
-    private Table iconButton(String text, com.badlogic.gdx.graphics.Color face, Runnable action) {
-        Table button = new Table();
-        button.setBackground(ui.primitives().rounded(Theme.RADIUS,
-                face, Theme.darken(face, 0.35f), Theme.BORDER));
-        Label label = new Label(text, ui.skin(), "onDark");
-        label.setAlignment(Align.center);
-        button.add(label).expand().center();
-        Animations.attachPress(button);
-        UiKit.onClick(button, action);
-        return button;
     }
 
     private void openPlayers() {

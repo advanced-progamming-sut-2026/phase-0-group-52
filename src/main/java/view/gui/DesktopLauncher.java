@@ -12,6 +12,8 @@ public final class DesktopLauncher {
 
     public static void main(String[] args) {
         Log.installConsoleCapture();
+        Log.info("gui", "Java " + System.getProperty("java.version")
+                + " (" + System.getProperty("java.vendor") + ")");
 
         System.setProperty("java.awt.headless", "true");
 

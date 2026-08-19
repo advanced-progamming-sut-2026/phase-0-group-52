@@ -9,9 +9,13 @@ group = 'ir.ac.sut'
 version = '1.0-SNAPSHOT'
 description = 'Advanced Programming course project at Sharif University of Technology'
 
-// Compile for Java 8, same as the previous Maven build (maven.compiler.release).
+java {
+    toolchain {
+        languageVersion = JavaLanguageVersion.of(8)
+    }
+}
+
 tasks.withType(JavaCompile).configureEach {
-    options.release = 8
     options.encoding = 'UTF-8'
 }
 
@@ -33,20 +37,55 @@ run {
 
 // The original terminal game, unchanged. Kept runnable so the console build can
 // be checked against the graphical one at any time.
+distributions {
+    main {
+        contents {
+            from('assets') { into 'assets' }
+        }
+    }
+}
+
+tasks.register('preview', JavaExec) {
+    group = 'application'
+    description = 'Renders every screen with sample data into build/preview/screenshots.'
+    classpath = sourceSets.main.runtimeClasspath
+    mainClass = 'view.gui.DesktopLauncher'
+    javaLauncher = javaToolchains.launcherFor(java.toolchain)
+    systemProperty 'pvz.tour', 'true'
+
+    def sandbox = layout.buildDirectory.dir('preview').get().asFile
+    workingDir = sandbox
+
+    doFirst {
+        delete sandbox
+        sandbox.mkdirs()
+        new File(sandbox, 'database').mkdirs()
+        new File(sandbox, 'database/users.json').text = file('gradle/preview-users.json').text
+        copy {
+            from 'assets'
+            into new File(sandbox, 'assets')
+        }
+    }
+}
+
 tasks.register('runConsole', JavaExec) {
     group = 'application'
     description = 'Runs the text/console version of the game.'
     classpath = sourceSets.main.runtimeClasspath
     mainClass = 'Main'
     standardInput = System.in
+    javaLauncher = javaToolchains.launcherFor(java.toolchain)
 }
 
 repositories {
     mavenCentral()
+    maven { url 'https://jitpack.io' }
 }
 
 ext {
     gdxVersion = '1.13.1'
+    pvzSkinVersion = 'v0.1.1'
+    libPvzVersion = 'v0.1.6'
 }
 
 dependencies {
@@ -64,6 +103,11 @@ dependencies {
     implementation "com.badlogicgames.gdx:gdx:$gdxVersion"
     implementation "com.badlogicgames.gdx:gdx-backend-lwjgl3:$gdxVersion"
     implementation "com.badlogicgames.gdx:gdx-platform:$gdxVersion:natives-desktop"
+
+    implementation "com.github.pizpizi:pvz-skin:$pvzSkinVersion"
+    implementation "com.github.pizpizi:libPVZ:$libPvzVersion"
+    implementation "com.badlogicgames.gdx:gdx-freetype:$gdxVersion"
+    runtimeOnly "com.badlogicgames.gdx:gdx-freetype-platform:$gdxVersion:natives-desktop"
 
     // JUnit 5: used only for automated tests under src/test/java.
     testImplementation 'org.junit.jupiter:junit-jupiter:5.10.2'
@@ -86,6 +130,18 @@ pmd {
     ruleSetFiles = files('pmd-ruleset.xml')
     ruleSets = []
     consoleOutput = true
+}
+
+def lintLauncher = javaToolchains.launcherFor {
+    languageVersion = JavaLanguageVersion.of(17)
+}
+
+tasks.withType(Checkstyle).configureEach {
+    javaLauncher = lintLauncher
+}
+
+tasks.withType(Pmd).configureEach {
+    javaLauncher = lintLauncher
 }
 
 // Like the old Maven setup (checkstyle/pmd had no <executions>, so they only

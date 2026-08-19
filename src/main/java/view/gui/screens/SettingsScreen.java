@@ -43,6 +43,7 @@ public final class SettingsScreen extends BaseScreen {
 
         panel.add(buildGridToggle()).left().row();
         panel.add(buildDebugToggle()).left().row();
+        panel.add(buildFullscreenToggle()).left().row();
 
         panel.add(ui.secondaryButton("Back to main menu", new Runnable() {
             @Override
@@ -79,6 +80,19 @@ public final class SettingsScreen extends BaseScreen {
             }
         });
         return debug;
+    }
+
+    private CheckBox buildFullscreenToggle() {
+        final CheckBox fullscreen = new CheckBox(" Fullscreen (F11)", ui.skin());
+        fullscreen.setProgrammaticChangeEvents(false);
+        fullscreen.setChecked(view.gui.Display.isFullscreen());
+        fullscreen.addListener(new com.badlogic.gdx.scenes.scene2d.utils.ChangeListener() {
+            @Override
+            public void changed(ChangeEvent event, com.badlogic.gdx.scenes.scene2d.Actor actor) {
+                view.gui.Display.setFullscreen(fullscreen.isChecked());
+            }
+        });
+        return fullscreen;
     }
 
     private Table buildDifficulty() {

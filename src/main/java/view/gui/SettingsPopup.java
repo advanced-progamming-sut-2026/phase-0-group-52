@@ -41,6 +41,14 @@ public final class SettingsPopup extends Popup {
         }));
         grid.row();
 
+        addToggles();
+
+        grid.add(valueRow("Language", "English", null));
+        grid.add(new Table());
+        grid.row();
+    }
+
+    private void addToggles() {
         grid.add(toggleRow("Show Grid", context.settings().isShowGrid(), new Runnable() {
             @Override
             public void run() {
@@ -64,7 +72,13 @@ public final class SettingsPopup extends Popup {
                 rebuild();
             }
         }));
-        grid.add(valueRow("Language", "English", null));
+        grid.add(toggleRow("Fullscreen (F11)", Display.isFullscreen(), new Runnable() {
+            @Override
+            public void run() {
+                Display.toggle();
+                rebuild();
+            }
+        }));
         grid.row();
     }
 

@@ -69,6 +69,7 @@ public final class ShopScreen extends BaseScreen {
 
         ScrollPane scroll = new ScrollPane(list, ui.skin());
         scroll.setFadeScrollBars(false);
+        view.gui.UiKit.focusOnHover(scroll);
         panel.add(scroll).grow();
 
         content.add(panel).width(820f).height(480f).center();

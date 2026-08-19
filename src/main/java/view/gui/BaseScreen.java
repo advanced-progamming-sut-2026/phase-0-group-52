@@ -21,6 +21,7 @@ public abstract class BaseScreen implements Screen {
     private final Table root = new Table();
     private final TopBar topBar;
     private final Toasts toasts;
+    private com.badlogic.gdx.scenes.scene2d.ui.ScrollPane contentScroll;
 
     protected BaseScreen(GameContext context, String title) {
         this.context = context;
@@ -39,8 +40,26 @@ public abstract class BaseScreen implements Screen {
         root.setFillParent(true);
         root.top();
         root.add(topBar).growX().row();
-        root.add(content).grow().pad(Theme.PAD_LARGE);
+        if (scrollContent()) {
+            contentScroll = new com.badlogic.gdx.scenes.scene2d.ui.ScrollPane(content, ui.skin());
+            contentScroll.setFadeScrollBars(false);
+            contentScroll.setScrollingDisabled(true, false);
+            contentScroll.setOverscroll(false, false);
+            UiKit.focusOnHover(contentScroll);
+            root.add(contentScroll).grow().pad(Theme.PAD_LARGE);
+        } else {
+            contentScroll = null;
+            root.add(content).grow().pad(Theme.PAD_LARGE);
+        }
         stage.addActor(root);
+    }
+
+    protected TopBar topBar() {
+        return topBar;
+    }
+
+    protected boolean scrollContent() {
+        return true;
     }
 
     protected abstract void build();
@@ -58,6 +77,9 @@ public abstract class BaseScreen implements Screen {
         stage.addActor(toasts);
 
         Gdx.input.setInputProcessor(stage);
+        if (contentScroll != null) {
+            stage.setScrollFocus(contentScroll);
+        }
         Animations.enter(content);
         Log.debug("view", "Entered " + getClass().getSimpleName());
     }

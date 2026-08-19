@@ -54,6 +54,7 @@ public final class CollectionScreen extends BaseScreen {
 
         ScrollPane scroll = new ScrollPane(listArea, ui.skin());
         scroll.setFadeScrollBars(false);
+        view.gui.UiKit.focusOnHover(scroll);
         scroll.setScrollingDisabled(true, false);
 
         body.add(scroll).grow().padRight(Theme.PAD);

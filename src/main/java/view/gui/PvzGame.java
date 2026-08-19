@@ -94,6 +94,9 @@ public final class PvzGame extends Game {
         }
         super.render();
 
+        if (com.badlogic.gdx.Gdx.input.isKeyJustPressed(com.badlogic.gdx.Input.Keys.F11)) {
+            Display.toggle();
+        }
         if (com.badlogic.gdx.Gdx.input.isKeyJustPressed(com.badlogic.gdx.Input.Keys.F12)) {
             Screenshots.capture();
             toasts.info("Screenshot saved.");

@@ -10,14 +10,20 @@ public final class Animations {
     private Animations() {
     }
 
+    private static final com.badlogic.gdx.graphics.Color RESTING =
+            new com.badlogic.gdx.graphics.Color(0.87f, 0.87f, 0.87f, 1f);
+
     public static void attachPress(final Actor actor) {
         actor.setOrigin(com.badlogic.gdx.utils.Align.center);
+        actor.setColor(RESTING);
         actor.addListener(new ClickListener() {
             @Override
             public void enter(InputEvent event, float x, float y, int pointer, Actor fromActor) {
                 if (pointer == -1) {
                     actor.clearActions();
-                    actor.addAction(Actions.scaleTo(1.04f, 1.04f, 0.09f, Interpolation.pow2Out));
+                    actor.addAction(Actions.parallel(
+                            Actions.scaleTo(1.06f, 1.06f, 0.09f, Interpolation.pow2Out),
+                            Actions.color(com.badlogic.gdx.graphics.Color.WHITE, 0.09f)));
                 }
             }
 
@@ -25,7 +31,9 @@ public final class Animations {
             public void exit(InputEvent event, float x, float y, int pointer, Actor toActor) {
                 if (pointer == -1) {
                     actor.clearActions();
-                    actor.addAction(Actions.scaleTo(1f, 1f, 0.09f, Interpolation.pow2Out));
+                    actor.addAction(Actions.parallel(
+                            Actions.scaleTo(1f, 1f, 0.09f, Interpolation.pow2Out),
+                            Actions.color(RESTING, 0.12f)));
                 }
             }
 
