@@ -49,7 +49,6 @@ public final class SeedPacket extends Stack {
         Label name = new Label(shortName(plant.getName()), ui.skin(), "small");
         name.setAlignment(Align.center);
         name.setWrap(true);
-        name.setFontScale(0.82f);
         face.add(name).width(Theme.PACKET_WIDTH - 10f).padTop(3f).expandY().top().row();
 
         costLabel = new Label(String.valueOf(plant.getCost()), ui.skin(), "small");

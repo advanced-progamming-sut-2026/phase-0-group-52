@@ -93,7 +93,7 @@ public final class TitleScreen implements Screen {
         button.setBackground(ui.buttonFace("green", Theme.plantFamily("MODIFIER")));
         Label label = new Label("Play", ui.skin(), "hugeOnDark");
         label.setAlignment(Align.center);
-        button.add(label).expand().center();
+        button.add(label).expand().center().padBottom(UiKit.opticalPad(label));
 
         Animations.attachPress(button);
         UiKit.onClick(button, new Runnable() {

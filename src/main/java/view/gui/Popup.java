@@ -13,24 +13,21 @@ public class Popup extends Table {
     protected final UiKit ui;
     private final Table body = new Table();
     private final Table footer = new Table();
-    private final Table frame = new Table();
+    private final Table frame;
     private final Table header = new Table();
     private final Table headerSlots = new Table();
     private final ScrollPane scroll;
 
     public Popup(UiKit ui, String title, float width, float height) {
         this.ui = ui;
+        this.frame = ui.panel();
 
         setFillParent(true);
         setTouchable(Touchable.enabled);
         setBackground(ui.drawable("scrim"));
         center();
 
-        frame.setBackground(ui.primitives().rounded(Theme.RADIUS + 4,
-                Theme.PANEL_FRAME, Theme.OUTLINE, Theme.BORDER + 1));
-        frame.pad(Theme.PAD);
-
-        Label heading = new Label(title, ui.skin(), "title");
+        Label heading = new Label(title, ui.skin(), "titleOnDark");
         heading.setAlignment(Align.center);
         header.add(heading).expandX().center().padLeft(44f);
         header.add(headerSlots).right().padRight(Theme.PAD_SMALL);
@@ -71,17 +68,9 @@ public class Popup extends Table {
         return footer;
     }
 
-    protected Popup addHeaderButton(String text, com.badlogic.gdx.graphics.Color face,
-            Runnable action) {
-        Table button = new Table();
-        button.setBackground(ui.primitives().rounded(Theme.RADIUS, face,
-                Theme.darken(face, 0.4f), 2));
-        Label label = new Label(text, ui.skin(), "smallOnDark");
-        label.setAlignment(Align.center);
-        button.add(label).pad(2f, Theme.PAD_SMALL, 2f, Theme.PAD_SMALL);
-        Animations.attachPress(button);
-        UiKit.onClick(button, action);
-        headerSlots.add(button).height(34f).padRight(Theme.PAD_SMALL);
+    protected Popup addHeaderButton(String text, Runnable action) {
+        headerSlots.add(ui.styledButton(text, "info", action))
+                .height(46f).padRight(Theme.PAD_SMALL);
         return this;
     }
 

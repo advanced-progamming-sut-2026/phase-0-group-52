@@ -173,8 +173,8 @@ public final class ChoosePlantScreen extends BaseScreen {
     private com.badlogic.gdx.scenes.scene2d.ui.TextButton compact(String text, Runnable action) {
         com.badlogic.gdx.scenes.scene2d.ui.TextButton button =
                 new com.badlogic.gdx.scenes.scene2d.ui.TextButton(text, ui.skin(), "secondary");
-        button.getLabel().setFontScale(0.8f);
-        button.pad(1f, 3f, 1f, 3f);
+        button.padLeft(Theme.PAD_SMALL).padRight(Theme.PAD_SMALL);
+        button.getLabelCell().padBottom(view.gui.UiKit.opticalPad(button.getLabel()));
         button.addListener(new com.badlogic.gdx.scenes.scene2d.utils.ChangeListener() {
             @Override
             public void changed(ChangeEvent event, com.badlogic.gdx.scenes.scene2d.Actor actor) {

@@ -42,6 +42,11 @@ public final class Theme {
     public static final Color GEM = rgb(0x36C4D9);
     public static final Color PLANT_FOOD = rgb(0x66BB6A);
 
+    public static final Color INK = rgb(0x473E00);
+    public static final Color INK_VALUE = rgb(0xFDDC67);
+    public static final Color INK_SELECTED = rgb(0x38B44A);
+    public static final Color HIGHLIGHT = rgb(0x00FFFF);
+
     public static final Color LOCKED = rgb(0x6D6459);
     public static final Color BOOSTED = rgb(0xFFC107);
     public static final Color SELECTED = rgb(0x4CAF50);

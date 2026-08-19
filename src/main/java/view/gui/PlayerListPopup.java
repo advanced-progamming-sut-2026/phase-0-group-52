@@ -2,7 +2,7 @@ package view.gui;
 
 import com.badlogic.gdx.scenes.scene2d.ui.CheckBox;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
-import com.badlogic.gdx.scenes.scene2d.ui.ScrollPane;
+import com.badlogic.gdx.scenes.scene2d.ui.Stack;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
 import com.badlogic.gdx.utils.Align;
@@ -13,6 +13,8 @@ import model.User;
 import java.util.List;
 
 public final class PlayerListPopup extends Popup {
+    private static final float ROW_HEIGHT = 90f;
+
     private final GameContext context;
     private final PlayerListController controller;
 
@@ -21,11 +23,11 @@ public final class PlayerListPopup extends Popup {
     private CheckBox stayBox;
 
     public PlayerListPopup(GameContext context) {
-        super(context.ui(), "Player List", 640f, 560f);
+        super(context.ui(), "Player List", 680f, 600f);
         this.context = context;
         this.controller = new PlayerListController(context.app());
 
-        addHeaderButton("Leaderboard", Theme.plantFamily("MELEE"), new Runnable() {
+        addHeaderButton("Leaderboard", new Runnable() {
             @Override
             public void run() {
                 close();
@@ -34,10 +36,15 @@ public final class PlayerListPopup extends Popup {
             }
         });
 
+        body().setBackground(ui.drawable("questPanel"));
+        body().pad(Theme.PAD_LARGE, Theme.PAD, Theme.PAD_LARGE, Theme.PAD);
+
         list = new Table();
-        body().add(list).growX().row();
-        footer().add(actions()).growX().row();
-        footer().add(staySignedInBox()).left().padTop(Theme.PAD_SMALL);
+        body().add(list).grow().top().row();
+
+        footer().add(staySignedInBox()).left().padLeft(Theme.PAD_SMALL)
+                .padTop(Theme.PAD_SMALL).padBottom(Theme.PAD_SMALL).row();
+        footer().add(actions()).growX();
 
         selected = controller.signedIn();
         rebuild();
@@ -46,116 +53,108 @@ public final class PlayerListPopup extends Popup {
     private void rebuild() {
         list.clear();
         list.top();
-        list.defaults().growX().pad(3f);
+        list.defaults().growX().padBottom(4f);
 
         List<User> players = controller.allPlayers();
         if (players.isEmpty()) {
             list.add(new Label("No accounts yet. Use Register to make one.",
-                    ui.skin(), "muted")).left().pad(Theme.PAD).row();
+                    ui.skin(), "onDark")).left().pad(Theme.PAD).row();
             return;
         }
         for (User player : players) {
-            list.add(playerRow(player)).row();
+            list.add(playerRow(player)).height(ROW_HEIGHT).row();
         }
+        list.add(new Table()).grow();
     }
 
-    private Table playerRow(final User player) {
+    private Stack playerRow(final User player) {
         boolean isSelected = selected != null && selected.getId() == player.getId();
-        boolean isCurrent = controller.isSignedIn(player);
 
         Table row = new Table();
-        row.setBackground(ui.drawable(isSelected ? "listRowSelected" : "listRow"));
-        row.pad(Theme.PAD, Theme.PAD_LARGE, Theme.PAD, Theme.PAD_LARGE);
-        row.left();
+        row.setBackground(ui.drawable("listRow"));
+        row.pad(Theme.PAD_SMALL, Theme.PAD_LARGE, Theme.PAD_SMALL, Theme.PAD_LARGE + 10f);
 
-        Table text = new Table();
-        text.left();
-
+        Table names = new Table();
+        names.left();
         Label nickname = new Label(player.getNickname(), ui.skin(),
-                isSelected ? "titleOnDark" : "title");
-        nickname.setAlignment(Align.left);
-        text.add(nickname).left().row();
+                isSelected ? "rowNameSelected" : "rowName");
+        names.add(nickname).left().row();
+        names.add(new Label(player.getUsername(), ui.skin(), "rowSub")).left();
+        row.add(names).growX().left();
 
-        Label username = new Label(player.getUsername(), ui.skin(),
-                isSelected ? "smallOnDark" : "muted");
-        text.add(username).left().row();
+        row.add(values(player)).right();
 
-        text.add(statLines(player, isSelected)).left().padTop(3f);
-
-        row.add(text).growX();
-
-        if (isCurrent) {
-            Label badge = new Label("SIGNED IN", ui.skin(), "smallOnDark");
-            row.add(badge).right().top();
+        Stack stack = new Stack();
+        stack.add(row);
+        if (isSelected) {
+            Table ring = new Table();
+            ring.setBackground(ui.drawable("listHighlight"));
+            Table holder = new Table();
+            holder.add(ring).grow().pad(3f);
+            stack.add(holder);
         }
 
-        Animations.attachPress(row);
-        UiKit.onClick(row, new Runnable() {
+        Animations.attachPress(stack);
+        UiKit.onClick(stack, new Runnable() {
             @Override
             public void run() {
                 selected = player;
                 rebuild();
             }
         });
-        return row;
+        return stack;
     }
 
-    private Table statLines(User player, boolean light) {
+    private Table values(User player) {
         Table info = new Table();
-        info.left();
-        info.defaults().left().padRight(Theme.PAD_LARGE);
-        info.add(stat("Coins", player.getCoins(), Theme.COIN, light));
-        info.add(stat("Gems", player.getGems(), Theme.GEM, light));
-        info.add(stat("Games", player.getGamesPlayed(), Theme.BLUE, light)).row();
-        info.add(stat("Best", player.getMaxPoint(), Theme.SUN, light));
-        info.add(stat("Levels", controller.completedLevels(player), Theme.GREEN, light));
-        info.add(stat("Meow", player.getMostMeowPoint(), Theme.plantFamily("MELEE"), light));
-        return info;
-    }
+        info.right();
 
-    private Table stat(String label, int value, com.badlogic.gdx.graphics.Color accent,
-            boolean light) {
-        Table cell = new Table();
-        cell.add(ui.token(14, accent)).size(14f).padRight(4f);
-        cell.add(new Label(label + " " + value, ui.skin(),
-                light ? "smallOnDark" : "small")).left();
-        return cell;
+        Label top = new Label(player.getCoins() + " coins    " + player.getGems() + " gems",
+                ui.skin(), "rowValue");
+        top.setAlignment(Align.right);
+        info.add(top).right().row();
+
+        Label bottom = new Label(controller.completedLevels(player) + " levels    "
+                + player.getMaxPoint() + " best", ui.skin(), "rowValue");
+        bottom.setAlignment(Align.right);
+        info.add(bottom).right();
+        return info;
     }
 
     private Table actions() {
         Table bar = new Table();
-        bar.defaults().growX().uniformX().pad(2f).height(44f);
+        bar.defaults().growX().uniformX().pad(3f).height(58f);
 
         bar.add(ui.styledButton("Register", "primary", new Runnable() {
             @Override
             public void run() {
                 openForm(AccountFormPopup.Mode.REGISTER);
             }
-        })).height(46f);
-        bar.add(ui.styledButton("Sign in", "primary", new Runnable() {
+        }));
+        bar.add(ui.styledButton("Sign in", "info", new Runnable() {
             @Override
             public void run() {
                 signIn();
             }
-        })).height(46f);
+        }));
         bar.add(ui.styledButton("Sign out", "secondary", new Runnable() {
             @Override
             public void run() {
                 signOut();
             }
-        })).height(46f);
+        }));
         bar.add(ui.styledButton("Profile", "secondary", new Runnable() {
             @Override
             public void run() {
                 openProfile();
             }
-        })).height(46f);
+        }));
         bar.add(ui.styledButton("Delete", "danger", new Runnable() {
             @Override
             public void run() {
                 deleteSelected();
             }
-        })).height(46f);
+        }));
         return bar;
     }
 
@@ -180,7 +179,7 @@ public final class PlayerListPopup extends Popup {
     }
 
     private CheckBox staySignedInBox() {
-        stayBox = new CheckBox(" Stay signed in after closing the game", ui.skin());
+        stayBox = ui.checkBox(" Stay signed in after closing the game");
         stayBox.setProgrammaticChangeEvents(false);
         stayBox.setChecked(controller.isStaySignedIn());
         stayBox.addListener(new ChangeListener() {

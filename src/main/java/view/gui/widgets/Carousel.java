@@ -278,12 +278,9 @@ public final class Carousel extends WidgetGroup {
         overlay.pad(Theme.PAD);
 
         boolean roomy = cardWidth >= 180f;
-        Label name = new Label(item.name, ui.skin(), roomy ? "titleOnDark" : "onDark");
+        Label name = new Label(item.name, ui.skin(), roomy ? "titleOnDark" : "smallOnDark");
         name.setAlignment(Align.center);
         name.setWrap(true);
-        if (!roomy) {
-            name.setFontScale(0.9f);
-        }
         overlay.add(name).growX().row();
 
         if (item.locked) {

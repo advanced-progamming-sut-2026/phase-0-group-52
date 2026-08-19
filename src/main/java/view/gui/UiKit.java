@@ -54,18 +54,9 @@ public final class UiKit implements Disposable {
     }
 
     private Skin loadPvzSkin() {
-        try {
-            Skin loaded = PvzSkin.get();
-            util.Log.info("gui", "Loaded the PvZ art skin");
-            return loaded;
-        } catch (RuntimeException e) {
-            util.Log.warn("gui", "PvZ art skin unavailable, drawing primitives instead: "
-                    + e.getMessage());
-            return null;
-        } catch (LinkageError e) {
-            util.Log.warn("gui", "PvZ art skin could not load: " + e.getMessage());
-            return null;
-        }
+        Skin loaded = PvzSkin.get();
+        util.Log.info("gui", "Loaded the PvZ art skin and its fonts");
+        return loaded;
     }
 
     private Drawable art(String name, Drawable fallback) {
@@ -118,8 +109,7 @@ public final class UiKit implements Disposable {
         button.setBackground(buttonFace("brown", face));
         Label label = new Label(text, skin, "smallOnDark");
         label.setAlignment(com.badlogic.gdx.utils.Align.center);
-        label.setFontScale(0.72f);
-        button.add(label).grow().pad(2f);
+        button.add(label).grow().pad(2f).padBottom(opticalPad(label));
         Animations.attachPress(button);
         if (action != null) {
             onClick(button, action);
@@ -162,49 +152,17 @@ public final class UiKit implements Disposable {
     }
 
     private void buildFonts() {
-        if (artSkin == null || !loadSkinFonts()) {
-            useDefaultFonts();
-        }
+        fontSmall = artSkin.getFont("BRIANNETOD");
+        fontBody = artSkin.getFont("FBUSV8C6EI_3");
+        fontTitle = artSkin.getFont("FBUSV8C5EI_2");
+        fontHuge = artSkin.getFont("FBUSV8C5EI_1_outline");
+        fontButton = artSkin.getFont("HOUSE_OF_TERROR");
+        fontTitleOutline = artSkin.getFont("FBUSV8C5EI_2_outline");
+
         skin.add("small", fontSmall);
         skin.add("body", fontBody);
         skin.add("title", fontTitle);
         skin.add("huge", fontHuge);
-    }
-
-    private void useDefaultFonts() {
-        util.Log.warn("gui", "Skin fonts unavailable; falling back to the built-in font");
-        fontSmall = plainFont(0.9f);
-        fontBody = plainFont(1.1f);
-        fontTitle = plainFont(1.6f);
-        fontHuge = plainFont(2.4f);
-        fontButton = fontBody;
-        fontTitleOutline = fontTitle;
-    }
-
-    private BitmapFont plainFont(float scale) {
-        BitmapFont font = new BitmapFont();
-        font.getRegion().getTexture().setFilter(
-                com.badlogic.gdx.graphics.Texture.TextureFilter.Linear,
-                com.badlogic.gdx.graphics.Texture.TextureFilter.Linear);
-        font.getData().setScale(scale);
-        font.setUseIntegerPositions(false);
-        return font;
-    }
-
-    private boolean loadSkinFonts() {
-        try {
-            fontSmall = artSkin.getFont("BRIANNETOD");
-            fontBody = artSkin.getFont("FBUSV8C6EI_3");
-            fontTitle = artSkin.getFont("FBUSV8C5EI_2");
-            fontHuge = artSkin.getFont("FBUSV8C5EI_1_outline");
-            fontButton = artSkin.getFont("HOUSE_OF_TERROR");
-            fontTitleOutline = artSkin.getFont("FBUSV8C5EI_2_outline");
-            util.Log.info("gui", "Using the skin's own fonts");
-            return true;
-        } catch (RuntimeException e) {
-            util.Log.warn("gui", "Skin fonts unavailable: " + e.getMessage());
-            return false;
-        }
     }
 
 
@@ -218,11 +176,9 @@ public final class UiKit implements Disposable {
                 primitives.panel()), Drawable.class);
         skin.add("questPanel", art("image_ui_quests_panel_edge_to_edge_ten",
                 primitives.sunken()), Drawable.class);
-        skin.add("listRow", art("image_ui_quests_travel_log_panel_default",
+        skin.add("listRow", stretched("image_ui_quests_travel_log_panel_default", 16, 16, 16, 16,
                 primitives.rounded(6, Theme.PANEL, Theme.OUTLINE_SOFT, 2)), Drawable.class);
-        skin.add("listRowSelected", art("image_ui_quests_travel_log_panel_complete",
-                primitives.rounded(6, Theme.lighten(Theme.PANEL, 0.4f),
-                        Theme.GREEN_DARK, 3)), Drawable.class);
+        skin.add("listHighlight", highlightFrame(), Drawable.class);
         skin.add("inset", art("image_ui_mainmenu_inset_bkgd",
                 primitives.sunken()), Drawable.class);
         skin.add("nameField", art("image_ui_mainmenu_name_field_10",
@@ -230,6 +186,55 @@ public final class UiKit implements Disposable {
                         Theme.OUTLINE, Theme.BORDER)), Drawable.class);
         skin.add("scrim", primitives.flat(Theme.SCRIM), Drawable.class);
         skin.add("transparent", primitives.flat(new Color(0f, 0f, 0f, 0f)), Drawable.class);
+    }
+
+    private Drawable stretched(String region, int left, int right, int top, int bottom,
+            Drawable fallback) {
+        if (artSkin == null) {
+            return fallback;
+        }
+        TextureRegion source = artSkin.getRegion(region);
+        if (source == null) {
+            return fallback;
+        }
+        return new com.badlogic.gdx.scenes.scene2d.utils.NinePatchDrawable(
+                new com.badlogic.gdx.graphics.g2d.NinePatch(source, left, right, top, bottom));
+    }
+
+    private Drawable highlightFrame() {
+        TextureRegion source = (artSkin == null)
+                ? null : artSkin.getRegion("image_ui_mainmenu_highlight_edge");
+        if (source == null) {
+            return primitives.rounded(6, new Color(0f, 0f, 0f, 0f), Theme.HIGHLIGHT, 3);
+        }
+        int cap = 9;
+        int seam = 2;
+        int height = source.getRegionHeight();
+        int middle = height - cap - cap;
+
+        TextureRegion topLeft = slice(source, 0, 0, cap, cap);
+        TextureRegion topCentre = slice(source, cap, 0, seam, cap);
+        TextureRegion midLeft = slice(source, 0, cap, cap, middle);
+        TextureRegion midCentre = slice(source, cap, cap, seam, middle);
+        TextureRegion lowLeft = slice(source, 0, height - cap, cap, cap);
+        TextureRegion lowCentre = slice(source, cap, height - cap, seam, cap);
+
+        com.badlogic.gdx.graphics.g2d.NinePatch patch =
+                new com.badlogic.gdx.graphics.g2d.NinePatch(
+                        lowLeft, lowCentre, mirror(lowLeft),
+                        midLeft, midCentre, mirror(midLeft),
+                        topLeft, topCentre, mirror(topLeft));
+        return new com.badlogic.gdx.scenes.scene2d.utils.NinePatchDrawable(patch);
+    }
+
+    private TextureRegion slice(TextureRegion source, int x, int y, int width, int height) {
+        return new TextureRegion(source, x, y, width, height);
+    }
+
+    private TextureRegion mirror(TextureRegion source) {
+        TextureRegion copy = new TextureRegion(source);
+        copy.flip(true, false);
+        return copy;
     }
 
     private Drawable framedPanel() {
@@ -266,6 +271,10 @@ public final class UiKit implements Disposable {
         skin.add("smallOnDark", new Label.LabelStyle(fontSmall, Theme.TEXT_ON_DARK));
         skin.add("error", new Label.LabelStyle(fontSmall, Theme.RED));
         skin.add("value", new Label.LabelStyle(fontBody, Theme.OUTLINE));
+        skin.add("rowName", new Label.LabelStyle(fontTitle, Theme.INK));
+        skin.add("rowNameSelected", new Label.LabelStyle(fontTitleOutline, Theme.INK_SELECTED));
+        skin.add("rowSub", new Label.LabelStyle(fontBody, Theme.INK));
+        skin.add("rowValue", new Label.LabelStyle(fontTitleOutline, Theme.INK_VALUE));
     }
 
     private void buildButtonStyles() {
@@ -273,7 +282,7 @@ public final class UiKit implements Disposable {
         skin.add("primary", artButton("green", Theme.GREEN, Theme.GREEN_DARK));
         skin.add("secondary", artButton("brown", Theme.PANEL_SUNKEN, Theme.OUTLINE));
         skin.add("danger", artButton("purple", Theme.RED, Theme.darken(Theme.RED, 0.3f)));
-        skin.add("info", artButton("default", Theme.BLUE, Theme.darken(Theme.BLUE, 0.3f)));
+        skin.add("info", blueButton());
 
         TextButton.TextButtonStyle tab = textButton(Theme.PANEL_SUNKEN, Theme.OUTLINE_SOFT, Theme.TEXT_MUTED);
         tab.checked = primitives.rounded(Theme.RADIUS, Theme.PANEL, Theme.OUTLINE, Theme.BORDER);
@@ -293,6 +302,20 @@ public final class UiKit implements Disposable {
         plain.over = primitives.rounded(Theme.RADIUS, Theme.lighten(Theme.PANEL, 0.15f),
                 Theme.OUTLINE, Theme.BORDER);
         skin.add("cardButton", plain);
+    }
+
+    private TextButton.TextButtonStyle blueButton() {
+        TextButton.TextButtonStyle style =
+                textButton(Theme.BLUE, Theme.darken(Theme.BLUE, 0.3f), Theme.TEXT_ON_DARK);
+        Drawable up = art("image_ui_generic_bluebutton_10", null);
+        Drawable down = art("image_ui_generic_bluebutton_down_10", null);
+        if (up != null) {
+            style.up = up;
+            style.over = up;
+            style.down = (down == null) ? up : down;
+            style.disabled = up;
+        }
+        return style;
     }
 
     private TextButton.TextButtonStyle artButton(String artName, Color face, Color border) {
@@ -402,7 +425,8 @@ public final class UiKit implements Disposable {
 
     public TextButton styledButton(String text, String styleName, final Runnable onClick) {
         TextButton button = new TextButton(text, skin, styleName);
-        button.pad(Theme.PAD_SMALL, Theme.PAD_LARGE, Theme.PAD_SMALL, Theme.PAD_LARGE);
+        button.padLeft(Theme.PAD_LARGE).padRight(Theme.PAD_LARGE);
+        button.getLabelCell().padBottom(opticalPad(button.getLabel()));
         if (onClick != null) {
             button.addListener(new ChangeListener() {
                 @Override
@@ -413,6 +437,18 @@ public final class UiKit implements Disposable {
         }
         Animations.attachPress(button);
         return button;
+    }
+
+    public static float opticalPad(Label label) {
+        return Math.round(-label.getStyle().font.getData().descent / 2f);
+    }
+
+    public CheckBox checkBox(String text) {
+        CheckBox box = new CheckBox(text, artSkin);
+        box.getLabel().setStyle(skin.get("rowSub", Label.LabelStyle.class));
+        box.getLabelCell().padLeft(Theme.PAD_SMALL).padBottom(opticalPad(box.getLabel()));
+        box.getImageCell().size(28f);
+        return box;
     }
 
     public Table panel() {
