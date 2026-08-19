@@ -10,14 +10,10 @@ import view.gui.screens.ChoosePlantScreen;
 import view.gui.screens.CollectionScreen;
 import view.gui.screens.GreenhouseScreen;
 import view.gui.screens.LeaderboardScreen;
-import view.gui.screens.LoginScreen;
 import view.gui.screens.MainMenuScreen;
 import view.gui.screens.NewsScreen;
-import view.gui.screens.ProfileScreen;
 import view.gui.screens.QuestsScreen;
-import view.gui.screens.SettingsScreen;
 import view.gui.screens.ShopScreen;
-import view.gui.screens.SignupScreen;
 import view.gui.screens.TitleScreen;
 
 import java.util.HashMap;
@@ -143,11 +139,7 @@ public final class PvzGame extends Game {
 
     private Screen create(MenuType type) {
         switch (type) {
-            case SIGNUP_MENU:      return new SignupScreen(context);
-            case LOGIN_MENU:       return new LoginScreen(context);
             case MAIN_MENU:        return new MainMenuScreen(context);
-            case PROFILE_MEMU:     return new ProfileScreen(context);
-            case SETTINGS_MENU:    return new SettingsScreen(context);
             case NEWS_MENU:        return new NewsScreen(context);
             case CHAPTER_MENU:     return new AdventureScreen(context);
             case COLLECTION_MENU:  return new CollectionScreen(context);

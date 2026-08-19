@@ -30,14 +30,9 @@ public class Popup extends Table {
         Label heading = new Label(title, ui.skin(), "hugeOnDark");
         heading.setAlignment(Align.center);
 
-        Table controls = new Table();
-        controls.right();
-        controls.add(headerSlots).right().padRight(Theme.PAD_SMALL);
-        controls.add(closeButton()).right().size(52f);
-
-        header.add(new Table()).uniformX();
+        header.add(headerSlots).left().uniformX();
         header.add(heading).expandX().center();
-        header.add(controls).right().uniformX();
+        header.add(closeButton()).right().size(52f).uniformX();
         frame.add(header).growX().padBottom(Theme.PAD).row();
 
         body.top();
@@ -74,9 +69,9 @@ public class Popup extends Table {
         return footer;
     }
 
-    protected Popup addHeaderButton(String text, Runnable action) {
-        headerSlots.add(ui.styledButton(text, "info", action))
-                .height(Theme.BUTTON_HEIGHT).minWidth(210f).padRight(Theme.PAD);
+    protected Popup addHeaderIcon(Icons.Icon icon, String fallbackText, Runnable action) {
+        headerSlots.add(ui.iconButton(icon, fallbackText, Theme.BLUE, action))
+                .size(52f).padRight(Theme.PAD_SMALL);
         return this;
     }
 

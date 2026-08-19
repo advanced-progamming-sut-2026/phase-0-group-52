@@ -23,11 +23,11 @@ public final class PlayerListPopup extends Popup {
     private CheckBox stayBox;
 
     public PlayerListPopup(GameContext context) {
-        super(context.ui(), "Player List", 680f, 600f);
+        super(context.ui(), "Player List", 760f, 600f);
         this.context = context;
         this.controller = new PlayerListController(context.app());
 
-        addHeaderButton("Leaderboard", new Runnable() {
+        addHeaderIcon(Icons.LEADERBOARD, "Leaderboard", new Runnable() {
             @Override
             public void run() {
                 close();
@@ -72,7 +72,7 @@ public final class PlayerListPopup extends Popup {
         boolean isCurrent = controller.isSignedIn(player);
 
         Table row = new Table();
-        row.setBackground(ui.drawable("listRow"));
+        row.setBackground(ui.drawable(isSelected ? "listRowSelected" : "listRow"));
         row.pad(Theme.PAD_SMALL, Theme.PAD_LARGE, Theme.PAD_SMALL, Theme.PAD_LARGE + 10f);
 
         Table names = new Table();
@@ -95,13 +95,6 @@ public final class PlayerListPopup extends Popup {
 
         Stack stack = new Stack();
         stack.add(row);
-        if (isSelected) {
-            Table ring = new Table();
-            ring.setBackground(ui.drawable("listHighlight"));
-            Table holder = new Table();
-            holder.add(ring).grow().pad(3f);
-            stack.add(holder);
-        }
 
         Animations.attachPress(stack);
         UiKit.onClick(stack, new Runnable() {
@@ -136,39 +129,44 @@ public final class PlayerListPopup extends Popup {
 
     private Table actions() {
         Table bar = new Table();
-        bar.defaults().growX().uniformX().pad(3f).height(Theme.BUTTON_HEIGHT);
+        bar.defaults().growX().uniformX().pad(3f);
 
-        bar.add(ui.styledButton("Register", "primary", new Runnable() {
+        action(bar, "Register", "primary", new Runnable() {
             @Override
             public void run() {
                 openForm(AccountFormPopup.Mode.REGISTER);
             }
-        }));
-        bar.add(ui.styledButton("Sign in", "info", new Runnable() {
+        });
+        action(bar, "Sign in", "info", new Runnable() {
             @Override
             public void run() {
                 signIn();
             }
-        }));
-        bar.add(ui.styledButton("Sign out", "secondary", new Runnable() {
+        });
+        action(bar, "Sign out", "secondary", new Runnable() {
             @Override
             public void run() {
                 signOut();
             }
-        }));
-        bar.add(ui.styledButton("Profile", "secondary", new Runnable() {
+        });
+        action(bar, "Profile", "secondary", new Runnable() {
             @Override
             public void run() {
                 openProfile();
             }
-        }));
-        bar.add(ui.styledButton("Delete", "danger", new Runnable() {
+        });
+        action(bar, "Delete", "danger", new Runnable() {
             @Override
             public void run() {
                 deleteSelected();
             }
-        }));
+        });
         return bar;
+    }
+
+    private void action(Table bar, String text, String style, Runnable onClick) {
+        bar.add(ui.styledButton(text, style, onClick))
+                .height(Theme.BUTTON_HEIGHT + UiKit.faceMargin(style));
     }
 
     private void signIn() {

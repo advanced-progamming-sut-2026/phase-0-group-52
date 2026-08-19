@@ -17,6 +17,13 @@ import model.enums.SecurityQuestions;
 public final class AccountFormPopup extends Popup {
     public enum Mode { REGISTER, SIGN_IN, PROFILE }
 
+    private static final int SIGN_IN_FORM = 0;
+    private static final int RECOVER_IDENTITY = 1;
+    private static final int RECOVER_ANSWER = 2;
+    private static final int RECOVER_PASSWORD = 3;
+
+    private String questionPrompt = "Answer your security question.";
+
     private final GameContext context;
     private final User target;
     private final Runnable onChanged;
@@ -34,6 +41,9 @@ public final class AccountFormPopup extends Popup {
     private SelectBox<String> gender;
     private SelectBox<String> question;
     private TextField answer;
+    private TextField recoveryEmail;
+    private TextField recoveryAnswer;
+    private TextField newPassword;
 
     public AccountFormPopup(GameContext context, Mode mode, User target, Runnable onChanged) {
         super(context.ui(), titleFor(mode), 620f, 520f);
@@ -112,7 +122,128 @@ public final class AccountFormPopup extends Popup {
             public void run() {
                 submitSignIn();
             }
-        })).height(46f).width(240f);
+        })).height(Theme.BUTTON_HEIGHT).width(240f).padRight(Theme.PAD);
+        footer().add(ui.secondaryButton("Forgot password", new Runnable() {
+            @Override
+            public void run() {
+                swap(RECOVER_IDENTITY);
+            }
+        })).height(Theme.BUTTON_HEIGHT).width(240f);
+    }
+
+    private void swap(int stage) {
+        body().clear();
+        footer().clear();
+        if (stage == RECOVER_IDENTITY) {
+            buildRecoverIdentity();
+        } else if (stage == RECOVER_ANSWER) {
+            buildRecoverAnswer();
+        } else if (stage == RECOVER_PASSWORD) {
+            buildRecoverPassword();
+        } else {
+            buildSignIn();
+        }
+        Animations.enter(body());
+    }
+
+    private void buildRecoverIdentity() {
+        Table form = new Table();
+        form.defaults().pad(3f).left();
+        username = new TextField(target == null ? "" : target.getUsername(), ui.skin());
+        recoveryEmail = new TextField("", ui.skin());
+        row(form, "Username", username);
+        row(form, "Email", recoveryEmail);
+
+        body().add(hint("Give the email this account was registered with.")).row();
+        body().add(form).growX().row();
+        recoveryButtons(new Runnable() {
+            @Override
+            public void run() {
+                submitIdentity();
+            }
+        });
+    }
+
+    private void buildRecoverAnswer() {
+        Table form = new Table();
+        form.defaults().pad(3f).left();
+        recoveryAnswer = new TextField("", ui.skin());
+        row(form, "Answer", recoveryAnswer);
+
+        body().add(hint(questionPrompt)).row();
+        body().add(form).growX().row();
+        recoveryButtons(new Runnable() {
+            @Override
+            public void run() {
+                submitAnswer();
+            }
+        });
+    }
+
+    private void buildRecoverPassword() {
+        Table form = new Table();
+        form.defaults().pad(3f).left();
+        newPassword = passwordField();
+        row(form, "New password", newPassword);
+
+        body().add(hint("Pick a new password with 8+ characters, "
+                + "upper and lower case, a digit and a symbol.")).row();
+        body().add(form).growX().row();
+        recoveryButtons(new Runnable() {
+            @Override
+            public void run() {
+                submitNewPassword();
+            }
+        });
+    }
+
+    private Label hint(String text) {
+        Label label = new Label(text, ui.skin(), "muted");
+        label.setWrap(true);
+        label.setAlignment(Align.center);
+        return label;
+    }
+
+    private void recoveryButtons(Runnable confirm) {
+        footer().add(ui.button("Continue", confirm))
+                .height(Theme.BUTTON_HEIGHT).width(240f).padRight(Theme.PAD);
+        footer().add(ui.secondaryButton("Back to sign in", new Runnable() {
+            @Override
+            public void run() {
+                swap(SIGN_IN_FORM);
+            }
+        })).height(Theme.BUTTON_HEIGHT).width(240f);
+    }
+
+    private void submitIdentity() {
+        Result result = login.forgetPassword(
+                username.getText().trim(), recoveryEmail.getText().trim());
+        if (result == null || !result.isSuccess()) {
+            context.toasts().error(firstLine(result == null ? null : result.getMessage()));
+            return;
+        }
+        questionPrompt = (result.getMessage() == null)
+                ? "Answer your security question." : result.getMessage().trim();
+        swap(RECOVER_ANSWER);
+    }
+
+    private void submitAnswer() {
+        Result result = login.answerQuestion(recoveryAnswer.getText().trim());
+        if (result == null || !result.isSuccess()) {
+            context.toasts().error(firstLine(result == null ? null : result.getMessage()));
+            return;
+        }
+        swap(RECOVER_PASSWORD);
+    }
+
+    private void submitNewPassword() {
+        Result result = login.setNewPassword(newPassword.getText());
+        if (result == null || !result.isSuccess()) {
+            context.toasts().error(firstLine(result == null ? null : result.getMessage()));
+            return;
+        }
+        context.toasts().success("Password changed. Sign in with the new one.");
+        swap(SIGN_IN_FORM);
     }
 
     private Table profileDetails() {
@@ -146,11 +277,18 @@ public final class AccountFormPopup extends Popup {
 
         Table form = new Table();
         form.defaults().pad(3f).left();
+        username = new TextField("", ui.skin());
         nickname = new TextField("", ui.skin());
         email = new TextField("", ui.skin());
         password = passwordField();
         passwordConfirm = passwordField();
 
+        editRow(form, "New username", username, new Runnable() {
+            @Override
+            public void run() {
+                apply("menu profile change-username -u " + username.getText().trim(), username);
+            }
+        });
         editRow(form, "New nickname", nickname, new Runnable() {
             @Override
             public void run() {
