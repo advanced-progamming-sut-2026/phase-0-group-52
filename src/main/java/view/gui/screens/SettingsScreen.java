@@ -10,16 +10,7 @@ import view.gui.BaseScreen;
 import view.gui.GameContext;
 import view.gui.Theme;
 
-/**
- * Difficulty plus the three settings the graphics phase introduces.
- *
- * <p>Difficulty belongs to the saved user, so it is changed through
- * {@link SettingMenuController}. Game speed, the grid overlay and debug mode only
- * affect how things are drawn, so they live in the view's own settings object and
- * never touch the model.
- */
 public final class SettingsScreen extends BaseScreen {
-
     private final SettingMenuController controller;
 
     private final TextButton[] difficultyButtons = new TextButton[5];
@@ -63,7 +54,6 @@ public final class SettingsScreen extends BaseScreen {
         content.add(panel).width(560f).center();
     }
 
-    /** Draws the red lawn grid during a level. Presentation only. */
     private CheckBox buildGridToggle() {
         final CheckBox grid = new CheckBox(" Show the lawn grid", ui.skin());
         grid.setChecked(context.settings().isShowGrid());
@@ -76,7 +66,6 @@ public final class SettingsScreen extends BaseScreen {
         return grid;
     }
 
-    /** Reveals the cheat controls in the top bar and on the lawn. */
     private CheckBox buildDebugToggle() {
         final CheckBox debug = new CheckBox(" Debug mode (cheat buttons)", ui.skin());
         debug.setChecked(context.settings().isDebugMode());
@@ -129,14 +118,12 @@ public final class SettingsScreen extends BaseScreen {
         return row;
     }
 
-    /** Difficulty is model state, so it goes through the controller. */
     private void setDifficulty(int level) {
         controller.handleCommand(new String[]{
                 "menu", "settings", "change-difficulty", "-l", String.valueOf(level)});
         markDifficulty();
     }
 
-    /** Highlights the button matching the user's saved difficulty. */
     private void markDifficulty() {
         User user = context.user();
         int current = (user == null) ? 1 : user.getDifficultyLevel();

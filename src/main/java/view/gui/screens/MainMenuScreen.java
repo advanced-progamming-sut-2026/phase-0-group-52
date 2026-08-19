@@ -13,15 +13,7 @@ import view.gui.GameContext;
 import view.gui.PvzGame;
 import view.gui.Theme;
 
-/**
- * The hub every other menu is reached from.
- *
- * <p>The specification's one hard requirement here is the news entry with an
- * indicator when unread items exist; the rest of the layout is free. Tiles are
- * used so each destination has room for a short description.
- */
 public final class MainMenuScreen extends BaseScreen {
-
     private final MainMenuController controller;
     private Label newsBadge;
 
@@ -40,17 +32,24 @@ public final class MainMenuScreen extends BaseScreen {
 
         panel.add(buildGrid()).row();
 
-        panel.add(ui.dangerButton("Sign out", new Runnable() {
+        Table footer = new Table();
+        footer.add(ui.secondaryButton("Title screen", new Runnable() {
+            @Override
+            public void run() {
+                game().showTitle();
+            }
+        })).padRight(Theme.PAD);
+        footer.add(ui.dangerButton("Sign out", new Runnable() {
             @Override
             public void run() {
                 signOut();
             }
-        })).padTop(Theme.PAD).right();
+        }));
+        panel.add(footer).padTop(Theme.PAD).right();
 
         content.add(panel).center();
     }
 
-    /** The nine destination tiles. */
     private Table buildGrid() {
         Table grid = new Table();
         grid.defaults().pad(Theme.PAD_SMALL).width(230f).height(84f);
@@ -84,7 +83,6 @@ public final class MainMenuScreen extends BaseScreen {
         return grid;
     }
 
-    /** A tile whose only job is to enter another menu. */
     private Table menuTile(String title, String subtitle, Color accent, final String menuName) {
         return tile(title, subtitle, accent, new Runnable() {
             @Override
@@ -94,7 +92,6 @@ public final class MainMenuScreen extends BaseScreen {
         });
     }
 
-    /** A destination tile: coloured token, title, and one line of description. */
     private Table tile(String title, String subtitle, Color accent, Runnable action) {
         Table tile = new Table();
         tile.setBackground(ui.primitives().rounded(
@@ -115,7 +112,6 @@ public final class MainMenuScreen extends BaseScreen {
         return tile;
     }
 
-    /** The news tile carries a count badge when unread items exist. */
     private Stack newsTile() {
         Table tile = tile("News", "Announcements", Theme.SUN_DEEP, new Runnable() {
             @Override
@@ -154,9 +150,6 @@ public final class MainMenuScreen extends BaseScreen {
         newsBadge.getParent().setVisible(unread > 0);
     }
 
-    // ------------------------------------------------------------- actions
-
-    /** All navigation is issued as the same command the console accepts. */
     private void navigate(String menuName) {
         controller.handleCommand(new String[]{"menu", "enter", menuName});
     }

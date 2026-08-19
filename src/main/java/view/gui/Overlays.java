@@ -9,30 +9,12 @@ import com.badlogic.gdx.utils.Align;
 
 import java.util.List;
 
-/**
- * The panels that sit on top of a level: its objectives, the pause menu, and the
- * result screen.
- *
- * <p>They are built as overlays rather than screens because the lawn must stay
- * visible behind them — the specification requires the board to be frozen but on
- * show while paused. Each dims the background and captures input so nothing
- * underneath reacts.
- *
- * <p>The buttons take callbacks: deciding what "restart" or "save and exit"
- * actually does belongs to whoever owns the level, not to this class.
- */
 public final class Overlays {
-
     private Overlays() {
     }
 
-    /**
-     * The objectives shown as a level opens: "do not let zombies reach the house",
-     * a dead line, a kill target, and so on.
-     */
     public static Table levelStart(UiKit ui, String chapter, int level,
             List<String> objectives, final Runnable onBegin) {
-
         Table panel = ui.panel();
         panel.pad(Theme.PAD_LARGE);
 
@@ -71,13 +53,8 @@ public final class Overlays {
         return wrap(ui, panel);
     }
 
-    /**
-     * The pause menu. While it is up the caller must stop advancing the level;
-     * this only presents the choices.
-     */
     public static Table pause(UiKit ui, final Runnable onResume,
             final Runnable onRestart, final Runnable onSaveAndExit) {
-
         Table panel = ui.panel();
         panel.pad(Theme.PAD_LARGE);
 
@@ -94,13 +71,8 @@ public final class Overlays {
         return wrap(ui, panel);
     }
 
-    /**
-     * The result panel. Retry is only offered after a loss, matching the
-     * specification.
-     */
     public static Table result(UiKit ui, boolean won, int score,
             final Runnable onRetry, final Runnable onExit) {
-
         Table panel = ui.panel();
         panel.pad(Theme.PAD_LARGE);
 
@@ -126,16 +98,11 @@ public final class Overlays {
         return wrap(ui, panel);
     }
 
-    /**
-     * Centres a panel over a full-screen scrim and blocks input to whatever is
-     * behind it.
-     */
     private static Table wrap(UiKit ui, Table panel) {
         Table root = new Table();
         root.setFillParent(true);
         root.setTouchable(Touchable.enabled);
-        // The scrim is the background of the root itself, so it always covers the
-        // full stage and swallows clicks meant for the board underneath.
+
         root.setBackground(ui.drawable("scrim"));
         root.center();
         root.add(panel);
@@ -144,12 +111,10 @@ public final class Overlays {
         return root;
     }
 
-    /** Adds an overlay to a stage. */
     public static void show(Stage stage, Table overlay) {
         stage.addActor(overlay);
     }
 
-    /** Fades an overlay out and removes it. */
     public static void dismiss(final Actor overlay) {
         Animations.exit(overlay, new Runnable() {
             @Override

@@ -12,16 +12,7 @@ import view.gui.BaseScreen;
 import view.gui.GameContext;
 import view.gui.Theme;
 
-/**
- * Sign-in, plus the password recovery flow.
- *
- * <p>Recovery runs in the same panel rather than a separate screen: the
- * specification leaves the presentation open, and keeping it here means the user
- * never loses the username they already typed.
- */
 public final class LoginScreen extends BaseScreen {
-
-    /** Which form the panel is currently showing. */
     private enum Mode { SIGN_IN, RECOVER_IDENTITY, RECOVER_ANSWER, RECOVER_PASSWORD }
 
     private final LoginMenuController controller = new LoginMenuController();
@@ -168,8 +159,6 @@ public final class LoginScreen extends BaseScreen {
         table.add(field).width(280f).height(34f).padBottom(Theme.PAD_SMALL).row();
     }
 
-    // ------------------------------------------------------------- actions
-
     private void signIn() {
         Result result = controller.login(
                 username.getText().trim(), password.getText(), stayLoggedIn.isChecked());
@@ -189,7 +178,7 @@ public final class LoginScreen extends BaseScreen {
             context.toasts().error(firstLine(result == null ? null : result.getMessage()));
             return;
         }
-        // The controller's message carries the user's security question.
+
         switchTo(Mode.RECOVER_ANSWER);
         prompt.setText(result.getMessage() == null ? "Answer your security question."
                 : result.getMessage().trim());
@@ -215,7 +204,6 @@ public final class LoginScreen extends BaseScreen {
         switchTo(Mode.SIGN_IN);
     }
 
-    /** Rebuilds the panel in a different mode. */
     private void switchTo(Mode next) {
         mode = next;
         content.clear();
@@ -223,7 +211,6 @@ public final class LoginScreen extends BaseScreen {
         Animations.enter(content);
     }
 
-    /** Menu changes go through the controller so navigation rules stay in one place. */
     private void navigate(String menuName) {
         Result result = controller.enterMenu(menuName);
         if (result != null && !result.isSuccess()) {
@@ -242,7 +229,6 @@ public final class LoginScreen extends BaseScreen {
 
     @Override
     public void show() {
-        // Always return to the sign-in form when the screen is re-entered.
         mode = Mode.SIGN_IN;
         super.show();
     }

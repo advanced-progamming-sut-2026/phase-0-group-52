@@ -133,6 +133,18 @@ public class UserRepository {
         writeAll(users);
     }
 
+    public synchronized boolean delete(int userId) {
+        List<User> users = readAll();
+        for (int i = 0; i < users.size(); i++) {
+            if (users.get(i).getId() == userId) {
+                users.remove(i);
+                writeAll(users);
+                return true;
+            }
+        }
+        return false;
+    }
+
     public synchronized boolean updateStats(User user) {
         List<User> users = readAll();
         for (int i = 0; i < users.size(); i++) {

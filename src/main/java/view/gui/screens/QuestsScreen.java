@@ -21,19 +21,7 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 
-/**
- * Missions and minigame access.
- *
- * <p>Quests are grouped into the same pages the console uses (daily, main, epic)
- * and sorted by the priority the model assigns. Minigames sit alongside them
- * because the travel log is where the console reaches them.
- *
- * <p>Quest state is read straight from {@link QuestRepository}, the same source the
- * console controller reads, and only for display — nothing here writes progress or
- * pays rewards.
- */
 public final class QuestsScreen extends BaseScreen {
-
     private static final String[] PAGES = {"daily", "main", "epic"};
     private static final String[] MINIGAMES = {
             "vase_breaker", "wallnut_bowling", "izombie", "beghouled", "zombotany"};
@@ -119,10 +107,6 @@ public final class QuestsScreen extends BaseScreen {
         }
     }
 
-    /**
-     * The quests belonging to the current page, highest priority first — the same
-     * ordering the console prints.
-     */
     private List<QuestProgress> questsForPage() {
         List<QuestProgress> result = new ArrayList<QuestProgress>();
         if (context.user() == null) {
@@ -148,7 +132,6 @@ public final class QuestsScreen extends BaseScreen {
         return result;
     }
 
-    /** One quest: name, reward, priority, progress bar and status. */
     private Table questCard(QuestProgress quest) {
         Table card = ui.sunken();
         card.left();
@@ -193,7 +176,6 @@ public final class QuestsScreen extends BaseScreen {
         return track;
     }
 
-    /** Minigame launchers, kept beside the quests as the console menu does. */
     private Table buildMinigames() {
         Table box = ui.sunken();
         box.top();

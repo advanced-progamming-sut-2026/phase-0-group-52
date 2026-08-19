@@ -10,25 +10,10 @@ import java.awt.Color;
 import java.awt.Font;
 import java.awt.FontMetrics;
 import java.awt.Graphics2D;
-import java.awt.GraphicsEnvironment;
 import java.awt.RenderingHints;
 import java.awt.image.BufferedImage;
 
-/**
- * Builds a chunky bitmap font at runtime from a system typeface.
- *
- * <p>The stock LibGDX font is a thin 15px face that looks weak once scaled up, and
- * the project has no font files to load. This rasterises an installed heavy
- * typeface into a texture instead, which keeps the "no assets" rule while getting
- * much closer to the bold, rounded lettering the game uses.
- *
- * <p>Glyphs are drawn white so they can be tinted per label. If anything goes wrong
- * — a headless environment, a missing typeface — the caller falls back to the
- * built-in font rather than failing to start.
- */
 final class FontFactory {
-
-    /** Preferred faces, heaviest first; the first one installed wins. */
     private static final String[] PREFERRED = {
             "Arial Rounded MT Bold",
             "Segoe UI Black",
@@ -40,16 +25,15 @@ final class FontFactory {
 
     private static final char FIRST_CHAR = 32;
     private static final char LAST_CHAR = 126;
-    /** Space around each glyph so neighbours do not bleed in when filtering. */
+
     private static final int PADDING = 2;
+
+    private static Font baseFont;
+    private static boolean resolved;
 
     private FontFactory() {
     }
 
-    /**
-     * Rasterises a font at the given pixel size, or returns {@code null} if the
-     * platform cannot do it.
-     */
     static BitmapFont create(int size) {
         try {
             Font awtFont = pickFont(size);
@@ -61,28 +45,32 @@ final class FontFactory {
             Log.warn("gui", "Falling back to the built-in font: " + e.getMessage());
             return null;
         } catch (LinkageError e) {
-            // AWT is unavailable on some minimal runtimes.
             Log.warn("gui", "AWT unavailable; using the built-in font");
             return null;
         }
     }
 
-    private static Font pickFont(int size) {
-        String[] installed = GraphicsEnvironment.getLocalGraphicsEnvironment()
-                .getAvailableFontFamilyNames();
-        for (String wanted : PREFERRED) {
-            for (String candidate : installed) {
-                if (candidate.equalsIgnoreCase(wanted)) {
-                    return new Font(candidate, Font.BOLD, size);
-                }
-            }
+    private static synchronized Font pickFont(int size) {
+        if (!resolved) {
+            resolved = true;
+            baseFont = resolveBase();
         }
-        return new Font(Font.SANS_SERIF, Font.BOLD, size);
+        return (baseFont == null) ? null : baseFont.deriveFont((float) size);
     }
 
-    /** Draws every printable ASCII glyph into one texture and describes it to LibGDX. */
+    private static Font resolveBase() {
+        for (String wanted : PREFERRED) {
+            Font candidate = new Font(wanted, Font.BOLD, 16);
+            if (candidate.getFamily().equalsIgnoreCase(wanted)) {
+                Log.debug("gui", "Using system font: " + candidate.getFamily());
+                return candidate;
+            }
+        }
+        Log.debug("gui", "No preferred font installed; using the default sans face");
+        return new Font(Font.SANS_SERIF, Font.BOLD, 16);
+    }
+
     private static BitmapFont rasterise(Font awtFont) {
-        // Measure first so the atlas is only as large as it needs to be.
         BufferedImage probe = new BufferedImage(1, 1, BufferedImage.TYPE_INT_ARGB);
         Graphics2D probeGraphics = probe.createGraphics();
         probeGraphics.setFont(awtFont);
@@ -116,23 +104,20 @@ final class FontFactory {
         drawGlyphs(graphics, metrics, data, columns, cellWidth, cellHeight, glyphHeight);
         graphics.dispose();
 
-        // A space glyph is required for wrapping to work.
         BitmapFont.Glyph space = data.getGlyph(' ');
         if (space != null) {
             data.spaceXadvance = space.xadvance;
         }
 
-        Texture texture = new Texture(toPixmap(atlas), true);
+        Texture texture = new Texture(toPixmapFast(atlas), true);
         texture.setFilter(Texture.TextureFilter.MipMapLinearLinear, Texture.TextureFilter.Linear);
 
-        // Not flipped: the stage uses a y-up viewport.
         BitmapFont font = new BitmapFont(data, new TextureRegion(texture), false);
         font.setUseIntegerPositions(false);
         font.setOwnsTexture(true);
         return font;
     }
 
-    /** Line metrics shared by every glyph. */
     private static BitmapFont.BitmapFontData describe(FontMetrics metrics, int glyphHeight) {
         BitmapFont.BitmapFontData data = new BitmapFont.BitmapFontData();
         data.setScale(1f);
@@ -145,11 +130,9 @@ final class FontFactory {
         return data;
     }
 
-    /** Draws each printable character into its cell and records where it landed. */
     private static void drawGlyphs(Graphics2D graphics, FontMetrics metrics,
             BitmapFont.BitmapFontData data, int columns, int cellWidth, int cellHeight,
             int glyphHeight) {
-
         for (char c = FIRST_CHAR; c <= LAST_CHAR; c++) {
             int index = c - FIRST_CHAR;
             int x = (index % columns) * cellWidth + PADDING;
@@ -164,33 +147,34 @@ final class FontFactory {
             glyph.width = metrics.charWidth(c);
             glyph.height = glyphHeight;
             glyph.xoffset = 0;
-            // Each glyph box starts at the top of the line, so its BMFont y-offset
-            // is zero. For an unflipped font LibGDX stores that as -(height + 0),
-            // which is what its own loader computes.
+
             glyph.yoffset = -glyph.height;
             glyph.xadvance = metrics.charWidth(c);
             data.setGlyph(c, glyph);
         }
     }
 
-    /** Copies an AWT image into a LibGDX pixmap, converting ARGB to RGBA. */
-    private static Pixmap toPixmap(BufferedImage image) {
+    private static Pixmap toPixmapFast(BufferedImage image) {
         int width = image.getWidth();
         int height = image.getHeight();
-        Pixmap pixmap = new Pixmap(width, height, Pixmap.Format.RGBA8888);
-        pixmap.setBlending(Pixmap.Blending.None);
-        for (int y = 0; y < height; y++) {
-            for (int x = 0; x < width; x++) {
-                int argb = image.getRGB(x, y);
-                int alpha = (argb >>> 24) & 0xFF;
-                int red = (argb >> 16) & 0xFF;
-                int green = (argb >> 8) & 0xFF;
-                int blue = argb & 0xFF;
-                pixmap.drawPixel(x, y, (red << 24) | (green << 16) | (blue << 8) | alpha);
-            }
+        int[] argb = ((java.awt.image.DataBufferInt) image.getRaster().getDataBuffer()).getData();
+        byte[] rgba = new byte[width * height * 4];
+        for (int i = 0; i < argb.length; i++) {
+            int pixel = argb[i];
+            int at = i * 4;
+            rgba[at] = (byte) ((pixel >> 16) & 0xFF);
+            rgba[at + 1] = (byte) ((pixel >> 8) & 0xFF);
+            rgba[at + 2] = (byte) (pixel & 0xFF);
+            rgba[at + 3] = (byte) ((pixel >>> 24) & 0xFF);
         }
+        Pixmap pixmap = new Pixmap(width, height, Pixmap.Format.RGBA8888);
+        java.nio.ByteBuffer buffer = pixmap.getPixels();
+        buffer.clear();
+        buffer.put(rgba);
+        buffer.position(0);
         return pixmap;
     }
+
 
     private static int nextPowerOfTwo(int value) {
         int result = 1;

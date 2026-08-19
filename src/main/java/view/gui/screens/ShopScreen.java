@@ -16,17 +16,7 @@ import view.gui.GameContext;
 import view.gui.PvzGame;
 import view.gui.Theme;
 
-/**
- * The shop, reached from the greenhouse as in the console build.
- *
- * <p>Only one daily offer exists, so the specification allows a single list rather
- * than separate permanent and daily sections; the daily item is simply marked. Each
- * purchase asks for confirmation first, then issues the documented
- * {@code shop buy} command so pricing and limits stay in {@link Shop}.
- */
 public final class ShopScreen extends BaseScreen {
-
-    /** Item identifiers accepted by {@code shop buy -i}. */
     private static final int ITEM_POT = 1;
     private static final int ITEM_PLANT_FOOD = 2;
     private static final int ITEM_RANDOM_SEEDS = 3;
@@ -84,13 +74,8 @@ public final class ShopScreen extends BaseScreen {
         content.add(panel).width(820f).height(480f).center();
     }
 
-    /**
-     * One shop row. {@code needsPlant} adds the plant picker the chosen-seed packet
-     * requires.
-     */
     private Table item(final String name, String description, final int price,
             final String currency, Color accent, final int itemId, final boolean needsPlant) {
-
         Table row = ui.sunken();
         row.left();
         row.add(ui.token(40, accent)).size(40f).padRight(Theme.PAD);
@@ -126,10 +111,8 @@ public final class ShopScreen extends BaseScreen {
         return row;
     }
 
-    /** The specification asks for confirmation before a purchase completes. */
     private void confirm(String name, int price, String currency,
             final int itemId, final boolean needsPlant) {
-
         final String plantName = (needsPlant && plantPicker != null)
                 ? plantPicker.getSelected() : null;
 
@@ -165,10 +148,6 @@ public final class ShopScreen extends BaseScreen {
         dialog.show(stage);
     }
 
-    /**
-     * Issues the purchase. {@link Shop} decides whether it is allowed and prints
-     * the outcome, which surfaces as a toast.
-     */
     private void purchase(int itemId, String plantName) {
         StringBuilder command = new StringBuilder("shop buy -i ")
                 .append(itemId).append(" -n 1");

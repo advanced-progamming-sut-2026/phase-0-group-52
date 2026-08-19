@@ -13,14 +13,7 @@ import view.gui.Theme;
 
 import java.util.List;
 
-/**
- * Announcements, unread ones first.
- *
- * <p>Reading is a state change (items become read), so it is triggered through
- * {@link NewsMenuController} rather than by flipping the flags here.
- */
 public final class NewsScreen extends BaseScreen {
-
     private final NewsMenuController controller;
     private boolean showAll = true;
 
@@ -68,7 +61,6 @@ public final class NewsScreen extends BaseScreen {
         content.add(panel).width(760f).height(460f).center();
     }
 
-    /** The announcement list for the current filter. */
     private Table buildList() {
         Table list = new Table();
         list.top();
@@ -93,7 +85,6 @@ public final class NewsScreen extends BaseScreen {
         return list;
     }
 
-    /** One announcement, with an unread marker down the side. */
     private Table card(News item) {
         Table card = ui.sunken();
         card.left();
@@ -116,7 +107,6 @@ public final class NewsScreen extends BaseScreen {
         return card;
     }
 
-    /** The controller marks items read as a side effect of showing unread ones. */
     private void markAllRead() {
         controller.handleCommand(new String[]{"menu", "news", "show-unread"});
         context.toasts().success("All announcements marked as read.");
