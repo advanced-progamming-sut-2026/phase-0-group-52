@@ -23,8 +23,6 @@ import view.gui.Theme;
 import view.gui.UiKit;
 
 public final class TitleScreen implements Screen {
-    private static final float ZOOM = 1.18f;
-
     private final GameContext context;
     private final UiKit ui;
     private final Stage stage;
@@ -66,10 +64,7 @@ public final class TitleScreen implements Screen {
                         64, 256, Theme.BACKDROP_ALT, Theme.BACKDROP)))
                 : new Image(region);
         image.setScaling(Scaling.fill);
-        image.setSize(Theme.WORLD_WIDTH * ZOOM, Theme.WORLD_HEIGHT * ZOOM);
-        image.setPosition(
-                (Theme.WORLD_WIDTH - image.getWidth()) / 2f,
-                (Theme.WORLD_HEIGHT - image.getHeight()) / 2f);
+        image.setFillParent(true);
         return image;
     }
 

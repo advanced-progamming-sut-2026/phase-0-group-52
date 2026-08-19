@@ -64,30 +64,28 @@ public final class PlayerListPopup extends Popup {
         boolean isCurrent = controller.isSignedIn(player);
 
         Table row = new Table();
-        row.setBackground(ui.primitives().rounded(6,
-                isSelected ? Theme.lighten(Theme.PANEL, 0.4f) : Theme.PANEL,
-                isSelected ? Theme.GREEN_DARK : Theme.OUTLINE_SOFT,
-                isSelected ? 3 : 2));
-        row.pad(Theme.PAD_SMALL, Theme.PAD, Theme.PAD_SMALL, Theme.PAD);
+        row.setBackground(ui.drawable(isSelected ? "listRowSelected" : "listRow"));
+        row.pad(Theme.PAD, Theme.PAD_LARGE, Theme.PAD, Theme.PAD_LARGE);
         row.left();
 
         Table text = new Table();
         text.left();
 
-        Label nickname = new Label(player.getNickname(), ui.skin(), "title");
+        Label nickname = new Label(player.getNickname(), ui.skin(),
+                isSelected ? "titleOnDark" : "title");
         nickname.setAlignment(Align.left);
         text.add(nickname).left().row();
 
-        Label username = new Label(player.getUsername(), ui.skin(), "muted");
+        Label username = new Label(player.getUsername(), ui.skin(),
+                isSelected ? "smallOnDark" : "muted");
         text.add(username).left().row();
 
-        text.add(statLines(player)).left().padTop(3f);
+        text.add(statLines(player, isSelected)).left().padTop(3f);
 
         row.add(text).growX();
 
         if (isCurrent) {
-            Label badge = new Label("SIGNED IN", ui.skin(), "small");
-            badge.setColor(Theme.GREEN_DARK);
+            Label badge = new Label("SIGNED IN", ui.skin(), "smallOnDark");
             row.add(badge).right().top();
         }
 
@@ -102,17 +100,26 @@ public final class PlayerListPopup extends Popup {
         return row;
     }
 
-    private Table statLines(User player) {
+    private Table statLines(User player, boolean light) {
         Table info = new Table();
         info.left();
         info.defaults().left().padRight(Theme.PAD_LARGE);
-        info.add(new Label("Coins " + player.getCoins(), ui.skin(), "small"));
-        info.add(new Label("Gems " + player.getGems(), ui.skin(), "small"));
-        info.add(new Label("Games " + player.getGamesPlayed(), ui.skin(), "small")).row();
-        info.add(new Label("Best " + player.getMaxPoint(), ui.skin(), "small"));
-        info.add(new Label("Levels " + controller.completedLevels(player), ui.skin(), "small"));
-        info.add(new Label("Meow " + player.getMostMeowPoint(), ui.skin(), "small"));
+        info.add(stat("Coins", player.getCoins(), Theme.COIN, light));
+        info.add(stat("Gems", player.getGems(), Theme.GEM, light));
+        info.add(stat("Games", player.getGamesPlayed(), Theme.BLUE, light)).row();
+        info.add(stat("Best", player.getMaxPoint(), Theme.SUN, light));
+        info.add(stat("Levels", controller.completedLevels(player), Theme.GREEN, light));
+        info.add(stat("Meow", player.getMostMeowPoint(), Theme.plantFamily("MELEE"), light));
         return info;
+    }
+
+    private Table stat(String label, int value, com.badlogic.gdx.graphics.Color accent,
+            boolean light) {
+        Table cell = new Table();
+        cell.add(ui.token(14, accent)).size(14f).padRight(4f);
+        cell.add(new Label(label + " " + value, ui.skin(),
+                light ? "smallOnDark" : "small")).left();
+        return cell;
     }
 
     private Table actions() {
@@ -124,31 +131,31 @@ public final class PlayerListPopup extends Popup {
             public void run() {
                 openForm(AccountFormPopup.Mode.REGISTER);
             }
-        }));
-        bar.add(ui.styledButton("Sign in", "info", new Runnable() {
+        })).height(46f);
+        bar.add(ui.styledButton("Sign in", "primary", new Runnable() {
             @Override
             public void run() {
                 signIn();
             }
-        }));
+        })).height(46f);
         bar.add(ui.styledButton("Sign out", "secondary", new Runnable() {
             @Override
             public void run() {
                 signOut();
             }
-        }));
+        })).height(46f);
         bar.add(ui.styledButton("Profile", "secondary", new Runnable() {
             @Override
             public void run() {
                 openProfile();
             }
-        }));
+        })).height(46f);
         bar.add(ui.styledButton("Delete", "danger", new Runnable() {
             @Override
             public void run() {
                 deleteSelected();
             }
-        }));
+        })).height(46f);
         return bar;
     }
 

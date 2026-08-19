@@ -218,6 +218,13 @@ public final class UiKit implements Disposable {
                 primitives.panel()), Drawable.class);
         skin.add("questPanel", art("image_ui_quests_panel_edge_to_edge_ten",
                 primitives.sunken()), Drawable.class);
+        skin.add("listRow", art("image_ui_quests_travel_log_panel_default",
+                primitives.rounded(6, Theme.PANEL, Theme.OUTLINE_SOFT, 2)), Drawable.class);
+        skin.add("listRowSelected", art("image_ui_quests_travel_log_panel_complete",
+                primitives.rounded(6, Theme.lighten(Theme.PANEL, 0.4f),
+                        Theme.GREEN_DARK, 3)), Drawable.class);
+        skin.add("inset", art("image_ui_mainmenu_inset_bkgd",
+                primitives.sunken()), Drawable.class);
         skin.add("nameField", art("image_ui_mainmenu_name_field_10",
                 primitives.rounded(Theme.RADIUS + 6, Theme.lighten(Theme.PANEL, 0.35f),
                         Theme.OUTLINE, Theme.BORDER)), Drawable.class);
