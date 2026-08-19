@@ -58,6 +58,7 @@ public final class ChoosePlantScreen extends BaseScreen {
         availableArea = new Table();
         ScrollPane scroll = new ScrollPane(availableArea, ui.skin());
         scroll.setFadeScrollBars(false);
+        view.gui.UiKit.focusOnHover(scroll);
         scroll.setScrollingDisabled(true, false);
         panel.add(scroll).grow().row();
 

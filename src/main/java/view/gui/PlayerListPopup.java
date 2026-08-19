@@ -1,8 +1,10 @@
 package view.gui;
 
+import com.badlogic.gdx.scenes.scene2d.ui.CheckBox;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.ui.ScrollPane;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
+import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
 import com.badlogic.gdx.utils.Align;
 import controller.menu.PlayerListController;
 import model.Result;
@@ -16,19 +18,26 @@ public final class PlayerListPopup extends Popup {
 
     private Table list;
     private User selected;
+    private CheckBox stayBox;
 
     public PlayerListPopup(GameContext context) {
         super(context.ui(), "Player List", 640f, 560f);
         this.context = context;
         this.controller = new PlayerListController(context.app());
 
-        list = new Table();
-        ScrollPane scroll = new ScrollPane(list, ui.skin());
-        scroll.setFadeScrollBars(false);
-        scroll.setScrollingDisabled(true, false);
+        addHeaderButton("Leaderboard", Theme.plantFamily("MELEE"), new Runnable() {
+            @Override
+            public void run() {
+                close();
+                ((view.gui.PvzGame) com.badlogic.gdx.Gdx.app.getApplicationListener())
+                        .showLeaderboard();
+            }
+        });
 
-        body().add(scroll).grow().row();
-        body().add(actions()).growX().padTop(Theme.PAD_SMALL);
+        list = new Table();
+        body().add(list).growX().row();
+        footer().add(actions()).growX().row();
+        footer().add(staySignedInBox()).left().padTop(Theme.PAD_SMALL);
 
         selected = controller.signedIn();
         rebuild();
@@ -122,6 +131,12 @@ public final class PlayerListPopup extends Popup {
                 signIn();
             }
         }));
+        bar.add(ui.styledButton("Sign out", "secondary", new Runnable() {
+            @Override
+            public void run() {
+                signOut();
+            }
+        }));
         bar.add(ui.styledButton("Profile", "secondary", new Runnable() {
             @Override
             public void run() {
@@ -157,14 +172,75 @@ public final class PlayerListPopup extends Popup {
         openForm(AccountFormPopup.Mode.PROFILE);
     }
 
-    private void deleteSelected() {
-        Result result = controller.delete(selected);
+    private CheckBox staySignedInBox() {
+        stayBox = new CheckBox(" Stay signed in after closing the game", ui.skin());
+        stayBox.setProgrammaticChangeEvents(false);
+        stayBox.setChecked(controller.isStaySignedIn());
+        stayBox.addListener(new ChangeListener() {
+            @Override
+            public void changed(ChangeEvent event, com.badlogic.gdx.scenes.scene2d.Actor actor) {
+                Result result = controller.setStaySignedIn(stayBox.isChecked());
+                if (!result.isSuccess()) {
+                    stayBox.setChecked(false);
+                    context.toasts().error(result.getMessage());
+                    return;
+                }
+                context.toasts().info(result.getMessage());
+            }
+        });
+        return stayBox;
+    }
+
+    private void signOut() {
+        Result result = controller.signOut();
         if (!result.isSuccess()) {
             context.toasts().error(result.getMessage());
             return;
         }
         context.toasts().success(result.getMessage());
         selected = null;
+        refreshStayBox();
+        rebuild();
+    }
+
+    private void refreshStayBox() {
+        if (stayBox != null) {
+            stayBox.setChecked(controller.isStaySignedIn());
+        }
+    }
+
+    private void deleteSelected() {
+        if (selected == null) {
+            context.toasts().error("Select a player first.");
+            return;
+        }
+        if (!controller.isSignedIn(selected)) {
+            context.toasts().error("You can only delete the account you are signed in to.");
+            return;
+        }
+        final User doomed = selected;
+        ConfirmPopup confirm = new ConfirmPopup(ui, "Delete account",
+                "Delete " + doomed.getUsername() + " for good? This cannot be undone.",
+                "Delete", new Runnable() {
+                    @Override
+                    public void run() {
+                        applyDelete(doomed);
+                    }
+                });
+        if (getStage() != null) {
+            confirm.showOn(getStage());
+        }
+    }
+
+    private void applyDelete(User doomed) {
+        Result result = controller.delete(doomed);
+        if (!result.isSuccess()) {
+            context.toasts().error(result.getMessage());
+            return;
+        }
+        context.toasts().success(result.getMessage());
+        selected = null;
+        refreshStayBox();
         rebuild();
     }
 

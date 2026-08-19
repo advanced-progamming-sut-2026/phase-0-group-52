@@ -1,7 +1,6 @@
 package view.gui;
 
 import com.badlogic.gdx.scenes.scene2d.Actor;
-import com.badlogic.gdx.scenes.scene2d.ui.CheckBox;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.ui.SelectBox;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
@@ -19,7 +18,6 @@ public final class AccountFormPopup extends Popup {
     public enum Mode { REGISTER, SIGN_IN, PROFILE }
 
     private final GameContext context;
-    private final Mode mode;
     private final User target;
     private final Runnable onChanged;
 
@@ -36,12 +34,10 @@ public final class AccountFormPopup extends Popup {
     private SelectBox<String> gender;
     private SelectBox<String> question;
     private TextField answer;
-    private CheckBox stayLoggedIn;
 
     public AccountFormPopup(GameContext context, Mode mode, User target, Runnable onChanged) {
         super(context.ui(), titleFor(mode), 620f, 520f);
         this.context = context;
-        this.mode = mode;
         this.target = target;
         this.onChanged = onChanged;
         this.profile = new ProfileMenuController(context.app());
@@ -91,12 +87,12 @@ public final class AccountFormPopup extends Popup {
         row(form, "Answer", answer);
 
         body().add(form).growX().row();
-        body().add(ui.button("Create account", new Runnable() {
+        footer().add(ui.button("Create account", new Runnable() {
             @Override
             public void run() {
                 submitRegister();
             }
-        })).height(46f).width(240f).padTop(Theme.PAD);
+        })).height(46f).width(240f);
     }
 
     private void buildSignIn() {
@@ -106,19 +102,17 @@ public final class AccountFormPopup extends Popup {
         username = new TextField(target == null ? "" : target.getUsername(), ui.skin());
         username.setDisabled(target != null);
         password = passwordField();
-        stayLoggedIn = new CheckBox(" Stay signed in", ui.skin());
 
         row(form, "Username", username);
         row(form, "Password", password);
-        form.add(stayLoggedIn).colspan(2).left().padTop(Theme.PAD_SMALL).row();
 
         body().add(form).growX().row();
-        body().add(ui.button("Sign in", new Runnable() {
+        footer().add(ui.button("Sign in", new Runnable() {
             @Override
             public void run() {
                 submitSignIn();
             }
-        })).height(46f).width(240f).padTop(Theme.PAD);
+        })).height(46f).width(240f);
     }
 
     private Table profileDetails() {
@@ -237,7 +231,7 @@ public final class AccountFormPopup extends Popup {
 
     private void submitSignIn() {
         Result result = login.login(username.getText().trim(), password.getText(),
-                stayLoggedIn.isChecked());
+                players.isStaySignedIn());
         if (result == null || !result.isSuccess()) {
             context.toasts().error(firstLine(result == null ? null : result.getMessage()));
             Animations.shake(password);

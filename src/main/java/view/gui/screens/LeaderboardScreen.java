@@ -63,6 +63,7 @@ public final class LeaderboardScreen extends BaseScreen {
 
         ScrollPane scroll = new ScrollPane(table, ui.skin());
         scroll.setFadeScrollBars(false);
+        view.gui.UiKit.focusOnHover(scroll);
         panel.add(scroll).grow();
 
         content.add(panel).width(900f).height(470f).center();

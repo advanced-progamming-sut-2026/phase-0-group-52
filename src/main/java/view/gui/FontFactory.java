@@ -12,14 +12,34 @@ import java.awt.FontMetrics;
 import java.awt.Graphics2D;
 import java.awt.RenderingHints;
 import java.awt.image.BufferedImage;
+import java.io.File;
+import java.util.HashMap;
+import java.util.Map;
 
 final class FontFactory {
-    private static final String[] PREFERRED = {
-            "Arial Rounded MT Bold",
-            "Segoe UI Black",
+    static final String FONT_FOLDER = "assets/fonts";
+
+    static final String[] DISPLAY_PREFERRED = {
+            "Burbank Big Condensed Bold",
+            "Burbank Big Cd Bd",
+            "BurbankBigCondensed-Bold",
+            "Burbank Big Condensed",
+            "Burbank",
+            "Bahnschrift SemiBold Condensed",
+            "Arial Narrow",
+            "Haettenschweiler",
+            "Impact",
             "Arial Black",
-            "Verdana",
+            "SansSerif",
+    };
+
+    static final String[] SUBTEXT_PREFERRED = {
+            "Brianne's Hand",
+            "Brianne's hand",
+            "Briannes Hand",
+            "BrianneTod",
             "Segoe UI",
+            "Verdana",
             "SansSerif",
     };
 
@@ -28,15 +48,15 @@ final class FontFactory {
 
     private static final int PADDING = 2;
 
-    private static Font baseFont;
-    private static boolean resolved;
+    private static Map<String, Font> fileFonts;
+    private static final Map<String, Font> RESOLVED = new HashMap<String, Font>();
 
     private FontFactory() {
     }
 
-    static BitmapFont create(int size) {
+    static BitmapFont create(int size, String[] preferred) {
         try {
-            Font awtFont = pickFont(size);
+            Font awtFont = pickFont(size, preferred);
             if (awtFont == null) {
                 return null;
             }
@@ -50,24 +70,70 @@ final class FontFactory {
         }
     }
 
-    private static synchronized Font pickFont(int size) {
-        if (!resolved) {
-            resolved = true;
-            baseFont = resolveBase();
+    private static synchronized Font pickFont(int size, String[] preferred) {
+        String key = preferred[0];
+        Font base = RESOLVED.get(key);
+        if (base == null) {
+            base = resolveBase(preferred);
+            RESOLVED.put(key, base);
         }
-        return (baseFont == null) ? null : baseFont.deriveFont((float) size);
+        return (base == null) ? null : base.deriveFont((float) size);
     }
 
-    private static Font resolveBase() {
-        for (String wanted : PREFERRED) {
+    private static Font resolveBase(String[] preferred) {
+        Map<String, Font> supplied = suppliedFonts();
+        for (String wanted : preferred) {
+            Font match = supplied.get(wanted.toLowerCase());
+            if (match != null) {
+                Log.info("gui", "Using supplied font " + match.getFamily()
+                        + " for " + preferred[0]);
+                return match.deriveFont(Font.PLAIN, 16f);
+            }
+        }
+        for (String wanted : preferred) {
             Font candidate = new Font(wanted, Font.BOLD, 16);
             if (candidate.getFamily().equalsIgnoreCase(wanted)) {
-                Log.debug("gui", "Using system font: " + candidate.getFamily());
+                Log.info("gui", "Using installed font " + candidate.getFamily()
+                        + " for " + preferred[0]);
                 return candidate;
             }
         }
-        Log.debug("gui", "No preferred font installed; using the default sans face");
+        Log.warn("gui", "No match for " + preferred[0] + "; using the default sans face");
         return new Font(Font.SANS_SERIF, Font.BOLD, 16);
+    }
+
+    private static Map<String, Font> suppliedFonts() {
+        if (fileFonts != null) {
+            return fileFonts;
+        }
+        fileFonts = new HashMap<String, Font>();
+        File folder = new File(FONT_FOLDER);
+        if (!folder.isDirectory()) {
+            return fileFonts;
+        }
+        File[] candidates = folder.listFiles();
+        if (candidates == null) {
+            return fileFonts;
+        }
+        java.util.Arrays.sort(candidates);
+        for (File file : candidates) {
+            String name = file.getName().toLowerCase();
+            if (!name.endsWith(".ttf") && !name.endsWith(".otf")) {
+                continue;
+            }
+            try {
+                Font loaded = Font.createFont(Font.TRUETYPE_FONT, file);
+                fileFonts.put(loaded.getFamily().toLowerCase(), loaded);
+                fileFonts.put(loaded.getFontName().toLowerCase(), loaded);
+                Log.debug("gui", "Found font file " + file.getName()
+                        + " -> " + loaded.getFamily());
+            } catch (java.awt.FontFormatException e) {
+                Log.warn("gui", "Not a usable font file: " + file.getName());
+            } catch (java.io.IOException e) {
+                Log.warn("gui", "Could not read font file: " + file.getName());
+            }
+        }
+        return fileFonts;
     }
 
     private static BitmapFont rasterise(Font awtFont) {
@@ -174,7 +240,6 @@ final class FontFactory {
         buffer.position(0);
         return pixmap;
     }
-
 
     private static int nextPowerOfTwo(int value) {
         int result = 1;

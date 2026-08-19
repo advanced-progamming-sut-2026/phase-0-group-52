@@ -43,6 +43,23 @@ public class PlayerListController {
         return new Result(true, "Account " + user.getUsername() + " deleted.", null);
     }
 
+    public boolean isStaySignedIn() {
+        User current = app.getCurrentuser();
+        return current != null && current.isStayLoggedIn();
+    }
+
+    public Result setStaySignedIn(boolean value) {
+        User current = app.getCurrentuser();
+        if (current == null) {
+            return new Result(false, "Sign in first.", null);
+        }
+        current.setStayLoggedIn(value);
+        repository.setStayLoggedIn(current.getId(), value);
+        return new Result(true, value
+                ? "You will stay signed in next time."
+                : "You will start signed out next time.", null);
+    }
+
     public Result signOut() {
         User current = app.getCurrentuser();
         if (current == null) {

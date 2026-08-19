@@ -108,6 +108,9 @@ final class ScreenTour {
                 AccountFormPopup.Mode.REGISTER, null, null), "tour-20-register.png");
         capturePanel(stage, new AccountFormPopup(game.context(),
                 AccountFormPopup.Mode.PROFILE, game.context().user(), null), "tour-21-profile.png");
+        capturePanel(stage, new ConfirmPopup(game.context().ui(), "Delete account",
+                "Delete arya for good? This cannot be undone.", "Delete", noop()),
+                "tour-22-confirm-delete.png");
     }
 
     private void captureOverlays() {

@@ -41,6 +41,7 @@ public final class NewsScreen extends BaseScreen {
 
         ScrollPane scroll = new ScrollPane(buildList(), ui.skin());
         scroll.setFadeScrollBars(false);
+        view.gui.UiKit.focusOnHover(scroll);
         panel.add(scroll).grow().row();
 
         Table actions = new Table();
