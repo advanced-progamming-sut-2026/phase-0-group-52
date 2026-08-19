@@ -13,7 +13,9 @@ import com.badlogic.gdx.utils.Scaling;
 import com.badlogic.gdx.utils.viewport.FitViewport;
 import model.User;
 import view.gui.Animations;
+import view.gui.Backdrops;
 import view.gui.GameContext;
+import view.gui.Icons;
 import view.gui.PlayerListPopup;
 import view.gui.Popup;
 import view.gui.SettingsPopup;
@@ -21,10 +23,13 @@ import view.gui.Theme;
 import view.gui.UiKit;
 
 public final class TitleScreen implements Screen {
+    private static final float ZOOM = 1.18f;
+
     private final GameContext context;
     private final UiKit ui;
     private final Stage stage;
     private final Runnable onPlay;
+    private final Backdrops backdrops = new Backdrops();
 
     private Label playerName;
 
@@ -37,50 +42,35 @@ public final class TitleScreen implements Screen {
     }
 
     private void build() {
-        Image backdrop = new Image(new TextureRegion(ui.primitives().verticalGradient(
-                64, 256, Theme.BACKDROP_ALT, Theme.BACKDROP)));
-        backdrop.setScaling(Scaling.stretch);
-        backdrop.setFillParent(true);
-        stage.addActor(backdrop);
+        stage.addActor(backdrop());
 
         Table root = new Table();
         root.setFillParent(true);
-        root.pad(Theme.PAD_LARGE);
+        root.bottom();
 
         Table centre = new Table();
-        centre.add(titleBlock()).padBottom(Theme.PAD_LARGE).row();
-        centre.add(playerBadge()).width(430f).height(52f).padBottom(Theme.PAD).row();
-        centre.add(playButton()).width(260f).height(74f).row();
+        centre.add(playerBadge()).width(444f).height(66f).padBottom(Theme.PAD).row();
+        centre.add(playButton()).width(260f).height(78f);
 
-        root.add(centre).expand().center().row();
+        root.add(centre).padBottom(Theme.PAD_LARGE).row();
         root.add(bottomRow()).growX();
 
         stage.addActor(root);
         Animations.enter(root);
     }
 
-    private Table titleBlock() {
-        Table block = new Table();
-
-        Label plants = new Label("PLANTS", ui.skin(), "hugeOnDark");
-        plants.setColor(Theme.GREEN_LIGHT);
-        Label versus = new Label("vs.", ui.skin(), "titleOnDark");
-        versus.setColor(Theme.SUN);
-        Label zombies = new Label("ZOMBIES", ui.skin(), "hugeOnDark");
-
-        Table line = new Table();
-        line.add(plants).padRight(Theme.PAD_SMALL);
-        line.add(versus).padRight(Theme.PAD_SMALL);
-        line.add(zombies);
-        line.add(new Label("2", ui.skin(), "hugeOnDark")).padLeft(Theme.PAD_SMALL);
-
-        block.add(line).row();
-
-        Label tagline = new Label("IT'S ABOUT TIME", ui.skin(), "onDark");
-        tagline.setColor(Theme.TEXT_ON_DARK);
-        tagline.setAlignment(Align.center);
-        block.add(tagline).padTop(Theme.PAD_SMALL);
-        return block;
+    private Image backdrop() {
+        TextureRegion region = backdrops.random();
+        Image image = (region == null)
+                ? new Image(new TextureRegion(ui.primitives().verticalGradient(
+                        64, 256, Theme.BACKDROP_ALT, Theme.BACKDROP)))
+                : new Image(region);
+        image.setScaling(Scaling.fill);
+        image.setSize(Theme.WORLD_WIDTH * ZOOM, Theme.WORLD_HEIGHT * ZOOM);
+        image.setPosition(
+                (Theme.WORLD_WIDTH - image.getWidth()) / 2f,
+                (Theme.WORLD_HEIGHT - image.getHeight()) / 2f);
+        return image;
     }
 
     private Table playerBadge() {
@@ -88,17 +78,19 @@ public final class TitleScreen implements Screen {
         badge.setBackground(ui.drawable("nameField"));
         playerName = new Label("", ui.skin(), "title");
         playerName.setAlignment(Align.center);
-        badge.add(playerName).expandX().center().padLeft(34f);
-        badge.add(ui.token(26, Theme.SUN_DEEP)).size(26f).right().padRight(Theme.PAD);
-
-        Animations.attachPress(badge);
-        UiKit.onClick(badge, new Runnable() {
+        badge.add(playerName).expandX().center().padLeft(40f);
+        badge.add(ui.iconButton(Icons.PLAYERS, "Edit", Theme.BLUE, new Runnable() {
             @Override
             public void run() {
                 openPlayers();
             }
-        });
-        return badge;
+        })).size(38f).right().padRight(Theme.PAD);
+
+        Table frame = new Table();
+        frame.setBackground(ui.primitives().rounded(Theme.RADIUS + 10,
+                Theme.darken(Theme.OUTLINE, 0.15f), Theme.darken(Theme.OUTLINE, 0.6f), 3));
+        frame.add(badge).grow().pad(5f);
+        return frame;
     }
 
     private Table playButton() {
@@ -120,22 +112,24 @@ public final class TitleScreen implements Screen {
 
     private Table bottomRow() {
         Table row = new Table();
-        row.add(ui.iconButton(view.gui.Icons.QUIT_GAME, "Quit", Theme.RED, new Runnable() {
+        row.bottom();
+        row.pad(0f, Theme.PAD, 0f, Theme.PAD);
+        row.add(ui.iconButton(Icons.QUIT_GAME, "Quit", Theme.RED, new Runnable() {
             @Override
             public void run() {
                 Gdx.app.exit();
             }
-        })).size(58f).left();
+        })).size(66f).left().bottom();
 
         row.add(new Table()).expandX();
 
-        row.add(ui.iconButton(view.gui.Icons.SETTINGS, "Settings",
+        row.add(ui.iconButton(Icons.SETTINGS, "Settings",
                 Theme.plantFamily("WALL_NUT"), new Runnable() {
                     @Override
                     public void run() {
                         openSettings();
                     }
-                })).size(58f);
+                })).size(60f).right().bottom().padBottom(Theme.PAD);
         return row;
     }
 
@@ -174,7 +168,7 @@ public final class TitleScreen implements Screen {
 
     @Override
     public void render(float delta) {
-        Gdx.gl.glClearColor(Theme.BACKDROP.r, Theme.BACKDROP.g, Theme.BACKDROP.b, 1f);
+        Gdx.gl.glClearColor(0f, 0f, 0f, 1f);
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
         refreshName();
         stage.act(delta);
@@ -200,6 +194,7 @@ public final class TitleScreen implements Screen {
 
     @Override
     public void dispose() {
+        backdrops.dispose();
         stage.dispose();
     }
 }

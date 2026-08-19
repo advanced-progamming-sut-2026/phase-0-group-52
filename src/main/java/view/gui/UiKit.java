@@ -162,22 +162,33 @@ public final class UiKit implements Disposable {
     }
 
     private void buildFonts() {
-        if (artSkin != null && loadSkinFonts()) {
-            skin.add("small", fontSmall);
-            skin.add("body", fontBody);
-            skin.add("title", fontTitle);
-            skin.add("huge", fontHuge);
-            return;
+        if (artSkin == null || !loadSkinFonts()) {
+            useDefaultFonts();
         }
-        fontSmall = sized(16, 0.85f, FontFactory.SUBTEXT_PREFERRED);
-        fontBody = sized(19, 1.05f, FontFactory.DISPLAY_PREFERRED);
-        fontTitle = sized(27, 1.6f, FontFactory.DISPLAY_PREFERRED);
-        fontHuge = sized(42, 2.4f, FontFactory.DISPLAY_PREFERRED);
-
         skin.add("small", fontSmall);
         skin.add("body", fontBody);
         skin.add("title", fontTitle);
         skin.add("huge", fontHuge);
+    }
+
+    private void useDefaultFonts() {
+        util.Log.warn("gui", "Skin fonts unavailable; falling back to the built-in font");
+        fontSmall = plainFont(0.9f);
+        fontBody = plainFont(1.1f);
+        fontTitle = plainFont(1.6f);
+        fontHuge = plainFont(2.4f);
+        fontButton = fontBody;
+        fontTitleOutline = fontTitle;
+    }
+
+    private BitmapFont plainFont(float scale) {
+        BitmapFont font = new BitmapFont();
+        font.getRegion().getTexture().setFilter(
+                com.badlogic.gdx.graphics.Texture.TextureFilter.Linear,
+                com.badlogic.gdx.graphics.Texture.TextureFilter.Linear);
+        font.getData().setScale(scale);
+        font.setUseIntegerPositions(false);
+        return font;
     }
 
     private boolean loadSkinFonts() {
@@ -196,19 +207,6 @@ public final class UiKit implements Disposable {
         }
     }
 
-    private BitmapFont sized(int pixels, float fallbackScale, String[] preferred) {
-        BitmapFont font = FontFactory.create(pixels, preferred);
-        if (font != null) {
-            return font;
-        }
-        font = new BitmapFont();
-        font.getRegion().getTexture().setFilter(
-                com.badlogic.gdx.graphics.Texture.TextureFilter.Linear,
-                com.badlogic.gdx.graphics.Texture.TextureFilter.Linear);
-        font.getData().setScale(fallbackScale);
-        font.setUseIntegerPositions(false);
-        return font;
-    }
 
     private void buildDrawables() {
         skin.add("white", primitives.pixel());
@@ -493,9 +491,8 @@ public final class UiKit implements Disposable {
     public void dispose() {
         skin.dispose();
         primitives.dispose();
-        fontSmall.dispose();
-        fontBody.dispose();
-        fontTitle.dispose();
-        fontHuge.dispose();
+        if (artSkin != null) {
+            artSkin.dispose();
+        }
     }
 }
