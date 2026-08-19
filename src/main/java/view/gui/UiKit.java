@@ -178,7 +178,13 @@ public final class UiKit implements Disposable {
                 primitives.sunken()), Drawable.class);
         skin.add("listRow", stretched("image_ui_quests_travel_log_panel_default", 16, 16, 16, 16,
                 primitives.rounded(6, Theme.PANEL, Theme.OUTLINE_SOFT, 2)), Drawable.class);
-        skin.add("listHighlight", highlightFrame(), Drawable.class);
+        skin.add("listRowSelected", stretched("image_ui_quests_travel_log_panel_epic",
+                16, 16, 16, 16, primitives.rounded(6, Theme.PANEL_SUNKEN,
+                        Theme.OUTLINE_SOFT, 2)), Drawable.class);
+        skin.add("chilliOn", art("image_ui_generic_jalapeno_difficulty_icon",
+                primitives.flat(Theme.RED)), Drawable.class);
+        skin.add("chilliOff", art("image_ui_generic_jalapeno_difficulty_icon_bg",
+                primitives.flat(Theme.LOCKED)), Drawable.class);
         skin.add("inset", art("image_ui_mainmenu_inset_bkgd",
                 primitives.sunken()), Drawable.class);
         skin.add("nameField", art("image_ui_mainmenu_name_field_10",
@@ -199,42 +205,6 @@ public final class UiKit implements Disposable {
         }
         return new com.badlogic.gdx.scenes.scene2d.utils.NinePatchDrawable(
                 new com.badlogic.gdx.graphics.g2d.NinePatch(source, left, right, top, bottom));
-    }
-
-    private Drawable highlightFrame() {
-        TextureRegion source = (artSkin == null)
-                ? null : artSkin.getRegion("image_ui_mainmenu_highlight_edge");
-        if (source == null) {
-            return primitives.rounded(6, new Color(0f, 0f, 0f, 0f), Theme.HIGHLIGHT, 3);
-        }
-        int cap = 9;
-        int seam = 2;
-        int height = source.getRegionHeight();
-        int middle = height - cap - cap;
-
-        TextureRegion topLeft = slice(source, 0, 0, cap, cap);
-        TextureRegion topCentre = slice(source, cap, 0, seam, cap);
-        TextureRegion midLeft = slice(source, 0, cap, cap, middle);
-        TextureRegion midCentre = slice(source, cap, cap, seam, middle);
-        TextureRegion lowLeft = slice(source, 0, height - cap, cap, cap);
-        TextureRegion lowCentre = slice(source, cap, height - cap, seam, cap);
-
-        com.badlogic.gdx.graphics.g2d.NinePatch patch =
-                new com.badlogic.gdx.graphics.g2d.NinePatch(
-                        lowLeft, lowCentre, mirror(lowLeft),
-                        midLeft, midCentre, mirror(midLeft),
-                        topLeft, topCentre, mirror(topLeft));
-        return new com.badlogic.gdx.scenes.scene2d.utils.NinePatchDrawable(patch);
-    }
-
-    private TextureRegion slice(TextureRegion source, int x, int y, int width, int height) {
-        return new TextureRegion(source, x, y, width, height);
-    }
-
-    private TextureRegion mirror(TextureRegion source) {
-        TextureRegion copy = new TextureRegion(source);
-        copy.flip(true, false);
-        return copy;
     }
 
     private Drawable framedPanel() {
@@ -381,10 +351,13 @@ public final class UiKit implements Disposable {
     private void buildToggleStyles() {
         CheckBox.CheckBoxStyle checkbox = new CheckBox.CheckBoxStyle();
         checkbox.font = fontBody;
-        checkbox.fontColor = Theme.TEXT;
-        checkbox.checkboxOff = primitives.rounded(4, Theme.lighten(Theme.PANEL, 0.35f),
-                Theme.OUTLINE, 2);
-        checkbox.checkboxOn = primitives.rounded(4, Theme.GREEN, Theme.GREEN_DARK, 2);
+        checkbox.fontColor = Theme.INK;
+        checkbox.overFontColor = Theme.INK;
+        checkbox.downFontColor = Theme.INK;
+        checkbox.checkboxOff = art("image_ui_mainmenu_checkbox_disabled",
+                primitives.rounded(4, Theme.lighten(Theme.PANEL, 0.35f), Theme.OUTLINE, 2));
+        checkbox.checkboxOn = art("image_ui_mainmenu_checkbox_enabled",
+                primitives.rounded(4, Theme.GREEN, Theme.GREEN_DARK, 2));
         skin.add("default", checkbox);
 
         SelectBox.SelectBoxStyle select = new SelectBox.SelectBoxStyle();
@@ -444,11 +417,14 @@ public final class UiKit implements Disposable {
     }
 
     public CheckBox checkBox(String text) {
-        CheckBox box = new CheckBox(text, artSkin);
-        box.getLabel().setStyle(skin.get("rowSub", Label.LabelStyle.class));
+        CheckBox box = new CheckBox(text, skin);
         box.getLabelCell().padLeft(Theme.PAD_SMALL).padBottom(opticalPad(box.getLabel()));
-        box.getImageCell().size(28f);
+        box.getImageCell().size(30f);
         return box;
+    }
+
+    public static float faceMargin(String styleName) {
+        return "info".equals(styleName) ? 3f : 0f;
     }
 
     public Table panel() {

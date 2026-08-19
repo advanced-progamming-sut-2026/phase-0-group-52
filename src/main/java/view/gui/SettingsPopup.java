@@ -8,13 +8,16 @@ import controller.menu.SettingMenuController;
 import model.User;
 
 public final class SettingsPopup extends Popup {
+    private static final int DIFFICULTY_LEVELS = 5;
+    private static final float CHILLI_SIZE = 34f;
+
     private final GameContext context;
     private final SettingMenuController controller;
 
     private Table grid;
 
     public SettingsPopup(GameContext context) {
-        super(context.ui(), "Settings", 860f, 470f);
+        super(context.ui(), "Settings", 720f, 520f);
         this.context = context;
         this.controller = new SettingMenuController(context.app());
         grid = new Table();
@@ -25,27 +28,17 @@ public final class SettingsPopup extends Popup {
     private void rebuild() {
         grid.clear();
         grid.top();
-        grid.defaults().pad(3f).growX().uniformX();
+        grid.defaults().pad(4f).growX();
 
-        grid.add(valueRow("Difficulty", difficultyText(), new Runnable() {
-            @Override
-            public void run() {
-                cycleDifficulty();
-            }
-        }));
+        grid.add(difficultyRow()).row();
         grid.add(valueRow("Game Speed", context.settings().getGameSpeed() + "x", new Runnable() {
             @Override
             public void run() {
                 cycleSpeed();
             }
-        }));
-        grid.row();
+        })).row();
 
         addToggles();
-
-        grid.add(valueRow("Language", "English", null));
-        grid.add(new Table());
-        grid.row();
     }
 
     private void addToggles() {
@@ -55,23 +48,15 @@ public final class SettingsPopup extends Popup {
                 context.settings().setShowGrid(!context.settings().isShowGrid());
                 rebuild();
             }
-        }));
+        })).row();
         grid.add(toggleRow("Debug Mode", context.settings().isDebugMode(), new Runnable() {
             @Override
             public void run() {
                 context.settings().setDebugMode(!context.settings().isDebugMode());
                 rebuild();
             }
-        }));
-        grid.row();
+        })).row();
 
-        grid.add(toggleRow("Allow Cheat", context.settings().isDebugMode(), new Runnable() {
-            @Override
-            public void run() {
-                context.settings().setDebugMode(!context.settings().isDebugMode());
-                rebuild();
-            }
-        }));
         grid.add(toggleRow("Fullscreen (F11)", Display.isFullscreen(), new Runnable() {
             @Override
             public void run() {
@@ -119,25 +104,45 @@ public final class SettingsPopup extends Popup {
         return row;
     }
 
-    private String difficultyText() {
+    private Table difficultyRow() {
+        Table row = new Table();
+        row.setBackground(ui.primitives().rounded(6,
+                Theme.lighten(Theme.PANEL, 0.25f), Theme.OUTLINE_SOFT, 2));
+        row.pad(Theme.PAD_SMALL, Theme.PAD, Theme.PAD_SMALL, Theme.PAD);
+
+        row.add(new Label("Difficulty", ui.skin(), "default")).left().expandX();
+
         User user = context.user();
-        int level = (user == null) ? 1 : user.getDifficultyLevel();
-        StringBuilder peppers = new StringBuilder();
-        for (int i = 0; i < Math.max(1, level); i++) {
-            peppers.append('*');
+        int level = (user == null) ? 1 : Math.max(1, user.getDifficultyLevel());
+        for (int i = 1; i <= DIFFICULTY_LEVELS; i++) {
+            row.add(chilli(i, i <= level)).size(CHILLI_SIZE).padLeft(Theme.PAD_SMALL);
         }
-        return peppers + "  (" + Math.max(1, level) + ")";
+        return row;
     }
 
-    private void cycleDifficulty() {
+    private com.badlogic.gdx.scenes.scene2d.ui.Image chilli(final int level, boolean lit) {
+        com.badlogic.gdx.scenes.scene2d.ui.Image pip =
+                new com.badlogic.gdx.scenes.scene2d.ui.Image(
+                        ui.drawable(lit ? "chilliOn" : "chilliOff"));
+        pip.setScaling(com.badlogic.gdx.utils.Scaling.fit);
+        Animations.attachPress(pip);
+        UiKit.onClick(pip, new Runnable() {
+            @Override
+            public void run() {
+                setDifficulty(level);
+            }
+        });
+        return pip;
+    }
+
+    private void setDifficulty(int level) {
         User user = context.user();
         if (user == null) {
             context.toasts().error("Sign in to change difficulty.");
             return;
         }
-        int next = user.getDifficultyLevel() >= 5 ? 1 : user.getDifficultyLevel() + 1;
         controller.handleCommand(new String[]{
-                "menu", "settings", "change-difficulty", "-l", String.valueOf(next)});
+                "menu", "settings", "change-difficulty", "-l", String.valueOf(level)});
         rebuild();
     }
 

@@ -31,6 +31,8 @@ public final class Icons {
     public static final Icon NEWS =
             new Icon("image_ui_hud_tasklist_buttons_hud_task_list_normal",
                     "image_ui_hud_tasklist_buttons_hud_task_list_selected");
+    public static final Icon LEADERBOARD =
+            new Icon("image_ui_generic_star_icon", "image_ui_generic_star_icon");
     public static final Icon QUESTS =
             new Icon("image_ui_generic_buttons_hud_quests_normal",
                     "image_ui_generic_buttons_hud_quests_selected");
