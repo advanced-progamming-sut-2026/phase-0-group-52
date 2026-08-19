@@ -58,6 +58,7 @@ public final class Theme {
     public static final int PAD_SMALL = 6;
     public static final int PAD_LARGE = 18;
     public static final int RADIUS = 10;
+    public static final float BUTTON_HEIGHT = 73f;
     public static final int BORDER = 3;
 
     public static final int PACKET_WIDTH = 98;

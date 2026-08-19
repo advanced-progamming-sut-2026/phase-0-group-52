@@ -27,12 +27,18 @@ public class Popup extends Table {
         setBackground(ui.drawable("scrim"));
         center();
 
-        Label heading = new Label(title, ui.skin(), "titleOnDark");
+        Label heading = new Label(title, ui.skin(), "hugeOnDark");
         heading.setAlignment(Align.center);
-        header.add(heading).expandX().center().padLeft(44f);
-        header.add(headerSlots).right().padRight(Theme.PAD_SMALL);
-        header.add(closeButton()).right().size(38f);
-        frame.add(header).growX().padBottom(Theme.PAD_SMALL).row();
+
+        Table controls = new Table();
+        controls.right();
+        controls.add(headerSlots).right().padRight(Theme.PAD_SMALL);
+        controls.add(closeButton()).right().size(52f);
+
+        header.add(new Table()).uniformX();
+        header.add(heading).expandX().center();
+        header.add(controls).right().uniformX();
+        frame.add(header).growX().padBottom(Theme.PAD).row();
 
         body.top();
         scroll = new ScrollPane(body, ui.skin());
@@ -70,7 +76,7 @@ public class Popup extends Table {
 
     protected Popup addHeaderButton(String text, Runnable action) {
         headerSlots.add(ui.styledButton(text, "info", action))
-                .height(46f).padRight(Theme.PAD_SMALL);
+                .height(Theme.BUTTON_HEIGHT).minWidth(210f).padRight(Theme.PAD);
         return this;
     }
 

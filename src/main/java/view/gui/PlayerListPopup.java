@@ -68,7 +68,8 @@ public final class PlayerListPopup extends Popup {
     }
 
     private Stack playerRow(final User player) {
-        boolean isSelected = selected != null && selected.getId() == player.getId();
+        boolean isSelected = isSame(selected, player);
+        boolean isCurrent = controller.isSignedIn(player);
 
         Table row = new Table();
         row.setBackground(ui.drawable("listRow"));
@@ -76,10 +77,18 @@ public final class PlayerListPopup extends Popup {
 
         Table names = new Table();
         names.left();
-        Label nickname = new Label(player.getNickname(), ui.skin(),
-                isSelected ? "rowNameSelected" : "rowName");
-        names.add(nickname).left().row();
-        names.add(new Label(player.getUsername(), ui.skin(), "rowSub")).left();
+
+        Table nameCell = new Table();
+        nameCell.add(new Label(player.getNickname(), ui.skin(),
+                isSelected ? "rowNameSelected" : "rowName")).left().row();
+        if (isCurrent) {
+            Table rule = new Table();
+            rule.setBackground(ui.primitives().flat(
+                    isSelected ? Theme.INK_SELECTED : Theme.INK));
+            nameCell.add(rule).height(3f).growX().padTop(2f);
+        }
+        names.add(nameCell).left().row();
+        names.add(new Label(player.getUsername(), ui.skin(), "rowSub")).left().padTop(2f);
         row.add(names).growX().left();
 
         row.add(values(player)).right();
@@ -109,21 +118,25 @@ public final class PlayerListPopup extends Popup {
         Table info = new Table();
         info.right();
 
-        Label top = new Label(player.getCoins() + " coins    " + player.getGems() + " gems",
-                ui.skin(), "rowValue");
-        top.setAlignment(Align.right);
-        info.add(top).right().row();
+        Label score = new Label("High Score: " + player.getMaxPoint(), ui.skin(), "rowValue");
+        score.setAlignment(Align.right);
+        info.add(score).right().row();
 
-        Label bottom = new Label(controller.completedLevels(player) + " levels    "
-                + player.getMaxPoint() + " best", ui.skin(), "rowValue");
-        bottom.setAlignment(Align.right);
-        info.add(bottom).right();
+        Label place = new Label("Chapter " + player.getLastChapter()
+                + ", Level " + player.getLastLevel(), ui.skin(), "rowValue");
+        place.setAlignment(Align.right);
+        info.add(place).right();
         return info;
+    }
+
+    private boolean isSame(User left, User right) {
+        return left != null && right != null && left.getUsername() != null
+                && left.getUsername().equals(right.getUsername());
     }
 
     private Table actions() {
         Table bar = new Table();
-        bar.defaults().growX().uniformX().pad(3f).height(58f);
+        bar.defaults().growX().uniformX().pad(3f).height(Theme.BUTTON_HEIGHT);
 
         bar.add(ui.styledButton("Register", "primary", new Runnable() {
             @Override
