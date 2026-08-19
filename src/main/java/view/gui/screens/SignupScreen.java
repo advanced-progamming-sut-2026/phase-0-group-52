@@ -13,16 +13,7 @@ import view.gui.BaseScreen;
 import view.gui.GameContext;
 import view.gui.Theme;
 
-/**
- * Account creation.
- *
- * <p>Runs in two steps because the controller does: the account fields are
- * validated one at a time, then a security question finalises registration. Each
- * field is checked by {@link SignupMenuController}, so the password and email rules
- * stay in the controller and this screen only reports what it is told.
- */
 public final class SignupScreen extends BaseScreen {
-
     private final SignupMenuController controller = new SignupMenuController();
 
     private TextField username;
@@ -58,8 +49,6 @@ public final class SignupScreen extends BaseScreen {
         buildAccountForm();
         buildSecurityForm();
 
-        // Only one step is in the layout at a time. A hidden table would still
-        // reserve its cell, leaving a gap the size of the form.
         formHolder = new Table();
         formHolder.add(stepOne);
         panel.add(formHolder).colspan(2).row();
@@ -88,7 +77,6 @@ public final class SignupScreen extends BaseScreen {
         content.add(panel).center();
     }
 
-    /** The account fields checked in the first step. */
     private void buildAccountForm() {
         username = new TextField("", ui.skin());
         password = new TextField("", ui.skin());
@@ -113,7 +101,6 @@ public final class SignupScreen extends BaseScreen {
         addRow(stepOne, "Gender", gender);
     }
 
-    /** The security question that completes registration. */
     private void buildSecurityForm() {
         question = new SelectBox<String>(ui.skin());
         question.setItems(SecurityQuestions.getAllQuestions());
@@ -132,10 +119,6 @@ public final class SignupScreen extends BaseScreen {
         table.add(field).width(280f).height(34f).row();
     }
 
-    /**
-     * Validates the account fields through the controller, one at a time, and
-     * reveals the security question once they all pass.
-     */
     private void submitStepOne() {
         if (onSecurityStep) {
             submitStepTwo();
@@ -176,7 +159,6 @@ public final class SignupScreen extends BaseScreen {
         context.toasts().info("Details accepted. One more step.");
     }
 
-    /** Finalises registration; the controller writes the user to storage. */
     private void submitStepTwo() {
         int index = question.getSelectedIndex() + 1;
         Result result = controller.setQuestion(
@@ -188,7 +170,6 @@ public final class SignupScreen extends BaseScreen {
         goToLogin();
     }
 
-    /** Reports a failed step and shakes the offending field. Returns true if failed. */
     private boolean reject(Result result, com.badlogic.gdx.scenes.scene2d.Actor field) {
         if (result == null || result.isSuccess()) {
             return false;
@@ -198,7 +179,6 @@ public final class SignupScreen extends BaseScreen {
         return true;
     }
 
-    /** Controller messages can carry several reasons; the toast shows the first. */
     private String firstLine(String message) {
         if (message == null) {
             return "That value was not accepted.";
@@ -208,10 +188,6 @@ public final class SignupScreen extends BaseScreen {
         return (newline < 0) ? trimmed : trimmed.substring(0, newline);
     }
 
-    /**
-     * Asks the controller to change menus. The router notices the model changed and
-     * swaps the screen; this method never touches the screen stack itself.
-     */
     private void goToLogin() {
         Result result = controller.enterMenu("login");
         if (result != null && !result.isSuccess()) {

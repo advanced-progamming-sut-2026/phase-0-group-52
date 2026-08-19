@@ -12,17 +12,7 @@ import util.Log;
 import java.util.ArrayDeque;
 import java.util.Deque;
 
-/**
- * Transient messages stacked in a corner of the screen.
- *
- * <p>The specification recommends showing errors as short-lived notifications
- * rather than inline text, and the controllers already produce exactly the strings
- * to show — they just print them. {@link #listenToLog()} subscribes to {@link Log},
- * so anything a controller prints during a click surfaces here without the
- * controller knowing a GUI exists.
- */
 public final class Toasts extends Group {
-
     private static final int MAX_VISIBLE = 4;
     private static final float LIFETIME = 3.2f;
 
@@ -30,7 +20,7 @@ public final class Toasts extends Group {
     private final Deque<Table> live = new ArrayDeque<Table>();
 
     private Log.Listener listener;
-    /** Messages logged before this many entries existed are ignored on attach. */
+
     private int ignoreBefore;
 
     public Toasts(UiKit ui) {
@@ -38,22 +28,18 @@ public final class Toasts extends Group {
         setTouchable(Touchable.childrenOnly);
     }
 
-    /** Shows an informational message. */
     public void info(String message) {
         show(message, Theme.PANEL, Theme.OUTLINE, Theme.TEXT);
     }
 
-    /** Shows a success message. */
     public void success(String message) {
         show(message, Theme.GREEN, Theme.GREEN_DARK, Theme.TEXT_ON_DARK);
     }
 
-    /** Shows a failure message. */
     public void error(String message) {
         show(message, Theme.RED, Theme.darken(Theme.RED, 0.3f), Theme.TEXT_ON_DARK);
     }
 
-    /** Picks a colour from the log level and shows the message. */
     public void fromLevel(Log.Level level, String message) {
         if (level == Log.Level.ERROR) {
             error(message);
@@ -108,7 +94,6 @@ public final class Toasts extends Group {
         reflow();
     }
 
-    /** Stacks the live toasts upward from the bottom of the group. */
     private void reflow() {
         float y = 0f;
         Table[] items = live.toArray(new Table[0]);
@@ -125,11 +110,6 @@ public final class Toasts extends Group {
         reflow();
     }
 
-    /**
-     * Mirrors new log entries as toasts. Only warnings and errors are shown by
-     * default — informational chatter would drown the screen, and it is already
-     * visible in the debug overlay.
-     */
     public void listenToLog() {
         if (listener != null) {
             return;
@@ -141,7 +121,7 @@ public final class Toasts extends Group {
                 if (entry.getLevel() == Log.Level.DEBUG || entry.getLevel() == Log.Level.INFO) {
                     return;
                 }
-                // Log listeners may fire off the render thread; hop back on.
+
                 com.badlogic.gdx.Gdx.app.postRunnable(new Runnable() {
                     @Override
                     public void run() {
@@ -153,7 +133,6 @@ public final class Toasts extends Group {
         Log.addListener(listener);
     }
 
-    /** Removes the "Error: " prefix the console views add. */
     private String strip(String message) {
         if (message == null) {
             return "";

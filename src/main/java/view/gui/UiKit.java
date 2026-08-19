@@ -21,17 +21,7 @@ import com.badlogic.gdx.scenes.scene2d.utils.Drawable;
 import com.badlogic.gdx.utils.Disposable;
 import com.badlogic.gdx.utils.Scaling;
 
-/**
- * Assembles the Scene2D {@link Skin} from {@link Primitives} and hands screens a
- * small set of factory methods so every menu looks the same.
- *
- * <p>No skin file is loaded; styles are registered in code. Fonts use the LibGDX
- * built-in bitmap font scaled to a few sizes, which is the one visibly "placeholder"
- * choice here — swapping in a real chunky face later is a change to {@link #buildFonts}
- * alone.
- */
 public final class UiKit implements Disposable {
-
     private final Primitives primitives = new Primitives();
     private final Skin skin = new Skin();
 
@@ -41,9 +31,13 @@ public final class UiKit implements Disposable {
     private BitmapFont fontHuge;
 
     public UiKit() {
+        long start = System.currentTimeMillis();
         buildFonts();
+        long fontsDone = System.currentTimeMillis();
         buildDrawables();
         buildStyles();
+        util.Log.debug("gui", "Interface ready in " + (System.currentTimeMillis() - start)
+                + " ms (fonts " + (fontsDone - start) + " ms)");
     }
 
     public Skin skin() {
@@ -53,8 +47,6 @@ public final class UiKit implements Disposable {
     public Primitives primitives() {
         return primitives;
     }
-
-    // ----------------------------------------------------------------- fonts
 
     private void buildFonts() {
         fontSmall = sized(15, 0.85f);
@@ -68,13 +60,6 @@ public final class UiKit implements Disposable {
         skin.add("huge", fontHuge);
     }
 
-    /**
-     * Builds a font at a real pixel size where the platform allows it, falling back
-     * to the scaled built-in face otherwise.
-     *
-     * @param pixels     size to rasterise a system typeface at
-     * @param fallbackScale multiplier applied to the stock font if rasterising fails
-     */
     private BitmapFont sized(int pixels, float fallbackScale) {
         BitmapFont font = FontFactory.create(pixels);
         if (font != null) {
@@ -89,20 +74,14 @@ public final class UiKit implements Disposable {
         return font;
     }
 
-    // ------------------------------------------------------------- drawables
-
     private void buildDrawables() {
         skin.add("white", primitives.pixel());
-        // Registered under Drawable.class explicitly: Skin keys resources by the
-        // type given here, and getDrawable() looks for Drawable, not the concrete
-        // NinePatchDrawable/TextureRegionDrawable subclass.
+
         skin.add("panel", primitives.panel(), Drawable.class);
         skin.add("sunken", primitives.sunken(), Drawable.class);
         skin.add("scrim", primitives.flat(Theme.SCRIM), Drawable.class);
         skin.add("transparent", primitives.flat(new Color(0f, 0f, 0f, 0f)), Drawable.class);
     }
-
-    // ---------------------------------------------------------------- styles
 
     private void buildStyles() {
         buildLabelStyles();
@@ -138,7 +117,6 @@ public final class UiKit implements Disposable {
         tab.checkedFontColor = Theme.TEXT;
         skin.add("tab", tab);
 
-        // A borderless button used for cards that supply their own background.
         TextButton.TextButtonStyle bare = new TextButton.TextButtonStyle();
         bare.font = fontSmall;
         bare.fontColor = Theme.TEXT;
@@ -213,9 +191,6 @@ public final class UiKit implements Disposable {
         skin.add("default", select);
     }
 
-    // -------------------------------------------------------------- factories
-
-    /** A heading label. */
     public Label title(String text) {
         return new Label(text, skin, "title");
     }
@@ -228,7 +203,6 @@ public final class UiKit implements Disposable {
         return new Label(text, skin, "muted");
     }
 
-    /** A primary (green) action button with a click handler already attached. */
     public TextButton button(String text, Runnable onClick) {
         return styledButton(text, "primary", onClick);
     }
@@ -256,7 +230,6 @@ public final class UiKit implements Disposable {
         return button;
     }
 
-    /** A panel container with the standard parchment background. */
     public Table panel() {
         Table table = new Table();
         table.setBackground(skin.getDrawable("panel"));
@@ -264,7 +237,6 @@ public final class UiKit implements Disposable {
         return table;
     }
 
-    /** A recessed sub-area inside a panel. */
     public Table sunken() {
         Table table = new Table();
         table.setBackground(skin.getDrawable("sunken"));
@@ -272,7 +244,6 @@ public final class UiKit implements Disposable {
         return table;
     }
 
-    /** A coloured disc standing in for a plant, zombie or resource icon. */
     public Image token(int diameter, Color body) {
         Image image = new Image(new TextureRegion(
                 primitives.entityToken(diameter, body, Theme.darken(body, 0.35f))));
@@ -280,16 +251,12 @@ public final class UiKit implements Disposable {
         return image;
     }
 
-    /** A horizontal rule. */
     public Actor divider() {
         Image image = new Image(skin.getDrawable("white"));
         image.setColor(Theme.alpha(Theme.OUTLINE, 0.35f));
         return image;
     }
 
-    /**
-     * Makes an actor respond to clicks without being a button, used by cards.
-     */
     public static void onClick(Actor actor, final Runnable action) {
         actor.setTouchable(Touchable.enabled);
         actor.addListener(new ClickListener() {

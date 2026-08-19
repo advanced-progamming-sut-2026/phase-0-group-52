@@ -9,15 +9,7 @@ import view.gui.BaseScreen;
 import view.gui.GameContext;
 import view.gui.Theme;
 
-/**
- * Player details and the forms that change them.
- *
- * <p>Every edit is issued as the documented console command, so the validation
- * rules (name length, email shape, old-password check) stay in
- * {@link ProfileMenuController}. Results arrive as toasts through the log.
- */
 public final class ProfileScreen extends BaseScreen {
-
     private final ProfileMenuController controller;
 
     private TextField usernameField;
@@ -45,7 +37,6 @@ public final class ProfileScreen extends BaseScreen {
         content.add(columns).center();
     }
 
-    /** Read-only summary of the account. */
     private Table buildStats() {
         Table panel = ui.panel();
         panel.top();
@@ -80,7 +71,6 @@ public final class ProfileScreen extends BaseScreen {
         return panel;
     }
 
-    /** Forms for changing username, nickname, email and password. */
     private Table buildEditor() {
         Table panel = ui.panel();
         panel.top();
@@ -160,10 +150,6 @@ public final class ProfileScreen extends BaseScreen {
         oldPasswordField.setText("");
     }
 
-    /**
-     * Issues a console command. The controller prints the outcome, the log picks it
-     * up, and the toast layer shows it, so no result plumbing is needed here.
-     */
     private void send(String command, TextField source) {
         if (source.getText().trim().isEmpty()) {
             context.toasts().error("Type a value first.");

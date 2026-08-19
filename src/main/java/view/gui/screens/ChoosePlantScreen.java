@@ -15,19 +15,7 @@ import view.gui.widgets.SeedPacket;
 
 import java.util.List;
 
-/**
- * Deck selection before a level starts.
- *
- * <p>Reuses {@link SeedPacket} so a plant looks the same here as in the almanac.
- * Chosen plants appear in a row of slots, with empty frames for the seats still
- * free, which is how the game shows remaining capacity.
- *
- * <p>Selection lives in the model ({@code App.getPlantSelection()}); every change
- * is a command to {@link ChoosePlantMenuController}, and this screen re-reads the
- * model afterwards rather than tracking its own copy.
- */
 public final class ChoosePlantScreen extends BaseScreen {
-
     private final ChoosePlantMenuController controller;
 
     private Table availableArea;
@@ -89,7 +77,6 @@ public final class ChoosePlantScreen extends BaseScreen {
         rebuildAvailable();
     }
 
-    /** The chosen deck, padded with empty frames up to the level's capacity. */
     private void rebuildSlots() {
         slotArea.clear();
         slotArea.left();
@@ -120,7 +107,6 @@ public final class ChoosePlantScreen extends BaseScreen {
         }
     }
 
-    /** A dashed-looking empty seat in the deck row. */
     private Table emptySlot() {
         Table slot = new Table();
         slot.setBackground(ui.primitives().rounded(8,
@@ -132,7 +118,6 @@ public final class ChoosePlantScreen extends BaseScreen {
         return slot;
     }
 
-    /** Every plant the player can add, with boost and upgrade actions. */
     private void rebuildAvailable() {
         availableArea.clear();
         availableArea.top().left();
@@ -184,7 +169,6 @@ public final class ChoosePlantScreen extends BaseScreen {
         }
     }
 
-    /** A small button sized for the strip beneath a card. */
     private com.badlogic.gdx.scenes.scene2d.ui.TextButton compact(String text, Runnable action) {
         com.badlogic.gdx.scenes.scene2d.ui.TextButton button =
                 new com.badlogic.gdx.scenes.scene2d.ui.TextButton(text, ui.skin(), "secondary");
@@ -209,21 +193,12 @@ public final class ChoosePlantScreen extends BaseScreen {
         return (context.user() == null) ? 1 : context.user().getPlantLevel(plant);
     }
 
-    /**
-     * How many plants this level allows. The controller keeps the rule private, so
-     * it is recomputed here from the constants it publishes; both read the same
-     * selected level from the model.
-     */
     private int deckCapacity() {
         return context.app().getSelectedLevel() <= 1
                 ? ChoosePlantMenuController.FIRST_LEVEL_SLOTS
                 : ChoosePlantMenuController.OTHER_LEVEL_SLOTS;
     }
 
-    /**
-     * Starts the level. The controller decides whether the deck is valid; if it
-     * refuses, the message reaches the player as a toast through the log.
-     */
     private void startLevel() {
         if (context.app().getPlantSelection().isEmpty()) {
             context.toasts().error("Pick at least one plant before starting.");

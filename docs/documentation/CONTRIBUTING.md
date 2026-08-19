@@ -23,7 +23,8 @@ Short version: never commit directly to `main` or `develop`. Branch off `develop
 - Rules are defined in [checkstyle.xml](../../checkstyle.xml) / [pmd-ruleset.xml](../../pmd-ruleset.xml)
   at the repo root, matching the course spec (`Phase 0-1.pdf`, Checkstyle/PMD section, also
   transcribed in [Phase 0-1.md](Phase%200-1.md)).
-- No comments explaining *what* the code does — only non-obvious *why*.
+- **No comments in source files at all** — no line comments, no block comments, no Javadoc.
+  Names carry the meaning; if something needs explaining, put it in `docs/`.
 
 ## Reference docs
 

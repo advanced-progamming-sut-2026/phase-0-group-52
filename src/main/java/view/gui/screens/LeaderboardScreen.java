@@ -13,14 +13,7 @@ import view.gui.Theme;
 
 import java.util.List;
 
-/**
- * Ranked players, sortable by the same columns the console version offers.
- *
- * <p>{@link Leaderboard} does the sorting; clicking a header only changes which
- * column and direction are asked for.
- */
 public final class LeaderboardScreen extends BaseScreen {
-
     private static final String[] COLUMNS = {"score", "level", "minigames", "daily", "quests"};
     private static final String[] HEADINGS = {"High score", "Progress", "Minigames", "Daily", "Quests"};
 
@@ -75,7 +68,6 @@ public final class LeaderboardScreen extends BaseScreen {
         content.add(panel).width(900f).height(470f).center();
     }
 
-    /** A clickable column heading that toggles direction when already active. */
     private TextButton sortHeader(String label, final String column) {
         String suffix = "";
         if (column.equals(sortColumn)) {

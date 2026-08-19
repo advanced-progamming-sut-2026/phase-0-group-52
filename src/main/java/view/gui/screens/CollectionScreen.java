@@ -18,18 +18,7 @@ import view.gui.Theme;
 import view.gui.UiKit;
 import view.gui.widgets.SeedPacket;
 
-/**
- * The almanac: two tabs listing plants and zombies with a detail panel.
- *
- * <p>Plants can be filtered by family, ownership and upgradeability, as the
- * specification asks. Zombies that have never been seen show as blank cards so the
- * player can tell something is missing without learning what it is.
- *
- * <p>Buying and upgrading are state changes and go through
- * {@link CollectionMenuController}.
- */
 public final class CollectionScreen extends BaseScreen {
-
     private static final String ALL_FAMILIES = "All families";
 
     private final CollectionMenuController controller;
@@ -115,7 +104,6 @@ public final class CollectionScreen extends BaseScreen {
         return header;
     }
 
-    /** Family / ownership / upgradeable filters, shown only on the plants tab. */
     private Table buildFilters() {
         final Table filters = new Table();
 
@@ -168,8 +156,6 @@ public final class CollectionScreen extends BaseScreen {
         zombiesTab.setColor(showingPlants ? Theme.PANEL_SUNKEN : Theme.PANEL);
     }
 
-    // ----------------------------------------------------------------- list
-
     private void rebuildList() {
         listArea.clear();
         listArea.top().left();
@@ -183,8 +169,7 @@ public final class CollectionScreen extends BaseScreen {
                 if (!passesFilter(plant)) {
                     continue;
                 }
-                // Fixed cell size, otherwise a wrapped name makes one card taller
-                // and the whole row grows with it.
+
                 listArea.add(plantCard(plant)).size(Theme.PACKET_WIDTH, Theme.PACKET_HEIGHT);
                 if (++column % perRow == 0) {
                     listArea.row();
@@ -217,13 +202,6 @@ public final class CollectionScreen extends BaseScreen {
         return true;
     }
 
-    /**
-     * Whether the plant is unavailable to the player.
-     *
-     * <p>Only the locked-plants level type records this, via {@code App}; there is
-     * no per-account ownership in the model, so outside that level everything reads
-     * as available. Inventing ownership here would put game state in the view.
-     */
     private boolean isLocked(Plants plant) {
         return context.app().getLockedPlants().contains(plant);
     }
@@ -246,10 +224,6 @@ public final class CollectionScreen extends BaseScreen {
         return packet;
     }
 
-    /**
-     * A zombie card. Unseen zombies render as an empty frame, so the player knows
-     * an entry exists without being told what it is.
-     */
     private Table zombieCard(final Zombies zombie) {
         final boolean seen = hasBeenSeen(zombie);
 
@@ -286,19 +260,9 @@ public final class CollectionScreen extends BaseScreen {
         return card;
     }
 
-    /**
-     * Whether the player has encountered this zombie.
-     *
-     * <p>Phase one never recorded sightings, so there is nothing in the model to
-     * read. Everything is treated as seen for now rather than inventing state here,
-     * which would put game knowledge in the view. A {@code seenZombies} set on
-     * {@code User} is the natural home for this when the lawn screen lands.
-     */
     private boolean hasBeenSeen(Zombies zombie) {
         return true;
     }
-
-    // --------------------------------------------------------------- detail
 
     private void rebuildDetail() {
         detailArea.clear();
@@ -337,7 +301,7 @@ public final class CollectionScreen extends BaseScreen {
         stat(box, "Recharge", plant.getRecharge() + "s");
         stat(box, "Level", levelOf(plant) + " / " + PlantData.MAX_LEVEL);
         stat(box, "Upgrade cost", PlantData.COINS_PER_LEVEL + " coins");
-        // Seed packets are a single account-wide pool in the model, not per plant.
+
         stat(box, "Seed packets held",
                 String.valueOf(context.user() == null ? 0 : context.user().getSeedPacket()));
 
@@ -363,7 +327,6 @@ public final class CollectionScreen extends BaseScreen {
         box.add(actions).padTop(Theme.PAD).row();
     }
 
-    /** Lists the plant's tags under its stats, when it has any. */
     private void addTags(Table box, Plants plant) {
         StringBuilder tags = new StringBuilder();
         for (int i = 0; i < plant.getTags().size(); i++) {
@@ -401,7 +364,6 @@ public final class CollectionScreen extends BaseScreen {
         box.add(row).growX().padTop(2f).row();
     }
 
-    /** Turns SCREAMING_CASE enum names into readable text. */
     private String pretty(String enumName) {
         if (enumName == null) {
             return "";

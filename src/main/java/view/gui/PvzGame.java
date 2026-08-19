@@ -18,22 +18,12 @@ import view.gui.screens.QuestsScreen;
 import view.gui.screens.SettingsScreen;
 import view.gui.screens.ShopScreen;
 import view.gui.screens.SignupScreen;
+import view.gui.screens.TitleScreen;
 
 import java.util.HashMap;
 import java.util.Map;
 
-/**
- * The application root: owns the shared interface services and keeps the visible
- * screen in step with the model.
- *
- * <p>Navigation is deliberately one-way. Screens never call {@code setScreen};
- * they invoke a controller, the controller updates {@code App}'s current menu, and
- * {@link #render} notices the change and swaps screens. The model stays the single
- * source of truth for "where am I", exactly as in the console build, so both front
- * ends can drive the same navigation rules.
- */
 public final class PvzGame extends Game {
-
     private final Map<MenuType, Screen> screens = new HashMap<MenuType, Screen>();
 
     private UiKit ui;
@@ -41,13 +31,10 @@ public final class PvzGame extends Game {
     private GameContext context;
     private MenuType displayed;
 
-    /**
-     * Screens that exist only inside a level (choose-plant, the lawn, overlays) are
-     * pushed directly rather than via a MenuType, so the router leaves them alone.
-     */
     private boolean routingSuspended;
+    private boolean firstFrameLogged;
+    private TitleScreen titleScreen;
 
-    /** When set, a scripted capture run starts as soon as the shell is up. */
     private final boolean runTour;
 
     public PvzGame() {
@@ -60,22 +47,48 @@ public final class PvzGame extends Game {
 
     @Override
     public void create() {
-        Log.info("gui", "Starting graphical shell");
+        Log.info("gui", "Window ready after "
+                + (System.currentTimeMillis() - DesktopLauncher.PROCESS_START) + " ms");
 
         ui = new UiKit();
         toasts = new Toasts(ui);
         toasts.listenToLog();
+
         context = new GameContext(App.getInstance(), ui, toasts, new GameContext.Settings());
 
-        syncToModel(true);
-
         if (runTour) {
+            syncToModel(true);
             startScreenTour();
+            return;
         }
+        showTitle();
+    }
+
+    public void showTitle() {
+        routingSuspended = true;
+        if (titleScreen == null) {
+            titleScreen = new TitleScreen(context, new Runnable() {
+                @Override
+                public void run() {
+                    enterGame();
+                }
+            });
+        }
+        setScreen(titleScreen);
+    }
+
+    private void enterGame() {
+        controller.Navigation.go(context.app(), MenuType.MAIN_MENU);
+        resumeRouting();
     }
 
     @Override
     public void render() {
+        if (!firstFrameLogged) {
+            firstFrameLogged = true;
+            Log.info("gui", "First frame at "
+                    + (System.currentTimeMillis() - DesktopLauncher.PROCESS_START) + " ms");
+        }
         if (!routingSuspended) {
             syncToModel(false);
         }
@@ -90,21 +103,12 @@ public final class PvzGame extends Game {
         }
     }
 
-    /**
-     * Attaches a scripted walk-through that visits each screen and captures it.
-     * Used to check the interface renders without having to click through it by
-     * hand; started by {@link DesktopLauncher} when {@code -Dpvz.tour=true} is set.
-     */
     public void startScreenTour() {
         tour = new ScreenTour(this);
     }
 
     private ScreenTour tour;
 
-    /**
-     * Compares the model's current menu with what is on screen and swaps if they
-     * differ.
-     */
     private void syncToModel(boolean force) {
         MenuType target = context.app().getCurrentmenu();
         if (target == null) {
@@ -115,8 +119,6 @@ public final class PvzGame extends Game {
         }
         Screen screen = screenFor(target);
         if (screen == null) {
-            // No graphical screen exists for this menu yet; stay where we are so the
-            // window never goes blank.
             Log.warn("gui", "No screen for menu " + target + "; staying on " + displayed);
             return;
         }
@@ -124,7 +126,6 @@ public final class PvzGame extends Game {
         setScreen(screen);
     }
 
-    /** Screens are built once and reused; {@code show()} rebuilds their contents. */
     private Screen screenFor(MenuType type) {
         Screen existing = screens.get(type);
         if (existing != null) {
@@ -154,26 +155,19 @@ public final class PvzGame extends Game {
         }
     }
 
-    /** Opens the leaderboard, which has no MenuType of its own. */
     public void showLeaderboard() {
         pushDetached(new LeaderboardScreen(context));
     }
 
-    /** Opens the shop, which the console reaches from inside the greenhouse. */
     public void showShop() {
         pushDetached(new ShopScreen(context));
     }
 
-    /**
-     * Shows a screen that is not tied to a menu in the model, and stops the router
-     * until {@link #resumeRouting()} is called.
-     */
     public void pushDetached(Screen screen) {
         routingSuspended = true;
         setScreen(screen);
     }
 
-    /** Returns to whatever menu the model currently says we are in. */
     public void resumeRouting() {
         routingSuspended = false;
         displayed = null;

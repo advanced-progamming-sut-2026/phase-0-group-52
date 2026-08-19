@@ -15,20 +15,7 @@ import view.gui.GameContext;
 import view.gui.Theme;
 import view.gui.UiKit;
 
-/**
- * Chapter and level selection.
- *
- * <p>Chapters unlock in order of the player's progress, and each shows how many of
- * its levels are cleared. Picking a level records the choice through
- * {@link ChapterMenuController} and moves on to the deck picker, matching the
- * console flow.
- *
- * <p>The specification explicitly says an island map is not required, so this is a
- * straightforward card list.
- */
 public final class AdventureScreen extends BaseScreen {
-
-    /** Levels per chapter, matching the progress arithmetic in {@code UserRepository}. */
     private static final int LEVELS_PER_CHAPTER = 4;
 
     private final ChapterMenuController controller;
@@ -83,7 +70,6 @@ public final class AdventureScreen extends BaseScreen {
         }
     }
 
-    /** One chapter: accent token, name, cleared count, and a lock when unreachable. */
     private Table chapterCard(final ChapterType chapter) {
         final boolean unlocked = isChapterUnlocked(chapter);
         final boolean open = chapter == openChapter;
@@ -121,7 +107,6 @@ public final class AdventureScreen extends BaseScreen {
         return card;
     }
 
-    /** The level list for the chapter currently expanded. */
     private void rebuildLevels() {
         levelArea.clear();
         levelArea.top();
@@ -193,10 +178,6 @@ public final class AdventureScreen extends BaseScreen {
         return card;
     }
 
-    /**
-     * Records the chapter and level, then moves to deck selection. Both steps are
-     * the same commands the console uses.
-     */
     private void selectLevel(int number) {
         controller.handleCommand(new String[]{
                 "menu", "enter", "chapter", "-c", openChapter.name()});
@@ -205,9 +186,6 @@ public final class AdventureScreen extends BaseScreen {
         controller.handleCommand(new String[]{"menu", "enter", "choose_plant_menu"});
     }
 
-    // -------------------------------------------------------------- progress
-
-    /** A chapter is reachable once every level of the previous one is cleared. */
     private boolean isChapterUnlocked(ChapterType chapter) {
         User user = context.user();
         if (user == null) {
@@ -216,7 +194,6 @@ public final class AdventureScreen extends BaseScreen {
         return chapter.ordinal() < Math.max(1, user.getLastChapter());
     }
 
-    /** How many levels of this chapter the player has finished. */
     private int clearedInChapter(ChapterType chapter) {
         User user = context.user();
         if (user == null) {

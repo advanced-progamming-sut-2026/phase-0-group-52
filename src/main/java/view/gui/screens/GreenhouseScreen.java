@@ -13,17 +13,7 @@ import view.gui.PvzGame;
 import view.gui.Theme;
 import view.gui.UiKit;
 
-/**
- * The garden: a grid of pots in one of four states — locked, empty, growing or
- * ready.
- *
- * <p>Clicking a pot does the obvious thing for its state (buy, plant, or harvest),
- * with growth acceleration offered separately while something is growing. Each is
- * issued as the documented console command so the prices and timers stay in
- * {@link GreenhouseMenuController} and {@link Greenhouse}.
- */
 public final class GreenhouseScreen extends BaseScreen {
-
     private final GreenhouseMenuController controller;
     private Table grid;
 
@@ -78,7 +68,6 @@ public final class GreenhouseScreen extends BaseScreen {
         }
     }
 
-    /** One pot, drawn according to its state. */
     private Table potCard(final Pot pot, final int x, final int y) {
         Table card = new Table();
         card.top();
@@ -109,7 +98,6 @@ public final class GreenhouseScreen extends BaseScreen {
         return card;
     }
 
-    /** A pot that has not been bought yet. */
     private void fillLocked(Table card) {
         Label locked = new Label("Locked", ui.skin(), "smallOnDark");
         locked.setAlignment(Align.center);
@@ -127,7 +115,6 @@ public final class GreenhouseScreen extends BaseScreen {
         });
     }
 
-    /** An owned but unplanted pot. */
     private void fillEmpty(Table card, final int x, final int y) {
         Label empty = new Label("Empty", ui.skin(), "muted");
         empty.setAlignment(Align.center);
@@ -140,7 +127,6 @@ public final class GreenhouseScreen extends BaseScreen {
         })).padBottom(Theme.PAD_SMALL);
     }
 
-    /** A pot with something in it: harvest when ready, otherwise offer a speed-up. */
     private void fillGrowing(Table card, Pot pot, boolean ready, final int x, final int y) {
         String name = (pot.getPlantType() == null) ? "Sprout" : pot.getPlantType().getName();
         card.add(ui.token(38, pot.isMarigold() ? Theme.COIN
@@ -173,10 +159,6 @@ public final class GreenhouseScreen extends BaseScreen {
         }
     }
 
-    /**
-     * Issues a console command and redraws. The controller reports success or
-     * failure by printing, which reaches the player as a toast through the log.
-     */
     private void send(String command) {
         controller.handleCommand(command);
         rebuildGrid();

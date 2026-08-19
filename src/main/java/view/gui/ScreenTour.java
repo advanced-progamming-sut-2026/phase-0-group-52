@@ -4,21 +4,9 @@ import com.badlogic.gdx.Gdx;
 import controller.Navigation;
 import util.Log;
 import view.MenuType;
+import view.gui.screens.TitleScreen;
 
-/**
- * Walks the interface from screen to screen, capturing each one.
- *
- * <p>A development aid, enabled with {@code -Dpvz.tour=true}. It answers the
- * question "does every menu still render" without a person clicking through all of
- * them, and leaves a set of PNGs that double as documentation.
- *
- * <p>It drives navigation the same way the screens do — by asking
- * {@link Navigation} to change menus — so it exercises the real routing rather
- * than reaching into the screen stack.
- */
 final class ScreenTour {
-
-    /** Frames to wait on each screen so entry animations finish before capture. */
     private static final int SETTLE_FRAMES = 24;
 
     private final PvzGame game;
@@ -45,7 +33,6 @@ final class ScreenTour {
         Log.info("tour", "Screen tour starting");
     }
 
-    /** Called once per frame; advances the tour when the current screen has settled. */
     void step() {
         if (finished) {
             return;
@@ -68,13 +55,10 @@ final class ScreenTour {
         Navigation.go(game.context().app(), route[index]);
     }
 
-    /**
-     * The leaderboard and shop have no menu of their own, so they are visited
-     * directly at the end of the run.
-     */
     private void captureExtras() {
         finished = true;
         captureOverlays();
+        captureTitleAndPopups();
         game.showLeaderboard();
         Gdx.app.postRunnable(new Runnable() {
             @Override
@@ -105,11 +89,27 @@ final class ScreenTour {
         });
     }
 
-    /**
-     * Captures the three in-level panels. They normally sit over the lawn, which
-     * does not exist yet, so they are shown over the current screen instead — enough
-     * to check they lay out and read correctly.
-     */
+    private void captureTitleAndPopups() {
+        TitleScreen title = new TitleScreen(game.context(), new Runnable() {
+            @Override
+            public void run() {
+            }
+        });
+        game.setScreen(title);
+        for (int i = 0; i < 20; i++) {
+            title.render(1f / 60f);
+        }
+        Screenshots.capture("screenshots/tour-0-title.png");
+
+        com.badlogic.gdx.scenes.scene2d.Stage stage = title.stageForCapture();
+        capturePanel(stage, new PlayerListPopup(game.context()), "tour-18-player-list.png");
+        capturePanel(stage, new SettingsPopup(game.context()), "tour-19-settings-popup.png");
+        capturePanel(stage, new AccountFormPopup(game.context(),
+                AccountFormPopup.Mode.REGISTER, null, null), "tour-20-register.png");
+        capturePanel(stage, new AccountFormPopup(game.context(),
+                AccountFormPopup.Mode.PROFILE, game.context().user(), null), "tour-21-profile.png");
+    }
+
     private void captureOverlays() {
         com.badlogic.gdx.Screen current = game.getScreen();
         if (!(current instanceof BaseScreen)) {
@@ -129,11 +129,10 @@ final class ScreenTour {
         capturePanel(stage, Overlays.result(ui, true, 4820, null, noop()), "tour-17-victory.png");
     }
 
-    /** Draws one frame with the overlay attached, captures it, then removes it. */
     private void capturePanel(com.badlogic.gdx.scenes.scene2d.Stage stage,
             com.badlogic.gdx.scenes.scene2d.ui.Table overlay, String file) {
         stage.addActor(overlay);
-        // Settle the entry animation before the grab.
+
         for (int i = 0; i < 20; i++) {
             stage.act(1f / 60f);
         }

@@ -11,23 +11,11 @@ import com.badlogic.gdx.utils.Scaling;
 import com.badlogic.gdx.utils.viewport.FitViewport;
 import util.Log;
 
-/**
- * Shared plumbing for every menu screen: a stage, a background, the top bar and
- * the toast layer.
- *
- * <p>Subclasses fill {@link #content} and nothing else. In particular they never
- * decide which screen comes next — they ask a controller to change menus, and
- * {@link PvzGame} notices the model changed and swaps screens. That one-way flow is
- * what keeps navigation rules in the controller layer where the console version
- * already put them.
- */
 public abstract class BaseScreen implements Screen {
-
     protected final GameContext context;
     protected final UiKit ui;
     protected final Stage stage;
 
-    /** The area subclasses populate. */
     protected final Table content = new Table();
 
     private final Table root = new Table();
@@ -55,10 +43,8 @@ public abstract class BaseScreen implements Screen {
         stage.addActor(root);
     }
 
-    /** Builds the screen body. Called once, after construction. */
     protected abstract void build();
 
-    /** Refreshes any labels that mirror model values. Called every frame. */
     protected void refresh() {
     }
 
@@ -67,8 +53,6 @@ public abstract class BaseScreen implements Screen {
         content.clear();
         build();
 
-        // The toast layer is shared across screens, so it is (re)parented here on
-        // every show rather than owned by one stage.
         toasts.setSize(stage.getViewport().getWorldWidth() - Theme.PAD_LARGE * 2, 240f);
         toasts.setPosition(Theme.PAD_LARGE, Theme.PAD_LARGE);
         stage.addActor(toasts);
@@ -106,8 +90,6 @@ public abstract class BaseScreen implements Screen {
 
     @Override
     public void hide() {
-        // The toast layer is shared between screens, so hand it back rather than
-        // letting the outgoing stage dispose of it.
         toasts.remove();
     }
 
