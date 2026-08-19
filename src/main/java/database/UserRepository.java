@@ -186,7 +186,28 @@ public class UserRepository {
         return result;
     }
 
+    private boolean wouldDestroyData(List<User> users) {
+        if (users != null && !users.isEmpty()) {
+            return false;
+        }
+        if (!Files.exists(FILE)) {
+            return false;
+        }
+        try {
+            String existing = new String(Files.readAllBytes(FILE), StandardCharsets.UTF_8);
+            Object parsed = Json.parse(existing);
+            return (parsed instanceof List) && !((List<?>) parsed).isEmpty();
+        } catch (IOException | RuntimeException e) {
+            return true;
+        }
+    }
+
     private void writeAll(List<User> users) {
+        if (wouldDestroyData(users)) {
+            System.err.println("Refused to overwrite " + FILE
+                    + " with an empty user list; the existing accounts were kept.");
+            return;
+        }
         StringBuilder sb = new StringBuilder();
         sb.append("[\n");
         for (int i = 0; i < users.size(); i++) {
@@ -222,6 +243,8 @@ public class UserRepository {
         num(sb, "plantFoodNum", u.getPlantFoodNum());
         num(sb, "mostMeowPoint", u.getMostMeowPoint());
         num(sb, "maxPoint", u.getMaxPoint());
+        num(sb, "lastChapter", u.getLastChapter());
+        num(sb, "lastLevel", u.getLastLevel());
         num(sb, "gamesPlayed", u.getGamesPlayed());
         num(sb, "miniGamesPlayed", u.getMiniGamesPlayed());
         num(sb, "questDailyNum", u.getQuestDailyNum());
@@ -253,6 +276,8 @@ public class UserRepository {
         u.setPlantFoodNum(intOf(m, "plantFoodNum"));
         u.setMostMeowPoint(intOf(m, "mostMeowPoint"));
         u.setMaxPoint(intOf(m, "maxPoint"));
+        u.setLastChapter(intOf(m, "lastChapter"));
+        u.setLastLevel(intOf(m, "lastLevel"));
         u.setGamesPlayed(intOf(m, "gamesPlayed"));
         u.setMiniGamesPlayed(intOf(m, "miniGamesPlayed"));
         u.setQuestDailyNum(intOf(m, "questDailyNum"));
