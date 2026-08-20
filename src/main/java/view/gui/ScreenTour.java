@@ -57,6 +57,7 @@ final class ScreenTour {
 
     private void captureExtras() {
         finished = true;
+        captureCheatBar();
         captureOverlays();
         captureTitleAndPopups();
         game.showLeaderboard();
@@ -87,6 +88,19 @@ final class ScreenTour {
                 }).start();
             }
         });
+    }
+
+    private void captureCheatBar() {
+        game.context().settings().setDebugMode(true);
+        com.badlogic.gdx.Screen screen = game.getScreen();
+        if (screen instanceof BaseScreen) {
+            ((BaseScreen) screen).refreshTopBar();
+        }
+        for (int i = 0; i < 6; i++) {
+            game.render();
+        }
+        Screenshots.capture("screenshots/tour-24-cheat-topbar.png");
+        game.context().settings().setDebugMode(false);
     }
 
     private void captureTitleAndPopups() {

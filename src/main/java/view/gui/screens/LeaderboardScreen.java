@@ -25,6 +25,11 @@ public final class LeaderboardScreen extends BaseScreen {
     }
 
     @Override
+    protected view.gui.TopBar.Section section() {
+        return view.gui.TopBar.Section.LEADERBOARD;
+    }
+
+    @Override
     protected void build() {
         Table panel = ui.panel();
         panel.top();

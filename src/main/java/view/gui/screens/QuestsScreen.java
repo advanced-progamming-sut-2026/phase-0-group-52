@@ -39,6 +39,11 @@ public final class QuestsScreen extends BaseScreen {
     }
 
     @Override
+    protected view.gui.TopBar.Section section() {
+        return view.gui.TopBar.Section.QUESTS;
+    }
+
+    @Override
     protected void build() {
         Table panel = ui.panel();
         panel.top();

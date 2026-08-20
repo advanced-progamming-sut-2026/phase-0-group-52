@@ -15,9 +15,7 @@ import model.quest.QuestState;
 import view.gui.Animations;
 import view.gui.BaseScreen;
 import view.gui.GameContext;
-import view.gui.PlayerListPopup;
 import view.gui.PvzGame;
-import view.gui.SettingsPopup;
 import view.gui.Theme;
 import view.gui.UiKit;
 import view.gui.widgets.Carousel;
@@ -53,36 +51,17 @@ public final class MainMenuScreen extends BaseScreen {
     }
 
     private void buildTopBar() {
-        topBar().addLeftButton(view.gui.Icons.BACK, "Back", Theme.GREEN, new Runnable() {
+        topBar().setBackAction(new Runnable() {
             @Override
             public void run() {
                 game().showTitle();
             }
         });
-        topBar().addLeftButton(view.gui.Icons.SETTINGS, "Set", Theme.plantFamily("WALL_NUT"), new Runnable() {
-            @Override
-            public void run() {
-                new SettingsPopup(context).showOn(stage);
-            }
-        });
-        topBar().addLeftButton(view.gui.Icons.ALMANAC, "Book", Theme.BLUE, new Runnable() {
-            @Override
-            public void run() {
-                controller.handleCommand(new String[]{"menu", "enter", "collection_menu"});
-            }
-        });
-        topBar().addRightButton(view.gui.Icons.NEWS, "News", Theme.SUN_DEEP, new Runnable() {
-            @Override
-            public void run() {
-                controller.handleCommand(new String[]{"menu", "enter", "news"});
-            }
-        });
-        topBar().addRightButton(view.gui.Icons.PLAYERS, "Players", Theme.plantFamily("MODIFIER"), new Runnable() {
-            @Override
-            public void run() {
-                new PlayerListPopup(context).showOn(stage);
-            }
-        });
+    }
+
+    @Override
+    protected view.gui.TopBar.Section section() {
+        return view.gui.TopBar.Section.MAIN;
     }
 
     @Override

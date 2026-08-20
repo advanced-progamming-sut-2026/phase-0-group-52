@@ -23,18 +23,24 @@ public final class PlayerListPopup extends Popup {
     private CheckBox stayBox;
 
     public PlayerListPopup(GameContext context) {
+        this(context, true);
+    }
+
+    public PlayerListPopup(GameContext context, boolean withLeaderboard) {
         super(context.ui(), "Player List", 760f, 600f);
         this.context = context;
         this.controller = new PlayerListController(context.app());
 
-        addHeaderIcon(Icons.LEADERBOARD, "Leaderboard", new Runnable() {
-            @Override
-            public void run() {
-                close();
-                ((view.gui.PvzGame) com.badlogic.gdx.Gdx.app.getApplicationListener())
-                        .showLeaderboard();
-            }
-        });
+        if (withLeaderboard) {
+            addHeaderIcon(Icons.LEADERBOARD, "Leaderboard", new Runnable() {
+                @Override
+                public void run() {
+                    close();
+                    ((view.gui.PvzGame) com.badlogic.gdx.Gdx.app.getApplicationListener())
+                            .showLeaderboard();
+                }
+            });
+        }
 
         body().setBackground(ui.drawable("questPanel"));
         body().pad(Theme.PAD_LARGE, Theme.PAD, Theme.PAD_LARGE, Theme.PAD);
