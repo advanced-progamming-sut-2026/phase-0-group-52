@@ -60,13 +60,35 @@ public final class UiKit implements Disposable {
     }
 
     private Drawable art(String name, Drawable fallback) {
-        if (artSkin == null) {
-            return fallback;
+        if (artSkin != null) {
+            try {
+                return artSkin.getDrawable(name);
+            } catch (RuntimeException e) {
+                util.Log.debug("gui", "No skin drawable named " + name);
+            }
+        }
+        if (skin.has(name, Drawable.class)) {
+            return skin.getDrawable(name);
+        }
+        return fallback;
+    }
+
+    private void loadIconFile(String name, String path) {
+        com.badlogic.gdx.files.FileHandle file = com.badlogic.gdx.Gdx.files.local(path);
+        if (!file.exists()) {
+            util.Log.warn("gui", "Missing icon file " + path);
+            return;
         }
         try {
-            return artSkin.getDrawable(name);
+            com.badlogic.gdx.graphics.Texture texture =
+                    new com.badlogic.gdx.graphics.Texture(file);
+            texture.setFilter(com.badlogic.gdx.graphics.Texture.TextureFilter.Linear,
+                    com.badlogic.gdx.graphics.Texture.TextureFilter.Linear);
+            skin.add(name, texture);
+            skin.add(name, new com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable(
+                    new TextureRegion(texture)), Drawable.class);
         } catch (RuntimeException e) {
-            return fallback;
+            util.Log.warn("gui", "Could not read " + path + ": " + e.getMessage());
         }
     }
 
@@ -190,6 +212,8 @@ public final class UiKit implements Disposable {
         skin.add("nameField", art("image_ui_mainmenu_name_field_10",
                 primitives.rounded(Theme.RADIUS + 6, Theme.lighten(Theme.PANEL, 0.35f),
                         Theme.OUTLINE, Theme.BORDER)), Drawable.class);
+        loadIconFile("leaderboardIcon", "assets/ui/leaderboard.png");
+        loadIconFile("leaderboardIconSelected", "assets/ui/leaderboard_selected.png");
         skin.add("scrim", primitives.flat(Theme.SCRIM), Drawable.class);
         skin.add("transparent", primitives.flat(new Color(0f, 0f, 0f, 0f)), Drawable.class);
     }
