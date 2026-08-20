@@ -266,6 +266,8 @@ public class ChapterMenuController {
                 break;
             default:
                 view.showError("Invalid type: " + parts[4] + ". Use 'coin' or 'diamond'.");
+                return;
         }
+        new controller.SaveService().persist(user);
     }
 }

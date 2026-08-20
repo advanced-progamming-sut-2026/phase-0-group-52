@@ -251,6 +251,9 @@ public class UserRepository {
         num(sb, "questNonDailyNum", u.getQuestNonDailyNum());
         str(sb, "lastWonGame", u.getLastWonGame());
         num(sb, "difficultyLevel", u.getDifficultyLevel());
+        num(sb, "gameSpeed", u.getGameSpeed());
+        bool(sb, "showGrid", u.isShowGrid());
+        bool(sb, "debugMode", u.isDebugMode());
         bool(sb, "stayLoggedIn", u.isStayLoggedIn());
 
         if (sb.charAt(sb.length() - 1) == ',') {
@@ -284,6 +287,9 @@ public class UserRepository {
         u.setQuestNonDailyNum(intOf(m, "questNonDailyNum"));
         u.setLastWonGame(strOf(m, "lastWonGame"));
         u.setDifficultyLevel(intOf(m, "difficultyLevel"));
+        u.setGameSpeed(intOf(m, "gameSpeed"));
+        u.setShowGrid(boolOf(m, "showGrid"));
+        u.setDebugMode(boolOf(m, "debugMode"));
         u.setStayLoggedIn(boolOf(m, "stayLoggedIn"));
         return u;
     }

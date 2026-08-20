@@ -43,32 +43,68 @@ public final class GameContext {
     }
 
     public static final class Settings {
+        private final App app;
+        private final controller.menu.SettingMenuController controller;
+
         private int gameSpeed = 1;
         private boolean showGrid;
         private boolean debugMode;
 
-        public int getGameSpeed() {
-            return gameSpeed;
+        public Settings(App app) {
+            this.app = app;
+            this.controller = new controller.menu.SettingMenuController(app);
         }
 
-        public void setGameSpeed(int gameSpeed) {
-            this.gameSpeed = Math.max(1, Math.min(3, gameSpeed));
+        private model.User signedIn() {
+            return app == null ? null : app.getLoggedInUser();
+        }
+
+        private void send(String... command) {
+            controller.handleCommand(command);
+        }
+
+        public int getGameSpeed() {
+            model.User user = signedIn();
+            return user == null ? gameSpeed : user.getGameSpeed();
+        }
+
+        public void setGameSpeed(int value) {
+            int clamped = Math.max(1, Math.min(3, value));
+            if (signedIn() == null) {
+                gameSpeed = clamped;
+                return;
+            }
+            send("menu", "settings", "set-speed", "-v", String.valueOf(clamped));
         }
 
         public boolean isShowGrid() {
-            return showGrid;
+            model.User user = signedIn();
+            return user == null ? showGrid : user.isShowGrid();
         }
 
-        public void setShowGrid(boolean showGrid) {
-            this.showGrid = showGrid;
+        public void setShowGrid(boolean value) {
+            if (signedIn() == null) {
+                showGrid = value;
+                return;
+            }
+            if (signedIn().isShowGrid() != value) {
+                send("menu", "settings", "toggle-grid");
+            }
         }
 
         public boolean isDebugMode() {
-            return debugMode;
+            model.User user = signedIn();
+            return user == null ? debugMode : user.isDebugMode();
         }
 
-        public void setDebugMode(boolean debugMode) {
-            this.debugMode = debugMode;
+        public void setDebugMode(boolean value) {
+            if (signedIn() == null) {
+                debugMode = value;
+                return;
+            }
+            if (signedIn().isDebugMode() != value) {
+                send("menu", "settings", "toggle-debug");
+            }
         }
     }
 }
