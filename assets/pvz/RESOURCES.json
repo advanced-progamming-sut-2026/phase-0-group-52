@@ -1,0 +1,69 @@
+{
+ "version": 1,
+ "content_version": 1,
+ "slot_count": 51928,
+ "groups": [
+  {
+   "type": "simple",
+   "id": "UI_Universe_768",
+   "res": "768",
+   "parent": "UI_Universe",
+   "resources": [
+    {
+     "type": "Image",
+     "slot": 7264,
+     "id": "ATLASIMAGE_ATLAS_UI_UNIVERSE_768_00",
+     "path": "atlases\\UI_Universe_768_00",
+     "atlas": true,
+     "runtime": true,
+     "width": 2048,
+     "height": 2048
+    },
+    {
+     "type": "Image",
+     "slot": 9914,
+     "id": "IMAGE_UI_UNIVERSE_UNIVERSE_PORTAL_UNIVERSE_PORTAL_149X154",
+     "path": "images\\768\\initial\\UI\\universe\\Universe_Portal\\Universe_Portal_149x154",
+     "parent": "ATLASIMAGE_ATLAS_UI_UNIVERSE_768_00",
+     "ax": 735,
+     "ay": 947,
+     "aw": 96,
+     "ah": 99
+    },
+    {
+     "type": "Image",
+     "slot": 9915,
+     "id": "IMAGE_UI_UNIVERSE_UNIVERSE_PORTAL_UNIVERSE_PORTAL_18X25",
+     "path": "images\\768\\initial\\UI\\universe\\Universe_Portal\\Universe_Portal_18x25",
+     "parent": "ATLASIMAGE_ATLAS_UI_UNIVERSE_768_00",
+     "ax": 1314,
+     "ay": 523,
+     "aw": 12,
+     "ah": 16
+    },
+    {
+     "type": "Image",
+     "slot": 9916,
+     "id": "IMAGE_UI_UNIVERSE_UNIVERSE_PORTAL_UNIVERSE_PORTAL_755X755",
+     "path": "images\\768\\initial\\UI\\universe\\Universe_Portal\\Universe_Portal_755x755",
+     "parent": "ATLASIMAGE_ATLAS_UI_UNIVERSE_768_00",
+     "ax": 885,
+     "ay": 1,
+     "aw": 483,
+     "ah": 483
+    },
+    {
+     "type": "Image",
+     "slot": 9917,
+     "id": "IMAGE_UI_UNIVERSE_UNIVERSE_PORTAL_UNIVERSE_PORTAL_763X763",
+     "path": "images\\768\\initial\\UI\\universe\\Universe_Portal\\Universe_Portal_763x763",
+     "parent": "ATLASIMAGE_ATLAS_UI_UNIVERSE_768_00",
+     "ax": 394,
+     "ay": 1,
+     "aw": 489,
+     "ah": 489
+    }
+   ]
+  }
+ ]
+}
