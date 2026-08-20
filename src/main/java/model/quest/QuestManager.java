@@ -25,15 +25,27 @@ public class QuestManager {
             }
             if (evaluate(qp, game, stats, user, won)) {
                 qp.setCompleted(true);
-                reward.grant(user, qp);
-                qp.setClaimed(true);
-                if (qp.getDef().isDaily()) {
-                    user.setQuestDailyNum(user.getQuestDailyNum() + 1);
-                } else {
-                    user.setQuestNonDailyNum(user.getQuestNonDailyNum() + 1);
-                }
             }
         }
+    }
+
+    public boolean claim(User user, QuestProgress qp) {
+        if (user == null || qp == null || !qp.isCompleted() || qp.isClaimed()) {
+            return false;
+        }
+        reward.grant(user, qp);
+        qp.setClaimed(true);
+        QuestTally.record(user, qp.getDef().getCategory());
+        return true;
+    }
+
+    public void forceComplete(QuestProgress qp) {
+        if (qp == null) {
+            return;
+        }
+        qp.setProgress(qp.getTarget());
+        qp.setCompleted(true);
+        qp.setClaimed(false);
     }
 
     private boolean evaluate(QuestProgress qp, Game game, GameStats stats, User user, boolean won) {
@@ -43,6 +55,9 @@ public class QuestManager {
                 return qp.getProgress() >= qp.getTarget();
 
             case CHAPTER_HUNTER:
+            case CHAPTER_HUNTER_ICEAGE:
+            case CHAPTER_HUNTER_BEACH:
+            case CHAPTER_HUNTER_DARK:
                 if (chapterMatches(game, qp.getVarStr())) {
                     qp.setProgress(qp.getProgress() + stats.getZombiesKilled());
                 }

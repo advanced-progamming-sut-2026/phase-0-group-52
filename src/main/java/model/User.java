@@ -50,6 +50,8 @@ public class User {
     private final Set<String> seenZombies = new HashSet<>();
     private final Set<String> unlockedMinigames = new HashSet<>();
     private boolean stayLoggedIn;
+    private int questMainNum;
+    private int questEpicNum;
     private int gameSpeed = 1;
     private boolean showGrid;
     private boolean debugMode;
@@ -444,5 +446,21 @@ public class User {
 
     public void setDebugMode(boolean debugMode) {
         this.debugMode = debugMode;
+    }
+
+    public int getQuestMainNum() {
+        return questMainNum;
+    }
+
+    public void setQuestMainNum(int questMainNum) {
+        this.questMainNum = questMainNum;
+    }
+
+    public int getQuestEpicNum() {
+        return questEpicNum;
+    }
+
+    public void setQuestEpicNum(int questEpicNum) {
+        this.questEpicNum = questEpicNum;
     }
 }

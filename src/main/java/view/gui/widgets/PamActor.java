@@ -11,11 +11,13 @@ public final class PamActor extends Widget {
     private final Pam pam;
     private final String path;
     private final boolean ready;
-    private final Rectangle extent;
+    private Rectangle extent;
 
     private String clipName;
     private boolean looping = true;
     private boolean fit;
+    private boolean frozen;
+    private boolean clipped;
     private float duration;
     private float stateTime;
     private float coverage = 1f;
@@ -41,6 +43,25 @@ public final class PamActor extends Widget {
         return this;
     }
 
+    public PamActor setExtent(float x, float y, float width, float height) {
+        if (ready) {
+            this.extent = new Rectangle(x, y, width, height);
+        }
+        return this;
+    }
+
+    public PamActor freeze() {
+        looping = false;
+        frozen = true;
+        stateTime = 0f;
+        return this;
+    }
+
+    public PamActor setClipped(boolean value) {
+        this.clipped = value;
+        return this;
+    }
+
     public boolean isReady() {
         return ready;
     }
@@ -54,6 +75,7 @@ public final class PamActor extends Widget {
         }
         clipName = clip;
         looping = loop;
+        frozen = false;
         stateTime = 0f;
         onFinished = finished;
         duration = pam.player().clipDurationSeconds(path, clip);
@@ -73,7 +95,7 @@ public final class PamActor extends Widget {
         float x = getX() + getWidth() / 2f - (extent.x + extent.width / 2f) * scale;
         float y = getY() + getHeight() / 2f - (extent.y + extent.height / 2f) * scale;
 
-        if (fit) {
+        if (fit && !clipped) {
             pam.player().draw(batch, path, clipName, stateTime, x, y, scale, scale, looping);
             return;
         }
@@ -87,6 +109,9 @@ public final class PamActor extends Widget {
     }
 
     private void advance() {
+        if (frozen) {
+            return;
+        }
         stateTime += Gdx.graphics.getDeltaTime();
         if (looping || duration <= 0f || stateTime < duration) {
             return;

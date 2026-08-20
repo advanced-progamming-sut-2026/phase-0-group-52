@@ -251,6 +251,8 @@ public class UserRepository {
         num(sb, "questNonDailyNum", u.getQuestNonDailyNum());
         str(sb, "lastWonGame", u.getLastWonGame());
         num(sb, "difficultyLevel", u.getDifficultyLevel());
+        num(sb, "questMainNum", u.getQuestMainNum());
+        num(sb, "questEpicNum", u.getQuestEpicNum());
         num(sb, "gameSpeed", u.getGameSpeed());
         bool(sb, "showGrid", u.isShowGrid());
         bool(sb, "debugMode", u.isDebugMode());
@@ -287,6 +289,8 @@ public class UserRepository {
         u.setQuestNonDailyNum(intOf(m, "questNonDailyNum"));
         u.setLastWonGame(strOf(m, "lastWonGame"));
         u.setDifficultyLevel(intOf(m, "difficultyLevel"));
+        u.setQuestMainNum(intOf(m, "questMainNum"));
+        u.setQuestEpicNum(intOf(m, "questEpicNum"));
         u.setGameSpeed(intOf(m, "gameSpeed"));
         u.setShowGrid(boolOf(m, "showGrid"));
         u.setDebugMode(boolOf(m, "debugMode"));

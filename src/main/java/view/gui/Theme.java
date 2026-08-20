@@ -14,6 +14,15 @@ public final class Theme {
 
     public static final Color PORTAL_VOID = rgb(0x06283A);
 
+    public static final Color QUEST_DAILY = rgb(0x1FAE96);
+    public static final Color QUEST_MAIN = rgb(0xC4761C);
+    public static final Color QUEST_EPIC = rgb(0x3B62C4);
+    public static final Color PRIORITY_CRITICAL = rgb(0x151515);
+    public static final Color PRIORITY_CRITICAL_GLOW = rgb(0xFF6A00);
+    public static final Color PRIORITY_HIGH = rgb(0xC62828);
+    public static final Color PRIORITY_MEDIUM = rgb(0xC9A227);
+    public static final Color PRIORITY_LOW = rgb(0x558B2F);
+
     public static final Color PANEL_SUNKEN = rgb(0xD6BF8E);
     public static final Color PANEL_FRAME = rgb(0xA9743C);
     public static final Color ROW_ON = rgb(0x2FBF2F);

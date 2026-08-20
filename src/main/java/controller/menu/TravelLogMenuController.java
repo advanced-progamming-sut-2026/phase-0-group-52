@@ -31,6 +31,36 @@ public class TravelLogMenuController {
         return false;
     }
 
+    public boolean claimQuest(String questName) {
+        QuestDef def = findDef(questName);
+        if (def == null) {
+            System.out.println("Error: Unknown quest: " + questName);
+            return false;
+        }
+        return new controller.QuestService().claim(def);
+    }
+
+    public boolean completeQuest(String questName) {
+        QuestDef def = findDef(questName);
+        if (def == null) {
+            System.out.println("Error: Unknown quest: " + questName);
+            return false;
+        }
+        return new controller.QuestService().forceComplete(def);
+    }
+
+    private QuestDef findDef(String questName) {
+        if (questName == null) {
+            return null;
+        }
+        for (QuestDef def : QuestDef.values()) {
+            if (def.name().equalsIgnoreCase(questName.trim())) {
+                return def;
+            }
+        }
+        return null;
+    }
+
     public void showPage(String page) {
         String p = page.trim().toLowerCase();
         if (!p.equals("daily") && !p.equals("main") && !p.equals("epic") && !p.equals("minigame")) {

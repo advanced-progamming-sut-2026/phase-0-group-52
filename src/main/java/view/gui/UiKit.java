@@ -83,6 +83,17 @@ public final class UiKit implements Disposable {
         return null;
     }
 
+    public Drawable ninePatchFile(String path, int top, int bottom, int left, int right) {
+        TextureRegion region = regionFile(path);
+        if (region == null) {
+            return null;
+        }
+        com.badlogic.gdx.graphics.g2d.NinePatch patch =
+                new com.badlogic.gdx.graphics.g2d.NinePatch(region, left, right, top, bottom);
+        patch.setPadding(0f, 0f, 0f, 0f);
+        return new com.badlogic.gdx.scenes.scene2d.utils.NinePatchDrawable(patch);
+    }
+
     public Drawable imageFile(String path) {
         String key = "file:" + path;
         if (skin.has(key, Drawable.class)) {
@@ -492,7 +503,8 @@ public final class UiKit implements Disposable {
     }
 
     public CheckBox checkBox(String text) {
-        CheckBox box = new CheckBox(text, skin);
+        CheckBox box = (artSkin != null && artSkin.has("default", CheckBox.CheckBoxStyle.class))
+                ? new CheckBox(text, artSkin) : new CheckBox(text, skin);
         box.getLabelCell().padLeft(Theme.PAD_SMALL).padBottom(opticalPad(box.getLabel()));
         box.getImageCell().size(30f);
         return box;
