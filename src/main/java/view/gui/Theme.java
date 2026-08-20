@@ -12,6 +12,8 @@ public final class Theme {
 
     public static final Color PANEL = rgb(0xE8D5A9);
 
+    public static final Color PORTAL_VOID = rgb(0x06283A);
+
     public static final Color PANEL_SUNKEN = rgb(0xD6BF8E);
     public static final Color PANEL_FRAME = rgb(0xA9743C);
     public static final Color ROW_ON = rgb(0x2FBF2F);

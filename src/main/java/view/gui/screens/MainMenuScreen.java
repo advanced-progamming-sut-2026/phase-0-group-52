@@ -1,10 +1,13 @@
 package view.gui.screens;
 
 import com.badlogic.gdx.graphics.Color;
+import com.badlogic.gdx.scenes.scene2d.ui.Image;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.ui.ScrollPane;
+import com.badlogic.gdx.scenes.scene2d.ui.Stack;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.utils.Align;
+import com.badlogic.gdx.utils.Scaling;
 import controller.menu.ChapterMenuController;
 import controller.menu.MainMenuController;
 import database.QuestRepository;
@@ -18,7 +21,9 @@ import view.gui.GameContext;
 import view.gui.PvzGame;
 import view.gui.Theme;
 import view.gui.UiKit;
+import view.gui.Pam;
 import view.gui.widgets.Carousel;
+import view.gui.widgets.PamActor;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -27,6 +32,10 @@ import java.util.List;
 
 public final class MainMenuScreen extends BaseScreen {
     private static final int LEVELS_PER_CHAPTER = 4;
+    private static final String PORTAL_CLIP = "idle";
+    private static final float PORTAL_COVERAGE = 1.5f;
+    private static final float LOGO_HEIGHT = 68f;
+    private static final float LOGO_OVERHANG = 26f;
     private static final String[] MINIGAMES = {
             "Vasebreaker", "Wallnut Bowling", "I, Zombie", "Beghouled"};
 
@@ -55,6 +64,11 @@ public final class MainMenuScreen extends BaseScreen {
     }
 
     @Override
+    protected String backdropImage() {
+        return "assets/backgrounds/main_menu.png";
+    }
+
+    @Override
     protected void build() {
         Table columns = new Table();
         columns.defaults().pad(Theme.PAD_SMALL).space(Theme.PAD_SMALL);
@@ -75,8 +89,8 @@ public final class MainMenuScreen extends BaseScreen {
         panel.top();
 
         chapterCarousel = new Carousel(ui)
-                .setCardSize(232f, 430f)
-                .setSpacing(218f)
+                .setCardSize(264f, 492f)
+                .setSpacing(248f)
                 .setFalloff(0.55f)
                 .setListener(new Carousel.Listener() {
                     @Override
@@ -90,8 +104,40 @@ public final class MainMenuScreen extends BaseScreen {
                 });
         chapterCarousel.setItems(chapterItems());
 
-        panel.add(chapterCarousel).grow();
-        return panel;
+        Stack layers = new Stack();
+        PamActor portal = new PamActor(context.pam(), Pam.PORTAL, PORTAL_CLIP)
+                .setCoverage(PORTAL_COVERAGE);
+        if (portal.isReady()) {
+            Table backing = new Table();
+            backing.setBackground(ui.primitives().flat(Theme.PORTAL_VOID));
+            layers.add(backing);
+            layers.add(portal);
+        }
+        layers.add(chapterCarousel);
+
+        panel.add(layers).grow();
+
+        Stack crested = new Stack();
+        crested.add(panel);
+        crested.add(logo());
+
+        Table holder = new Table();
+        holder.add(crested).grow();
+        return holder;
+    }
+
+    private Table logo() {
+        Table crest = new Table();
+        crest.top();
+        com.badlogic.gdx.scenes.scene2d.utils.Drawable art =
+                ui.imageFile("assets/ui/pvz2_logo_horizontal.png");
+        if (art == null) {
+            return crest;
+        }
+        Image mark = new Image(art);
+        mark.setScaling(Scaling.fit);
+        crest.add(mark).height(LOGO_HEIGHT).padTop(-LOGO_OVERHANG).center();
+        return crest;
     }
 
     private List<Carousel.Item> chapterItems() {
