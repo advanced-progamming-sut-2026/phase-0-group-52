@@ -40,12 +40,6 @@ public final class GreenhouseScreen extends BaseScreen {
                 ((PvzGame) com.badlogic.gdx.Gdx.app.getApplicationListener()).showShop();
             }
         })).padRight(Theme.PAD_SMALL);
-        header.add(ui.secondaryButton("Back", new Runnable() {
-            @Override
-            public void run() {
-                controller.handleCommand("menu enter main");
-            }
-        })).right();
         panel.add(header).growX().padBottom(Theme.PAD_SMALL).row();
 
         Label legend = new Label(

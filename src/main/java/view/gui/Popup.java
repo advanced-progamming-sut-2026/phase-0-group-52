@@ -62,6 +62,10 @@ public class Popup extends Table {
         });
     }
 
+    public Navigator.PopupKind kind() {
+        return Navigator.PopupKind.NONE;
+    }
+
     protected void setTitle(String title) {
         heading.setText(title);
     }

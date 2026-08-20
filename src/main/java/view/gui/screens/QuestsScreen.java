@@ -6,7 +6,6 @@ import com.badlogic.gdx.scenes.scene2d.ui.ScrollPane;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 import com.badlogic.gdx.utils.Align;
-import controller.menu.ChapterMenuController;
 import database.QuestRepository;
 import model.quest.QuestProgress;
 import model.quest.QuestState;
@@ -26,7 +25,6 @@ public final class QuestsScreen extends BaseScreen {
     private static final String[] MINIGAMES = {
             "vase_breaker", "wallnut_bowling", "izombie", "beghouled", "zombotany"};
 
-    private final ChapterMenuController navigation;
     private final QuestRepository quests = new QuestRepository();
 
     private String page = "daily";
@@ -35,7 +33,6 @@ public final class QuestsScreen extends BaseScreen {
 
     public QuestsScreen(GameContext context) {
         super(context, "Quests");
-        this.navigation = new ChapterMenuController(context.app());
     }
 
     @Override
@@ -66,12 +63,6 @@ public final class QuestsScreen extends BaseScreen {
         }
 
         header.add(new Table()).expandX();
-        header.add(ui.secondaryButton("Back", new Runnable() {
-            @Override
-            public void run() {
-                navigation.handleCommand(new String[]{"menu", "enter", "chapter_menu"});
-            }
-        })).right();
         panel.add(header).growX().padBottom(Theme.PAD).row();
 
         Table body = new Table();

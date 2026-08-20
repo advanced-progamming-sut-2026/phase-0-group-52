@@ -44,12 +44,6 @@ public final class ShopScreen extends BaseScreen {
 
         Table header = new Table();
         header.add(new Label("Store", ui.skin(), "title")).left().expandX();
-        header.add(ui.secondaryButton("Back", new Runnable() {
-            @Override
-            public void run() {
-                ((PvzGame) com.badlogic.gdx.Gdx.app.getApplicationListener()).resumeRouting();
-            }
-        })).right();
         panel.add(header).growX().padBottom(Theme.PAD).row();
 
         Table list = new Table();
