@@ -17,6 +17,8 @@ public final class Pam implements Disposable {
             "768/INITIAL/UI/UNIVERSE/WORLD_LOCK/WORLD_LOCK.PAM";
     public static final String DIFFICULTY_METER =
             "768/DEV/UI/QUESTS/DIFFICULTY_METER/DIFFICULTY_METER.PAM";
+    public static final String BEE =
+            "768/INITIAL/ZEN_GARDEN/BEE/BEE.PAM";
     public static final String SKULL =
             "IMAGE_UI_HUD_INGAME_ZOMBOSS_HEALTH_METER_SKULL_ICON";
 
