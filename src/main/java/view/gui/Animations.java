@@ -14,12 +14,12 @@ public final class Animations {
             new com.badlogic.gdx.graphics.Color(0.87f, 0.87f, 0.87f, 1f);
 
     public static void attachPress(final Actor actor) {
-        actor.setOrigin(com.badlogic.gdx.utils.Align.center);
         actor.setColor(RESTING);
         actor.addListener(new ClickListener() {
             @Override
             public void enter(InputEvent event, float x, float y, int pointer, Actor fromActor) {
                 if (pointer == -1) {
+                    actor.setOrigin(com.badlogic.gdx.utils.Align.center);
                     actor.clearActions();
                     actor.addAction(Actions.parallel(
                             Actions.scaleTo(1.06f, 1.06f, 0.09f, Interpolation.pow2Out),
@@ -39,6 +39,7 @@ public final class Animations {
 
             @Override
             public boolean touchDown(InputEvent event, float x, float y, int pointer, int button) {
+                actor.setOrigin(com.badlogic.gdx.utils.Align.center);
                 actor.clearActions();
                 actor.addAction(Actions.scaleTo(0.95f, 0.95f, 0.05f, Interpolation.pow2Out));
                 return false;
@@ -54,11 +55,7 @@ public final class Animations {
 
     public static void enter(Actor actor) {
         actor.getColor().a = 0f;
-        actor.addAction(Actions.parallel(
-                Actions.fadeIn(Theme.TRANSITION_TIME, Interpolation.pow2Out),
-                Actions.sequence(
-                        Actions.moveBy(0f, -18f),
-                        Actions.moveBy(0f, 18f, Theme.TRANSITION_TIME, Interpolation.pow3Out))));
+        actor.addAction(Actions.fadeIn(Theme.TRANSITION_TIME, Interpolation.pow2Out));
     }
 
     public static void exit(Actor actor, Runnable after) {
@@ -78,9 +75,7 @@ public final class Animations {
     public static void shake(Actor actor) {
         actor.clearActions();
         actor.addAction(Actions.sequence(
-                Actions.moveBy(-7f, 0f, 0.04f),
-                Actions.moveBy(14f, 0f, 0.08f),
-                Actions.moveBy(-14f, 0f, 0.08f),
-                Actions.moveBy(7f, 0f, 0.04f)));
+                Actions.color(Theme.RED_LIGHT, 0.06f),
+                Actions.color(com.badlogic.gdx.graphics.Color.WHITE, 0.28f)));
     }
 }
