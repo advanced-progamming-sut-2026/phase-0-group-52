@@ -33,7 +33,7 @@ public final class GreenhouseScreen extends BaseScreen {
         panel.top();
 
         Table header = new Table();
-        header.add(new Label("Your garden", ui.skin(), "title")).left().expandX();
+        header.add(new Label("Greenhouse", ui.skin(), "title")).left().expandX();
         header.add(ui.styledButton("Shop", "info", new Runnable() {
             @Override
             public void run() {
