@@ -21,10 +21,6 @@ public final class LeaderboardScreen extends BaseScreen {
     private static final String[] HEADINGS = {"Score", "Prog", "Mini", "Daily", "Quests"};
 
     private static final float PAPER_WIDTH = 673f;
-    private static final float ROLL_OVERHANG = 300f / 165f;
-    private static final float CENTRE_SHARE = 2f / 3f;
-    private static final float ROLL_RATIO = 100f / 300f;
-    private static final float SEAM_OVERLAP = 0.30f;
     private static final float SHADOW_OFFSET = 14f;
     private static final float SHADOW_ALPHA = 0.55f;
     private static final int SHADOW_LAYERS = 3;
