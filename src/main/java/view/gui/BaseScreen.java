@@ -35,7 +35,7 @@ public abstract class BaseScreen implements Screen {
         backdrop.setFillParent(true);
         stage.addActor(backdrop);
 
-        topBar = new TopBar(context, title);
+        topBar = new TopBar(context, title, section());
 
         root.setFillParent(true);
         root.top();
@@ -56,6 +56,14 @@ public abstract class BaseScreen implements Screen {
 
     protected TopBar topBar() {
         return topBar;
+    }
+
+    public void refreshTopBar() {
+        topBar.refresh();
+    }
+
+    protected TopBar.Section section() {
+        return TopBar.Section.OTHER;
     }
 
     protected boolean scrollContent() {

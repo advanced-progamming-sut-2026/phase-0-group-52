@@ -42,6 +42,11 @@ public final class CollectionScreen extends BaseScreen {
     }
 
     @Override
+    protected view.gui.TopBar.Section section() {
+        return view.gui.TopBar.Section.ALMANAC;
+    }
+
+    @Override
     protected void build() {
         Table panel = ui.panel();
         panel.top();

@@ -33,6 +33,11 @@ public final class ShopScreen extends BaseScreen {
     }
 
     @Override
+    protected view.gui.TopBar.Section section() {
+        return view.gui.TopBar.Section.SHOP;
+    }
+
+    @Override
     protected void build() {
         Table panel = ui.panel();
         panel.top();

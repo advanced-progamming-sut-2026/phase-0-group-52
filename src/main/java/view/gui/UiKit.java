@@ -213,7 +213,17 @@ public final class UiKit implements Disposable {
                 primitives.rounded(Theme.RADIUS + 6, Theme.lighten(Theme.PANEL, 0.35f),
                         Theme.OUTLINE, Theme.BORDER)), Drawable.class);
         loadIconFile("leaderboardIcon", "assets/ui/leaderboard.png");
+        loadIconFile("plusIcon", "assets/ui/currency_plus.png");
         loadIconFile("leaderboardIconSelected", "assets/ui/leaderboard_selected.png");
+        skin.add("topBar", art("image_ui_quests_panel_edge_to_edge_ten",
+                primitives.flat(Theme.darken(Theme.OUTLINE, 0.25f))), Drawable.class);
+        skin.add("counter", stretched("image_ui_generic_counter_bg", 16, 16, 14, 14,
+                primitives.rounded(Theme.RADIUS, Theme.darken(Theme.OUTLINE, 0.45f),
+                        Theme.OUTLINE_SOFT, 2)), Drawable.class);
+        skin.add("coinIcon", art("image_ui_generic_coin_icon_small",
+                primitives.flat(Theme.COIN)), Drawable.class);
+        skin.add("gemIcon", art("image_ui_generic_gem_icon_small",
+                primitives.flat(Theme.GEM)), Drawable.class);
         skin.add("scrim", primitives.flat(Theme.SCRIM), Drawable.class);
         skin.add("transparent", primitives.flat(new Color(0f, 0f, 0f, 0f)), Drawable.class);
     }

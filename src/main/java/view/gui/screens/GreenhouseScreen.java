@@ -23,6 +23,11 @@ public final class GreenhouseScreen extends BaseScreen {
     }
 
     @Override
+    protected view.gui.TopBar.Section section() {
+        return view.gui.TopBar.Section.GREENHOUSE;
+    }
+
+    @Override
     protected void build() {
         Table panel = ui.panel();
         panel.top();
