@@ -26,6 +26,7 @@ import view.gui.UiKit;
 import view.gui.Pam;
 import view.gui.widgets.Carousel;
 import view.gui.widgets.PamActor;
+import view.gui.widgets.QuestCard;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -38,6 +39,9 @@ public final class MainMenuScreen extends BaseScreen {
     private static final float LOGO_HEIGHT = 68f;
     private static final float LOGO_OVERHANG = 26f;
     private static final float PANEL_INSET = 12f;
+    private static final float QUEST_CARD_HEIGHT = 66f;
+    private static final int MAX_PANEL_QUESTS = 6;
+    private static final float QUEST_PANEL_WIDTH = 322f;
     private static final float VEIL_DELAY = 0.35f;
     private static final float VEIL_FADE = 0.45f;
     private static final String[] ISLANDS = {
@@ -250,7 +254,7 @@ public final class MainMenuScreen extends BaseScreen {
         Table row = new Table();
         row.defaults().space(Theme.PAD_SMALL);
 
-        row.add(questPanel()).grow();
+        row.add(questPanel()).growY().width(QUEST_PANEL_WIDTH);
 
         Table side = new Table();
         side.defaults().growX().grow().space(Theme.PAD_SMALL);
@@ -266,7 +270,7 @@ public final class MainMenuScreen extends BaseScreen {
                 game().showShop();
             }
         }));
-        row.add(side).width(210f).growY();
+        row.add(side).grow();
         return row;
     }
 
@@ -274,16 +278,38 @@ public final class MainMenuScreen extends BaseScreen {
         Table panel = ui.panel();
         panel.top();
 
-        Label heading = new Label("Quests", ui.skin(), "title");
-        panel.add(heading).left().padBottom(Theme.PAD_SMALL).row();
-
         questList = new Table();
         questList.top();
         ScrollPane scroll = new ScrollPane(questList, ui.skin());
-        scroll.setFadeScrollBars(false);
+        scroll.setStyle(ui.skin().get("bare", ScrollPane.ScrollPaneStyle.class));
         scroll.setScrollingDisabled(true, false);
         UiKit.focusOnHover(scroll);
-        panel.add(scroll).grow();
+
+        Table front = new Table();
+        front.top();
+        front.pad(Theme.PAD_SMALL);
+        front.add(new Label("Quests", ui.skin(), "titleOnDark")).left()
+                .padBottom(Theme.PAD_SMALL).row();
+        front.add(scroll).grow();
+
+        Stack layers = new Stack();
+        com.badlogic.gdx.scenes.scene2d.utils.Drawable art =
+                ui.imageFile("assets/backgrounds/quests.png");
+        if (art != null) {
+            Table backdrop = new Table();
+            backdrop.setBackground(art);
+            layers.add(backdrop);
+        }
+        layers.add(front);
+
+        panel.add(layers).grow().pad(-PANEL_INSET);
+        Animations.attachPress(panel);
+        UiKit.onClick(panel, new Runnable() {
+            @Override
+            public void run() {
+                controller.handleCommand(new String[]{"menu", "enter", "travel_log_menu"});
+            }
+        });
 
         rebuildQuests();
         return panel;
@@ -296,11 +322,12 @@ public final class MainMenuScreen extends BaseScreen {
 
         List<QuestProgress> quests = activeQuests();
         if (quests.isEmpty()) {
-            questList.add(new Label("No quests right now.", ui.skin(), "muted")).left();
+            questList.add(new Label("No quests right now.", ui.skin(), "onDark")).left();
             return;
         }
         for (QuestProgress quest : quests) {
-            questList.add(questRow(quest)).row();
+            questList.add(new QuestCard(ui, context.pam(), quest, true, null, null))
+                    .height(QUEST_CARD_HEIGHT).row();
         }
     }
 
@@ -314,55 +341,24 @@ public final class MainMenuScreen extends BaseScreen {
             return result;
         }
         for (QuestProgress quest : state.getQuests()) {
-            if (!quest.isClaimed()) {
+            if (!quest.isCompleted()) {
                 result.add(quest);
             }
         }
         Collections.sort(result, new Comparator<QuestProgress>() {
             @Override
             public int compare(QuestProgress a, QuestProgress b) {
-                return Integer.compare(
-                        b.getDef().getPriority().getPrioritynum(),
-                        a.getDef().getPriority().getPrioritynum());
+                if (a.isPinned() != b.isPinned()) {
+                    return a.isPinned() ? -1 : 1;
+                }
+                return Double.compare(ratio(b), ratio(a));
             }
         });
-        return result.subList(0, Math.min(result.size(), 6));
+        return result.subList(0, Math.min(result.size(), MAX_PANEL_QUESTS));
     }
 
-    private Table questRow(final QuestProgress quest) {
-        Table row = ui.sunken();
-        row.left();
-
-        Table text = new Table();
-        text.left();
-        text.add(new Label(quest.getDef().getDisplayName(), ui.skin(), "default")).left().row();
-        text.add(new Label(quest.getDef().getRewardAmount() + " "
-                + quest.getDef().getRewardType().name().toLowerCase(),
-                ui.skin(), "muted")).left().row();
-        text.add(progressBar(quest)).growX().height(8f).padTop(3f);
-        row.add(text).growX();
-
-        if (quest.isCompleted()) {
-            row.add(ui.button("Claim", new Runnable() {
-                @Override
-                public void run() {
-                    context.toasts().info("Rewards are granted automatically when a level ends.");
-                }
-            })).padLeft(Theme.PAD);
-        }
-        return row;
-    }
-
-    private Table progressBar(QuestProgress quest) {
-        float ratio = (quest.getTarget() <= 0) ? 0f
-                : Math.min(1f, (float) (quest.getProgress() / quest.getTarget()));
-        Table track = new Table();
-        track.setBackground(ui.primitives().flat(Theme.alpha(Theme.OUTLINE, 0.25f)));
-        track.left();
-        Table fill = new Table();
-        fill.setBackground(ui.primitives().flat(quest.isCompleted() ? Theme.GREEN : Theme.SUN_DEEP));
-        track.add(fill).growY().width(Math.max(2f, 240f * ratio)).left();
-        return track;
+    private static double ratio(QuestProgress quest) {
+        return quest.getTarget() <= 0 ? 0d : quest.getProgress() / quest.getTarget();
     }
 
     private Table bigButton(String text, Color face, Runnable action) {
