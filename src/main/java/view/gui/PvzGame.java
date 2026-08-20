@@ -54,7 +54,7 @@ public final class PvzGame extends Game {
         toasts.listenToLog();
 
         context = new GameContext(App.getInstance(), ui, toasts,
-                new GameContext.Settings(), pam);
+                new GameContext.Settings(App.getInstance()), pam);
         navigator = new Navigator(this);
 
         if (runTour) {
@@ -194,6 +194,7 @@ public final class PvzGame extends Game {
 
     @Override
     public void dispose() {
+        new controller.SaveService().persist();
         for (Screen screen : screens.values()) {
             screen.dispose();
         }

@@ -157,9 +157,17 @@ public class GameMenuController {
             System.out.println("Reward: 500 coins, score " + score + ". Use 'menu enter chapter_menu' to continue.");
             int clearedLevel = game.getLevel() != null ? game.getLevel().getLevelnumber() : u.getLastLevel();
             if (clearedLevel >= u.getLastLevel()) {
-                u.setLastLevel(clearedLevel + 1);
-                u.getNewsList().addNews("New level unlocked: level " + (clearedLevel + 1)
-                        + "! A tougher wave awaits.");
+                if (clearedLevel >= model.ChapterType.LEVELS_PER_CHAPTER) {
+                    int nextChapter = Math.min(model.ChapterType.values().length,
+                            Math.max(1, u.getLastChapter()) + 1);
+                    u.setLastChapter(nextChapter);
+                    u.setLastLevel(1);
+                    u.getNewsList().addNews("Chapter cleared! A new world is open.");
+                } else {
+                    u.setLastLevel(clearedLevel + 1);
+                    u.getNewsList().addNews("New level unlocked: level " + (clearedLevel + 1)
+                            + "! A tougher wave awaits.");
+                }
             }
         } else {
             System.out.println("Use 'menu enter chapter_menu' to try again.");

@@ -129,6 +129,7 @@ public class CollectionMenuController {
         user.setSeedPacket(user.getSeedPacket() + 1);
         user.getNewsList().addNews("New plant unlocked: " + type.getName() + "! Add it to your deck.");
         System.out.println("Bought " + type.getName() + " for " + cost + " coins. It is now unlocked.");
+        new controller.SaveService().persist(user);
     }
 
     private Plants findPlant(String input) {

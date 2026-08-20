@@ -1,6 +1,7 @@
 package controller.menu;
 
 import controller.Navigation;
+import controller.SaveService;
 import model.App;
 import view.MenuType;
 import view.SettingMenu;
@@ -9,6 +10,7 @@ public class SettingMenuController {
 
     private final App app;
     private final SettingMenu view;
+    private final SaveService saves = new SaveService();
 
     public SettingMenuController(App app) {
         this.app = app;
@@ -31,11 +33,54 @@ public class SettingMenuController {
                 handleEnter(parts);
                 break;
             case "settings":
-                handleChangeDifficulty(parts);
+                handleSettings(parts);
                 break;
             default:
                 view.showError("Unknown command: " + parts[1]);
         }
+    }
+
+    private void handleSettings(String[] parts) {
+        if (parts.length < 3) {
+            view.showError("Usage: menu settings <change-difficulty|set-speed|"
+                    + "toggle-grid|toggle-debug>");
+            return;
+        }
+        if (app.getCurrentuser() == null) {
+            view.showError("No user is logged in.");
+            return;
+        }
+        if (parts[2].equals("set-speed")) {
+            handleSetSpeed(parts);
+        } else if (parts[2].equals("toggle-grid")) {
+            app.getCurrentuser().setShowGrid(!app.getCurrentuser().isShowGrid());
+            saves.persist(app.getCurrentuser());
+        } else if (parts[2].equals("toggle-debug")) {
+            app.getCurrentuser().setDebugMode(!app.getCurrentuser().isDebugMode());
+            saves.persist(app.getCurrentuser());
+        } else {
+            handleChangeDifficulty(parts);
+        }
+    }
+
+    private void handleSetSpeed(String[] parts) {
+        if (parts.length < 5 || !parts[3].equals("-v")) {
+            view.showError("Usage: menu settings set-speed -v <1-3>");
+            return;
+        }
+        int speed;
+        try {
+            speed = Integer.parseInt(parts[4]);
+        } catch (NumberFormatException e) {
+            view.showError("Invalid speed: " + parts[4]);
+            return;
+        }
+        if (speed < 1 || speed > 3) {
+            view.showError("Speed must be between 1 and 3.");
+            return;
+        }
+        app.getCurrentuser().setGameSpeed(speed);
+        saves.persist(app.getCurrentuser());
     }
 
     private void handleChangeDifficulty(String[] parts) {
@@ -59,6 +104,7 @@ public class SettingMenuController {
             return;
         }
         app.getCurrentuser().setDifficultyLevel(level);
+        saves.persist(app.getCurrentuser());
         view.showDifficultyChanged(level);
     }
 

@@ -50,6 +50,9 @@ public class User {
     private final Set<String> seenZombies = new HashSet<>();
     private final Set<String> unlockedMinigames = new HashSet<>();
     private boolean stayLoggedIn;
+    private int gameSpeed = 1;
+    private boolean showGrid;
+    private boolean debugMode;
 
     public User() {
         this.difficultyLevel = 3;
@@ -418,4 +421,28 @@ public class User {
         this.securityQuestion = securityQuestion;
     }
 
+
+    public int getGameSpeed() {
+        return gameSpeed < 1 ? 1 : gameSpeed;
+    }
+
+    public void setGameSpeed(int gameSpeed) {
+        this.gameSpeed = gameSpeed < 1 ? 1 : Math.min(gameSpeed, 3);
+    }
+
+    public boolean isShowGrid() {
+        return showGrid;
+    }
+
+    public void setShowGrid(boolean showGrid) {
+        this.showGrid = showGrid;
+    }
+
+    public boolean isDebugMode() {
+        return debugMode;
+    }
+
+    public void setDebugMode(boolean debugMode) {
+        this.debugMode = debugMode;
+    }
 }
