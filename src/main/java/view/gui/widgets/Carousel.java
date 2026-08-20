@@ -2,16 +2,21 @@ package view.gui.widgets;
 
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.graphics.Color;
+import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Interpolation;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.InputListener;
 import com.badlogic.gdx.scenes.scene2d.Touchable;
+import com.badlogic.gdx.scenes.scene2d.ui.Image;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.ui.Stack;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.ui.WidgetGroup;
+import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
 import com.badlogic.gdx.utils.Align;
+import com.badlogic.gdx.utils.Scaling;
 import view.gui.Animations;
+import view.gui.Pam;
 import view.gui.Theme;
 import view.gui.UiKit;
 
@@ -26,6 +31,12 @@ public final class Carousel extends WidgetGroup {
         private final int segments;
         private final int completed;
         private final boolean[] special;
+        private TextureRegion art;
+
+        public Item setArt(TextureRegion value) {
+            this.art = value;
+            return this;
+        }
 
         public Item(String name, Color accent, boolean locked) {
             this(name, accent, locked, 0, 0, null);
@@ -59,6 +70,15 @@ public final class Carousel extends WidgetGroup {
     private final UiKit ui;
     private final List<Item> items = new ArrayList<Item>();
     private final List<Table> cards = new ArrayList<Table>();
+    private final List<Table> overlays = new ArrayList<Table>();
+    private final List<PamActor> locks = new ArrayList<PamActor>();
+
+    private static final float ENTER_TIME = 0.9f;
+    private static final Color DIMMED = new Color(0.42f, 0.48f, 0.62f, 1f);
+
+    private Pam pam;
+    private String lockAnimation;
+    private float enterTime = -1f;
 
     private float cardWidth = 260f;
     private float cardHeight = 320f;
@@ -187,6 +207,36 @@ public final class Carousel extends WidgetGroup {
         return this;
     }
 
+    public Carousel setLockAnimation(Pam value, String path) {
+        this.pam = value;
+        this.lockAnimation = path;
+        return this;
+    }
+
+    public boolean isTransitioning() {
+        return enterTime >= 0f;
+    }
+
+    public void playEnter() {
+        if (enterTime < 0f) {
+            enterTime = 0f;
+        }
+    }
+
+    public void resetTransition() {
+        enterTime = -1f;
+    }
+
+    public void playUnlock(int index, Runnable done) {
+        if (index < 0 || index >= locks.size() || locks.get(index) == null) {
+            if (done != null) {
+                done.run();
+            }
+            return;
+        }
+        locks.get(index).play("open", false, done);
+    }
+
     public Carousel setListener(Listener value) {
         this.listener = value;
         return this;
@@ -259,6 +309,8 @@ public final class Carousel extends WidgetGroup {
             card.remove();
         }
         cards.clear();
+        overlays.clear();
+        locks.clear();
         for (Item item : items) {
             Table card = buildCard(item);
             cards.add(card);
@@ -267,15 +319,16 @@ public final class Carousel extends WidgetGroup {
     }
 
     private Table buildCard(Item item) {
-        Color face = item.locked ? Theme.LOCKED : item.accent;
-
-        Table art = new Table();
-        art.setBackground(ui.primitives().rounded(Theme.RADIUS + 2,
-                face, Theme.darken(face, 0.45f), Theme.BORDER));
+        Stack stack = new Stack();
+        stack.add(item.art != null ? islandFace(item) : paintedFace(item));
 
         Table overlay = new Table();
-        overlay.bottom();
-        overlay.pad(Theme.PAD);
+        if (item.art == null) {
+            overlay.bottom();
+            overlay.pad(Theme.PAD);
+        } else {
+            overlay.center();
+        }
 
         boolean roomy = cardWidth >= 180f;
         Label name = new Label(item.name, ui.skin(), roomy ? "titleOnDark" : "smallOnDark");
@@ -283,91 +336,73 @@ public final class Carousel extends WidgetGroup {
         name.setWrap(true);
         overlay.add(name).growX().row();
 
-        if (item.locked) {
+        if (item.locked && item.art == null) {
             Label lock = new Label("LOCKED", ui.skin(), "smallOnDark");
             lock.setAlignment(Align.center);
             overlay.add(lock).padTop(4f);
-        } else if (item.segments > 0) {
-            overlay.add(progressBar(item)).growX().padTop(Theme.PAD_SMALL);
+        } else if (!item.locked && item.segments > 0) {
+            overlay.add(levelTrack(item))
+                    .width(item.art == null ? cardWidth : cardWidth * 0.72f)
+                    .padTop(Theme.PAD_SMALL);
         }
-
-        Stack stack = new Stack();
-        stack.add(art);
         stack.add(overlay);
+        overlays.add(overlay);
+        locks.add(addLock(item, stack));
 
         Table card = new Table();
         card.add(stack).grow();
+        card.setTransform(true);
         card.setSize(cardWidth, cardHeight);
         card.setOrigin(Align.center);
+        if (item.locked && item.art != null) {
+            card.setColor(DIMMED);
+        }
         return card;
     }
 
-    private Table progressBar(Item item) {
-        com.badlogic.gdx.scenes.scene2d.ui.ProgressBar skinBar =
-                ui.skinProgressBar(item.segments, item.completed, "xp_green");
-        if (skinBar != null) {
-            return skinnedProgress(item, skinBar);
-        }
-        return segmentedProgress(item);
-    }
-
-    private Table skinnedProgress(Item item, com.badlogic.gdx.scenes.scene2d.ui.ProgressBar bar) {
-        Table track = new Table();
-        track.add(bar).grow().height(18f);
-
-        Table markers = new Table();
-        markers.left();
-        boolean any = false;
-        for (int i = 0; i < item.segments; i++) {
-            boolean isSpecial = item.special != null && i < item.special.length && item.special[i];
-            Table cell = new Table();
-            if (isSpecial) {
-                any = true;
-                cell.add(ui.token(8, Theme.SUN)).size(8f);
-            }
-            markers.add(cell).growX().uniformX();
-        }
-        if (!any) {
-            return track;
-        }
-
-        Stack stack = new Stack();
-        stack.add(track);
-        stack.add(markers);
-
+    private Table islandFace(Item item) {
+        Image island = new Image(new TextureRegionDrawable(item.art));
+        island.setScaling(Scaling.fit);
         Table holder = new Table();
-        holder.add(stack).grow();
+        holder.add(island).grow();
         return holder;
     }
 
-    private Table segmentedProgress(Item item) {
-        Table bar = new Table();
-        for (int i = 0; i < item.segments; i++) {
-            boolean done = i < item.completed;
-            boolean isSpecial = item.special != null && i < item.special.length && item.special[i];
+    private Table paintedFace(Item item) {
+        Color face = item.locked ? Theme.LOCKED : item.accent;
+        Table art = new Table();
+        art.setBackground(ui.primitives().rounded(Theme.RADIUS + 2,
+                face, Theme.darken(face, 0.45f), Theme.BORDER));
+        return art;
+    }
 
-            Table segment = new Table();
-            segment.setBackground(ui.primitives().rounded(3,
-                    done ? Theme.GREEN : Theme.darken(Theme.PANEL_SUNKEN, 0.35f),
-                    Theme.darken(Theme.OUTLINE, 0.2f), 2));
-
-            Stack cell = new Stack();
-            cell.add(segment);
-            if (isSpecial) {
-                Table dotHolder = new Table();
-                dotHolder.center();
-                dotHolder.add(ui.token(9, Theme.SUN)).size(9f);
-                cell.add(dotHolder);
-            }
-            bar.add(cell).growX().height(14f).padRight(i == item.segments - 1 ? 0f : 3f);
+    private PamActor addLock(Item item, Stack stack) {
+        if (!item.locked || pam == null || lockAnimation == null) {
+            return null;
         }
-        return bar;
+        PamActor lock = new PamActor(pam, lockAnimation, "idle").setFit(true);
+        if (!lock.isReady()) {
+            return null;
+        }
+        Table holder = new Table();
+        holder.top();
+        holder.add(lock).size(cardWidth * 0.44f).padTop(cardHeight * 0.14f);
+        stack.add(holder);
+        return lock;
+    }
+
+    private LevelTrack levelTrack(Item item) {
+        return new LevelTrack(ui, item.segments, item.completed, item.special,
+                pam == null ? null : pam.region(Pam.SKULL));
     }
 
     @Override
     public void act(float delta) {
         super.act(delta);
         visualIndex += (selected - visualIndex) * Math.min(1f, delta * 9f);
+        if (enterTime >= 0f) {
+            enterTime = Math.min(ENTER_TIME, enterTime + delta);
+        }
         layoutCards();
     }
 
@@ -384,9 +419,22 @@ public final class Carousel extends WidgetGroup {
             float scale = 1f - falloff * Interpolation.smooth.apply(shrink);
             float alpha = 1f - 0.55f * Interpolation.smooth.apply(shrink);
 
+            float exit = enterTime < 0f ? 0f : enterTime / ENTER_TIME;
+            boolean focused = distance < 0.5f;
+            if (focused) {
+                scale *= 1f - 0.9f * Interpolation.pow2In.apply(exit);
+            } else {
+                alpha *= Math.max(0f, 1f - exit * 2.5f);
+            }
+            if (overlays.size() > i) {
+                float focus = Math.max(0f, 1f - distance * 2.5f);
+                overlays.get(i).getColor().a = focus * Math.max(0f, 1f - exit * 3f);
+            }
+
             card.setSize(drawWidth, drawHeight);
             card.setOrigin(Align.center);
             card.setScale(scale);
+            card.setRotation(focused ? 540f * Interpolation.pow2In.apply(exit) : 0f);
             card.getColor().a = alpha;
             card.setPosition(
                     centreX + (i - anchor()) * spacing - drawWidth / 2f,

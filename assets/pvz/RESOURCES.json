@@ -5,6 +5,35 @@
  "groups": [
   {
    "type": "simple",
+   "id": "UI_AlwaysLoaded_768",
+   "res": "768",
+   "parent": "UI_AlwaysLoaded",
+   "resources": [
+    {
+     "type": "Image",
+     "slot": 7126,
+     "id": "ATLASIMAGE_ATLAS_UI_ALWAYSLOADED_768_01",
+     "path": "atlases\\UI_AlwaysLoaded_768_01",
+     "atlas": true,
+     "runtime": true,
+     "width": 2048,
+     "height": 2048
+    },
+    {
+     "type": "Image",
+     "slot": 47334,
+     "id": "IMAGE_UI_HUD_INGAME_ZOMBOSS_HEALTH_METER_SKULL_ICON",
+     "path": "images\\768\\initial\\UI\\hud_ingame\\zomboss_health_meter_skull_icon",
+     "parent": "ATLASIMAGE_ATLAS_UI_ALWAYSLOADED_768_01",
+     "ax": 1588,
+     "ay": 240,
+     "aw": 24,
+     "ah": 20
+    }
+   ]
+  },
+  {
+   "type": "simple",
    "id": "UI_Universe_768",
    "res": "768",
    "parent": "UI_Universe",
@@ -62,6 +91,241 @@
      "ay": 1,
      "aw": 489,
      "ah": 489
+    },
+    {
+     "type": "Image",
+     "slot": 9926,
+     "id": "IMAGE_UI_UNIVERSE_WORLDS_BEACH",
+     "path": "images\\768\\initial\\UI\\universe\\worlds\\beach",
+     "x": 983,
+     "y": 188,
+     "parent": "ATLASIMAGE_ATLAS_UI_UNIVERSE_768_00",
+     "ax": 1717,
+     "ay": 1,
+     "aw": 328,
+     "ah": 612
+    },
+    {
+     "type": "Image",
+     "slot": 9928,
+     "id": "IMAGE_UI_UNIVERSE_WORLDS_DARK",
+     "path": "images\\768\\initial\\UI\\universe\\worlds\\dark",
+     "x": 827,
+     "y": 110,
+     "parent": "ATLASIMAGE_ATLAS_UI_UNIVERSE_768_00",
+     "ax": 1200,
+     "ay": 615,
+     "aw": 284,
+     "ah": 664
+    },
+    {
+     "type": "Image",
+     "slot": 9930,
+     "id": "IMAGE_UI_UNIVERSE_WORLDS_EGYPT",
+     "path": "images\\768\\initial\\UI\\universe\\worlds\\egypt",
+     "x": 59,
+     "y": 282,
+     "parent": "ATLASIMAGE_ATLAS_UI_UNIVERSE_768_00",
+     "ax": 870,
+     "ay": 1101,
+     "aw": 275,
+     "ah": 552
+    },
+    {
+     "type": "Image",
+     "slot": 9933,
+     "id": "IMAGE_UI_UNIVERSE_WORLDS_ICEAGE",
+     "path": "images\\768\\initial\\UI\\universe\\worlds\\iceage",
+     "x": 1238,
+     "y": 154,
+     "parent": "ATLASIMAGE_ATLAS_UI_UNIVERSE_768_00",
+     "ax": 1486,
+     "ay": 615,
+     "aw": 297,
+     "ah": 617
+    }
+   ]
+  },
+  {
+   "type": "simple",
+   "id": "UI_Universe_Lock_768",
+   "res": "768",
+   "parent": "UI_Universe_Lock",
+   "resources": [
+    {
+     "type": "Image",
+     "slot": 7266,
+     "id": "ATLASIMAGE_ATLAS_UI_UNIVERSE_LOCK_768_00",
+     "path": "atlases\\UI_Universe_Lock_768_00",
+     "atlas": true,
+     "runtime": true,
+     "width": 512,
+     "height": 512
+    },
+    {
+     "type": "Image",
+     "slot": 9899,
+     "id": "IMAGE_UI_UNIVERSE_WORLD_LOCK_WORLD_LOCK_128X120",
+     "path": "images\\768\\initial\\UI\\universe\\World_Lock\\World_Lock_128x120",
+     "parent": "ATLASIMAGE_ATLAS_UI_UNIVERSE_LOCK_768_00",
+     "ax": 415,
+     "ay": 159,
+     "aw": 82,
+     "ah": 77
+    },
+    {
+     "type": "Image",
+     "slot": 9900,
+     "id": "IMAGE_UI_UNIVERSE_WORLD_LOCK_WORLD_LOCK_153X145",
+     "path": "images\\768\\initial\\UI\\universe\\World_Lock\\World_Lock_153x145",
+     "parent": "ATLASIMAGE_ATLAS_UI_UNIVERSE_LOCK_768_00",
+     "ax": 406,
+     "ay": 263,
+     "aw": 98,
+     "ah": 93
+    },
+    {
+     "type": "Image",
+     "slot": 9901,
+     "id": "IMAGE_UI_UNIVERSE_WORLD_LOCK_WORLD_LOCK_165X121",
+     "path": "images\\768\\initial\\UI\\universe\\World_Lock\\World_Lock_165x121",
+     "parent": "ATLASIMAGE_ATLAS_UI_UNIVERSE_LOCK_768_00",
+     "ax": 1,
+     "ay": 282,
+     "aw": 106,
+     "ah": 78
+    },
+    {
+     "type": "Image",
+     "slot": 9902,
+     "id": "IMAGE_UI_UNIVERSE_WORLD_LOCK_WORLD_LOCK_190X146",
+     "path": "images\\768\\initial\\UI\\universe\\World_Lock\\World_Lock_190x146",
+     "parent": "ATLASIMAGE_ATLAS_UI_UNIVERSE_LOCK_768_00",
+     "ax": 282,
+     "ay": 263,
+     "aw": 122,
+     "ah": 94
+    },
+    {
+     "type": "Image",
+     "slot": 9903,
+     "id": "IMAGE_UI_UNIVERSE_WORLD_LOCK_WORLD_LOCK_205X188",
+     "path": "images\\768\\initial\\UI\\universe\\World_Lock\\World_Lock_205x188",
+     "parent": "ATLASIMAGE_ATLAS_UI_UNIVERSE_LOCK_768_00",
+     "ax": 282,
+     "ay": 140,
+     "aw": 131,
+     "ah": 121
+    },
+    {
+     "type": "Image",
+     "slot": 9904,
+     "id": "IMAGE_UI_UNIVERSE_WORLD_LOCK_WORLD_LOCK_230X213",
+     "path": "images\\768\\initial\\UI\\universe\\World_Lock\\World_Lock_230x213",
+     "parent": "ATLASIMAGE_ATLAS_UI_UNIVERSE_LOCK_768_00",
+     "ax": 282,
+     "ay": 1,
+     "aw": 147,
+     "ah": 137
+    },
+    {
+     "type": "Image",
+     "slot": 9905,
+     "id": "IMAGE_UI_UNIVERSE_WORLD_LOCK_WORLD_LOCK_33X31",
+     "path": "images\\768\\initial\\UI\\universe\\World_Lock\\World_Lock_33x31",
+     "parent": "ATLASIMAGE_ATLAS_UI_UNIVERSE_LOCK_768_00",
+     "ax": 486,
+     "ay": 1,
+     "aw": 21,
+     "ah": 20
+    },
+    {
+     "type": "Image",
+     "slot": 9906,
+     "id": "IMAGE_UI_UNIVERSE_WORLD_LOCK_WORLD_LOCK_435X435",
+     "path": "images\\768\\initial\\UI\\universe\\World_Lock\\World_Lock_435x435",
+     "parent": "ATLASIMAGE_ATLAS_UI_UNIVERSE_LOCK_768_00",
+     "ax": 1,
+     "ay": 1,
+     "aw": 279,
+     "ah": 279
+    },
+    {
+     "type": "Image",
+     "slot": 9907,
+     "id": "IMAGE_UI_UNIVERSE_WORLD_LOCK_WORLD_LOCK_56X56",
+     "path": "images\\768\\initial\\UI\\universe\\World_Lock\\World_Lock_56x56",
+     "parent": "ATLASIMAGE_ATLAS_UI_UNIVERSE_LOCK_768_00",
+     "ax": 406,
+     "ay": 358,
+     "aw": 36,
+     "ah": 36
+    },
+    {
+     "type": "Image",
+     "slot": 9908,
+     "id": "IMAGE_UI_UNIVERSE_WORLD_LOCK_WORLD_LOCK_59X57",
+     "path": "images\\768\\initial\\UI\\universe\\World_Lock\\World_Lock_59x57",
+     "parent": "ATLASIMAGE_ATLAS_UI_UNIVERSE_LOCK_768_00",
+     "ax": 211,
+     "ay": 353,
+     "aw": 38,
+     "ah": 37
+    },
+    {
+     "type": "Image",
+     "slot": 9909,
+     "id": "IMAGE_UI_UNIVERSE_WORLD_LOCK_WORLD_LOCK_64X98",
+     "path": "images\\768\\initial\\UI\\universe\\World_Lock\\World_Lock_64x98",
+     "parent": "ATLASIMAGE_ATLAS_UI_UNIVERSE_LOCK_768_00",
+     "ax": 168,
+     "ay": 348,
+     "aw": 41,
+     "ah": 63
+    },
+    {
+     "type": "Image",
+     "slot": 9910,
+     "id": "IMAGE_UI_UNIVERSE_WORLD_LOCK_WORLD_LOCK_77X108",
+     "path": "images\\768\\initial\\UI\\universe\\World_Lock\\World_Lock_77x108",
+     "parent": "ATLASIMAGE_ATLAS_UI_UNIVERSE_LOCK_768_00",
+     "ax": 224,
+     "ay": 282,
+     "aw": 50,
+     "ah": 69
+    },
+    {
+     "type": "Image",
+     "slot": 9911,
+     "id": "IMAGE_UI_UNIVERSE_WORLD_LOCK_WORLD_LOCK_83X243",
+     "path": "images\\768\\initial\\UI\\universe\\World_Lock\\World_Lock_83x243",
+     "parent": "ATLASIMAGE_ATLAS_UI_UNIVERSE_LOCK_768_00",
+     "ax": 431,
+     "ay": 1,
+     "aw": 53,
+     "ah": 156
+    },
+    {
+     "type": "Image",
+     "slot": 9912,
+     "id": "IMAGE_UI_UNIVERSE_WORLD_LOCK_WORLD_LOCK_84X99",
+     "path": "images\\768\\initial\\UI\\universe\\World_Lock\\World_Lock_84x99",
+     "parent": "ATLASIMAGE_ATLAS_UI_UNIVERSE_LOCK_768_00",
+     "ax": 168,
+     "ay": 282,
+     "aw": 54,
+     "ah": 64
+    },
+    {
+     "type": "Image",
+     "slot": 9913,
+     "id": "IMAGE_UI_UNIVERSE_WORLD_LOCK_WORLD_LOCK_89X123",
+     "path": "images\\768\\initial\\UI\\universe\\World_Lock\\World_Lock_89x123",
+     "parent": "ATLASIMAGE_ATLAS_UI_UNIVERSE_LOCK_768_00",
+     "ax": 109,
+     "ay": 282,
+     "aw": 57,
+     "ah": 79
     }
    ]
   }

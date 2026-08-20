@@ -13,6 +13,10 @@ import java.util.Set;
 public final class Pam implements Disposable {
     public static final String PORTAL =
             "768/INITIAL/UI/UNIVERSE/UNIVERSE_PORTAL/UNIVERSE_PORTAL.PAM";
+    public static final String WORLD_LOCK =
+            "768/INITIAL/UI/UNIVERSE/WORLD_LOCK/WORLD_LOCK.PAM";
+    public static final String SKULL =
+            "IMAGE_UI_HUD_INGAME_ZOMBOSS_HEALTH_METER_SKULL_ICON";
 
     private static final String ROOT = "assets/pvz";
     private static final String RESOLUTION = "768";
@@ -58,6 +62,24 @@ public final class Pam implements Disposable {
             Log.warn("gui", "Could not load " + path + ": " + e.getMessage());
             failed.add(path);
             return false;
+        }
+    }
+
+    public com.badlogic.gdx.graphics.g2d.TextureRegion region(String imageId) {
+        if (textures == null || failed.contains(imageId)) {
+            return null;
+        }
+        try {
+            com.badlogic.gdx.graphics.g2d.TextureRegion found = textures.region(imageId);
+            if (found == null) {
+                failed.add(imageId);
+                Log.warn("gui", "No image " + imageId + " in the PAM bundle");
+            }
+            return found;
+        } catch (RuntimeException e) {
+            Log.warn("gui", "Could not read " + imageId + ": " + e.getMessage());
+            failed.add(imageId);
+            return null;
         }
     }
 
