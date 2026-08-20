@@ -240,9 +240,7 @@ public final class UiKit implements Disposable {
                         Theme.OUTLINE, Theme.BORDER)), Drawable.class);
         loadIconFile("leaderboardIcon", "assets/ui/leaderboard.png");
         loadIconFile("plusIcon", "assets/ui/currency_plus.png");
-        loadIconFile("scrollTop", "assets/ui/scroll_top.png");
         loadIconFile("scrollMid", "assets/ui/scroll_mid.png");
-        loadIconFile("rankCrown", "assets/ui/rank_crown.png");
         loadIconFile("rankFirst", "assets/ui/rank_standstill.png");
         loadIconFile("rankSecond", "assets/ui/rank_promoted.png");
         loadIconFile("rankThird", "assets/ui/rank_demoted.png");
@@ -316,6 +314,7 @@ public final class UiKit implements Disposable {
         skin.add("rowNameMe", new Label.LabelStyle(fontTitle, Theme.INK_SELECTED));
         skin.add("rowNameBig", new Label.LabelStyle(fontTitleOutline, Theme.INK));
         skin.add("rankNumber", new Label.LabelStyle(fontTitle, Theme.INK));
+        skin.add("rowHeader", new Label.LabelStyle(fontTitle, Theme.INK));
         skin.add("rowSub", new Label.LabelStyle(fontBody, Theme.INK));
         skin.add("rowValue", new Label.LabelStyle(fontTitleOutline, Theme.INK_VALUE));
     }

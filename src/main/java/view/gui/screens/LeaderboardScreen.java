@@ -20,7 +20,7 @@ public final class LeaderboardScreen extends BaseScreen {
     private static final String[] COLUMNS = {"score", "level", "minigames", "daily", "quests"};
     private static final String[] HEADINGS = {"Score", "Prog", "Mini", "Daily", "Quests"};
 
-    private static final float PAPER_WIDTH = 820f;
+    private static final float PAPER_WIDTH = 673f;
     private static final float ROLL_OVERHANG = 300f / 165f;
     private static final float CENTRE_SHARE = 2f / 3f;
     private static final float ROLL_RATIO = 100f / 300f;
@@ -28,11 +28,12 @@ public final class LeaderboardScreen extends BaseScreen {
     private static final float SHADOW_OFFSET = 14f;
     private static final float SHADOW_ALPHA = 0.55f;
     private static final int SHADOW_LAYERS = 3;
-    private static final float CROWN_TILT = -28f;
-    private static final float NAME_WIDTH = 170f;
-    private static final float VALUE_WIDTH = 96f;
-    private static final float RANK_MARK = 52f;
+    private static final float NAME_WIDTH = 145f;
+    private static final float VALUE_WIDTH = 82f;
+    private static final float RANK_MARK = 46f;
     private static final float ROW_HEIGHT = 54f;
+
+    private ScrollPane list;
 
     private String sortColumn = "score";
     private boolean ascending;
@@ -62,15 +63,15 @@ public final class LeaderboardScreen extends BaseScreen {
 
         float paper = PAPER_WIDTH;
         float paperHeight = Theme.WORLD_HEIGHT;
-        float centre = Theme.WORLD_WIDTH * CENTRE_SHARE;
-
         Stack scroll = new Stack();
         scroll.add(shadowLayer(paper, paperHeight));
         scroll.add(paperLayer(paper, paperHeight));
 
-        content.add(new Table()).width(centre - paper / 2f - Theme.PAD_LARGE);
-        content.add(scroll).width(paper).growY();
         content.add(new Table()).expandX();
+        content.add(scroll).width(paper).growY()
+                .padTop(-Theme.PAD_LARGE)
+                .padRight(-Theme.PAD_LARGE)
+                .padBottom(-Theme.PAD_LARGE);
     }
 
     private Table paperLayer(float paper, float paperHeight) {
@@ -89,7 +90,7 @@ public final class LeaderboardScreen extends BaseScreen {
     private Table listLayer(float paper) {
         Table inner = new Table();
         inner.top();
-        inner.pad(Theme.PAD_LARGE, paper * 0.075f, Theme.PAD, paper * 0.075f);
+        inner.pad(Theme.PAD_LARGE, paper * 0.05f, Theme.PAD, paper * 0.05f);
         inner.add(headerRow()).growX().row();
         Table rule = new Table();
         rule.setBackground(ui.primitives().flat(Theme.alpha(Theme.INK, 0.55f)));
@@ -107,9 +108,11 @@ public final class LeaderboardScreen extends BaseScreen {
         }
         float scale = full.getRegionWidth() / width;
         int needed = Math.min(full.getRegionHeight(), Math.round(paperHeight * scale));
-        return new com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable(
+        com.badlogic.gdx.graphics.g2d.TextureRegion slice =
                 new com.badlogic.gdx.graphics.g2d.TextureRegion(
-                        full, 0, 0, full.getRegionWidth(), needed));
+                        full, 0, 0, full.getRegionWidth(), needed);
+        slice.flip(true, false);
+        return new com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable(slice);
     }
 
     private Stack shadowLayer(float paper, float paperHeight) {
@@ -136,10 +139,10 @@ public final class LeaderboardScreen extends BaseScreen {
     private Table headerRow() {
         Table header = new Table();
         header.defaults().pad(1f);
-        Label hash = new Label("#", ui.skin(), "rowValue");
+        Label hash = new Label("#", ui.skin(), "rowHeader");
         hash.setAlignment(Align.center);
         header.add(hash).width(RANK_MARK).center();
-        header.add(new Label("Player", ui.skin(), "rowValue")).left().width(NAME_WIDTH);
+        header.add(new Label("Player", ui.skin(), "rowHeader")).left().width(NAME_WIDTH);
         for (int i = 0; i < COLUMNS.length; i++) {
             header.add(sortHeader(HEADINGS[i], COLUMNS[i])).width(VALUE_WIDTH);
         }
@@ -148,11 +151,11 @@ public final class LeaderboardScreen extends BaseScreen {
 
     private Table sortHeader(String label, final String column) {
         Table cell = new Table();
-        cell.add(new Label(label, ui.skin(), "rowValue")).center();
+        cell.add(new Label(label, ui.skin(), "rowHeader")).center();
         if (column.equals(sortColumn)) {
             Image arrow = new Image(ui.drawable(ascending ? "sortAscending" : "sortDescending"));
             arrow.setScaling(Scaling.fit);
-            cell.add(arrow).size(18f).padLeft(3f);
+            cell.add(arrow).size(15f).padLeft(2f);
         }
         view.gui.Animations.attachPress(cell);
         UiKit.onClick(cell, new Runnable() {
@@ -171,28 +174,37 @@ public final class LeaderboardScreen extends BaseScreen {
     }
 
     private ScrollPane rankList() {
-        Table list = new Table();
-        list.top();
-        list.defaults().growX();
+        Table rows = new Table();
+        rows.top();
+        rows.defaults().growX();
 
         List<Leaderboard.Entry> entries = new Leaderboard().getEntries(sortColumn, ascending);
         if (entries.isEmpty()) {
-            list.add(new Label("No players registered yet.", ui.skin(), "rowSub"))
+            rows.add(new Label("No players registered yet.", ui.skin(), "rowSub"))
                     .left().pad(Theme.PAD).row();
         } else {
             int rank = 1;
             for (Leaderboard.Entry entry : entries) {
-                list.add(row(rank++, entry)).height(ROW_HEIGHT).row();
+                rows.add(row(rank++, entry)).height(ROW_HEIGHT).row();
             }
         }
 
-        ScrollPane scroll = new ScrollPane(list, ui.skin());
+        ScrollPane scroll = new ScrollPane(rows, ui.skin());
         scroll.setStyle(ui.skin().get("bare", ScrollPane.ScrollPaneStyle.class));
         scroll.setScrollingDisabled(true, false);
         scroll.setOverscroll(false, true);
         scroll.setForceScroll(false, true);
         UiKit.focusOnHover(scroll);
+        list = scroll;
         return scroll;
+    }
+
+    @Override
+    public void show() {
+        super.show();
+        if (list != null) {
+            uiStage().setScrollFocus(list);
+        }
     }
 
     private Table row(int rank, Leaderboard.Entry entry) {
@@ -253,33 +265,12 @@ public final class LeaderboardScreen extends BaseScreen {
         Label label = new Label(String.valueOf(rank), ui.skin(),
                 banner == null ? "rowSub" : "rankNumber");
         label.setAlignment(Align.center);
-        number.add(label).center().padTop(banner == null ? 0f : RANK_MARK * 0.5f);
+        number.add(label).center().padBottom(banner == null ? 0f : RANK_MARK * 0.1f);
         stack.add(number);
-
-        if (rank == 1) {
-            stack.add(tiltedCrown());
-        }
 
         Table mark = new Table();
         mark.add(stack).size(RANK_MARK);
         return mark;
     }
 
-    private Table tiltedCrown() {
-        Image crown = new Image(ui.drawable("rankCrown")) {
-            @Override
-            public void layout() {
-                super.layout();
-                setOrigin(Align.center);
-            }
-        };
-        crown.setScaling(Scaling.fit);
-        crown.setRotation(CROWN_TILT);
-
-        Table holder = new Table();
-        holder.top().left();
-        holder.add(crown).width(RANK_MARK * 0.72f).height(RANK_MARK * 0.44f)
-                .padTop(-RANK_MARK * 0.12f);
-        return holder;
-    }
 }
