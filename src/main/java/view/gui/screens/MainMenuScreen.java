@@ -6,6 +6,8 @@ import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.ui.ScrollPane;
 import com.badlogic.gdx.scenes.scene2d.ui.Stack;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
+import com.badlogic.gdx.scenes.scene2d.Touchable;
+import com.badlogic.gdx.scenes.scene2d.actions.Actions;
 import com.badlogic.gdx.utils.Align;
 import com.badlogic.gdx.utils.Scaling;
 import controller.menu.ChapterMenuController;
@@ -31,11 +33,18 @@ import java.util.Comparator;
 import java.util.List;
 
 public final class MainMenuScreen extends BaseScreen {
-    private static final int LEVELS_PER_CHAPTER = 4;
     private static final String PORTAL_CLIP = "idle";
     private static final float PORTAL_COVERAGE = 1.5f;
     private static final float LOGO_HEIGHT = 68f;
     private static final float LOGO_OVERHANG = 26f;
+    private static final float PANEL_INSET = 12f;
+    private static final float VEIL_DELAY = 0.35f;
+    private static final float VEIL_FADE = 0.45f;
+    private static final String[] ISLANDS = {
+            "IMAGE_UI_UNIVERSE_WORLDS_EGYPT",
+            "IMAGE_UI_UNIVERSE_WORLDS_ICEAGE",
+            "IMAGE_UI_UNIVERSE_WORLDS_BEACH",
+            "IMAGE_UI_UNIVERSE_WORLDS_DARK"};
     private static final String[] MINIGAMES = {
             "Vasebreaker", "Wallnut Bowling", "I, Zombie", "Beghouled"};
 
@@ -44,6 +53,9 @@ public final class MainMenuScreen extends BaseScreen {
     private final QuestRepository questRepository = new QuestRepository();
 
     private Carousel chapterCarousel;
+    private PamActor portal;
+    private Image veil;
+    private boolean[] lockState;
     private Carousel minigameCarousel;
     private Table questList;
 
@@ -90,8 +102,8 @@ public final class MainMenuScreen extends BaseScreen {
 
         chapterCarousel = new Carousel(ui)
                 .setCardSize(264f, 492f)
-                .setSpacing(248f)
-                .setFalloff(0.55f)
+                .setSpacing(232f)
+                .setFalloff(0.68f)
                 .setListener(new Carousel.Listener() {
                     @Override
                     public void onSelected(int index) {
@@ -102,10 +114,11 @@ public final class MainMenuScreen extends BaseScreen {
                         enterChapter(index);
                     }
                 });
-        chapterCarousel.setItems(chapterItems());
+        chapterCarousel.setLockAnimation(context.pam(), Pam.WORLD_LOCK);
+        syncChapters();
 
         Stack layers = new Stack();
-        PamActor portal = new PamActor(context.pam(), Pam.PORTAL, PORTAL_CLIP)
+        portal = new PamActor(context.pam(), Pam.PORTAL, PORTAL_CLIP)
                 .setCoverage(PORTAL_COVERAGE);
         if (portal.isReady()) {
             Table backing = new Table();
@@ -115,7 +128,7 @@ public final class MainMenuScreen extends BaseScreen {
         }
         layers.add(chapterCarousel);
 
-        panel.add(layers).grow();
+        panel.add(layers).grow().pad(-PANEL_INSET);
 
         Stack crested = new Stack();
         crested.add(panel);
@@ -140,18 +153,66 @@ public final class MainMenuScreen extends BaseScreen {
         return crest;
     }
 
-    private List<Carousel.Item> chapterItems() {
+    private List<Carousel.Item> chapterItems(boolean[] locked) {
         List<Carousel.Item> result = new ArrayList<Carousel.Item>();
-        for (ChapterType chapter : ChapterType.values()) {
-            boolean unlocked = isChapterUnlocked(chapter);
-            boolean[] special = new boolean[LEVELS_PER_CHAPTER];
-            special[LEVELS_PER_CHAPTER - 1] = true;
+        ChapterType[] chapters = ChapterType.values();
+        for (int i = 0; i < chapters.length; i++) {
+            ChapterType chapter = chapters[i];
+            boolean[] special = new boolean[ChapterType.LEVELS_PER_CHAPTER];
             special[1] = true;
+            special[2] = true;
             result.add(new Carousel.Item(pretty(chapter.name()),
-                    Theme.chapter(chapter.name()), !unlocked,
-                    LEVELS_PER_CHAPTER, clearedInChapter(chapter), special));
+                    Theme.chapter(chapter.name()), locked[i],
+                    ChapterType.LEVELS_PER_CHAPTER, clearedInChapter(chapter), special)
+                    .setArt(island(i)));
         }
         return result;
+    }
+
+    private com.badlogic.gdx.graphics.g2d.TextureRegion island(int index) {
+        if (context.pam() == null || index >= ISLANDS.length) {
+            return null;
+        }
+        return context.pam().region(ISLANDS[index]);
+    }
+
+    private boolean[] lockStates() {
+        ChapterType[] chapters = ChapterType.values();
+        boolean[] locked = new boolean[chapters.length];
+        for (int i = 0; i < chapters.length; i++) {
+            locked[i] = !isChapterUnlocked(chapters[i]);
+        }
+        return locked;
+    }
+
+    private void syncChapters() {
+        boolean[] now = lockStates();
+        int opened = firstOpened(lockState, now);
+        if (opened < 0) {
+            lockState = now;
+            chapterCarousel.setItems(chapterItems(now));
+            return;
+        }
+        chapterCarousel.setItems(chapterItems(lockState));
+        lockState = now;
+        chapterCarousel.playUnlock(opened, new Runnable() {
+            @Override
+            public void run() {
+                chapterCarousel.setItems(chapterItems(lockState));
+            }
+        });
+    }
+
+    private int firstOpened(boolean[] before, boolean[] after) {
+        if (before == null) {
+            return -1;
+        }
+        for (int i = 0; i < after.length && i < before.length; i++) {
+            if (before[i] && !after[i]) {
+                return i;
+            }
+        }
+        return -1;
     }
 
     private Table minigamePanel() {
@@ -317,13 +378,58 @@ public final class MainMenuScreen extends BaseScreen {
     }
 
     private void enterChapter(int index) {
-        ChapterType chapter = ChapterType.values()[index];
-        if (!isChapterUnlocked(chapter)) {
-            context.toasts().error("Finish the previous chapter first.");
+        if (chapterCarousel.isTransitioning()) {
             return;
         }
+        final ChapterType chapter = ChapterType.values()[index];
+        if (!isChapterUnlocked(chapter)) {
+            if (!context.settings().isDebugMode()) {
+                context.toasts().error("Finish the previous chapter first.");
+                return;
+            }
+            chapterCarousel.playUnlock(index, new Runnable() {
+                @Override
+                public void run() {
+                    beginEnter(chapter);
+                }
+            });
+            return;
+        }
+        beginEnter(chapter);
+    }
+
+    private void beginEnter(final ChapterType chapter) {
+        if (portal != null) {
+            portal.play("open", false, null);
+        }
+        chapterCarousel.playEnter();
+        veil().addAction(Actions.sequence(
+                Actions.delay(VEIL_DELAY),
+                Actions.alpha(1f, VEIL_FADE),
+                Actions.run(new Runnable() {
+                    @Override
+                    public void run() {
+                        openChapter(chapter);
+                    }
+                })));
+    }
+
+    private void openChapter(ChapterType chapter) {
         chapters.handleCommand(new String[]{"menu", "enter", "chapter", "-c", chapter.name()});
         chapters.handleCommand(new String[]{"menu", "enter", "chapter_menu"});
+    }
+
+    private Image veil() {
+        if (veil == null) {
+            veil = new Image(ui.primitives().flat(com.badlogic.gdx.graphics.Color.BLACK));
+            veil.setFillParent(true);
+            veil.setTouchable(Touchable.disabled);
+        }
+        veil.clearActions();
+        veil.remove();
+        veil.getColor().a = 0f;
+        stage.addActor(veil);
+        return veil;
     }
 
     private boolean isChapterUnlocked(ChapterType chapter) {
@@ -343,12 +449,12 @@ public final class MainMenuScreen extends BaseScreen {
         int reachedLevel = Math.max(1, user.getLastLevel());
         int index = chapter.ordinal() + 1;
         if (index < reachedChapter) {
-            return LEVELS_PER_CHAPTER;
+            return ChapterType.LEVELS_PER_CHAPTER;
         }
         if (index > reachedChapter) {
             return 0;
         }
-        return Math.min(LEVELS_PER_CHAPTER, reachedLevel - 1);
+        return Math.min(ChapterType.LEVELS_PER_CHAPTER, reachedLevel - 1);
     }
 
     private String pretty(String enumName) {
@@ -370,8 +476,9 @@ public final class MainMenuScreen extends BaseScreen {
     @Override
     public void show() {
         super.show();
-        if (chapterCarousel != null) {
-            chapterCarousel.setItems(chapterItems());
+        if (veil != null) {
+            veil.clearActions();
+            veil.remove();
         }
         if (questList != null) {
             rebuildQuests();
