@@ -73,10 +73,36 @@ public final class UiKit implements Disposable {
         return fallback;
     }
 
+    private final java.util.Set<String> missingFiles = new java.util.HashSet<String>();
+
+    public TextureRegion regionFile(String path) {
+        Drawable art = imageFile(path);
+        if (art instanceof com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable) {
+            return ((com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable) art).getRegion();
+        }
+        return null;
+    }
+
+    public Drawable imageFile(String path) {
+        String key = "file:" + path;
+        if (skin.has(key, Drawable.class)) {
+            return skin.getDrawable(key);
+        }
+        if (missingFiles.contains(path)) {
+            return null;
+        }
+        loadIconFile(key, path);
+        if (skin.has(key, Drawable.class)) {
+            return skin.getDrawable(key);
+        }
+        missingFiles.add(path);
+        return null;
+    }
+
     private void loadIconFile(String name, String path) {
         com.badlogic.gdx.files.FileHandle file = com.badlogic.gdx.Gdx.files.local(path);
         if (!file.exists()) {
-            util.Log.warn("gui", "Missing icon file " + path);
+            util.Log.debug("gui", "Missing icon file " + path);
             return;
         }
         try {
@@ -214,6 +240,14 @@ public final class UiKit implements Disposable {
                         Theme.OUTLINE, Theme.BORDER)), Drawable.class);
         loadIconFile("leaderboardIcon", "assets/ui/leaderboard.png");
         loadIconFile("plusIcon", "assets/ui/currency_plus.png");
+        loadIconFile("scrollMid", "assets/ui/scroll_mid.png");
+        loadIconFile("rankFirst", "assets/ui/rank_standstill.png");
+        loadIconFile("rankSecond", "assets/ui/rank_promoted.png");
+        loadIconFile("rankThird", "assets/ui/rank_demoted.png");
+        skin.add("sortAscending", art("image_ui_generic_arrow_up_green",
+                primitives.flat(Theme.GREEN)), Drawable.class);
+        skin.add("sortDescending", art("image_ui_generic_arrow_down_orange",
+                primitives.flat(Theme.SUN_DEEP)), Drawable.class);
         loadIconFile("leaderboardIconSelected", "assets/ui/leaderboard_selected.png");
         skin.add("topBar", art("image_ui_quests_panel_edge_to_edge_ten",
                 primitives.flat(Theme.darken(Theme.OUTLINE, 0.25f))), Drawable.class);
@@ -277,6 +311,10 @@ public final class UiKit implements Disposable {
         skin.add("value", new Label.LabelStyle(fontBody, Theme.OUTLINE));
         skin.add("rowName", new Label.LabelStyle(fontTitle, Theme.INK));
         skin.add("rowNameSelected", new Label.LabelStyle(fontTitleOutline, Theme.INK_SELECTED));
+        skin.add("rowNameMe", new Label.LabelStyle(fontTitle, Theme.INK_SELECTED));
+        skin.add("rowNameBig", new Label.LabelStyle(fontTitleOutline, Theme.INK));
+        skin.add("rankNumber", new Label.LabelStyle(fontTitle, Theme.INK));
+        skin.add("rowHeader", new Label.LabelStyle(fontTitle, Theme.INK));
         skin.add("rowSub", new Label.LabelStyle(fontBody, Theme.INK));
         skin.add("rowValue", new Label.LabelStyle(fontTitleOutline, Theme.INK_VALUE));
     }
@@ -380,6 +418,9 @@ public final class UiKit implements Disposable {
         style.hScroll = primitives.flat(Theme.alpha(Theme.OUTLINE, 0.18f));
         style.hScrollKnob = primitives.rounded(4, Theme.OUTLINE_SOFT, null, 0);
         skin.add("default", style);
+
+        ScrollPane.ScrollPaneStyle bare = new ScrollPane.ScrollPaneStyle();
+        skin.add("bare", bare);
     }
 
     private void buildToggleStyles() {
