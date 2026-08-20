@@ -505,6 +505,7 @@ public final class UiKit implements Disposable {
     public CheckBox checkBox(String text) {
         CheckBox box = (artSkin != null && artSkin.has("default", CheckBox.CheckBoxStyle.class))
                 ? new CheckBox(text, artSkin) : new CheckBox(text, skin);
+        box.getLabel().setColor(Theme.TEXT);
         box.getLabelCell().padLeft(Theme.PAD_SMALL).padBottom(opticalPad(box.getLabel()));
         box.getImageCell().size(30f);
         return box;
