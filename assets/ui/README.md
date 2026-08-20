@@ -9,6 +9,15 @@ Single images pulled from the game that the `pvz-skin` library does not carry.
 | `leaderboard_selected.png` | `IMAGE_UI_GAMECENTER_ANDROID_ACHIEVEMENTS_SELECT`, 94x70 |
 | `currency_plus.png` | green plus badge cut out of the skin's `image_ui_generic_button_generic_currency_normal`, 32x32 |
 
+| `scroll_top.png`, `scroll_mid.png` | `IMAGE_UI_JOUST_LEADERBOARD_LEADERBOARD_SCROLL_TOP` / `_MID` |
+| `rank_crown.png` | `IMAGE_UI_JOUST_ICONS_CROWNS_CROWNS_LARGE`, 139x96 — 1st place |
+| `rank_standstill.png`, `rank_demoted.png` | joust leaderboard rank banners, reused for 2nd and 3rd |
+
+The scroll pieces are cropped from `ATLASES/UI_JOUST_LEADERBOARD_768_00.PNG` at the
+coordinates in `RESOURCES.json`. `scroll_bottom.png` (the wooden base) is extracted
+but unused: the leaderboard deliberately runs the parchment off the bottom of the
+screen rather than closing it off.
+
 `currency_plus.png` exists because that skin region bakes the badge into a
 158x59 pill whose stretchable band runs straight through it, so any nine-patch
 that resized the pill squashed the badge. Cut out as its own image it keeps a

@@ -29,9 +29,8 @@ public abstract class BaseScreen implements Screen, Navigator.Hosted {
         this.stage = new Stage(new FitViewport(Theme.WORLD_WIDTH, Theme.WORLD_HEIGHT));
         this.toasts = context.toasts();
 
-        Image backdrop = new Image(new TextureRegion(ui.primitives().verticalGradient(
-                64, 256, Theme.BACKDROP_ALT, Theme.BACKDROP)));
-        backdrop.setScaling(Scaling.stretch);
+        Image backdrop = new Image(backdropDrawable());
+        backdrop.setScaling(Scaling.fill);
         backdrop.setFillParent(true);
         stage.addActor(backdrop);
 
@@ -65,6 +64,24 @@ public abstract class BaseScreen implements Screen, Navigator.Hosted {
 
     public void refreshTopBar() {
         topBar.refresh();
+    }
+
+    protected String backdropImage() {
+        return null;
+    }
+
+    private com.badlogic.gdx.scenes.scene2d.utils.Drawable backdropDrawable() {
+        String path = backdropImage();
+        if (path != null) {
+            com.badlogic.gdx.scenes.scene2d.utils.Drawable art = ui.imageFile(path);
+            if (art != null) {
+                return art;
+            }
+            util.Log.debug("gui", "Backdrop " + path + " is missing; using the plain gradient");
+        }
+        return new com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable(
+                new TextureRegion(ui.primitives().verticalGradient(
+                        64, 256, Theme.BACKDROP_ALT, Theme.BACKDROP)));
     }
 
     protected TopBar.Section section() {
