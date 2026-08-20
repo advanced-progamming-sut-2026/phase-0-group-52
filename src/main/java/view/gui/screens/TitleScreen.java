@@ -20,6 +20,7 @@ import view.gui.PlayerListPopup;
 import view.gui.Popup;
 import view.gui.SettingsPopup;
 import view.gui.Theme;
+import view.gui.Toasts;
 import view.gui.UiKit;
 
 public final class TitleScreen implements Screen {
@@ -157,6 +158,11 @@ public final class TitleScreen implements Screen {
 
     @Override
     public void show() {
+        Toasts toasts = context.toasts();
+        toasts.setSize(stage.getViewport().getWorldWidth() - Theme.PAD_LARGE * 2, 240f);
+        toasts.setPosition(Theme.PAD_LARGE, Theme.PAD_LARGE);
+        stage.addActor(toasts);
+
         Gdx.input.setInputProcessor(stage);
         refreshName();
     }
@@ -173,6 +179,8 @@ public final class TitleScreen implements Screen {
     @Override
     public void resize(int width, int height) {
         stage.getViewport().update(width, height, true);
+        context.toasts().setSize(
+                stage.getViewport().getWorldWidth() - Theme.PAD_LARGE * 2, 240f);
     }
 
     @Override
@@ -185,6 +193,7 @@ public final class TitleScreen implements Screen {
 
     @Override
     public void hide() {
+        context.toasts().remove();
     }
 
     @Override

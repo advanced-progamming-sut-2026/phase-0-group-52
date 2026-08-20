@@ -423,8 +423,20 @@ public final class UiKit implements Disposable {
         return box;
     }
 
-    public static float faceMargin(String styleName) {
+    private static float faceMarginTop(String styleName) {
+        return 0f;
+    }
+
+    private static float faceMarginBottom(String styleName) {
         return "info".equals(styleName) ? 3f : 0f;
+    }
+
+    public Table faceButton(String text, String styleName, Runnable onClick) {
+        Table holder = new Table();
+        holder.add(styledButton(text, styleName, onClick)).grow()
+                .padTop(-faceMarginTop(styleName))
+                .padBottom(-faceMarginBottom(styleName));
+        return holder;
     }
 
     public Table panel() {

@@ -165,8 +165,7 @@ public final class PlayerListPopup extends Popup {
     }
 
     private void action(Table bar, String text, String style, Runnable onClick) {
-        bar.add(ui.styledButton(text, style, onClick))
-                .height(Theme.BUTTON_HEIGHT + UiKit.faceMargin(style));
+        bar.add(ui.faceButton(text, style, onClick)).height(Theme.BUTTON_HEIGHT);
     }
 
     private void signIn() {
