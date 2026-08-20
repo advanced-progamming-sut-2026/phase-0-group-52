@@ -42,21 +42,11 @@ public final class MainMenuScreen extends BaseScreen {
         super(context, "");
         this.controller = new MainMenuController(context.app());
         this.chapters = new ChapterMenuController(context.app());
-        buildTopBar();
     }
 
     @Override
     protected boolean scrollContent() {
         return false;
-    }
-
-    private void buildTopBar() {
-        topBar().setBackAction(new Runnable() {
-            @Override
-            public void run() {
-                game().showTitle();
-            }
-        });
     }
 
     @Override

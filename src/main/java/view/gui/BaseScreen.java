@@ -11,7 +11,7 @@ import com.badlogic.gdx.utils.Scaling;
 import com.badlogic.gdx.utils.viewport.FitViewport;
 import util.Log;
 
-public abstract class BaseScreen implements Screen {
+public abstract class BaseScreen implements Screen, Navigator.Hosted {
     protected final GameContext context;
     protected final UiKit ui;
     protected final Stage stage;
@@ -56,6 +56,11 @@ public abstract class BaseScreen implements Screen {
 
     protected TopBar topBar() {
         return topBar;
+    }
+
+    @Override
+    public Stage uiStage() {
+        return stage;
     }
 
     public void refreshTopBar() {

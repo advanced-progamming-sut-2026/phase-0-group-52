@@ -35,7 +35,6 @@ public final class PlayerListPopup extends Popup {
             addHeaderIcon(Icons.LEADERBOARD, "Leaderboard", new Runnable() {
                 @Override
                 public void run() {
-                    close();
                     ((view.gui.PvzGame) com.badlogic.gdx.Gdx.app.getApplicationListener())
                             .showLeaderboard();
                 }
@@ -54,6 +53,11 @@ public final class PlayerListPopup extends Popup {
 
         selected = controller.signedIn();
         rebuild();
+    }
+
+    @Override
+    public Navigator.PopupKind kind() {
+        return Navigator.PopupKind.PLAYERS;
     }
 
     private void rebuild() {

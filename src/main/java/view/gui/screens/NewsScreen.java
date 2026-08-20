@@ -56,12 +56,6 @@ public final class NewsScreen extends BaseScreen {
                 markAllRead();
             }
         })).padRight(Theme.PAD);
-        actions.add(ui.secondaryButton("Back to main menu", new Runnable() {
-            @Override
-            public void run() {
-                controller.handleCommand(new String[]{"menu", "enter", "main"});
-            }
-        }));
         panel.add(actions).padTop(Theme.PAD).right();
 
         content.add(panel).width(760f).height(460f).center();

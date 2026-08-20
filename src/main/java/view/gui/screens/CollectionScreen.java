@@ -99,12 +99,6 @@ public final class CollectionScreen extends BaseScreen {
         header.add(plantsTab).width(120f).padRight(Theme.PAD_SMALL);
         header.add(zombiesTab).width(120f).padRight(Theme.PAD_LARGE);
         header.add(buildFilters()).left().expandX();
-        header.add(ui.secondaryButton("Back", new Runnable() {
-            @Override
-            public void run() {
-                controller.handleCommand("menu enter main");
-            }
-        })).right();
 
         markTabs();
         return header;

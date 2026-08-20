@@ -42,12 +42,6 @@ public final class ChoosePlantScreen extends BaseScreen {
                 refreshAll();
             }
         })).padRight(Theme.PAD_SMALL);
-        header.add(ui.secondaryButton("Back", new Runnable() {
-            @Override
-            public void run() {
-                controller.handleCommand("menu enter chapter_menu");
-            }
-        }));
         panel.add(header).growX().padBottom(Theme.PAD_SMALL).row();
 
         slotArea = new Table();

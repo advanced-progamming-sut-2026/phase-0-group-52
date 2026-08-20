@@ -23,7 +23,7 @@ import view.gui.Theme;
 import view.gui.Toasts;
 import view.gui.UiKit;
 
-public final class TitleScreen implements Screen {
+public final class TitleScreen implements Screen, view.gui.Navigator.Hosted {
     private final GameContext context;
     private final UiKit ui;
     private final Stage stage;
@@ -153,6 +153,11 @@ public final class TitleScreen implements Screen {
     }
 
     public Stage stageForCapture() {
+        return stage;
+    }
+
+    @Override
+    public Stage uiStage() {
         return stage;
     }
 

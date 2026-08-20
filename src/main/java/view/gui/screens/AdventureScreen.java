@@ -42,12 +42,6 @@ public final class AdventureScreen extends BaseScreen {
                 controller.handleCommand(new String[]{"menu", "enter", "travel_log_menu"});
             }
         })).padRight(Theme.PAD_SMALL);
-        header.add(ui.secondaryButton("Back", new Runnable() {
-            @Override
-            public void run() {
-                controller.handleCommand(new String[]{"menu", "enter", "main"});
-            }
-        })).right();
         panel.add(header).growX().padBottom(Theme.PAD).row();
 
         chapterArea = new Table();

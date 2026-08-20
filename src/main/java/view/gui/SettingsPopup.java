@@ -25,6 +25,11 @@ public final class SettingsPopup extends Popup {
         rebuild();
     }
 
+    @Override
+    public Navigator.PopupKind kind() {
+        return Navigator.PopupKind.SETTINGS;
+    }
+
     private void rebuild() {
         grid.clear();
         grid.top();

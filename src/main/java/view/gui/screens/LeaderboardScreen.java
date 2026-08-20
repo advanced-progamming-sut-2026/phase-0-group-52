@@ -36,12 +36,6 @@ public final class LeaderboardScreen extends BaseScreen {
 
         Table header = new Table();
         header.add(new Label("Rankings", ui.skin(), "title")).left().expandX();
-        header.add(ui.secondaryButton("Back", new Runnable() {
-            @Override
-            public void run() {
-                ((PvzGame) com.badlogic.gdx.Gdx.app.getApplicationListener()).resumeRouting();
-            }
-        })).right();
         panel.add(header).growX().padBottom(Theme.PAD).row();
 
         Table table = new Table();

@@ -26,10 +26,11 @@ public final class PvzGame extends Game {
     private Toasts toasts;
     private GameContext context;
     private MenuType displayed;
+    private MenuType unmapped;
 
-    private boolean routingSuspended;
     private boolean firstFrameLogged;
     private TitleScreen titleScreen;
+    private Navigator navigator;
 
     private final boolean runTour;
 
@@ -51,31 +52,56 @@ public final class PvzGame extends Game {
         toasts.listenToLog();
 
         context = new GameContext(App.getInstance(), ui, toasts, new GameContext.Settings());
+        navigator = new Navigator(this);
 
         if (runTour) {
-            syncToModel(true);
+            navigator.reset(MenuType.MAIN_MENU);
             startScreenTour();
             return;
         }
         showTitle();
     }
 
+    public Navigator navigator() {
+        return navigator;
+    }
+
     public void showTitle() {
-        routingSuspended = true;
+        navigator.goTitle();
+    }
+
+    void showTitleScreen() {
         if (titleScreen == null) {
             titleScreen = new TitleScreen(context, new Runnable() {
                 @Override
                 public void run() {
-                    enterGame();
+                    navigator.goMenu(MenuType.MAIN_MENU);
                 }
             });
         }
+        displayed = null;
         setScreen(titleScreen);
     }
 
-    private void enterGame() {
-        controller.Navigation.go(context.app(), MenuType.MAIN_MENU);
-        resumeRouting();
+    void showMenuScreen(MenuType target) {
+        controller.Navigation.go(context.app(), target);
+        Screen screen = screenFor(target);
+        if (screen == null) {
+            Log.warn("gui", "No screen for menu " + target);
+            return;
+        }
+        displayed = target;
+        setScreen(screen);
+    }
+
+    void showLeaderboardScreen() {
+        displayed = null;
+        setScreen(new LeaderboardScreen(context));
+    }
+
+    void showShopScreen() {
+        displayed = null;
+        setScreen(new ShopScreen(context));
     }
 
     @Override
@@ -85,9 +111,7 @@ public final class PvzGame extends Game {
             Log.info("gui", "First frame at "
                     + (System.currentTimeMillis() - DesktopLauncher.PROCESS_START) + " ms");
         }
-        if (!routingSuspended) {
-            syncToModel(false);
-        }
+        syncToModel(false);
         super.render();
 
         if (com.badlogic.gdx.Gdx.input.isKeyJustPressed(com.badlogic.gdx.Input.Keys.F11)) {
@@ -109,20 +133,23 @@ public final class PvzGame extends Game {
     private ScreenTour tour;
 
     private void syncToModel(boolean force) {
+        if (navigator == null || navigator.place() != Navigator.Place.MENU) {
+            return;
+        }
         MenuType target = context.app().getCurrentmenu();
-        if (target == null) {
-            target = MenuType.SIGNUP_MENU;
-        }
-        if (!force && target == displayed) {
+        if (target == null || (!force && target == displayed)) {
             return;
         }
-        Screen screen = screenFor(target);
-        if (screen == null) {
-            Log.warn("gui", "No screen for menu " + target + "; staying on " + displayed);
+        if (screenFor(target) == null) {
+            if (target != unmapped) {
+                unmapped = target;
+                Log.debug("gui", "Menu " + target + " has no screen; the GUI handles it in a popup");
+            }
             return;
         }
+        unmapped = null;
         displayed = target;
-        setScreen(screen);
+        navigator.modelChanged(target);
     }
 
     private Screen screenFor(MenuType type) {
@@ -151,22 +178,11 @@ public final class PvzGame extends Game {
     }
 
     public void showLeaderboard() {
-        pushDetached(new LeaderboardScreen(context));
+        navigator.goLeaderboard();
     }
 
     public void showShop() {
-        pushDetached(new ShopScreen(context));
-    }
-
-    public void pushDetached(Screen screen) {
-        routingSuspended = true;
-        setScreen(screen);
-    }
-
-    public void resumeRouting() {
-        routingSuspended = false;
-        displayed = null;
-        syncToModel(true);
+        navigator.goShop();
     }
 
     public GameContext context() {

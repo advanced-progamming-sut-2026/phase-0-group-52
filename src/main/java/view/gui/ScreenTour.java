@@ -58,6 +58,7 @@ final class ScreenTour {
     private void captureExtras() {
         finished = true;
         captureCheatBar();
+        captureBackNavigation();
         captureOverlays();
         captureTitleAndPopups();
         game.showLeaderboard();
@@ -80,6 +81,7 @@ final class ScreenTour {
                             @Override
                             public void run() {
                                 Screenshots.capture("screenshots/tour-13-shop.png");
+                                captureSignedOut();
                                 Log.info("tour", "Screen tour complete");
                                 Gdx.app.exit();
                             }
@@ -88,6 +90,39 @@ final class ScreenTour {
                 }).start();
             }
         });
+    }
+
+    private void captureSignedOut() {
+        new controller.menu.PlayerListController(game.context().app()).signOut();
+        game.navigator().goMenu(view.MenuType.COLLECTION_MENU);
+        pump(6);
+        Screenshots.capture("screenshots/tour-27-signed-out-topbar.png");
+    }
+
+    private void captureBackNavigation() {
+        Navigator nav = game.navigator();
+        nav.goTitle();
+        pump(4);
+
+        com.badlogic.gdx.Screen screen = game.getScreen();
+        if (screen instanceof Navigator.Hosted) {
+            new PlayerListPopup(game.context()).showOn(((Navigator.Hosted) screen).uiStage());
+        }
+        pump(4);
+
+        nav.goLeaderboard();
+        pump(4);
+        Screenshots.capture("screenshots/tour-25-leaderboard-from-popup.png");
+
+        nav.back();
+        pump(8);
+        Screenshots.capture("screenshots/tour-26-back-restores-popup.png");
+    }
+
+    private void pump(int frames) {
+        for (int i = 0; i < frames; i++) {
+            game.render();
+        }
     }
 
     private void captureCheatBar() {

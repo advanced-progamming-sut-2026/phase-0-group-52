@@ -16,7 +16,7 @@ public final class TopBar extends Table {
     public static final float BUTTON = 68f;
     private static final float WALLET_WIDTH = 196f;
     private static final float WALLET_HEIGHT = 40f;
-    private static final float WALLET_ICON = 60f;
+    private static final float WALLET_ICON = 69f;
     private static final float PLUS_ICON = 40f;
     private static final int COIN_COARSE = 500;
     private static final int COIN_FINE = 25;
@@ -29,12 +29,13 @@ public final class TopBar extends Table {
     private final Label gemLabel;
     private final Table leftSlots = new Table();
     private final Table rightSlots = new Table();
+    private final Table walletSlots = new Table();
     private final Table coinWallet;
     private final Table gemWallet;
     private final Table coinPlus = new Table();
     private final Table gemPlus = new Table();
 
-    private Runnable backAction;
+    private Boolean lastSignedIn;
     private int lastCoins = Integer.MIN_VALUE;
     private int lastGems = Integer.MIN_VALUE;
 
@@ -46,7 +47,6 @@ public final class TopBar extends Table {
         setBackground(ui.drawable("topBar"));
         pad(Theme.PAD_SMALL, Theme.PAD, Theme.PAD_SMALL, Theme.PAD);
 
-        buildButtons();
         add(leftSlots).left();
 
         Label title = new Label(screenTitle == null ? "" : screenTitle, ui.skin(), "titleOnDark");
@@ -58,14 +58,24 @@ public final class TopBar extends Table {
         coinWallet = wallet(coinPlus, "coinIcon", coinLabel, COIN_COARSE, COIN_FINE, "coin");
         gemWallet = wallet(gemPlus, "gemIcon", gemLabel, GEM_COARSE, GEM_FINE, "diamond");
 
-        add(coinWallet).right().padRight(WALLET_ICON * 0.45f);
-        add(gemWallet).right().padRight(Theme.PAD_LARGE);
+        add(walletSlots).right().padRight(Theme.PAD_LARGE);
         add(rightSlots).right();
 
         refresh();
     }
 
-    private void buildButtons() {
+    private void layoutSlots(boolean signedIn) {
+        leftSlots.clearChildren();
+        rightSlots.clearChildren();
+        walletSlots.clearChildren();
+        buildButtons(signedIn);
+        if (signedIn) {
+            walletSlots.add(coinWallet).padRight(WALLET_ICON * 0.45f);
+            walletSlots.add(gemWallet);
+        }
+    }
+
+    private void buildButtons(boolean signedIn) {
         addLeftButton(Icons.BACK, "Back", Theme.GREEN, new Runnable() {
             @Override
             public void run() {
@@ -78,19 +88,19 @@ public final class TopBar extends Table {
                 openPopup(new SettingsPopup(context));
             }
         });
-        if (section != Section.ALMANAC) {
+        if (signedIn && section != Section.ALMANAC) {
             addLeftButton(Icons.ALMANAC, "Almanac", Theme.BLUE, new Runnable() {
                 @Override
                 public void run() {
-                    enter("collection_menu");
+                    game().navigator().goMenu(view.MenuType.COLLECTION_MENU);
                 }
             });
         }
-        if (section != Section.NEWS) {
+        if (signedIn && section != Section.NEWS) {
             addRightButton(Icons.NEWS, "News", Theme.SUN_DEEP, new Runnable() {
                 @Override
                 public void run() {
-                    enter("news");
+                    game().navigator().goMenu(view.MenuType.NEWS_MENU);
                 }
             });
         }
@@ -102,22 +112,12 @@ public final class TopBar extends Table {
         });
     }
 
-    public TopBar setBackAction(Runnable action) {
-        this.backAction = action;
-        return this;
-    }
-
     private void goBack() {
-        if (backAction != null) {
-            backAction.run();
-            return;
-        }
-        enter("main");
+        game().navigator().back();
     }
 
-    private void enter(String menuName) {
-        new ChapterMenuController(context.app())
-                .handleCommand(new String[]{"menu", "enter", menuName});
+    private PvzGame game() {
+        return (PvzGame) com.badlogic.gdx.Gdx.app.getApplicationListener();
     }
 
     private void openPopup(Popup popup) {
@@ -199,6 +199,11 @@ public final class TopBar extends Table {
         applyCheatFace();
 
         User user = context.user();
+        boolean signedIn = user != null;
+        if (lastSignedIn == null || lastSignedIn != signedIn) {
+            lastSignedIn = signedIn;
+            layoutSlots(signedIn);
+        }
         int coins = (user == null) ? 0 : user.getCoins();
         int gems = (user == null) ? 0 : user.getGems();
 
