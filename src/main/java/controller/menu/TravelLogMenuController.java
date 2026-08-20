@@ -40,6 +40,15 @@ public class TravelLogMenuController {
         return new controller.QuestService().claim(def);
     }
 
+    public boolean pinQuest(String questName) {
+        QuestDef def = findDef(questName);
+        if (def == null) {
+            System.out.println("Error: Unknown quest: " + questName);
+            return false;
+        }
+        return new controller.QuestService().togglePin(def);
+    }
+
     public boolean completeQuest(String questName) {
         QuestDef def = findDef(questName);
         if (def == null) {

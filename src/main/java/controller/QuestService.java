@@ -35,6 +35,22 @@ public class QuestService {
         return false;
     }
 
+    public boolean togglePin(QuestDef def) {
+        User user = App.getInstance().getLoggedInUser();
+        if (user == null || user.getUsername() == null || def == null) {
+            return false;
+        }
+        QuestState state = questRepo.load(user.getUsername());
+        for (QuestProgress qp : state.getQuests()) {
+            if (qp.getDef() == def) {
+                qp.setPinned(!qp.isPinned());
+                questRepo.save(state);
+                return true;
+            }
+        }
+        return false;
+    }
+
     public boolean forceComplete(QuestDef def) {
         User user = App.getInstance().getLoggedInUser();
         if (user == null || user.getUsername() == null || def == null) {

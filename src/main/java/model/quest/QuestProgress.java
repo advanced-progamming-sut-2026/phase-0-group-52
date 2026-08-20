@@ -7,6 +7,7 @@ public class QuestProgress {
     private int target;
     private boolean completed;
     private boolean claimed;
+    private boolean pinned;
     private int varInt;
     private String varStr;
 
@@ -38,4 +39,7 @@ public class QuestProgress {
 
     public String getVarStr() { return varStr; }
     public void setVarStr(String varStr) { this.varStr = varStr; }
+
+    public boolean isPinned() { return pinned; }
+    public void setPinned(boolean pinned) { this.pinned = pinned; }
 }
