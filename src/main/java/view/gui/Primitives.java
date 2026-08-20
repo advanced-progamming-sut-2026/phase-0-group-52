@@ -85,6 +85,41 @@ public final class Primitives implements Disposable {
         return new NinePatch(new TextureRegion(cached), edge + 1, edge + 1, edge + 1, edge + 1);
     }
 
+    public Drawable roundedTop(int radius, Color fill, Color border, int borderWidth) {
+        int edge = Math.max(radius, (border == null) ? 0 : borderWidth);
+        int size = edge * 2 + 3;
+        String key = "topPatch:" + size + ":" + radius + ":" + fill + ":" + border
+                + ":" + borderWidth;
+        Texture cached = cache.get(key);
+        if (cached == null) {
+            Pixmap pixmap = new Pixmap(size, size, Pixmap.Format.RGBA8888);
+            pixmap.setBlending(Pixmap.Blending.None);
+            pixmap.setColor(0f, 0f, 0f, 0f);
+            pixmap.fill();
+            if (border != null && borderWidth > 0) {
+                drawRoundedRect(pixmap, 0, 0, size, size, radius, border);
+                drawRoundedRect(pixmap, borderWidth, borderWidth,
+                        size - borderWidth * 2, size - borderWidth * 2,
+                        Math.max(0, radius - borderWidth), fill);
+            } else {
+                drawRoundedRect(pixmap, 0, 0, size, size, radius, fill);
+            }
+            int fillBits = Color.rgba8888(fill);
+            int borderBits = (border == null) ? fillBits : Color.rgba8888(border);
+            for (int y = size - edge - 1; y < size; y++) {
+                for (int x = 0; x < size; x++) {
+                    boolean side = borderWidth > 0
+                            && (x < borderWidth || x >= size - borderWidth);
+                    pixmap.drawPixel(x, y, side ? borderBits : fillBits);
+                }
+            }
+            cached = upload(pixmap);
+            cache.put(key, cached);
+        }
+        return new NinePatchDrawable(
+                new NinePatch(new TextureRegion(cached), edge + 1, edge + 1, edge + 1, 1));
+    }
+
     public Drawable rounded(int radius, Color fill, Color border, int borderWidth) {
         return new NinePatchDrawable(roundedPatch(radius, fill, border, borderWidth));
     }
