@@ -64,6 +64,7 @@ public final class Toasts extends Group {
         toast.pack();
 
         addActor(toast);
+        toFront();
         live.addLast(toast);
         while (live.size() > MAX_VISIBLE) {
             Table oldest = live.pollFirst();
