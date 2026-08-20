@@ -18,9 +18,10 @@ public final class AccountFormPopup extends Popup {
     public enum Mode { REGISTER, SIGN_IN, PROFILE }
 
     private static final int SIGN_IN_FORM = 0;
-    private static final int RECOVER_IDENTITY = 1;
+    static final int RECOVER_IDENTITY = 1;
     private static final int RECOVER_ANSWER = 2;
     private static final int RECOVER_PASSWORD = 3;
+    private static final int RECOVERY_STEPS = 3;
 
     private String questionPrompt = "Answer your security question.";
 
@@ -117,13 +118,13 @@ public final class AccountFormPopup extends Popup {
         row(form, "Password", password);
 
         body().add(form).growX().row();
-        footer().add(ui.button("Sign in", new Runnable() {
+        footer().add(ui.faceButton("Sign in", "primary", new Runnable() {
             @Override
             public void run() {
                 submitSignIn();
             }
         })).height(Theme.BUTTON_HEIGHT).width(240f).padRight(Theme.PAD);
-        footer().add(ui.secondaryButton("Forgot password", new Runnable() {
+        footer().add(ui.faceButton("Forgot password", "secondary", new Runnable() {
             @Override
             public void run() {
                 swap(RECOVER_IDENTITY);
@@ -131,7 +132,7 @@ public final class AccountFormPopup extends Popup {
         })).height(Theme.BUTTON_HEIGHT).width(240f);
     }
 
-    private void swap(int stage) {
+    void swap(int stage) {
         body().clear();
         footer().clear();
         if (stage == RECOVER_IDENTITY) {
@@ -141,6 +142,7 @@ public final class AccountFormPopup extends Popup {
         } else if (stage == RECOVER_PASSWORD) {
             buildRecoverPassword();
         } else {
+            setTitle("Sign in");
             buildSignIn();
         }
         Animations.enter(body());
@@ -148,31 +150,28 @@ public final class AccountFormPopup extends Popup {
 
     private void buildRecoverIdentity() {
         Table form = new Table();
-        form.defaults().pad(3f).left();
+        form.defaults().pad(4f).left();
         username = new TextField(target == null ? "" : target.getUsername(), ui.skin());
         recoveryEmail = new TextField("", ui.skin());
         row(form, "Username", username);
         row(form, "Email", recoveryEmail);
 
-        body().add(hint("Give the email this account was registered with.")).row();
-        body().add(form).growX().row();
-        recoveryButtons(new Runnable() {
-            @Override
-            public void run() {
-                submitIdentity();
-            }
-        });
+        recoveryPage(1, "Tell us which account to reset. "
+                + "The email must match the one it was registered with.", form, new Runnable() {
+                    @Override
+                    public void run() {
+                        submitIdentity();
+                    }
+                });
     }
 
     private void buildRecoverAnswer() {
         Table form = new Table();
-        form.defaults().pad(3f).left();
+        form.defaults().pad(4f).left();
         recoveryAnswer = new TextField("", ui.skin());
         row(form, "Answer", recoveryAnswer);
 
-        body().add(hint(questionPrompt)).row();
-        body().add(form).growX().row();
-        recoveryButtons(new Runnable() {
+        recoveryPage(2, questionPrompt, form, new Runnable() {
             @Override
             public void run() {
                 submitAnswer();
@@ -182,19 +181,51 @@ public final class AccountFormPopup extends Popup {
 
     private void buildRecoverPassword() {
         Table form = new Table();
-        form.defaults().pad(3f).left();
+        form.defaults().pad(4f).left();
         newPassword = passwordField();
         row(form, "New password", newPassword);
 
-        body().add(hint("Pick a new password with 8+ characters, "
-                + "upper and lower case, a digit and a symbol.")).row();
-        body().add(form).growX().row();
-        recoveryButtons(new Runnable() {
+        recoveryPage(3, "Pick a new password with 8 or more characters, "
+                + "upper and lower case, a digit and a symbol.", form, new Runnable() {
+                    @Override
+                    public void run() {
+                        submitNewPassword();
+                    }
+                });
+    }
+
+    private void recoveryPage(int step, String hintText, Table form, Runnable confirm) {
+        setTitle("Reset password");
+
+        Table page = new Table();
+        page.add(steps(step)).padBottom(Theme.PAD).row();
+        page.add(hint(hintText)).width(440f).padBottom(Theme.PAD_LARGE).row();
+        page.add(form);
+        body().add(page).expand().center();
+
+        footer().add(ui.faceButton("Continue", "primary", confirm))
+                .height(Theme.BUTTON_HEIGHT).width(240f).padRight(Theme.PAD);
+        footer().add(ui.faceButton("Back to sign in", "secondary", new Runnable() {
             @Override
             public void run() {
-                submitNewPassword();
+                swap(SIGN_IN_FORM);
             }
-        });
+        })).height(Theme.BUTTON_HEIGHT).width(240f);
+    }
+
+    private Table steps(int current) {
+        Table dots = new Table();
+        for (int i = 1; i <= RECOVERY_STEPS; i++) {
+            Table pip = new Table();
+            pip.setBackground(ui.primitives().rounded(7,
+                    i <= current ? Theme.GREEN : Theme.PANEL_SUNKEN,
+                    i <= current ? Theme.GREEN_DARK : Theme.OUTLINE_SOFT, 2));
+            dots.add(pip).size(i == current ? 16f : 12f).padRight(Theme.PAD_SMALL);
+        }
+        Label label = new Label("Step " + current + " of " + RECOVERY_STEPS,
+                ui.skin(), "muted");
+        dots.add(label).padLeft(Theme.PAD_SMALL);
+        return dots;
     }
 
     private Label hint(String text) {
@@ -202,17 +233,6 @@ public final class AccountFormPopup extends Popup {
         label.setWrap(true);
         label.setAlignment(Align.center);
         return label;
-    }
-
-    private void recoveryButtons(Runnable confirm) {
-        footer().add(ui.button("Continue", confirm))
-                .height(Theme.BUTTON_HEIGHT).width(240f).padRight(Theme.PAD);
-        footer().add(ui.secondaryButton("Back to sign in", new Runnable() {
-            @Override
-            public void run() {
-                swap(SIGN_IN_FORM);
-            }
-        })).height(Theme.BUTTON_HEIGHT).width(240f);
     }
 
     private void submitIdentity() {

@@ -17,6 +17,7 @@ public class Popup extends Table {
     private final Table header = new Table();
     private final Table headerSlots = new Table();
     private final ScrollPane scroll;
+    private final Label heading;
 
     public Popup(UiKit ui, String title, float width, float height) {
         this.ui = ui;
@@ -27,7 +28,7 @@ public class Popup extends Table {
         setBackground(ui.drawable("scrim"));
         center();
 
-        Label heading = new Label(title, ui.skin(), "hugeOnDark");
+        heading = new Label(title, ui.skin(), "hugeOnDark");
         heading.setAlignment(Align.center);
 
         header.add(headerSlots).left().uniformX();
@@ -61,6 +62,10 @@ public class Popup extends Table {
         });
     }
 
+    protected void setTitle(String title) {
+        heading.setText(title);
+    }
+
     protected Table body() {
         return body;
     }
@@ -71,7 +76,7 @@ public class Popup extends Table {
 
     protected Popup addHeaderIcon(Icons.Icon icon, String fallbackText, Runnable action) {
         headerSlots.add(ui.iconButton(icon, fallbackText, Theme.BLUE, action))
-                .size(52f).padRight(Theme.PAD_SMALL);
+                .size(64f).padRight(Theme.PAD_SMALL);
         return this;
     }
 
