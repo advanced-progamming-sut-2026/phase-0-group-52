@@ -50,6 +50,23 @@ public final class PamActor extends Widget {
         return this;
     }
 
+    public PamActor cycle(final String[] clips) {
+        if (ready && clips != null && clips.length > 0) {
+            playRandom(clips);
+        }
+        return this;
+    }
+
+    private void playRandom(final String[] clips) {
+        String next = clips[com.badlogic.gdx.math.MathUtils.random(clips.length - 1)];
+        play(next, false, new Runnable() {
+            @Override
+            public void run() {
+                playRandom(clips);
+            }
+        });
+    }
+
     public PamActor freeze() {
         looping = false;
         frozen = true;
