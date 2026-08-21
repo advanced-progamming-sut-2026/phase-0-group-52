@@ -23,6 +23,7 @@ import com.badlogic.gdx.utils.Scaling;
 import pvz.skin.PvzSkin;
 
 public final class UiKit implements Disposable {
+    private final Assets assets;
     private final Primitives primitives = new Primitives();
     private final Skin skin = new Skin();
     private Skin artSkin;
@@ -34,7 +35,8 @@ public final class UiKit implements Disposable {
     private BitmapFont fontButton;
     private BitmapFont fontTitleOutline;
 
-    public UiKit() {
+    public UiKit(Assets assets) {
+        this.assets = assets;
         long start = System.currentTimeMillis();
         artSkin = loadPvzSkin();
         buildFonts();
@@ -111,22 +113,13 @@ public final class UiKit implements Disposable {
     }
 
     private void loadIconFile(String name, String path) {
-        com.badlogic.gdx.files.FileHandle file = com.badlogic.gdx.Gdx.files.local(path);
-        if (!file.exists()) {
-            util.Log.debug("gui", "Missing icon file " + path);
+        com.badlogic.gdx.graphics.Texture texture = assets.texture(path);
+        if (texture == null) {
             return;
         }
-        try {
-            com.badlogic.gdx.graphics.Texture texture =
-                    new com.badlogic.gdx.graphics.Texture(file);
-            texture.setFilter(com.badlogic.gdx.graphics.Texture.TextureFilter.Linear,
-                    com.badlogic.gdx.graphics.Texture.TextureFilter.Linear);
-            skin.add(name, texture);
-            skin.add(name, new com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable(
-                    new TextureRegion(texture)), Drawable.class);
-        } catch (RuntimeException e) {
-            util.Log.warn("gui", "Could not read " + path + ": " + e.getMessage());
-        }
+        skin.add(name, texture);
+        skin.add(name, new com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable(
+                new TextureRegion(texture)), Drawable.class);
     }
 
     public Primitives primitives() {

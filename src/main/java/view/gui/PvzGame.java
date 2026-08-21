@@ -23,7 +23,7 @@ public final class PvzGame extends Game {
     private final Map<MenuType, Screen> screens = new HashMap<MenuType, Screen>();
 
     private UiKit ui;
-    private Pam pam;
+    private Assets assets;
     private Toasts toasts;
     private GameContext context;
     private MenuType displayed;
@@ -48,13 +48,13 @@ public final class PvzGame extends Game {
         Log.info("gui", "Window ready after "
                 + (System.currentTimeMillis() - DesktopLauncher.PROCESS_START) + " ms");
 
-        ui = new UiKit();
-        pam = new Pam();
+        assets = new Assets();
+        ui = new UiKit(assets);
         toasts = new Toasts(ui);
         toasts.listenToLog();
 
         context = new GameContext(App.getInstance(), ui, toasts,
-                new GameContext.Settings(App.getInstance()), pam);
+                new GameContext.Settings(App.getInstance()), assets);
         navigator = new Navigator(this);
 
         if (runTour) {
@@ -205,8 +205,8 @@ public final class PvzGame extends Game {
         if (ui != null) {
             ui.dispose();
         }
-        if (pam != null) {
-            pam.dispose();
+        if (assets != null) {
+            assets.dispose();
         }
         Log.info("gui", "Graphical shell stopped");
     }

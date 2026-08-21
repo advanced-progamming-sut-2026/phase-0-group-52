@@ -15,7 +15,7 @@ import model.quest.QuestCategory;
 import model.quest.QuestPriorities;
 import model.quest.QuestProgress;
 import model.quest.QuestText;
-import view.gui.Pam;
+import view.gui.Assets;
 import view.gui.Theme;
 import view.gui.UiKit;
 
@@ -41,14 +41,14 @@ public final class QuestCard extends Table {
     private static final Color DIM = new Color(0.55f, 0.55f, 0.58f, 1f);
 
     private final UiKit ui;
-    private final Pam pam;
+    private final Assets pam;
     private final QuestProgress quest;
     private PamActor meter;
     private boolean flourishing;
     private Actionable actionable;
     private com.badlogic.gdx.scenes.scene2d.Action hoverAction;
 
-    public QuestCard(UiKit ui, Pam pam, QuestProgress quest, Runnable onClaim) {
+    public QuestCard(UiKit ui, Assets pam, QuestProgress quest, Runnable onClaim) {
         this.ui = ui;
         this.pam = pam;
         this.quest = quest;
@@ -150,7 +150,7 @@ public final class QuestCard extends Table {
 
     private Table chilli() {
         Table holder = new Table();
-        meter = new PamActor(pam, Pam.DIFFICULTY_METER, chilliClip())
+        meter = new PamActor(pam, Assets.DIFFICULTY_METER, chilliClip())
                 .setFit(true)
                 .setExtent(PEPPER_X, PEPPER_Y, PEPPER_W, PEPPER_H)
                 .setClipped(true)

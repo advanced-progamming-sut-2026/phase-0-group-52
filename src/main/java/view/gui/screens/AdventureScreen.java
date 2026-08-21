@@ -78,7 +78,7 @@ public final class AdventureScreen extends BaseScreen {
         card.add(ui.token(38, unlocked ? accent : Theme.LOCKED)).size(38f).padRight(Theme.PAD);
 
         Table text = new Table();
-        Label name = new Label(pretty(chapter.name()), ui.skin(), "default");
+        Label name = new Label(chapter.getDisplayName(), ui.skin(), "default");
         text.add(name).left().row();
         text.add(new Label(unlocked
                 ? clearedInChapter(chapter) + " / " + LEVELS_PER_CHAPTER + " levels"
@@ -114,7 +114,7 @@ public final class AdventureScreen extends BaseScreen {
         Table box = ui.sunken();
         box.top().left();
 
-        Label heading = new Label(pretty(openChapter.name()), ui.skin(), "title");
+        Label heading = new Label(openChapter.getDisplayName(), ui.skin(), "title");
         box.add(heading).left().colspan(LEVELS_PER_CHAPTER).padBottom(Theme.PAD_SMALL).row();
 
         int cleared = clearedInChapter(openChapter);
@@ -183,7 +183,7 @@ public final class AdventureScreen extends BaseScreen {
     private boolean isChapterUnlocked(ChapterType chapter) {
         User user = context.user();
         if (user == null) {
-            return chapter == ChapterType.values()[0];
+            return chapter == ChapterType.first();
         }
         return chapter.ordinal() < Math.max(1, user.getLastChapter());
     }
@@ -195,7 +195,7 @@ public final class AdventureScreen extends BaseScreen {
         }
         int reachedChapter = Math.max(1, user.getLastChapter());
         int reachedLevel = Math.max(1, user.getLastLevel());
-        int index = chapter.ordinal() + 1;
+        int index = chapter.number();
         if (index < reachedChapter) {
             return LEVELS_PER_CHAPTER;
         }
@@ -205,15 +205,4 @@ public final class AdventureScreen extends BaseScreen {
         return Math.min(LEVELS_PER_CHAPTER, reachedLevel - 1);
     }
 
-    private String pretty(String enumName) {
-        String[] words = enumName.toLowerCase().split("_");
-        StringBuilder out = new StringBuilder();
-        for (String word : words) {
-            if (out.length() > 0) {
-                out.append(' ');
-            }
-            out.append(Character.toUpperCase(word.charAt(0))).append(word.substring(1));
-        }
-        return out.toString();
-    }
 }

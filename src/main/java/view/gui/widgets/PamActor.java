@@ -5,10 +5,10 @@ import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.scenes.scene2d.Touchable;
 import com.badlogic.gdx.scenes.scene2d.ui.Widget;
-import view.gui.Pam;
+import view.gui.Assets;
 
 public final class PamActor extends Widget {
-    private final Pam pam;
+    private final Assets pam;
     private final String path;
     private final boolean ready;
     private Rectangle extent;
@@ -23,7 +23,7 @@ public final class PamActor extends Widget {
     private float coverage = 1f;
     private Runnable onFinished;
 
-    public PamActor(Pam pam, String path, String clipName) {
+    public PamActor(Assets pam, String path, String clipName) {
         this.pam = pam;
         this.path = path;
         this.ready = pam != null && pam.load(path);
