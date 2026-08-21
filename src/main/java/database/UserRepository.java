@@ -1,6 +1,7 @@
 package database;
 
 import model.User;
+import util.Json;
 
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
