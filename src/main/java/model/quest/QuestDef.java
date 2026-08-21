@@ -92,4 +92,10 @@ public enum QuestDef {
     public String getIconName() { return iconName; }
 
     public boolean isDaily() { return category == DAILY; }
+
+    public boolean isTracked() {
+        return this == DAILY_SUN || this == CHAPTER_HUNTER || this == CHAPTER_HUNTER_ICEAGE
+                || this == CHAPTER_HUNTER_BEACH || this == CHAPTER_HUNTER_DARK
+                || this == WIN_STREAK || this == ALMOST_WON || this == MOWER_TIME;
+    }
 }

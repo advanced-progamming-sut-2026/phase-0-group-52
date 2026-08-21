@@ -36,12 +36,6 @@ public final class AdventureScreen extends BaseScreen {
 
         Table header = new Table();
         header.add(new Label("Chapters", ui.skin(), "title")).left().expandX();
-        header.add(ui.styledButton("Quests", "info", new Runnable() {
-            @Override
-            public void run() {
-                controller.handleCommand(new String[]{"menu", "enter", "travel_log_menu"});
-            }
-        })).padRight(Theme.PAD_SMALL);
         panel.add(header).growX().padBottom(Theme.PAD).row();
 
         chapterArea = new Table();

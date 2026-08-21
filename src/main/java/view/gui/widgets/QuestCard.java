@@ -25,16 +25,21 @@ public final class QuestCard extends Table {
         boolean isActionable();
     }
 
-    private static final float BAR_HEIGHT = 57f;
+    private static final float BAR_HEIGHT = 66f;
     private static final float ICON = 42f;
     private static final float PEPPER_X = -64f;
     private static final float PEPPER_Y = -30.9f;
     private static final float PEPPER_W = 104f;
     private static final float PEPPER_H = 176f;
+    private static final float PIN_SIZE = 22f;
     private static final float CHILLI_WIDTH = 38f;
     private static final float CHILLI_HEIGHT = 50f;
     private static final float REWARD_ICON = 46f;
     private static final float TRACK_HEIGHT = 14f;
+    private static final float FULL_TRACK = 260f;
+    private static final float FULL_NAME = 180f;
+    private static final float COMPACT_NAME = 84f;
+    private static final float COMPACT_TRACK = 84f;
     private static final int COIN_PLURAL_FROM = 200;
     private static final int GEM_PLURAL_FROM = 50;
 
@@ -43,18 +48,28 @@ public final class QuestCard extends Table {
     private final UiKit ui;
     private final Assets pam;
     private final QuestProgress quest;
+    private boolean compact;
+    private Runnable onPin;
     private PamActor meter;
     private boolean flourishing;
     private Actionable actionable;
     private com.badlogic.gdx.scenes.scene2d.Action hoverAction;
 
     public QuestCard(UiKit ui, Assets pam, QuestProgress quest, Runnable onClaim) {
+        this(ui, pam, quest, false, onClaim, null);
+    }
+
+    public QuestCard(UiKit ui, Assets pam, QuestProgress quest, boolean compact,
+            Runnable onClaim, Runnable onPin) {
         this.ui = ui;
         this.pam = pam;
         this.quest = quest;
+        this.compact = compact;
+        this.onPin = onPin;
 
         setTransform(true);
-        Drawable face = ui.ninePatchFile(panelPath(), (int) BAR_HEIGHT, 12, 14, 14);
+        Drawable face = ui.ninePatchFile(panelPath(), (int) barHeight(),
+                compact ? 6 : 12, compact ? 7 : 14, compact ? 7 : 14);
         if (face != null) {
             setBackground(face);
         } else {
@@ -63,9 +78,22 @@ public final class QuestCard extends Table {
         }
 
         pad(0f, Theme.PAD_SMALL, Theme.PAD_SMALL, Theme.PAD_SMALL);
-        add(headerRow()).growX().height(BAR_HEIGHT).row();
+        add(headerRow()).growX().height(barHeight()).row();
         add(body()).grow().padLeft(Theme.PAD).padRight(Theme.PAD).padTop(2f);
 
+        attachHover();
+
+        swallowTouches();
+
+        if (claimable()) {
+            attract();
+            UiKit.onClick(this, onClaim);
+        } else if (quest.isClaimed()) {
+            setColor(DIM);
+        }
+    }
+
+    private void attachHover() {
         addListener(new com.badlogic.gdx.scenes.scene2d.InputListener() {
             @Override
             public void enter(com.badlogic.gdx.scenes.scene2d.InputEvent event, float x, float y,
@@ -87,12 +115,17 @@ public final class QuestCard extends Table {
                 }
             }
         });
+    }
 
-        if (claimable()) {
-            attract();
-            UiKit.onClick(this, onClaim);
-        } else if (quest.isClaimed()) {
-            setColor(DIM);
+    private void swallowTouches() {
+        if (compact) {
+            addListener(new com.badlogic.gdx.scenes.scene2d.InputListener() {
+                @Override
+                public boolean touchDown(com.badlogic.gdx.scenes.scene2d.InputEvent event,
+                        float x, float y, int pointer, int button) {
+                    return true;
+                }
+            });
         }
     }
 
@@ -114,7 +147,17 @@ public final class QuestCard extends Table {
     }
 
     private String panelPath() {
-        return "assets/ui/quest_panel_" + quest.getDef().getCategory().name().toLowerCase() + ".png";
+        return "assets/ui/quest_panel_"
+                + quest.getDef().getCategory().name().toLowerCase()
+                + (compact ? "_small" : "") + ".png";
+    }
+
+    private float barHeight() {
+        return compact ? BAR_HEIGHT / 2f : BAR_HEIGHT;
+    }
+
+    private float half(float full) {
+        return compact ? full / 2f : full;
     }
 
     private void attract() {
@@ -137,15 +180,51 @@ public final class QuestCard extends Table {
         if (icon != null) {
             Image art = new Image(new com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable(icon));
             art.setScaling(Scaling.fit);
-            row.add(art).size(ICON).padRight(Theme.PAD_SMALL);
+            row.add(art).size(half(ICON)).padRight(compact ? 3f : Theme.PAD_SMALL);
         }
 
-        Label name = new Label(quest.getDef().getDisplayName(), ui.skin(), "titleOnDark");
+        Label name = new Label(quest.getDef().getDisplayName(), ui.skin(),
+                compact ? "smallOnDark" : "titleOnDark");
         name.setEllipsis(true);
-        row.add(name).growX().minWidth(0f).left().padTop(UiKit.opticalPad(name));
+        row.add(name).growX().minWidth(0f).prefWidth(compact ? COMPACT_NAME : FULL_NAME)
+                .left().padTop(UiKit.opticalPad(name));
 
-        row.add(chilli()).size(CHILLI_WIDTH, CHILLI_HEIGHT);
+        if (!compact && onPin != null) {
+            row.add(pinToggle()).size(half(PIN_SIZE)).padRight(4f);
+        }
+        row.add(chilli()).size(half(CHILLI_WIDTH), half(CHILLI_HEIGHT));
         return row;
+    }
+
+    private Table pinToggle() {
+        Table holder = new Table();
+        Image dot = ui.token((int) PIN_SIZE,
+                quest.isPinned() ? Theme.SUN : Theme.alpha(Theme.TEXT_ON_DARK, 0.45f));
+        holder.add(dot).size(PIN_SIZE);
+        view.gui.Animations.attachPress(holder);
+        holder.addListener(new com.badlogic.gdx.scenes.scene2d.InputListener() {
+            @Override
+            public boolean touchDown(com.badlogic.gdx.scenes.scene2d.InputEvent event,
+                    float x, float y, int pointer, int button) {
+                event.stop();
+                return true;
+            }
+
+            @Override
+            public void touchUp(com.badlogic.gdx.scenes.scene2d.InputEvent event, float x,
+                    float y, int pointer, int button) {
+                event.stop();
+                if (onPin != null && x >= 0 && y >= 0
+                        && x <= holderWidth() && y <= holderWidth()) {
+                    onPin.run();
+                }
+            }
+        });
+        return holder;
+    }
+
+    private float holderWidth() {
+        return half(PIN_SIZE);
     }
 
     private Table chilli() {
@@ -190,20 +269,35 @@ public final class QuestCard extends Table {
     private Table body() {
         Table body = new Table();
         body.top().left();
-        body.add(headline()).left().padTop(Theme.PAD_SMALL).row();
+        if (!compact) {
+            body.add(headline()).left().padTop(Theme.PAD_SMALL).row();
 
-        Label desc = new Label(QuestText.describe(quest), ui.skin(), "default");
-        desc.setWrap(true);
-        body.add(desc).growX().minWidth(0f).left().padTop(2f).row();
+            Label desc = new Label(QuestText.describe(quest), ui.skin(), "default");
+            desc.setWrap(true);
+            body.add(desc).growX().minWidth(0f).left().padTop(2f).row();
+        }
 
         body.add(new Table()).grow().row();
-
+        if (compact) {
+            body.add(footer()).growX().left().padTop(2f).padBottom(2f);
+            return body;
+        }
         body.add(rewardRow()).left().padTop(Theme.PAD_SMALL).row();
-
-        if (quest.getTarget() > 1) {
+        if (tracked()) {
             body.add(progressRow()).growX().left().padTop(2f).padBottom(2f);
         }
         return body;
+    }
+
+    private Table footer() {
+        Table row = new Table();
+        row.left();
+        if (tracked()) {
+            row.add(progressRow()).left().padRight(Theme.PAD_SMALL);
+        }
+        row.add(new Table()).growX();
+        row.add(rewardRow()).right();
+        return row;
     }
 
     private Table headline() {
@@ -262,13 +356,14 @@ public final class QuestCard extends Table {
     private Table rewardRow() {
         Table row = new Table();
         row.left();
-        Label caption = new Label("Reward:", ui.skin(), "muted");
+        Label caption = new Label("Reward:", ui.skin(), compact ? "small" : "muted");
         row.add(caption).padRight(Theme.PAD_SMALL).padTop(UiKit.opticalPad(caption));
 
         int amount = new model.quest.RewardService().amountFor(quest);
         String region = rewardRegion(amount);
         if (quest.getDef().getRewardType() != model.quest.RewardType.PLANT_UNLOCK) {
-            Label value = new Label(String.valueOf(amount), ui.skin(), "rowValue");
+            Label value = new Label(String.valueOf(amount), ui.skin(),
+                    compact ? "small" : "rowValue");
             row.add(value).padRight(4f).padTop(UiKit.opticalPad(value));
         }
         if (region == null) {
@@ -276,7 +371,7 @@ public final class QuestCard extends Table {
             if (single != null) {
                 Image icon = new Image(single);
                 icon.setScaling(Scaling.fit);
-                row.add(icon).size(REWARD_ICON);
+                row.add(icon).size(half(REWARD_ICON));
                 return row;
             }
         }
@@ -284,7 +379,7 @@ public final class QuestCard extends Table {
         if (art != null) {
             Image icon = new Image(new com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable(art));
             icon.setScaling(Scaling.fit);
-            row.add(icon).size(REWARD_ICON);
+            row.add(icon).size(half(REWARD_ICON));
         } else {
             row.add(new Label(quest.getDef().getRewardType().name().toLowerCase(),
                     ui.skin(), "muted"));
@@ -313,6 +408,14 @@ public final class QuestCard extends Table {
         return "coinIcon";
     }
 
+    private float trackWidth() {
+        return compact ? COMPACT_TRACK : FULL_TRACK;
+    }
+
+    private boolean tracked() {
+        return quest.getDef().isTracked() && quest.getTarget() > 1;
+    }
+
     private Table progressRow() {
         int done = (int) Math.min(quest.getProgress(), quest.getTarget());
         float ratio = quest.getTarget() <= 0 ? 0f : (float) done / quest.getTarget();
@@ -321,15 +424,19 @@ public final class QuestCard extends Table {
         track.setBackground(ui.primitives().rounded((int) (TRACK_HEIGHT / 2f),
                 Theme.darken(Theme.PANEL_SUNKEN, 0.45f), Theme.darken(Theme.OUTLINE, 0.2f), 2));
         track.left();
-        Table fill = new Table();
-        fill.setBackground(ui.primitives().rounded((int) (TRACK_HEIGHT / 2f),
-                Theme.GREEN, Theme.GREEN_DARK, 2));
-        track.add(fill).growY().width(Math.max(2f, 260f * ratio)).left();
+        float filled = trackWidth() * ratio;
+        if (filled >= TRACK_HEIGHT) {
+            Table fill = new Table();
+            fill.setBackground(ui.primitives().rounded((int) (TRACK_HEIGHT / 2f),
+                    Theme.GREEN, Theme.GREEN_DARK, 2));
+            track.add(fill).growY().width(filled).left();
+        }
 
         Table row = new Table();
         row.left();
-        row.add(track).width(260f).height(TRACK_HEIGHT);
-        Label count = new Label(done + "/" + quest.getTarget(), ui.skin(), "muted");
+        row.add(track).width(trackWidth()).height(half(TRACK_HEIGHT));
+        Label count = new Label(done + "/" + quest.getTarget(), ui.skin(),
+                compact ? "small" : "muted");
         row.add(count).padLeft(Theme.PAD_SMALL).padTop(UiKit.opticalPad(count));
         return row;
     }

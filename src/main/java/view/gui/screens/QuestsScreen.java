@@ -176,7 +176,6 @@ public final class QuestsScreen extends BaseScreen {
         stack.add(sortControl()).right().row();
 
         CheckBox box = ui.checkBox("Hide finished");
-        box.getLabel().setColor(Theme.TEXT);
         box.setChecked(hideFinished);
         UiKit.onClick(box, new Runnable() {
             @Override
@@ -252,12 +251,19 @@ public final class QuestsScreen extends BaseScreen {
     }
 
     private QuestCard card(final QuestProgress quest) {
-        final QuestCard card = new QuestCard(ui, context.assets(), quest, new Runnable() {
-            @Override
-            public void run() {
-                claim(quest);
-            }
-        });
+        final QuestCard card = new QuestCard(ui, context.assets(), quest, false,
+                new Runnable() {
+                    @Override
+                    public void run() {
+                        claim(quest);
+                    }
+                },
+                new Runnable() {
+                    @Override
+                    public void run() {
+                        pin(quest);
+                    }
+                });
         if (!card.claimable()) {
             UiKit.onClick(card, new Runnable() {
                 @Override
@@ -275,6 +281,11 @@ public final class QuestsScreen extends BaseScreen {
             }
         });
         return card;
+    }
+
+    private void pin(QuestProgress quest) {
+        controller.pinQuest(quest.getDef().name());
+        rebuild();
     }
 
     private void claim(QuestProgress quest) {
@@ -325,6 +336,9 @@ public final class QuestsScreen extends BaseScreen {
         return new Comparator<QuestProgress>() {
             @Override
             public int compare(QuestProgress a, QuestProgress b) {
+                if (a.isPinned() != b.isPinned()) {
+                    return a.isPinned() ? -1 : 1;
+                }
                 if (a.isClaimed() != b.isClaimed()) {
                     return a.isClaimed() ? 1 : -1;
                 }

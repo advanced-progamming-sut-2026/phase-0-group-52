@@ -26,6 +26,7 @@ import view.gui.UiKit;
 import view.gui.Assets;
 import view.gui.widgets.Carousel;
 import view.gui.widgets.PamActor;
+import view.gui.widgets.QuestCard;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -38,6 +39,19 @@ public final class MainMenuScreen extends BaseScreen {
     private static final float LOGO_HEIGHT = 68f;
     private static final float LOGO_OVERHANG = 26f;
     private static final float PANEL_INSET = 12f;
+    private static final float QUEST_CARD_HEIGHT = 66f;
+    private static final int MAX_PANEL_QUESTS = 6;
+    private static final float ADVENTURE_WIDTH = 624f;
+    private static final float QUEST_PANEL_WIDTH = 300f;
+    private static final float GREENHOUSE_WIDTH = 252f;
+    private static final float GREENHOUSE_HEIGHT = 160f;
+    private static final float BEE_SIZE = 62f;
+    private static final float BEE_EXTENT = 300f;
+    private static final float SHOP_DIM = 0.45f;
+    private static final String[] BEE_CLIPS = {
+            "idle", "idle", "idle", "idle", "idle", "idle", "idle", "idle",
+            "idle", "idle", "idle", "idle", "idle", "idle", "idle", "idle",
+            "action3", "action3", "action1", "action2"};
     private static final float VEIL_DELAY = 0.35f;
     private static final float VEIL_FADE = 0.45f;
     private static final String[] MINIGAMES = {
@@ -80,7 +94,7 @@ public final class MainMenuScreen extends BaseScreen {
         Table columns = new Table();
         columns.defaults().pad(Theme.PAD_SMALL).space(Theme.PAD_SMALL);
 
-        columns.add(adventurePanel()).grow().prefWidth(560f).minWidth(360f);
+        columns.add(adventurePanel()).growY().width(ADVENTURE_WIDTH);
 
         Table right = new Table();
         right.defaults().growX().space(Theme.PAD_SMALL);
@@ -245,23 +259,24 @@ public final class MainMenuScreen extends BaseScreen {
         Table row = new Table();
         row.defaults().space(Theme.PAD_SMALL);
 
-        row.add(questPanel()).grow();
+        row.add(questPanel()).grow().minWidth(QUEST_PANEL_WIDTH);
 
         Table side = new Table();
-        side.defaults().growX().grow().space(Theme.PAD_SMALL);
-        side.add(bigButton("Greenhouse", Theme.plantFamily("SUN_PRODUCER"), new Runnable() {
+        side.top();
+        side.defaults().space(Theme.PAD_SMALL);
+        side.add(greenhouseButton(new Runnable() {
             @Override
             public void run() {
                 controller.handleCommand(new String[]{"menu", "enter", "greenhouse_menu"});
             }
-        })).row();
-        side.add(bigButton("Shop", Theme.COIN, new Runnable() {
+        })).size(GREENHOUSE_WIDTH, GREENHOUSE_HEIGHT).row();
+        side.add(shopButton(new Runnable() {
             @Override
             public void run() {
                 game().showShop();
             }
-        }));
-        row.add(side).width(210f).growY();
+        })).size(GREENHOUSE_WIDTH, GREENHOUSE_HEIGHT);
+        row.add(side).width(GREENHOUSE_WIDTH).growY();
         return row;
     }
 
@@ -269,16 +284,38 @@ public final class MainMenuScreen extends BaseScreen {
         Table panel = ui.panel();
         panel.top();
 
-        Label heading = new Label("Quests", ui.skin(), "title");
-        panel.add(heading).left().padBottom(Theme.PAD_SMALL).row();
-
         questList = new Table();
         questList.top();
         ScrollPane scroll = new ScrollPane(questList, ui.skin());
-        scroll.setFadeScrollBars(false);
+        scroll.setStyle(ui.skin().get("bare", ScrollPane.ScrollPaneStyle.class));
         scroll.setScrollingDisabled(true, false);
         UiKit.focusOnHover(scroll);
-        panel.add(scroll).grow();
+
+        Table front = new Table();
+        front.top();
+        front.pad(Theme.PAD_SMALL);
+        front.add(new Label("Quests", ui.skin(), "titleOnDark")).left()
+                .padBottom(Theme.PAD_SMALL).row();
+        front.add(scroll).grow();
+
+        Stack layers = new Stack();
+        com.badlogic.gdx.scenes.scene2d.utils.Drawable art =
+                ui.imageFile("assets/backgrounds/quests.png");
+        if (art != null) {
+            Table backdrop = new Table();
+            backdrop.setBackground(art);
+            layers.add(backdrop);
+        }
+        layers.add(front);
+
+        panel.add(layers).grow().pad(-PANEL_INSET);
+        Animations.attachPress(panel);
+        UiKit.onClick(panel, new Runnable() {
+            @Override
+            public void run() {
+                controller.handleCommand(new String[]{"menu", "enter", "travel_log_menu"});
+            }
+        });
 
         rebuildQuests();
         return panel;
@@ -291,11 +328,12 @@ public final class MainMenuScreen extends BaseScreen {
 
         List<QuestProgress> quests = activeQuests();
         if (quests.isEmpty()) {
-            questList.add(new Label("No quests right now.", ui.skin(), "muted")).left();
+            questList.add(new Label("No quests right now.", ui.skin(), "onDark")).left();
             return;
         }
         for (QuestProgress quest : quests) {
-            questList.add(questRow(quest)).row();
+            questList.add(new QuestCard(ui, context.assets(), quest, true, null, null))
+                    .height(QUEST_CARD_HEIGHT).row();
         }
     }
 
@@ -309,68 +347,112 @@ public final class MainMenuScreen extends BaseScreen {
             return result;
         }
         for (QuestProgress quest : state.getQuests()) {
-            if (!quest.isClaimed()) {
+            if (!quest.isCompleted()) {
                 result.add(quest);
             }
         }
         Collections.sort(result, new Comparator<QuestProgress>() {
             @Override
             public int compare(QuestProgress a, QuestProgress b) {
-                return Integer.compare(
-                        b.getDef().getPriority().getPrioritynum(),
-                        a.getDef().getPriority().getPrioritynum());
+                if (a.isPinned() != b.isPinned()) {
+                    return a.isPinned() ? -1 : 1;
+                }
+                return Double.compare(ratio(b), ratio(a));
             }
         });
-        return result.subList(0, Math.min(result.size(), 6));
+        return result.subList(0, Math.min(result.size(), MAX_PANEL_QUESTS));
     }
 
-    private Table questRow(final QuestProgress quest) {
-        Table row = ui.sunken();
-        row.left();
+    private static double ratio(QuestProgress quest) {
+        return quest.getTarget() <= 0 ? 0d : quest.getProgress() / quest.getTarget();
+    }
 
-        Table text = new Table();
-        text.left();
-        text.add(new Label(quest.getDef().getDisplayName(), ui.skin(), "default")).left().row();
-        text.add(new Label(quest.getDef().getRewardAmount() + " "
-                + quest.getDef().getRewardType().name().toLowerCase(),
-                ui.skin(), "muted")).left().row();
-        text.add(progressBar(quest)).growX().height(8f).padTop(3f);
-        row.add(text).growX();
+    private Table greenhouseButton(Runnable action) {
+        Stack layers = new Stack();
+        layers.add(artLayer("assets/backgrounds/greenhouse.png"));
 
-        if (quest.isCompleted()) {
-            row.add(ui.button("Claim", new Runnable() {
-                @Override
-                public void run() {
-                    context.toasts().info("Rewards are granted automatically when a level ends.");
-                }
-            })).padLeft(Theme.PAD);
+        PamActor bee = new PamActor(context.assets(), Assets.BEE, "idle")
+                .setFit(true)
+                .setExtent(-BEE_EXTENT / 2f, -BEE_EXTENT / 2f, BEE_EXTENT, BEE_EXTENT)
+                .cycle(BEE_CLIPS);
+        if (bee.isReady()) {
+            Table beeLayer = new Table();
+            beeLayer.top().right();
+            beeLayer.add(bee).size(BEE_SIZE).padRight(Theme.PAD_SMALL).padTop(Theme.PAD_SMALL);
+            layers.add(beeLayer);
         }
-        return row;
-    }
 
-    private Table progressBar(QuestProgress quest) {
-        float ratio = (quest.getTarget() <= 0) ? 0f
-                : Math.min(1f, (float) (quest.getProgress() / quest.getTarget()));
-        Table track = new Table();
-        track.setBackground(ui.primitives().flat(Theme.alpha(Theme.OUTLINE, 0.25f)));
-        track.left();
-        Table fill = new Table();
-        fill.setBackground(ui.primitives().flat(quest.isCompleted() ? Theme.GREEN : Theme.SUN_DEEP));
-        track.add(fill).growY().width(Math.max(2f, 240f * ratio)).left();
-        return track;
-    }
+        Table caption = new Table();
+        caption.bottom().left();
+        caption.add(new Label("GREENHOUSE", ui.skin(), "titleOnDark"))
+                .padLeft(Theme.PAD_SMALL).padBottom(Theme.PAD_SMALL);
+        layers.add(caption);
 
-    private Table bigButton(String text, Color face, Runnable action) {
-        Table button = new Table();
-        button.setBackground(ui.buttonFace("green", face));
-        Label label = new Label(text, ui.skin(), "onDark");
-        label.setAlignment(Align.center);
-        label.setWrap(true);
-        button.add(label).width(150f).expand().center();
+        Table button = ui.panel();
+        button.add(layers).grow().pad(-PANEL_INSET);
         Animations.attachPress(button);
         UiKit.onClick(button, action);
         return button;
     }
+
+    private Table shopButton(Runnable action) {
+        Stack layers = new Stack();
+
+        Table backdrop = artLayerRegion("IMAGE_UI_THYMED_EVENTS_COINS_SPREE_EVENT_BG",
+                SHOP_DIM);
+        layers.add(backdrop);
+
+        Table front = artLayerRegion("IMAGE_UI_ALMANAC_FINDMORE_STORE", 1f);
+        layers.add(front);
+
+        Table caption = new Table();
+        caption.bottom().right();
+        caption.add(new Label("SHOP", ui.skin(), "titleOnDark"))
+                .padRight(Theme.PAD_SMALL).padBottom(Theme.PAD_SMALL);
+        layers.add(caption);
+
+        Table button = ui.panel();
+        button.add(layers).grow().pad(-PANEL_INSET);
+        Animations.attachPress(button);
+        UiKit.onClick(button, action);
+        return button;
+    }
+
+    private Table artLayerRegion(String imageId, float dim) {
+        Table layer = new Table();
+        com.badlogic.gdx.graphics.g2d.TextureRegion art = context.assets() == null ? null
+                : context.assets().region(imageId);
+        if (art == null) {
+            return layer;
+        }
+        Image image = new Image(
+                new com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable(art));
+        image.setScaling(dim < 1f ? Scaling.fill : Scaling.fit);
+        image.setColor(dim, dim, dim, 1f);
+        com.badlogic.gdx.scenes.scene2d.ui.Container<Image> box =
+                new com.badlogic.gdx.scenes.scene2d.ui.Container<Image>(image);
+        box.setClip(true);
+        box.fill();
+        layer.add(box).grow();
+        return layer;
+    }
+
+    private Table artLayer(String path) {
+        Table layer = new Table();
+        com.badlogic.gdx.graphics.g2d.TextureRegion art = ui.regionFile(path);
+        if (art != null) {
+            Image image = new Image(
+                    new com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable(art));
+            image.setScaling(Scaling.fill);
+            com.badlogic.gdx.scenes.scene2d.ui.Container<Image> box =
+                    new com.badlogic.gdx.scenes.scene2d.ui.Container<Image>(image);
+            box.setClip(true);
+            box.fill();
+            layer.add(box).grow();
+        }
+        return layer;
+    }
+
 
     private void enterChapter(int index) {
         if (chapterCarousel.isTransitioning()) {

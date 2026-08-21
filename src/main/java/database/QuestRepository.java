@@ -133,6 +133,7 @@ public class QuestRepository {
         qp.setTarget(Json.intOf(m, "target"));
         qp.setCompleted(Json.boolOf(m, "completed"));
         qp.setClaimed(Json.boolOf(m, "claimed"));
+        qp.setPinned(Json.boolOf(m, "pinned"));
         qp.setVarInt(Json.intOf(m, "varInt"));
         qp.setVarStr(Json.str(m, "varStr"));
         return qp;
@@ -163,6 +164,7 @@ public class QuestRepository {
         sb.append("\"target\":").append(qp.getTarget()).append(',');
         sb.append("\"completed\":").append(qp.isCompleted()).append(',');
         sb.append("\"claimed\":").append(qp.isClaimed()).append(',');
+        sb.append("\"pinned\":").append(qp.isPinned()).append(',');
         sb.append("\"varInt\":").append(qp.getVarInt()).append(',');
         sb.append("\"varStr\":").append(quote(qp.getVarStr()));
         sb.append('}');
