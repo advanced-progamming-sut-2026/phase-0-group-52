@@ -6,6 +6,8 @@ import java.util.List;
 
 public final class QuestFactory {
 
+    private static final int[] MOWER_TARGETS = {10, 20, 30, 40, 50};
+
     private QuestFactory() {}
 
     public static QuestState buildDefault(String username) {
@@ -20,12 +22,25 @@ public final class QuestFactory {
 
     public static void assignVariable(QuestProgress qp) {
         switch (qp.getDef()) {
+            case MOWER_TIME:
+                qp.setVarInt(MOWER_TARGETS[new java.util.Random().nextInt(MOWER_TARGETS.length)]);
+                qp.setTarget(qp.getVarInt());
+                break;
             case DAILY_SUN:
                 qp.setVarInt(3000);
                 qp.setTarget(3000);
                 break;
             case CHAPTER_HUNTER:
                 qp.setVarStr("ANCIENT_EGYPT");
+                break;
+            case CHAPTER_HUNTER_ICEAGE:
+                qp.setVarStr("FROSTBITE_CAVES");
+                break;
+            case CHAPTER_HUNTER_BEACH:
+                qp.setVarStr("BIG_WAVE_BEACH");
+                break;
+            case CHAPTER_HUNTER_DARK:
+                qp.setVarStr("DARK_AGES");
                 break;
             case PLANT_PRO:
                 qp.setVarStr("PEASHOOTER");

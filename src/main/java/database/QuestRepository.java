@@ -17,7 +17,7 @@ import java.util.Map;
 
 public class QuestRepository {
 
-    private static final Path FILE = Paths.get("quests.json");
+    private static final Path FILE = Paths.get("database", "quests.json");
 
     public synchronized QuestState load(String username) {
         List<QuestState> all = readAll();
@@ -91,6 +91,7 @@ public class QuestRepository {
         }
         sb.append("]\n");
         try {
+            Files.createDirectories(FILE.getParent());
             Files.write(FILE, sb.toString().getBytes(StandardCharsets.UTF_8));
         } catch (IOException e) {
             System.err.println("Could not write quests file: " + e.getMessage());

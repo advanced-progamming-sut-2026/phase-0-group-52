@@ -25,15 +25,27 @@ public class QuestManager {
             }
             if (evaluate(qp, game, stats, user, won)) {
                 qp.setCompleted(true);
-                reward.grant(user, qp);
-                qp.setClaimed(true);
-                if (qp.getDef().isDaily()) {
-                    user.setQuestDailyNum(user.getQuestDailyNum() + 1);
-                } else {
-                    user.setQuestNonDailyNum(user.getQuestNonDailyNum() + 1);
-                }
             }
         }
+    }
+
+    public boolean claim(User user, QuestProgress qp) {
+        if (user == null || qp == null || !qp.isCompleted() || qp.isClaimed()) {
+            return false;
+        }
+        reward.grant(user, qp);
+        qp.setClaimed(true);
+        QuestTally.record(user, qp.getDef().getCategory());
+        return true;
+    }
+
+    public void forceComplete(QuestProgress qp) {
+        if (qp == null) {
+            return;
+        }
+        qp.setProgress(qp.getTarget());
+        qp.setCompleted(true);
+        qp.setClaimed(false);
     }
 
     private boolean evaluate(QuestProgress qp, Game game, GameStats stats, User user, boolean won) {
@@ -43,43 +55,35 @@ public class QuestManager {
                 return qp.getProgress() >= qp.getTarget();
 
             case CHAPTER_HUNTER:
+            case CHAPTER_HUNTER_ICEAGE:
+            case CHAPTER_HUNTER_BEACH:
+            case CHAPTER_HUNTER_DARK:
                 if (chapterMatches(game, qp.getVarStr())) {
                     qp.setProgress(qp.getProgress() + stats.getZombiesKilled());
                 }
                 return qp.getProgress() >= qp.getTarget();
-
             case PLANT_PRO:
                 return onlyPlantTypeUsed(stats, Plants.valueOf(qp.getVarStr()))
                     && stats.getZombiesKilled() >= qp.getTarget();
-
             case ONLY_CACTUS:
                 return onlyPlantTypeUsed(stats, Plants.CACTUS)
                     && stats.getZombiesKilled() >= qp.getTarget();
-
             case THRIFTY_HERBIVORE:
                 return won && stats.getPlantsLost() <= qp.getVarInt();
-
             case DEFENSE_MASTER:
                 return won && stats.getFinalSun() == 0;
-
             case QUICK_KILLS:
                 return stats.killsWithinTicksOfFirstWave(THIRTY_SECONDS_TICKS) >= qp.getTarget();
-
             case DEMOLITION_PRO:
                 return countCategory(stats, PlantsCategory.EXPLOSIVE) >= qp.getTarget();
-
             case SYMMETRY:
                 return won && isBoardSymmetric(game);
-
             case FAMILY_KILL:
                 return won && onlyFamilyUsed(stats, qp.getVarStr()) && stats.getZombiesKilled() > 0;
-
             case BLOOM_LIMITS:
                 return won && familyNotUsed(stats, qp.getVarStr());
-
             case NIGHT_OR_DAY:
                 return won && isDayLevel(game) && allPlantsNightTagged(stats);
-
             case WIN_STREAK:
                 if (won && user.getDifficultyLevel() == MAX_DIFFICULTY) {
                     qp.setProgress(qp.getProgress() + 1);
@@ -87,30 +91,21 @@ public class QuestManager {
                     qp.setProgress(0);
                 }
                 return qp.getProgress() >= qp.getTarget();
-
             case ALMOST_WON:
                 qp.setProgress(qp.getProgress() + stats.getKillsAtColZeroNoMower());
                 return qp.getProgress() >= qp.getTarget();
-
             case OCD:
                 return won && !isBoardSymmetric(game);
-
             case CLOUDY_DAY:
                 return won && allCategory(stats, PlantsCategory.SUN_PRODUCER)
                     && countCategory(stats, PlantsCategory.SUN_PRODUCER) == 3;
-
             case ONE_COLUMN_LESS:
                 return won && columnEmpty(stats, qp.getVarInt());
-
             case DEFENSELESS_ROW:
                 return won && rowEmpty(stats, qp.getVarInt());
-
             case DEFENSELESS_CROSS:
                 return won && columnEmpty(stats, qp.getVarInt()) && rowEmpty(stats, qp.getVarInt());
-
-            default:
-                return false;
-        }
+            default: return false;}
     }
 
     private boolean chapterMatches(Game game, String chapterName) {

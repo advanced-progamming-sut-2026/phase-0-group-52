@@ -47,7 +47,14 @@ public class User {
     private int plantFoodNum;
     private final Set<Plants> storedBoosts = new HashSet<>();
     private final Map<Plants, Integer> plantLevels = new HashMap<>();
+    private final Set<String> seenZombies = new HashSet<>();
+    private final Set<String> unlockedMinigames = new HashSet<>();
     private boolean stayLoggedIn;
+    private int questMainNum;
+    private int questEpicNum;
+    private int gameSpeed = 1;
+    private boolean showGrid;
+    private boolean debugMode;
 
     public User() {
         this.difficultyLevel = 3;
@@ -71,7 +78,8 @@ public class User {
         this.newsList = new NewsList();
     }
 
-    public User(String username, String password, String nickname, String email, String gender, boolean isLogged, int coinBalance,
+    public User(String username, String password, String nickname,
+                String email, String gender, boolean isLogged, int coinBalance,
                 int diamondBalance, int lastChapter, int lastLevel, int minigamesFinished,
                 int dailyQuestCount, int otherQuestCount, int highScore, Collection collection) {
         this.username = username;
@@ -271,6 +279,14 @@ public class User {
         return newsList;
     }
 
+    public boolean markZombieSeen(String zombieName) {
+        return seenZombies.add(zombieName);
+    }
+
+    public boolean markMinigameUnlocked(String minigameName) {
+        return unlockedMinigames.add(minigameName);
+    }
+
     public void setNewsList(NewsList newsList) {
         this.newsList = newsList;
     }
@@ -407,4 +423,44 @@ public class User {
         this.securityQuestion = securityQuestion;
     }
 
+
+    public int getGameSpeed() {
+        return gameSpeed < 1 ? 1 : gameSpeed;
+    }
+
+    public void setGameSpeed(int gameSpeed) {
+        this.gameSpeed = gameSpeed < 1 ? 1 : Math.min(gameSpeed, 3);
+    }
+
+    public boolean isShowGrid() {
+        return showGrid;
+    }
+
+    public void setShowGrid(boolean showGrid) {
+        this.showGrid = showGrid;
+    }
+
+    public boolean isDebugMode() {
+        return debugMode;
+    }
+
+    public void setDebugMode(boolean debugMode) {
+        this.debugMode = debugMode;
+    }
+
+    public int getQuestMainNum() {
+        return questMainNum;
+    }
+
+    public void setQuestMainNum(int questMainNum) {
+        this.questMainNum = questMainNum;
+    }
+
+    public int getQuestEpicNum() {
+        return questEpicNum;
+    }
+
+    public void setQuestEpicNum(int questEpicNum) {
+        this.questEpicNum = questEpicNum;
+    }
 }

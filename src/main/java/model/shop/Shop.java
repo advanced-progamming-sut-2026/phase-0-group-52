@@ -52,7 +52,7 @@ public class Shop {
                 + RANDOM_SEEDS_COUNT + " seed packets for a random unlocked plant");
         System.out.println("  4. Choice Seed Packet Bundle | " + CHOICE_SEEDS_PRICE + " diamonds | "
                 + CHOICE_SEEDS_COUNT + " seed packets for a plant of your choice (-t required)");
-        System.out.println("  5. Currency Exchange | " + EXCHANGE_DIAMONDS + " diamonds | " + EXCHANGE_COINS + " coins");
+        System.out.println("  5. Currency Exchange | " + EXCHANGE_DIAMONDS + " diamonds | " + EXCHANGE_COINS+ " coins");
     }
 
     public void printDaily() {
@@ -73,8 +73,7 @@ public class Shop {
                     if (greenhouse.unlockNextPot()) unlocked++;
                 if (unlocked == 0) return "Error: All greenhouse slots are already unlocked.";
                 user.setCoins(user.getCoins() - POT_PRICE * unlocked);
-                return "Unlocked " + unlocked + " greenhouse slot(s).";
-            }
+                return "Unlocked " + unlocked + " greenhouse slot(s).";}
             case 2: {
                 int space = PLANT_FOOD_MAX - user.getPlantFoodNum();
                 if (space <= 0) return "Error: Plant food storage is full (max " + PLANT_FOOD_MAX + ").";
@@ -82,28 +81,26 @@ public class Shop {
                 if (user.getGems() < PLANT_FOOD_PRICE * bought) return "Error: Not enough diamonds.";
                 user.setGems(user.getGems() - PLANT_FOOD_PRICE * bought);
                 user.setPlantFoodNum(user.getPlantFoodNum() + bought);
-                return "Bought " + bought + " plant food(s). Stored: " + user.getPlantFoodNum() + "/" + PLANT_FOOD_MAX + ".";
-            }
+                return "Bought " + bought + " plant food(s). Stored: "
+                        + user.getPlantFoodNum() + "/" + PLANT_FOOD_MAX + ".";}
             case 3: {
                 if (user.getCoins() < RANDOM_SEEDS_PRICE * count) return "Error: Not enough coins.";
                 user.setCoins(user.getCoins() - RANDOM_SEEDS_PRICE * count);
                 Plants plant = randomPlant();
                 user.setSeedPacket(user.getSeedPacket() + RANDOM_SEEDS_COUNT * count);
-                return "Bought " + (RANDOM_SEEDS_COUNT * count) + " seed packets for " + plant.getName() + ".";
-            }
+                return "Bought " + (RANDOM_SEEDS_COUNT * count) + " seed packets for " + plant.getName() + ".";}
             case 4: {
                 if (plantType == null) return "Error: Choice bundles need -t <plant_type>.";
                 if (user.getGems() < CHOICE_SEEDS_PRICE * count) return "Error: Not enough diamonds.";
                 user.setGems(user.getGems() - CHOICE_SEEDS_PRICE * count);
                 user.setSeedPacket(user.getSeedPacket() + CHOICE_SEEDS_COUNT * count);
-                return "Bought " + (CHOICE_SEEDS_COUNT * count) + " seed packets for " + plantType.getName() + ".";
-            }
+                return "Bought " + (CHOICE_SEEDS_COUNT * count) + " seed packets for " + plantType.getName() + ".";}
             case 5: {
                 if (user.getGems() < EXCHANGE_DIAMONDS * count) return "Error: Not enough diamonds.";
                 user.setGems(user.getGems() - EXCHANGE_DIAMONDS * count);
                 user.setCoins(user.getCoins() + EXCHANGE_COINS * count);
-                return "Exchanged " + (EXCHANGE_DIAMONDS * count) + " diamonds for " + (EXCHANGE_COINS * count) + " coins.";
-            }
+                return "Exchanged " + (EXCHANGE_DIAMONDS * count) + " diamonds for "
+                        + (EXCHANGE_COINS * count) + " coins.";}
             case 6: {
                 refreshDaily();
                 if (offerDate.equals(lastDailyPurchase))
@@ -112,8 +109,7 @@ public class Shop {
                 user.setCoins(user.getCoins() - DAILY_PRICE);
                 user.setSeedPacket(user.getSeedPacket() + DAILY_COUNT);
                 lastDailyPurchase = offerDate;
-                return "Bought the daily bundle: " + DAILY_COUNT + " seed packets for " + dailyPlant.getName() + ".";
-            }
+                return "Bought the daily bundle: " + DAILY_COUNT + " seed packets for " + dailyPlant.getName() + ".";}
             default:
                 return "Error: Unknown item id: " + itemId;
         }

@@ -1,0 +1,151 @@
+plugins {
+    id 'java'
+    id 'application'
+    id 'checkstyle'
+    id 'pmd'
+}
+
+group = 'ir.ac.sut'
+version = '1.0-SNAPSHOT'
+description = 'Advanced Programming course project at Sharif University of Technology'
+
+java {
+    toolchain {
+        languageVersion = JavaLanguageVersion.of(8)
+    }
+}
+
+tasks.withType(JavaCompile).configureEach {
+    options.encoding = 'UTF-8'
+}
+
+application {
+    // The graphical shell. The console build is still available via "runConsole".
+    mainClass = 'view.gui.DesktopLauncher'
+}
+
+// The application plugin's run task doesn't forward stdin by default, which
+// breaks the interactive console app (Scanner reads would see closed input).
+run {
+    standardInput = System.in
+    // "./gradlew run -Ptour" walks every screen, saves a PNG of each, then exits.
+    // A -D flag on the command line would reach the Gradle daemon, not this JVM.
+    if (project.hasProperty('tour')) {
+        systemProperty 'pvz.tour', 'true'
+    }
+}
+
+// The original terminal game, unchanged. Kept runnable so the console build can
+// be checked against the graphical one at any time.
+distributions {
+    main {
+        contents {
+            from('assets') { into 'assets' }
+        }
+    }
+}
+
+tasks.register('preview', JavaExec) {
+    group = 'application'
+    description = 'Renders every screen with sample data into build/preview/screenshots.'
+    classpath = sourceSets.main.runtimeClasspath
+    mainClass = 'view.gui.DesktopLauncher'
+    javaLauncher = javaToolchains.launcherFor(java.toolchain)
+    systemProperty 'pvz.tour', 'true'
+
+    def sandbox = layout.buildDirectory.dir('preview').get().asFile
+    workingDir = sandbox
+
+    doFirst {
+        delete sandbox
+        sandbox.mkdirs()
+        new File(sandbox, 'database').mkdirs()
+        new File(sandbox, 'database/users.json').text = file('gradle/preview-users.json').text
+        copy {
+            from 'assets'
+            into new File(sandbox, 'assets')
+        }
+    }
+}
+
+tasks.register('runConsole', JavaExec) {
+    group = 'application'
+    description = 'Runs the text/console version of the game.'
+    classpath = sourceSets.main.runtimeClasspath
+    mainClass = 'Main'
+    standardInput = System.in
+    javaLauncher = javaToolchains.launcherFor(java.toolchain)
+}
+
+repositories {
+    mavenCentral()
+    maven { url 'https://jitpack.io' }
+}
+
+ext {
+    gdxVersion = '1.13.1'
+    pvzSkinVersion = 'v0.1.1'
+    libPvzVersion = 'v0.1.6'
+}
+
+dependencies {
+    // SQLite JDBC driver used by database.* repositories.
+    implementation 'org.xerial:sqlite-jdbc:3.45.3.0'
+
+    // Required at runtime by sqlite-jdbc (its pom marks it "provided").
+    implementation 'org.slf4j:slf4j-api:1.7.36'
+
+    // Silences the SLF4J "StaticLoggerBinder" startup warning.
+    implementation 'org.slf4j:slf4j-nop:1.7.36'
+
+    // LibGDX: wired in for the upcoming graphical phase. Not used by any
+    // current code, which is still the plain text/console game.
+    implementation "com.badlogicgames.gdx:gdx:$gdxVersion"
+    implementation "com.badlogicgames.gdx:gdx-backend-lwjgl3:$gdxVersion"
+    implementation "com.badlogicgames.gdx:gdx-platform:$gdxVersion:natives-desktop"
+
+    implementation "com.github.pizpizi:pvz-skin:$pvzSkinVersion"
+    implementation "com.github.pizpizi:libPVZ:$libPvzVersion"
+    implementation "com.badlogicgames.gdx:gdx-freetype:$gdxVersion"
+    runtimeOnly "com.badlogicgames.gdx:gdx-freetype-platform:$gdxVersion:natives-desktop"
+
+    // JUnit 5: used only for automated tests under src/test/java.
+    testImplementation 'org.junit.jupiter:junit-jupiter:5.10.2'
+    testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
+}
+
+test {
+    useJUnitPlatform()
+}
+
+// Run with: ./gradlew checkstyleMain
+checkstyle {
+    toolVersion = '10.26.1'
+    configFile = file('checkstyle.xml')
+}
+
+// Run with: ./gradlew pmdMain
+pmd {
+    toolVersion = '7.13.0'
+    ruleSetFiles = files('pmd-ruleset.xml')
+    ruleSets = []
+    consoleOutput = true
+}
+
+def lintLauncher = javaToolchains.launcherFor {
+    languageVersion = JavaLanguageVersion.of(17)
+}
+
+tasks.withType(Checkstyle).configureEach {
+    javaLauncher = lintLauncher
+}
+
+tasks.withType(Pmd).configureEach {
+    javaLauncher = lintLauncher
+}
+
+// Like the old Maven setup (checkstyle/pmd had no <executions>, so they only
+// ran via explicit "mvn checkstyle:check" / "mvn pmd:check"), lint is opt-in
+// here too: detach it from check/build so those keep matching plain
+// "mvn package" / "mvn test" behavior regardless of lint violations.
+check.dependsOn = ['test']

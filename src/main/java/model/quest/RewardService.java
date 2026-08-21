@@ -30,6 +30,9 @@ public class RewardService {
             case DAILY_SUN:
                 amount = qp.getTarget() / 100;
                 break;
+            case MOWER_TIME:
+                amount = qp.getTarget();
+                break;
             case THRIFTY_HERBIVORE:
                 amount = Math.max(0, 20 - qp.getVarInt());
                 break;

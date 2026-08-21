@@ -27,6 +27,10 @@ public class App {
     private final java.util.Set<model.entities.plants.Plants> boostedSelection = new java.util.HashSet<>();
     private int selectedLevel = 1;
     private ChapterType selectedChapter;
+    private model.entities.plants.Plants imitatedPlant;
+    private boolean awaitingImitate;
+    private String pendingSpecial;
+    private final java.util.Set<model.entities.plants.Plants> lockedPlants = new java.util.HashSet<>();
 
     public App(Game game, ArrayList<User> users, User currentuser, MenuType currentmenu, Minigame minigame) {
         this.game = game;
@@ -67,6 +71,13 @@ public class App {
     public void setSelectedLevel(int selectedLevel) { this.selectedLevel = selectedLevel; }
     public ChapterType getSelectedChapter() { return selectedChapter; }
     public void setSelectedChapter(ChapterType selectedChapter) { this.selectedChapter = selectedChapter; }
+    public model.entities.plants.Plants getImitatedPlant() { return imitatedPlant; }
+    public void setImitatedPlant(model.entities.plants.Plants imitatedPlant) { this.imitatedPlant = imitatedPlant; }
+    public boolean isAwaitingImitate() { return awaitingImitate; }
+    public void setAwaitingImitate(boolean awaitingImitate) { this.awaitingImitate = awaitingImitate; }
+    public String getPendingSpecial() { return pendingSpecial; }
+    public void setPendingSpecial(String pendingSpecial) { this.pendingSpecial = pendingSpecial; }
+    public java.util.Set<model.entities.plants.Plants> getLockedPlants() { return lockedPlants; }
     public java.util.Set<model.entities.plants.Plants> getBoostedSelection() { return boostedSelection; }
 
     public User getLoggedInUser() { return loggedInUser; }

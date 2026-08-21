@@ -55,6 +55,11 @@ public class ChapterMenuController {
                 if (app.getCurrentuser() == null) { view.showError("No user is logged in."); break; }
                 view.showGemWallet(app.getCurrentuser().getGems());
                 break;
+            case "seed-wallet":
+            case "seed-packets":
+                if (app.getCurrentuser() == null) { view.showError("No user is logged in."); break; }
+                view.showSeedWallet(app.getCurrentuser().getSeedPacket());
+                break;
             case "cheat":
                 handleCheat(parts);
                 break;
@@ -109,8 +114,7 @@ public class ChapterMenuController {
     private void handleStartLevel(String[] parts) {
         if (app.getCurrentuser() == null) {
             view.showError("No user is logged in.");
-            return;
-        }
+            return;}
         ChapterType chapter = currentChapter;
         int levelNumber = app.getSelectedLevel();
         for (int i = 1; i + 1 < parts.length; i++) {
@@ -118,17 +122,30 @@ public class ChapterMenuController {
                 try { chapter = ChapterType.valueOf(parts[i + 1].toUpperCase()); }
                 catch (IllegalArgumentException e) { view.showError("Invalid chapter: " + parts[i + 1]); return; }
             } else if (parts[i].equals("-l")) {
-                try { levelNumber = Integer.parseInt(parts[i + 1]); } catch (NumberFormatException ignored) {}
-            }
+                try { levelNumber = Integer.parseInt(parts[i + 1]); } catch (NumberFormatException ignored) {}}
         }
         app.setSelectedLevel(levelNumber);
         if (chapter == null) {
             view.showError("Enter a chapter first: menu enter chapter -c <chapter>");
-            return;
-        }
+            return;}
         if (app.getPlantSelection().isEmpty()) {
             view.showError("Pick your plant deck first: 'menu enter choose_plant_menu', "
                     + "choose plants, then 'start'.");
+            return;}
+        if (app.getPendingSpecial() != null) {
+            String sp = app.getPendingSpecial();
+            Game sgame = LevelBuilder.buildSpecial(app, chapter, levelNumber, sp);
+            app.setPendingSpecial(null);
+            if (sgame == null) { view.showError("Unknown special level: " + sp + "."); return; }
+            for (Plants p : app.getBoostedSelection())
+                app.getCurrentuser().getStoredBoosts().add(p);
+            app.getBoostedSelection().clear();
+            sgame.setApp(app);
+            app.setGame(sgame);
+            app.setCurrentmenu(MenuType.GAME_MENU);
+            app.setCurrentMenu(Menu.GameMenu);
+            System.out.println("Special level '" + sp + "' started in " + chapter + " (level "
+                    + levelNumber + "). Starting sun: " + sgame.getSunAmount() + ".");
             return;
         }
         Game game = LevelBuilder.build(app, chapter, levelNumber);
@@ -170,8 +187,7 @@ public class ChapterMenuController {
     private void handleStartSpecial(String[] parts) {
         if (app.getCurrentuser() == null) {
             view.showError("No user is logged in.");
-            return;
-        }
+            return;}
         ChapterType chapter = currentChapter;
         int levelNumber = app.getSelectedLevel();
         String special = null;
@@ -181,22 +197,34 @@ public class ChapterMenuController {
                 try { chapter = ChapterType.valueOf(parts[i + 1].toUpperCase()); }
                 catch (IllegalArgumentException e) { view.showError("Invalid chapter: " + parts[i + 1]); return; }
             } else if (parts[i].equals("-l")) {
-                try { levelNumber = Integer.parseInt(parts[i + 1]); } catch (NumberFormatException ignored) {}
-            }
-        }
+                try { levelNumber = Integer.parseInt(parts[i + 1]); } catch (NumberFormatException ignored) {}}}
         if (chapter == null) {
-            view.showError("Enter a chapter first: menu enter chapter -c <chapter>");
-            return;
-        }
+            view.showError("Enter a chapter first: menu enter chapter -c <chapter>");return;}
         if (special == null) {
-            view.showError("Usage: start special -t <type>. Types: " + LevelBuilder.specialTypes());
-            return;
-        }
+            view.showError("Usage: start special -t <type>. Types: " + LevelBuilder.specialTypes());return;}
+        String key = special.toLowerCase().replace("-", "").replace("_", "");
+        boolean providesPlants = key.equals("conveyor") || key.equals("conveyorbelt")
+                || key.equals("plantwhatyouget") || key.equals("pwyg");
+        if (!providesPlants) {
+            app.setSelectedChapter(chapter);
+            app.setSelectedLevel(levelNumber);
+            app.getPlantSelection().clear();
+            app.getBoostedSelection().clear();
+            app.getLockedPlants().clear();
+            if (key.equals("lockedplants") || key.equals("locked")) {
+                app.getLockedPlants().addAll(java.util.Arrays.asList(
+                        model.entities.plants.Plants.CHERRY_BOMB, model.entities.plants.Plants.JALAPENO,
+                        model.entities.plants.Plants.SQUASH, model.entities.plants.Plants.REPEATER,
+                        model.entities.plants.Plants.WINTER_MELON));
+            }
+            app.setPendingSpecial(special);
+            Navigation.go(app, MenuType.CHOOSE_PLANT_MENU);
+            System.out.println("Special level '" + special + "': pick your plant deck in choose_plant_menu"
+                    + (app.getLockedPlants().isEmpty() ? "" : " (some plants are LOCKED — use 'show plants')")
+                    + ", then 'start'.");return;}
         Game game = LevelBuilder.buildSpecial(app, chapter, levelNumber, special);
         if (game == null) {
-            view.showError("Unknown special level: " + special + ". Types: " + LevelBuilder.specialTypes());
-            return;
-        }
+            view.showError("Unknown special level: " + special + ". Types: " + LevelBuilder.specialTypes());return;}
         game.setApp(app);
         app.setGame(game);
         app.setCurrentmenu(MenuType.GAME_MENU);
@@ -204,8 +232,7 @@ public class ChapterMenuController {
         System.out.println("Special level '" + special + "' started in " + chapter
                 + ". Starting sun: " + game.getSunAmount() + ".");
         System.out.println("Commands: plant plant -t <type> -l (x, y) | collect sun | tick [n]"
-                + " | show map | start zombie waves | menu enter <menu>");
-    }
+                + " | show map | start zombie waves | menu enter <menu>");}
 
     private void handleCheat(String[] parts) {
         if (app.getCurrentuser() == null) {
@@ -239,6 +266,8 @@ public class ChapterMenuController {
                 break;
             default:
                 view.showError("Invalid type: " + parts[4] + ". Use 'coin' or 'diamond'.");
+                return;
         }
+        new controller.SaveService().persist(user);
     }
 }

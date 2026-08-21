@@ -14,7 +14,7 @@ import java.util.Map;
 
 public class UserRepository {
 
-    private static final Path FILE = Paths.get("users.json");
+    private static final Path FILE = Paths.get("database", "users.json");
 
     public synchronized boolean register(User user) {
         List<User> users = readAll();
@@ -133,6 +133,18 @@ public class UserRepository {
         writeAll(users);
     }
 
+    public synchronized boolean delete(int userId) {
+        List<User> users = readAll();
+        for (int i = 0; i < users.size(); i++) {
+            if (users.get(i).getId() == userId) {
+                users.remove(i);
+                writeAll(users);
+                return true;
+            }
+        }
+        return false;
+    }
+
     public synchronized boolean updateStats(User user) {
         List<User> users = readAll();
         for (int i = 0; i < users.size(); i++) {
@@ -174,7 +186,28 @@ public class UserRepository {
         return result;
     }
 
+    private boolean wouldDestroyData(List<User> users) {
+        if (users != null && !users.isEmpty()) {
+            return false;
+        }
+        if (!Files.exists(FILE)) {
+            return false;
+        }
+        try {
+            String existing = new String(Files.readAllBytes(FILE), StandardCharsets.UTF_8);
+            Object parsed = Json.parse(existing);
+            return (parsed instanceof List) && !((List<?>) parsed).isEmpty();
+        } catch (IOException | RuntimeException e) {
+            return true;
+        }
+    }
+
     private void writeAll(List<User> users) {
+        if (wouldDestroyData(users)) {
+            System.err.println("Refused to overwrite " + FILE
+                    + " with an empty user list; the existing accounts were kept.");
+            return;
+        }
         StringBuilder sb = new StringBuilder();
         sb.append("[\n");
         for (int i = 0; i < users.size(); i++) {
@@ -186,6 +219,7 @@ public class UserRepository {
         }
         sb.append("]\n");
         try {
+            Files.createDirectories(FILE.getParent());
             Files.write(FILE, sb.toString().getBytes(StandardCharsets.UTF_8));
         } catch (IOException e) {
             System.err.println("Could not write users file: " + e.getMessage());
@@ -217,6 +251,11 @@ public class UserRepository {
         num(sb, "questNonDailyNum", u.getQuestNonDailyNum());
         str(sb, "lastWonGame", u.getLastWonGame());
         num(sb, "difficultyLevel", u.getDifficultyLevel());
+        num(sb, "questMainNum", u.getQuestMainNum());
+        num(sb, "questEpicNum", u.getQuestEpicNum());
+        num(sb, "gameSpeed", u.getGameSpeed());
+        bool(sb, "showGrid", u.isShowGrid());
+        bool(sb, "debugMode", u.isDebugMode());
         bool(sb, "stayLoggedIn", u.isStayLoggedIn());
 
         if (sb.charAt(sb.length() - 1) == ',') {
@@ -250,6 +289,11 @@ public class UserRepository {
         u.setQuestNonDailyNum(intOf(m, "questNonDailyNum"));
         u.setLastWonGame(strOf(m, "lastWonGame"));
         u.setDifficultyLevel(intOf(m, "difficultyLevel"));
+        u.setQuestMainNum(intOf(m, "questMainNum"));
+        u.setQuestEpicNum(intOf(m, "questEpicNum"));
+        u.setGameSpeed(intOf(m, "gameSpeed"));
+        u.setShowGrid(boolOf(m, "showGrid"));
+        u.setDebugMode(boolOf(m, "debugMode"));
         u.setStayLoggedIn(boolOf(m, "stayLoggedIn"));
         return u;
     }

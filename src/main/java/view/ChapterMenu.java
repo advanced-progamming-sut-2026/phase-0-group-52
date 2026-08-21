@@ -29,6 +29,10 @@ public class ChapterMenu implements AppMenu {
         System.out.println("Gem Wallet: " + gems + " gems");
     }
 
+    public void showSeedWallet(int seedPackets) {
+        System.out.println("Seed Packet Wallet: " + seedPackets + " seed packet(s)");
+    }
+
     public void showCheatResult(int amount, String type, int newBalance) {
         System.out.println("Added " + amount + " " + type + "(s). New balance: " + newBalance);
     }

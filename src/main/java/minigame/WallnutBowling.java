@@ -58,7 +58,13 @@ public class WallnutBowling {
             if (line.isEmpty()) continue;
             if (line.equals("exit")) { System.out.println("Left Wallnut Bowling."); return; }
             else if (line.equals("show")) render();
-            else if (line.equals("tick")) tick();
+            else if (line.equals("tick") || line.startsWith("tick ")) {
+                int n = 1;
+                String[] tp = line.split("\\s+");
+                if (tp.length >= 2) {
+                    try { n = Math.max(1, Integer.parseInt(tp[1])); } catch (NumberFormatException ignored) {} }
+                for (int ti = 0; ti < n && !over; ti++) tick();
+            }
             else {
                 Matcher m = PLANT.matcher(line);
                 if (m.matches()) plant(Integer.parseInt(m.group(1)), Integer.parseInt(m.group(2)));
@@ -146,7 +152,8 @@ public class WallnutBowling {
             StringBuilder sb = new StringBuilder("  ");
             for (int c = 0; c < COLS; c++) {
                 char ch = (c < PLANT_ZONE) ? '_' : '.';
-                for (Ball b : balls) if (b.row == r && (int) Math.round(b.x) == c) ch = (b.kind == Nut.EXPLODE) ? 'X' : 'O';
+                for (Ball b : balls)
+                    if (b.row == r && (int) Math.round(b.x) == c) ch = (b.kind == Nut.EXPLODE) ? 'X' : 'O';
                 for (Zombie z : zombies) if (z.row == r && (int) Math.round(z.x) == c) ch = 'Z';
                 sb.append(ch).append(' ');
             }
