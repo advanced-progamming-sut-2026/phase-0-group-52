@@ -8,14 +8,14 @@ public final class GameContext {
     private final UiKit ui;
     private final Toasts toasts;
     private final Settings settings;
-    private final Pam pam;
+    private final Assets assets;
 
-    public GameContext(App app, UiKit ui, Toasts toasts, Settings settings, Pam pam) {
+    public GameContext(App app, UiKit ui, Toasts toasts, Settings settings, Assets assets) {
         this.app = app;
         this.ui = ui;
         this.toasts = toasts;
         this.settings = settings;
-        this.pam = pam;
+        this.assets = assets;
     }
 
     public App app() {
@@ -34,8 +34,8 @@ public final class GameContext {
         return settings;
     }
 
-    public Pam pam() {
-        return pam;
+    public Assets assets() {
+        return assets;
     }
 
     public User user() {

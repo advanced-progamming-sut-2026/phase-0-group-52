@@ -5,6 +5,8 @@ import model.quest.QuestFactory;
 import model.quest.QuestProgress;
 import model.quest.QuestState;
 
+import util.Json;
+
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;

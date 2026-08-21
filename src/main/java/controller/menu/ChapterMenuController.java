@@ -93,8 +93,8 @@ public class ChapterMenuController {
         try {
             chapter = ChapterType.valueOf(parts[4].toUpperCase());
         } catch (IllegalArgumentException e) {
-            view.showError("Invalid chapter: " + parts[4] +
-                    ". Options: ANCIENT_EGYPT, FROSTBITE_CAVES, BIG_WAVE_BEACH, DARK_AGES");
+            view.showError("Invalid chapter: " + parts[4]
+                    + ". Options: " + ChapterType.options());
             return;
         }
         currentChapter = chapter;

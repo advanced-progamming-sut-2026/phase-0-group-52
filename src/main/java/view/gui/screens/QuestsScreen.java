@@ -251,7 +251,7 @@ public final class QuestsScreen extends BaseScreen {
     }
 
     private QuestCard card(final QuestProgress quest) {
-        final QuestCard card = new QuestCard(ui, context.pam(), quest, false,
+        final QuestCard card = new QuestCard(ui, context.assets(), quest, false,
                 new Runnable() {
                     @Override
                     public void run() {
@@ -375,8 +375,8 @@ public final class QuestsScreen extends BaseScreen {
     private Table cornerLayer() {
         Table layer = new Table();
         layer.bottom().left();
-        com.badlogic.gdx.graphics.g2d.TextureRegion art = context.pam() == null ? null
-                : context.pam().region("IMAGE_UI_QUESTS_TRAVEL_LOG_CORNER_NORANK");
+        com.badlogic.gdx.graphics.g2d.TextureRegion art = context.assets() == null ? null
+                : context.assets().region("IMAGE_UI_QUESTS_TRAVEL_LOG_CORNER_NORANK");
         if (art == null) {
             return layer;
         }
