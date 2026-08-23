@@ -88,7 +88,7 @@ public final class TitleScreen implements Screen, view.gui.Navigator.Hosted {
 
     private Table playButton() {
         Table button = new Table();
-        button.setBackground(ui.buttonFace("green", Theme.plantFamily("MODIFIER")));
+        button.setBackground(ui.buttonFace("green", Theme.plantFamily("MAGIC")));
         Label label = new Label("Play", ui.skin(), "hugeOnDark");
         label.setAlignment(Align.center);
         button.add(label).expand().center().padBottom(UiKit.opticalPad(label));
