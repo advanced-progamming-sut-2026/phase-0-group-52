@@ -68,6 +68,14 @@ tasks.register('preview', JavaExec) {
     }
 }
 
+tasks.register('tunePackets', JavaExec) {
+    group = 'application'
+    description = 'Hand-places each plant on its seed packet; writes assets/packet-layout.json.'
+    classpath = sourceSets.main.runtimeClasspath
+    mainClass = 'tools.PacketTuner'
+    javaLauncher = javaToolchains.launcherFor(java.toolchain)
+}
+
 tasks.register('runConsole', JavaExec) {
     group = 'application'
     description = 'Runs the text/console version of the game.'
