@@ -50,6 +50,14 @@ public final class PlantRecord {
     private final List<Stat> details;
     private final List<PlantUpgrade> upgrades;
     private final PlantAnimations animations;
+    private final PlantLeveling leveling;
+    private final boolean boostable;
+    private final int gemCost;
+    private final String categoryBadge;
+    private final int iconOffsetX;
+    private final int iconOffsetY;
+    private final int iconWidth;
+    private final int iconHeight;
 
     PlantRecord(PlantRecordBuilder b) {
         this.id = b.id;
@@ -75,6 +83,14 @@ public final class PlantRecord {
         this.details = Collections.unmodifiableList(b.details);
         this.upgrades = Collections.unmodifiableList(b.upgrades);
         this.animations = b.animations;
+        this.leveling = b.leveling;
+        this.boostable = b.boostable;
+        this.gemCost = b.gemCost;
+        this.categoryBadge = b.categoryBadge;
+        this.iconOffsetX = b.iconOffsetX;
+        this.iconOffsetY = b.iconOffsetY;
+        this.iconWidth = b.iconWidth;
+        this.iconHeight = b.iconHeight;
     }
 
     public int getId() {
@@ -171,5 +187,37 @@ public final class PlantRecord {
 
     public PlantAnimations getAnimations() {
         return animations;
+    }
+
+    public PlantLeveling getLeveling() {
+        return leveling;
+    }
+
+    public boolean isBoostable() {
+        return boostable;
+    }
+
+    public int getGemCost() {
+        return gemCost;
+    }
+
+    public String getCategoryBadge() {
+        return categoryBadge;
+    }
+
+    public int getIconOffsetX() {
+        return iconOffsetX;
+    }
+
+    public int getIconOffsetY() {
+        return iconOffsetY;
+    }
+
+    public int getIconWidth() {
+        return iconWidth;
+    }
+
+    public int getIconHeight() {
+        return iconHeight;
     }
 }

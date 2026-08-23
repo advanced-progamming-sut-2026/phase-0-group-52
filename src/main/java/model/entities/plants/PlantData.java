@@ -17,8 +17,6 @@ import java.util.Map;
 public final class PlantData {
 
     public static final int MAX_LEVEL = 4;
-    public static final int SEED_PACKETS_PER_LEVEL = 5;
-    public static final int COINS_PER_LEVEL = 500;
 
     private static Map<Plants, PlantRecord> records;
 
@@ -113,6 +111,30 @@ public final class PlantData {
         return record == null ? Collections.<PlantUpgrade>emptyList() : record.getUpgrades();
     }
 
+    private static double buffTotal(Plants type, int level, String kind) {
+        double total = 0;
+        for (PlantUpgrade upgrade : getUpgrades(type)) {
+            if (upgrade.getLevel() <= level && upgrade.getType().equals(kind)) {
+                total += upgrade.getValue();
+            }
+        }
+        return total;
+    }
+
+    public static int effectiveHp(Plants type, int level) {
+        return (int) Math.max(0, type.getBaseHP() + buffTotal(type, level, "BUFF_HP"));
+    }
+
+    public static int effectiveDamage(Plants type, int level) {
+        return (int) Math.max(0, type.getDamage() + buffTotal(type, level, "BUFF_DAMAGE"));
+    }
+
+    public static double effectiveInterval(Plants type, int level) {
+        double base = type.getActionInterval()
+                + buffTotal(type, level, "BUFF_ACTION_INTERVAL");
+        return Math.max(0.1, base);
+    }
+
     public static int effectiveCost(Plants type, int level) {
         int cost = type.getCost();
         for (PlantUpgrade upgrade : getUpgrades(type)) {
@@ -149,31 +171,131 @@ public final class PlantData {
         return (int) Math.max(0, recharge);
     }
 
+    public static boolean canAfford(User user, Plants type) {
+        PlantRecord record = record(type);
+        PlantProgress state = user.getPlants().progress(type);
+        if (record == null || state.isMaxLevel()) {
+            return false;
+        }
+        int next = state.getLevel() + 1;
+        return state.getPackets() >= record.getLeveling().packetsToLevel(next)
+                || user.getCoins() >= record.getLeveling().coinsToLevel(next);
+    }
+
+    public static boolean canUpgrade(User user, Plants type) {
+        PlantProgress state = user.getPlants().progress(type);
+        if (!state.isUnlocked() || state.isMaxLevel()) {
+            return false;
+        }
+        if (user.isDebugMode()) {
+            return true;
+        }
+        return state.isXpFull() && canAfford(user, type);
+    }
+
+    public static String upgradeBlocker(User user, Plants type) {
+        PlantRecord record = record(type);
+        PlantProgress state = user.getPlants().progress(type);
+        if (record == null) {
+            return "No data for " + type.getName() + ".";
+        }
+        if (!state.isUnlocked()) {
+            return type.getName() + " is still locked.";
+        }
+        if (state.isMaxLevel()) {
+            return type.getName() + " is already at max level.";
+        }
+        if (user.isDebugMode()) {
+            return null;
+        }
+        if (!state.isXpFull()) {
+            return type.getName() + " needs " + (state.xpNeeded() - state.getXp())
+                    + " more planting(s) before it can level up.";
+        }
+        if (!canAfford(user, type)) {
+            int next = state.getLevel() + 1;
+            return "Needs " + record.getLeveling().packetsToLevel(next)
+                    + " seed packets or " + record.getLeveling().coinsToLevel(next) + " coins.";
+        }
+        return null;
+    }
+
     public static String upgrade(User user, Plants type) {
-        int level = user.getPlantLevel(type);
-        if (level >= MAX_LEVEL) {
-            return "Error: " + type.getName() + " is already at max level (" + MAX_LEVEL + ").";
+        PlantRecord record = record(type);
+        PlantProgress state = user.getPlants().progress(type);
+        if (record == null) {
+            return "Error: No data for " + type.getName() + ".";
         }
-        int packets = SEED_PACKETS_PER_LEVEL * level;
-        int coins = COINS_PER_LEVEL * level;
-        if (user.getSeedPacket() < packets) {
-            return "Error: Not enough seed packets. Upgrading to level " + (level + 1)
-                    + " needs " + packets + " (you have " + user.getSeedPacket() + ").";
+        if (!state.isUnlocked()) {
+            return "Error: " + type.getName() + " is still locked.";
         }
-        if (user.getCoins() < coins) {
-            return "Error: Not enough coins. Upgrading to level " + (level + 1)
-                    + " needs " + coins + " (you have " + user.getCoins() + ").";
+        if (state.isMaxLevel()) {
+            return "Error: " + type.getName() + " is already at max level ("
+                    + record.getLeveling().getMaxLevel() + ").";
         }
-        user.setSeedPacket(user.getSeedPacket() - packets);
-        user.setCoins(user.getCoins() - coins);
-        user.setPlantLevel(type, level + 1);
+        int next = state.getLevel() + 1;
+        boolean forced = user.isDebugMode();
+        if (!forced && !state.isXpFull()) {
+            return "Error: " + type.getName() + " needs " + state.xpNeeded()
+                    + " plantings to reach level " + next + " (it has " + state.getXp() + ").";
+        }
+        int packets = record.getLeveling().packetsToLevel(next);
+        int coins = record.getLeveling().coinsToLevel(next);
+        String spent;
+        if (forced) {
+            spent = "nothing (cheat mode)";
+        } else if (state.getPackets() >= packets) {
+            state.setPackets(state.getPackets() - packets);
+            spent = packets + " seed packet(s)";
+        } else if (user.getCoins() >= coins) {
+            user.setCoins(user.getCoins() - coins);
+            spent = coins + " coins";
+        } else {
+            return "Error: Upgrading " + type.getName() + " to level " + next + " needs "
+                    + packets + " seed packets or " + coins + " coins.";
+        }
+        state.setLevel(next);
+        state.setXp(0);
         String effect = "";
         for (PlantUpgrade upgrade : getUpgrades(type)) {
-            if (upgrade.getLevel() == level + 1) {
+            if (upgrade.getLevel() == next) {
                 effect = " (" + upgrade.describe() + ")";
             }
         }
-        return type.getName() + " upgraded to level " + (level + 1) + effect
-                + ". Spent " + packets + " seed packets and " + coins + " coins.";
+        return type.getName() + " upgraded to level " + next + effect + ". Spent " + spent + ".";
+    }
+
+    public static boolean canBoost(User user, Plants type) {
+        PlantRecord record = record(type);
+        if (record == null || !record.isBoostable()) {
+            return false;
+        }
+        if (!user.getPlants().progress(type).isUnlocked()
+                || user.getStoredBoosts().contains(type)) {
+            return false;
+        }
+        return user.isDebugMode() || user.getGems() >= record.getGemCost();
+    }
+
+    public static String boost(User user, Plants type) {
+        PlantRecord record = record(type);
+        if (record == null || !record.isBoostable()) {
+            return "Error: " + type.getName() + " cannot be boosted.";
+        }
+        if (!user.getPlants().progress(type).isUnlocked()) {
+            return "Error: " + type.getName() + " is still locked.";
+        }
+        if (user.getStoredBoosts().contains(type)) {
+            return "Error: " + type.getName() + " is already boosted.";
+        }
+        if (!user.isDebugMode() && user.getGems() < record.getGemCost()) {
+            return "Error: Boosting " + type.getName() + " needs "
+                    + record.getGemCost() + " diamonds.";
+        }
+        if (!user.isDebugMode()) {
+            user.setGems(user.getGems() - record.getGemCost());
+        }
+        user.getStoredBoosts().add(type);
+        return type.getName() + " boosted for " + record.getGemCost() + " diamonds.";
     }
 }

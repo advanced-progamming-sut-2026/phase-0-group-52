@@ -98,16 +98,26 @@ public abstract class PlantFactory {
         switch (type.getCategory()) {
             case SUN_PRODUCER:   return new SunProducer(type, position);
             case SHOOTER:        return isMint(type) ? new Mint(type, position) : new Shooter(type, position);
-            case HOMING:         return new Homing(type, position);
             case STRIKE_THROUGH: return isMint(type) ? new Mint(type, position) : new StrikeThrough(type, position);
             case LOBBER:         return new Lobber(type, position);
             case EXPLOSIVE:      return isMint(type) ? new Mint(type, position) : new Explosive(type, position);
             case MELEE:          return new Melee(type, position);
-            case MODIFIER:       return isMint(type) ? new Mint(type, position) : new Modifier(type, position);
+            case MAGIC:          return magicPlant(type, position);
             case MINT:           return new Mint(type, position);
             case WALL_NUT:       return isMint(type) ? new Mint(type, position) : new Wallnut(type, position);
             default:             return new Modifier(type, position);
         }
+    }
+
+    private static Plant magicPlant(Plants type, Vec2 position) {
+        if (isMint(type)) {
+            return new Mint(type, position);
+        }
+        if (type == Plants.CAULIPOWER || type == Plants.ELECTRIC_BLUEBERRY
+                || type == Plants.MAGNET_SHROOM) {
+            return new Homing(type, position);
+        }
+        return new Modifier(type, position);
     }
 
     private static boolean isMint(Plants type) {

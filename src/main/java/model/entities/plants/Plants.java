@@ -50,20 +50,22 @@ public enum Plants {
     PUFF_SHROOM("Puff-shroom", PlantsCategory.SHOOTER,
             new ArrayList<>(Arrays.asList(PlantTag.SHROOM)), 0, 300, 20, 1.5, 5),
 
-    CAULIPOWER("Caulipower", PlantsCategory.HOMING,
+    CAULIPOWER("Caulipower", PlantsCategory.MAGIC,
             new ArrayList<>(Arrays.asList(PlantTag.MAGIC, PlantTag.CHARGE)), 250, 300, 9999, 12, 15),
-    ELECTRIC_BLUEBERRY("Electric Blueberry", PlantsCategory.HOMING,
+    ELECTRIC_BLUEBERRY("Electric Blueberry", PlantsCategory.MAGIC,
             new ArrayList<>(Arrays.asList(PlantTag.CHARGE)), 150, 300, 5000, 12, 15),
-    MAGNET_SHROOM("Magnet-shroom", PlantsCategory.HOMING,
+    MAGNET_SHROOM("Magnet-shroom", PlantsCategory.MAGIC,
             new ArrayList<>(Arrays.asList(PlantTag.SHROOM, PlantTag.MAGIC)), 100, 300, 0, 10, 15),
-    CAT_TAIL("Cat-tail", PlantsCategory.HOMING,
-            new ArrayList<>(), 175, 300, 15, 1.5, 20),
+    SNAPDRAGON("Snapdragon", PlantsCategory.STRIKE_THROUGH,
+            new ArrayList<>(Arrays.asList(PlantTag.FIRE, PlantTag.AOE)), 150, 300, 30, 2, 5),
 
     CACTUS("Cactus", PlantsCategory.STRIKE_THROUGH,
             new ArrayList<>(), 175, 300, 30, 1.5, 5),
     FUME_SHROOM("Fume-shroom", PlantsCategory.STRIKE_THROUGH,
             new ArrayList<>(Arrays.asList(PlantTag.SHROOM)), 125, 300, 20, 1.5, 5),
 
+    LIGHTNING_REED("Lightning Reed", PlantsCategory.STRIKE_THROUGH,
+            new ArrayList<>(Arrays.asList(PlantTag.AOE)), 125, 300, 10, 1, 5),
     CABBAGE_PULT("Cabbage-pult", PlantsCategory.LOBBER,
             new ArrayList<>(), 100, 300, 40, 2.9, 5),
     KERNEL_PULT("Kernel-pult", PlantsCategory.LOBBER,
@@ -128,13 +130,13 @@ public enum Plants {
     SUN_BEAN("Sun Bean", PlantsCategory.WALL_NUT,
             new ArrayList<>(Arrays.asList(PlantTag.SUN)), 50, 1000, 0, 0, 20),
 
-    TORCHWOOD("Torchwood", PlantsCategory.MODIFIER,
+    TORCHWOOD("Torchwood", PlantsCategory.MAGIC,
             new ArrayList<>(Arrays.asList(PlantTag.FIRE)), 175, 300, 0, 0, 5),
-    HYPNO_SHROOM("Hypno-shroom", PlantsCategory.MODIFIER,
+    HYPNO_SHROOM("Hypno-shroom", PlantsCategory.MAGIC,
             new ArrayList<>(Arrays.asList(PlantTag.SHROOM, PlantTag.MAGIC)), 125, 300, 0, 0, 20),
-    IMITATER("Imitater", PlantsCategory.MODIFIER,
+    IMITATER("Imitater", PlantsCategory.MAGIC,
             new ArrayList<>(), 0, 0, 0, 0, 0),
-    LILY_PAD("Lily Pad", PlantsCategory.MODIFIER,
+    LILY_PAD("Lily Pad", PlantsCategory.MAGIC,
             new ArrayList<>(Arrays.asList(PlantTag.WATER, PlantTag.STACK)), 25, 300, 0, 0, 5),
 
     ENLIGHTEN_MINT("Enlighten-mint", PlantsCategory.SUN_PRODUCER, new ArrayList<>(), 0, 0, 0, 0, 85),
@@ -143,9 +145,8 @@ public enum Plants {
     BOMBARD_MINT("Bombard-mint", PlantsCategory.EXPLOSIVE, new ArrayList<>(), 0, 0, 0, 0, 85),
     ENFORCE_MINT("Enforce-mint", PlantsCategory.MELEE, new ArrayList<>(), 0, 0, 0, 0, 85),
     REINFORCE_MINT("Reinforce-mint", PlantsCategory.WALL_NUT, new ArrayList<>(), 0, 0, 0, 0, 85),
-    ENCHANT_MINT("Enchant-mint", PlantsCategory.MODIFIER, new ArrayList<>(), 0, 0, 0, 0, 85),
-    PIERCE_MINT("Pierce-mint", PlantsCategory.STRIKE_THROUGH, new ArrayList<>(), 0, 0, 0, 0, 85),
-    CATTAIL_MINT("catTail-mint", PlantsCategory.HOMING, new ArrayList<>(), 0, 0, 0, 0, 85);
+    ENCHANT_MINT("Enchant-mint", PlantsCategory.MAGIC, new ArrayList<>(), 0, 0, 0, 0, 85),
+    PIERCE_MINT("Pierce-mint", PlantsCategory.STRIKE_THROUGH, new ArrayList<>(), 0, 0, 0, 0, 85);
 
     private final String name;
     private final PlantsCategory category;

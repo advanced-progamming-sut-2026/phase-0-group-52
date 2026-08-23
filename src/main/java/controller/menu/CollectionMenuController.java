@@ -19,6 +19,8 @@ public class CollectionMenuController {
             Pattern.compile("^buy\\s+plant\\s+-t\\s+(.+)$");
     private static final Pattern DOC_UPGRADE =
             Pattern.compile("^menu\\s+collection\\s+upgrade-plant\\s+-p\\s+(.+)$");
+    private static final Pattern BOOST =
+            Pattern.compile("^menu\\s+collection\\s+boost-plant\\s+-p\\s+(.+)$");
     private static final Pattern DOC_BUY =
             Pattern.compile("^menu\\s+collection\\s+purchase-plant\\s+-p\\s+(.+)$");
     private static final Pattern DOC_SHOW_PLANT =
@@ -44,6 +46,7 @@ public class CollectionMenuController {
             showZombies(); return;
         }
         if ((dm = DOC_UPGRADE.matcher(command)).matches()) { doUpgrade(dm.group(1)); return; }
+        if ((dm = BOOST.matcher(command)).matches()) { doBoost(dm.group(1)); return; }
         if ((dm = DOC_BUY.matcher(command)).matches()) { buyPlant(dm.group(1)); return; }
         if ((dm = DOC_SHOW_PLANT.matcher(command)).matches()) { showOnePlant(dm.group(1)); return; }
         if ((dm = DOC_SHOW_ZOMBIE.matcher(command)).matches()) { showOneZombie(dm.group(1)); return; }
@@ -72,6 +75,16 @@ public class CollectionMenuController {
         Plants type = findPlant(name);
         if (type == null) { System.out.println("Error: Unknown plant: " + name); return; }
         System.out.println(PlantData.upgrade(user, type));
+        new controller.SaveService().persist(user);
+    }
+
+    private void doBoost(String name) {
+        User user = app.getCurrentuser();
+        if (user == null) { System.out.println("Error: No user is logged in."); return; }
+        Plants type = findPlant(name);
+        if (type == null) { System.out.println("Error: Unknown plant: " + name); return; }
+        System.out.println(PlantData.boost(user, type));
+        new controller.SaveService().persist(user);
     }
 
     private void showOnePlant(String name) {
@@ -126,7 +139,7 @@ public class CollectionMenuController {
             return;
         }
         user.setCoins(user.getCoins() - cost);
-        user.setSeedPacket(user.getSeedPacket() + 1);
+        user.getPlants().grant(type, 1);
         user.getNewsList().addNews("New plant unlocked: " + type.getName() + "! Add it to your deck.");
         System.out.println("Bought " + type.getName() + " for " + cost + " coins. It is now unlocked.");
         new controller.SaveService().persist(user);

@@ -14,7 +14,7 @@ public class RewardService {
                 user.setGems(user.getGems() + amount);
                 break;
             case SEED_PACKET:
-                user.setSeedPacket(user.getSeedPacket() + amount);
+                user.getPlants().grantRandom(amount);
                 break;
             case PLANT_UNLOCK:
                 unlockRandomPlant(user);

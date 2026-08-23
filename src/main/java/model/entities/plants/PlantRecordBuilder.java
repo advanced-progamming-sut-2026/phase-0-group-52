@@ -13,7 +13,7 @@ final class PlantRecordBuilder {
     int id;
     String name;
     String codeName;
-    PlantsCategory category = PlantsCategory.MODIFIER;
+    PlantsCategory category = PlantsCategory.MAGIC;
     String mintFamily;
     List<PlantTag> tags = new ArrayList<PlantTag>();
     String damageText = "";
@@ -33,13 +33,21 @@ final class PlantRecordBuilder {
     List<PlantRecord.Stat> details = new ArrayList<PlantRecord.Stat>();
     List<PlantUpgrade> upgrades = new ArrayList<PlantUpgrade>();
     PlantAnimations animations;
+    PlantLeveling leveling;
+    boolean boostable;
+    int gemCost;
+    String categoryBadge;
+    int iconOffsetX;
+    int iconOffsetY;
+    int iconWidth;
+    int iconHeight;
 
     static PlantRecord from(Map<?, ?> m) {
         PlantRecordBuilder b = new PlantRecordBuilder();
         b.id = Json.intOf(m, "id");
         b.name = Json.str(m, "name");
         b.codeName = Json.str(m, "codeName");
-        b.category = enumOf(PlantsCategory.class, Json.str(m, "category"), PlantsCategory.MODIFIER);
+        b.category = enumOf(PlantsCategory.class, Json.str(m, "category"), PlantsCategory.MAGIC);
         b.mintFamily = Json.str(m, "mintFamily");
         b.damageText = text(Json.str(m, "damageText"));
         b.ability = text(Json.str(m, "ability"));
@@ -52,24 +60,8 @@ final class PlantRecordBuilder {
             }
         }
 
-        Map<?, ?> unlock = map(m.get("unlock"));
-        b.unlockKind = enumOf(PlantRecord.UnlockKind.class, Json.str(unlock, "kind"),
-                PlantRecord.UnlockKind.CHAPTER);
-        b.chapter = enumOf(ChapterType.class, Json.str(unlock, "chapter"), null);
-        b.chapterOrder = Json.intOf(unlock, "chapterOrder");
-        b.seedPacketPrice = Json.intOf(unlock, "seedPacketPrice");
-        b.originWorld = Json.str(unlock, "originWorld");
-
-        Map<?, ?> packet = map(m.get("seedPacket"));
-        b.packetIcon = Json.str(packet, "icon");
-        b.packetBackground = Json.str(packet, "background");
-
-        Map<?, ?> almanac = map(m.get("almanac"));
-        b.description = text(Json.str(almanac, "description"));
-        b.plantFoodDescription = text(Json.str(almanac, "plantFood"));
-        b.flavorText = text(Json.str(almanac, "flavorText"));
-        b.stats = statsOf(almanac.get("stats"));
-        b.details = statsOf(almanac.get("details"));
+        b.readUnlock(map(m.get("unlock")));
+        b.readAlmanac(map(m.get("almanac")), map(m.get("seedPacket")));
 
         for (Object raw : list(m.get("upgrades"))) {
             Map<?, ?> u = map(raw);
@@ -78,7 +70,51 @@ final class PlantRecordBuilder {
         }
 
         b.animations = animationsOf(map(m.get("animations")));
+        b.categoryBadge = Json.str(m, "categoryBadge");
+
+        Map<?, ?> boost = map(m.get("boost"));
+        b.boostable = Json.boolOf(boost, "boostable");
+        b.gemCost = Json.intOf(boost, "gemCost");
+
+        Map<?, ?> lv = map(m.get("leveling"));
+        b.leveling = new PlantLeveling(Json.intOf(lv, "maxLevel"),
+                levels(lv.get("xpToLevel")), levels(lv.get("packetsToLevel")),
+                levels(lv.get("coinsToLevel")));
         return new PlantRecord(b);
+    }
+
+    private void readUnlock(Map<?, ?> unlock) {
+        unlockKind = enumOf(PlantRecord.UnlockKind.class, Json.str(unlock, "kind"),
+                PlantRecord.UnlockKind.CHAPTER);
+        chapter = enumOf(ChapterType.class, Json.str(unlock, "chapter"), null);
+        chapterOrder = Json.intOf(unlock, "chapterOrder");
+        seedPacketPrice = Json.intOf(unlock, "seedPacketPrice");
+        originWorld = Json.str(unlock, "originWorld");
+    }
+
+    private void readAlmanac(Map<?, ?> almanac, Map<?, ?> packet) {
+        packetIcon = Json.str(packet, "icon");
+        packetBackground = Json.str(packet, "background");
+        iconOffsetX = pair(packet.get("iconOffset"), 0);
+        iconOffsetY = pair(packet.get("iconOffset"), 1);
+        iconWidth = pair(packet.get("iconSize"), 0);
+        iconHeight = pair(packet.get("iconSize"), 1);
+        description = text(Json.str(almanac, "description"));
+        plantFoodDescription = text(Json.str(almanac, "plantFood"));
+        flavorText = text(Json.str(almanac, "flavorText"));
+        stats = statsOf(almanac.get("stats"));
+        details = statsOf(almanac.get("details"));
+    }
+
+    private static int pair(Object raw, int index) {
+        if (!(raw instanceof List)) {
+            return 0;
+        }
+        List<?> values = (List<?>) raw;
+        if (index >= values.size() || !(values.get(index) instanceof Number)) {
+            return 0;
+        }
+        return ((Number) values.get(index)).intValue();
     }
 
     private static PlantAnimations animationsOf(Map<?, ?> a) {
@@ -99,6 +135,21 @@ final class PlantRecordBuilder {
             effects.put(String.valueOf(e.getKey()), String.valueOf(e.getValue()));
         }
         return new PlantAnimations(Json.str(a, "plant"), width, height, clips, effects);
+    }
+
+    private static Map<Integer, Integer> levels(Object raw) {
+        Map<Integer, Integer> out = new LinkedHashMap<Integer, Integer>();
+        for (Map.Entry<?, ?> e : map(raw).entrySet()) {
+            if (e.getValue() instanceof Number) {
+                try {
+                    out.put(Integer.valueOf(String.valueOf(e.getKey())),
+                            ((Number) e.getValue()).intValue());
+                } catch (NumberFormatException ignored) {
+                    continue;
+                }
+            }
+        }
+        return out;
     }
 
     private static List<PlantRecord.Stat> statsOf(Object raw) {
