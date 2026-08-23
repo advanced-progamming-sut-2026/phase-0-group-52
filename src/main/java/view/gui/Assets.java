@@ -32,6 +32,12 @@ public final class Assets implements Disposable {
     public static final String DIFFICULTY_METER =
             "768/DEV/UI/QUESTS/DIFFICULTY_METER/DIFFICULTY_METER.PAM";
     public static final String BEE = "768/INITIAL/ZEN_GARDEN/BEE/BEE.PAM";
+    public static final String UPGRADE_BADGE =
+            "768/INITIAL/UI/LEVELING/UPGRADE_BADGE/UPGRADE_BADGE.PAM";
+    public static final String BOOST_EFFECT =
+            "768/INITIAL/ZEN_GARDEN/BOOSTEFFECT/BOOSTEFFECT.PAM";
+    public static final String BOOSTCARD_ANIM =
+            "768/INITIAL/ZEN_GARDEN/BOOSTCARD_ANIM/BOOSTCARD_ANIM.PAM";
     public static final String SKULL =
             "IMAGE_UI_HUD_INGAME_ZOMBOSS_HEALTH_METER_SKULL_ICON";
 

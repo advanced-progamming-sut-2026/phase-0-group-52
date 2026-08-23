@@ -104,7 +104,7 @@ public final class TopBar extends Table {
                 }
             });
         }
-        addRightButton(Icons.PLAYERS, "Players", Theme.plantFamily("MODIFIER"), new Runnable() {
+        addRightButton(Icons.PLAYERS, "Players", Theme.plantFamily("MAGIC"), new Runnable() {
             @Override
             public void run() {
                 openPopup(new PlayerListPopup(context, section != Section.LEADERBOARD));
