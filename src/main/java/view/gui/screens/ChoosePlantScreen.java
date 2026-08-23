@@ -83,8 +83,7 @@ public final class ChoosePlantScreen extends BaseScreen {
         slotCounter.setText("Deck  " + selection.size() + " / " + capacity);
 
         for (final Plants plant : selection) {
-            SeedPacket packet = new SeedPacket(ui, plant);
-            packet.setLevel(levelOf(plant));
+            SeedPacket packet = new SeedPacket(ui, context.assets(), plant, SeedPacket.Mode.GAME, 1f);
             packet.setSelected(true);
             packet.setBoosted(context.app().getBoostedSelection().contains(plant));
             packet.onClick(new Runnable() {
@@ -94,7 +93,7 @@ public final class ChoosePlantScreen extends BaseScreen {
                     refreshAll();
                 }
             });
-            slotArea.add(packet).size(Theme.PACKET_WIDTH, Theme.PACKET_HEIGHT);
+            slotArea.add(packet).size(packet.width(), packet.height());
         }
 
         for (int i = selection.size(); i < capacity; i++) {
@@ -128,8 +127,7 @@ public final class ChoosePlantScreen extends BaseScreen {
             final boolean chosen = selection.contains(plant);
 
             Table cell = new Table();
-            SeedPacket packet = new SeedPacket(ui, plant);
-            packet.setLevel(levelOf(plant));
+            SeedPacket packet = new SeedPacket(ui, context.assets(), plant, SeedPacket.Mode.GAME, 1f);
             packet.setSelected(chosen);
             packet.setBoosted(context.app().getBoostedSelection().contains(plant));
             packet.onClick(new Runnable() {
@@ -138,7 +136,7 @@ public final class ChoosePlantScreen extends BaseScreen {
                     toggle(plant, chosen);
                 }
             });
-            cell.add(packet).size(Theme.PACKET_WIDTH, Theme.PACKET_HEIGHT).row();
+            cell.add(packet).size(packet.width(), packet.height()).row();
 
             Table tools = new Table();
             tools.add(compact("Boost", new Runnable() {
@@ -184,9 +182,6 @@ public final class ChoosePlantScreen extends BaseScreen {
         refreshAll();
     }
 
-    private int levelOf(Plants plant) {
-        return (context.user() == null) ? 1 : context.user().getPlantLevel(plant);
-    }
 
     private int deckCapacity() {
         return context.app().getSelectedLevel() <= 1

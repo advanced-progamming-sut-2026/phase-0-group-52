@@ -18,14 +18,11 @@ import java.util.List;
 
 public final class LeaderboardScreen extends BaseScreen {
     private static final String[] COLUMNS = {"score", "level", "minigames", "daily", "quests"};
-    private static final String[] HEADINGS = {"Score", "Prog", "Mini", "Daily", "Quests"};
+    private static final String[] HEADINGS = {"Score", "Prog", "Mini", "Daily", "Quest"};
 
-    private static final float PAPER_WIDTH = 673f;
-    private static final float SHADOW_OFFSET = 14f;
-    private static final float SHADOW_ALPHA = 0.55f;
-    private static final int SHADOW_LAYERS = 3;
-    private static final float NAME_WIDTH = 145f;
-    private static final float VALUE_WIDTH = 82f;
+    private static final float PANEL_WIDTH = Theme.WORLD_WIDTH * 0.5f;
+    private static final float NAME_WIDTH = 150f;
+    private static final float VALUE_WIDTH = 70f;
     private static final float RANK_MARK = 46f;
     private static final float ROW_HEIGHT = 54f;
 
@@ -57,79 +54,18 @@ public final class LeaderboardScreen extends BaseScreen {
     protected void build() {
         content.clearChildren();
 
-        float paper = PAPER_WIDTH;
-        float paperHeight = Theme.WORLD_HEIGHT;
-        Stack scroll = new Stack();
-        scroll.add(shadowLayer(paper, paperHeight));
-        scroll.add(paperLayer(paper, paperHeight));
+        Table panel = ui.panel();
+        panel.top();
+        panel.add(headerRow()).growX().row();
 
-        content.add(new Table()).expandX();
-        content.add(scroll).width(paper).growY()
-                .padTop(-Theme.PAD_LARGE)
-                .padRight(-Theme.PAD_LARGE)
-                .padBottom(-Theme.PAD_LARGE);
-    }
-
-    private Table paperLayer(float paper, float paperHeight) {
-        Stack stack = new Stack();
-        Image parchment = new Image(parchmentSlice(paper, paperHeight));
-        parchment.setScaling(Scaling.stretch);
-        stack.add(parchment);
-        stack.add(listLayer(paper));
-
-        Table layer = new Table();
-        layer.top();
-        layer.add(stack).width(paper).height(paperHeight);
-        return layer;
-    }
-
-    private Table listLayer(float paper) {
-        Table inner = new Table();
-        inner.top();
-        inner.pad(Theme.PAD_LARGE, paper * 0.05f, Theme.PAD, paper * 0.05f);
-        inner.add(headerRow()).growX().row();
         Table rule = new Table();
         rule.setBackground(ui.primitives().flat(Theme.alpha(Theme.INK, 0.55f)));
-        inner.add(rule).height(3f).growX().padTop(4f).padBottom(6f).row();
-        inner.add(rankList()).grow();
-        return inner;
-    }
+        panel.add(rule).height(3f).growX().padTop(4f).padBottom(6f).row();
 
-    private com.badlogic.gdx.scenes.scene2d.utils.Drawable parchmentSlice(
-            float width, float paperHeight) {
-        com.badlogic.gdx.graphics.g2d.TextureRegion full =
-                ui.regionFile("assets/ui/scroll_mid.png");
-        if (full == null) {
-            return ui.drawable("scrollMid");
-        }
-        float scale = full.getRegionWidth() / width;
-        int needed = Math.min(full.getRegionHeight(), Math.round(paperHeight * scale));
-        com.badlogic.gdx.graphics.g2d.TextureRegion slice =
-                new com.badlogic.gdx.graphics.g2d.TextureRegion(
-                        full, 0, 0, full.getRegionWidth(), needed);
-        slice.flip(true, false);
-        return new com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable(slice);
-    }
+        panel.add(rankList()).grow();
 
-    private Stack shadowLayer(float paper, float paperHeight) {
-        Stack layers = new Stack();
-        for (int i = 1; i <= SHADOW_LAYERS; i++) {
-            layers.add(shadowPass(paper, paperHeight, SHADOW_OFFSET * i / SHADOW_LAYERS));
-        }
-        return layers;
-    }
-
-    private Table shadowPass(float paper, float paperHeight, float offset) {
-        Image parchment = new Image(parchmentSlice(paper, paperHeight));
-        parchment.setScaling(Scaling.stretch);
-        parchment.setColor(0f, 0f, 0f, SHADOW_ALPHA / SHADOW_LAYERS);
-
-        Table layer = new Table();
-        layer.top();
-        layer.add(parchment).width(paper).height(paperHeight)
-                .padLeft(offset).padTop(offset)
-                .padRight(-offset).padBottom(-offset);
-        return layer;
+        content.right();
+        content.add(panel).width(PANEL_WIDTH).growY();
     }
 
     private Table headerRow() {
@@ -217,7 +153,9 @@ public final class LeaderboardScreen extends BaseScreen {
 
         Table name = new Table();
         name.left();
-        name.add(new Label(user.getNickname(), ui.skin(), nameStyle)).left().row();
+        Label nickname = new Label(user.getNickname(), ui.skin(), nameStyle);
+        nickname.setEllipsis(true);
+        name.add(nickname).growX().minWidth(0f).left().row();
         if (isMe) {
             Table rule = new Table();
             rule.setBackground(ui.primitives().flat(Theme.INK_SELECTED));

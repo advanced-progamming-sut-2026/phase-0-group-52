@@ -1,6 +1,9 @@
 package database;
 
 import model.User;
+import model.entities.plants.PlantCollection;
+import model.entities.plants.PlantProgress;
+import model.entities.plants.Plants;
 import util.Json;
 
 import java.io.IOException;
@@ -139,8 +142,7 @@ public class UserRepository {
         for (int i = 0; i < users.size(); i++) {
             if (users.get(i).getId() == userId) {
                 users.remove(i);
-                writeAll(users);
-                return true;
+                return writeAll(users, true);
             }
         }
         return false;
@@ -204,10 +206,14 @@ public class UserRepository {
     }
 
     private void writeAll(List<User> users) {
-        if (wouldDestroyData(users)) {
+        writeAll(users, false);
+    }
+
+    private boolean writeAll(List<User> users, boolean allowEmpty) {
+        if (!allowEmpty && wouldDestroyData(users)) {
             System.err.println("Refused to overwrite " + FILE
                     + " with an empty user list; the existing accounts were kept.");
-            return;
+            return false;
         }
         StringBuilder sb = new StringBuilder();
         sb.append("[\n");
@@ -222,8 +228,10 @@ public class UserRepository {
         try {
             Files.createDirectories(FILE.getParent());
             Files.write(FILE, sb.toString().getBytes(StandardCharsets.UTF_8));
+            return true;
         } catch (IOException e) {
             System.err.println("Could not write users file: " + e.getMessage());
+            return false;
         }
     }
 
@@ -240,7 +248,6 @@ public class UserRepository {
         str(sb, "securityAnswerHash", u.getSecurityAnswerHash());
         num(sb, "coins", u.getCoins());
         num(sb, "gems", u.getGems());
-        num(sb, "seedPacket", u.getSeedPacket());
         num(sb, "plantFoodNum", u.getPlantFoodNum());
         num(sb, "mostMeowPoint", u.getMostMeowPoint());
         num(sb, "maxPoint", u.getMaxPoint());
@@ -258,6 +265,7 @@ public class UserRepository {
         bool(sb, "showGrid", u.isShowGrid());
         bool(sb, "debugMode", u.isDebugMode());
         bool(sb, "stayLoggedIn", u.isStayLoggedIn());
+        plants(sb, u);
 
         if (sb.charAt(sb.length() - 1) == ',') {
             sb.setLength(sb.length() - 1);
@@ -278,7 +286,6 @@ public class UserRepository {
         u.setSecurityAnswerHash(strOf(m, "securityAnswerHash"));
         u.setCoins(intOf(m, "coins"));
         u.setGems(intOf(m, "gems"));
-        u.setSeedPacket(intOf(m, "seedPacket"));
         u.setPlantFoodNum(intOf(m, "plantFoodNum"));
         u.setMostMeowPoint(intOf(m, "mostMeowPoint"));
         u.setMaxPoint(intOf(m, "maxPoint"));
@@ -296,7 +303,65 @@ public class UserRepository {
         u.setShowGrid(boolOf(m, "showGrid"));
         u.setDebugMode(boolOf(m, "debugMode"));
         u.setStayLoggedIn(boolOf(m, "stayLoggedIn"));
+        readPlants(u, m.get("plants"));
         return u;
+    }
+
+    private void plants(StringBuilder sb, User u) {
+        StringBuilder rows = new StringBuilder();
+        for (Plants plant : Plants.values()) {
+            PlantProgress state = u.getPlants().progress(plant);
+            boolean boosted = u.getStoredBoosts().contains(plant);
+            if (!state.isUnlocked() && state.getPackets() == 0
+                    && state.getXp() == 0 && state.getLevel() <= 1 && !boosted) {
+                continue;
+            }
+            if (rows.length() > 0) {
+                rows.append(',');
+            }
+            rows.append("{\"plant\":\"").append(plant.name()).append("\",\"packets\":")
+                    .append(state.getPackets()).append(",\"xp\":").append(state.getXp())
+                    .append(",\"level\":").append(state.getLevel())
+                    .append(",\"unlocked\":").append(state.isUnlocked())
+                    .append(",\"boosted\":").append(boosted).append('}');
+        }
+        sb.append("\"plants\":[").append(rows).append("],");
+    }
+
+    private void readPlants(User u, Object raw) {
+        if (!(raw instanceof List)) {
+            return;
+        }
+        PlantCollection collection = u.getPlants();
+        for (Object item : (List<?>) raw) {
+            if (!(item instanceof Map)) {
+                continue;
+            }
+            Map<?, ?> row = (Map<?, ?>) item;
+            Plants plant = plantOf(strOf(row, "plant"));
+            if (plant == null) {
+                continue;
+            }
+            PlantProgress state = collection.progress(plant);
+            state.setPackets(intOf(row, "packets"));
+            state.setXp(intOf(row, "xp"));
+            state.setLevel(intOf(row, "level"));
+            state.setUnlocked(boolOf(row, "unlocked"));
+            if (boolOf(row, "boosted")) {
+                u.getStoredBoosts().add(plant);
+            }
+        }
+    }
+
+    private static Plants plantOf(String name) {
+        if (name == null) {
+            return null;
+        }
+        try {
+            return Plants.valueOf(name);
+        } catch (IllegalArgumentException e) {
+            return null;
+        }
     }
 
     private void str(StringBuilder sb, String key, String value) {

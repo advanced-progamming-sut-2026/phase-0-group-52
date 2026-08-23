@@ -7,7 +7,7 @@ import util.Log;
 import view.MenuType;
 import view.gui.screens.AdventureScreen;
 import view.gui.screens.ChoosePlantScreen;
-import view.gui.screens.CollectionScreen;
+import view.gui.screens.AlmanacScreen;
 import view.gui.screens.GreenhouseScreen;
 import view.gui.screens.LeaderboardScreen;
 import view.gui.screens.MainMenuScreen;
@@ -172,7 +172,7 @@ public final class PvzGame extends Game {
             case MAIN_MENU:        return new MainMenuScreen(context);
             case NEWS_MENU:        return new NewsScreen(context);
             case CHAPTER_MENU:     return new AdventureScreen(context);
-            case COLLECTION_MENU:  return new CollectionScreen(context);
+            case COLLECTION_MENU:  return new AlmanacScreen(context);
             case GREENHOUSE_MENU:  return new GreenhouseScreen(context);
             case TRAVEL_LOG_MENU:  return new QuestsScreen(context);
             case CHOOSE_PLANT_MENU: return new ChoosePlantScreen(context);

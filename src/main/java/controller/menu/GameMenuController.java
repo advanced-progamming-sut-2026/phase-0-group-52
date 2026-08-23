@@ -341,6 +341,14 @@ public class GameMenuController {
         cell.getPlants().add(plant);
         game.getPlants().add(plant);
         game.getStats().recordPlantPlanted(type, x - 1, y - 1);
+        finishPlanting(game, plant, type, plantLevel, conveyor, x, y);
+    }
+
+    private void finishPlanting(Game game, Plant plant, Plants type, int plantLevel,
+            boolean conveyor, int x, int y) {
+        if (app.getCurrentuser() != null) {
+            app.getCurrentuser().getPlants().addXp(type, 1);
+        }
         if (!conveyor && !game.isCooldownsRemoved())
             game.startCooldown(type, PlantData.effectiveRecharge(type, plantLevel));
         plant.onPlanted(game);

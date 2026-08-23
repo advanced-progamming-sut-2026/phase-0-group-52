@@ -34,6 +34,7 @@ public final class UiKit implements Disposable {
     private BitmapFont fontHuge;
     private BitmapFont fontButton;
     private BitmapFont fontTitleOutline;
+    private BitmapFont fontHand;
 
     public UiKit(Assets assets) {
         this.assets = assets;
@@ -210,6 +211,7 @@ public final class UiKit implements Disposable {
         fontHuge = artSkin.getFont("FBUSV8C5EI_1_outline");
         fontButton = artSkin.getFont("HOUSE_OF_TERROR");
         fontTitleOutline = artSkin.getFont("FBUSV8C5EI_2_outline");
+        fontHand = artSkin.getFont("BRIANNETOD");
 
         skin.add("small", fontSmall);
         skin.add("body", fontBody);
@@ -244,7 +246,6 @@ public final class UiKit implements Disposable {
                         Theme.OUTLINE, Theme.BORDER)), Drawable.class);
         loadIconFile("leaderboardIcon", "assets/ui/leaderboard.png");
         loadIconFile("plusIcon", "assets/ui/currency_plus.png");
-        loadIconFile("scrollMid", "assets/ui/scroll_mid.png");
         loadIconFile("rankFirst", "assets/ui/rank_standstill.png");
         loadIconFile("rankSecond", "assets/ui/rank_promoted.png");
         loadIconFile("rankThird", "assets/ui/rank_demoted.png");
@@ -313,6 +314,13 @@ public final class UiKit implements Disposable {
         skin.add("smallOnDark", new Label.LabelStyle(fontSmall, Theme.TEXT_ON_DARK));
         skin.add("error", new Label.LabelStyle(fontSmall, Theme.RED));
         skin.add("value", new Label.LabelStyle(fontBody, Theme.OUTLINE));
+        skin.add("story", new Label.LabelStyle(
+                fontHand != null ? fontHand : fontBody, Theme.INK));
+        skin.add("statLabel", new Label.LabelStyle(fontSmall, Theme.INK));
+        skin.add("statValue", new Label.LabelStyle(fontBody, Theme.darken(Theme.SUN, 0.28f)));
+        skin.add("special", new Label.LabelStyle(fontBody, Theme.RED));
+        skin.add("packetCost", new Label.LabelStyle(
+                fontTitleOutline != null ? fontTitleOutline : fontTitle, Color.WHITE));
         skin.add("rowName", new Label.LabelStyle(fontTitle, Theme.INK));
         skin.add("rowNameSelected", new Label.LabelStyle(fontTitleOutline, Theme.INK_SELECTED));
         skin.add("rowNameMe", new Label.LabelStyle(fontTitle, Theme.INK_SELECTED));
