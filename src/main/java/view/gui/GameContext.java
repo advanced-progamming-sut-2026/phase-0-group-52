@@ -49,6 +49,7 @@ public final class GameContext {
         private int gameSpeed = 1;
         private boolean showGrid;
         private boolean debugMode;
+        private boolean uiEditMode;
 
         public Settings(App app) {
             this.app = app;
@@ -104,6 +105,21 @@ public final class GameContext {
             }
             if (signedIn().isDebugMode() != value) {
                 send("menu", "settings", "toggle-debug");
+            }
+        }
+
+        public boolean isUiEditMode() {
+            model.User user = signedIn();
+            return user == null ? uiEditMode : user.isUiEditMode();
+        }
+
+        public void setUiEditMode(boolean value) {
+            if (signedIn() == null) {
+                uiEditMode = value;
+                return;
+            }
+            if (signedIn().isUiEditMode() != value) {
+                send("menu", "settings", "toggle-ui-edit");
             }
         }
     }

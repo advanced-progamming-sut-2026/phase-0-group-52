@@ -6,6 +6,7 @@ import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.utils.Align;
 import controller.menu.SettingMenuController;
 import model.User;
+import view.gui.layout.UiLayout;
 
 public final class SettingsPopup extends Popup {
     private static final int DIFFICULTY_LEVELS = 5;
@@ -62,6 +63,21 @@ public final class SettingsPopup extends Popup {
             }
         })).row();
 
+        grid.add(toggleRow("UI Edit Mode (F10)", context.settings().isUiEditMode(),
+                new Runnable() {
+                    @Override
+                    public void run() {
+                        context.settings().setUiEditMode(!context.settings().isUiEditMode());
+                        rebuild();
+                    }
+                })).row();
+        grid.add(valueRow("Restore UI Layout", UiLayout.count() + " saved", new Runnable() {
+            @Override
+            public void run() {
+                restoreLayout();
+            }
+        })).row();
+
         grid.add(toggleRow("Fullscreen (F11)", Display.isFullscreen(), new Runnable() {
             @Override
             public void run() {
@@ -70,6 +86,14 @@ public final class SettingsPopup extends Popup {
             }
         }));
         grid.row();
+    }
+
+    private void restoreLayout() {
+        int removed = UiLayout.clearAll();
+        UiLayout.save();
+        UiLayout.refresh(getStage() == null ? null : getStage().getRoot());
+        context.toasts().info(removed + " interface tweaks were restored to the stock layout.");
+        rebuild();
     }
 
     private Table valueRow(String label, String value, Runnable action) {
