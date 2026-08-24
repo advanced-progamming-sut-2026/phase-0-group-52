@@ -29,6 +29,7 @@ public final class PvzGame extends Game {
     private MenuType displayed;
     private MenuType unmapped;
 
+    private view.gui.layout.LayoutEditor layoutEditor;
     private boolean firstFrameLogged;
     private TitleScreen titleScreen;
     private Navigator navigator;
@@ -115,8 +116,12 @@ public final class PvzGame extends Game {
                     + (System.currentTimeMillis() - DesktopLauncher.PROCESS_START) + " ms");
         }
         syncToModel(false);
+        syncLayoutEditor();
         super.render();
 
+        if (com.badlogic.gdx.Gdx.input.isKeyJustPressed(com.badlogic.gdx.Input.Keys.F10)) {
+            context.settings().setUiEditMode(!context.settings().isUiEditMode());
+        }
         if (com.badlogic.gdx.Gdx.input.isKeyJustPressed(com.badlogic.gdx.Input.Keys.F11)) {
             Display.toggle();
         }
@@ -127,6 +132,27 @@ public final class PvzGame extends Game {
         if (tour != null) {
             tour.step();
         }
+    }
+
+    private void syncLayoutEditor() {
+        Screen screen = getScreen();
+        if (!(screen instanceof Navigator.Hosted)) {
+            return;
+        }
+        com.badlogic.gdx.scenes.scene2d.Stage stage = ((Navigator.Hosted) screen).uiStage();
+        view.gui.layout.UiLayout.setScope(screen.getClass().getSimpleName());
+        view.gui.layout.UiLayout.apply(stage.getRoot());
+        if (!context.settings().isUiEditMode()) {
+            if (layoutEditor != null && layoutEditor.getStage() != null) {
+                layoutEditor.detach();
+            }
+            return;
+        }
+        if (layoutEditor == null) {
+            layoutEditor = new view.gui.layout.LayoutEditor(context);
+        }
+        layoutEditor.attach(stage);
+        layoutEditor.poll();
     }
 
     public void startScreenTour() {
@@ -194,6 +220,7 @@ public final class PvzGame extends Game {
 
     @Override
     public void dispose() {
+        view.gui.layout.UiLayout.save();
         new controller.SaveService().persist();
         for (Screen screen : screens.values()) {
             screen.dispose();
