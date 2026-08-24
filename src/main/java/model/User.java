@@ -55,6 +55,7 @@ public class User {
     private int gameSpeed = 1;
     private boolean showGrid;
     private boolean debugMode;
+    private boolean uiEditMode;
 
     public User() {
         this.difficultyLevel = 3;
@@ -417,6 +418,14 @@ public class User {
 
     public void setDebugMode(boolean debugMode) {
         this.debugMode = debugMode;
+    }
+
+    public boolean isUiEditMode() {
+        return uiEditMode;
+    }
+
+    public void setUiEditMode(boolean uiEditMode) {
+        this.uiEditMode = uiEditMode;
     }
 
     public int getQuestMainNum() {

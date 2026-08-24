@@ -43,7 +43,7 @@ public class SettingMenuController {
     private void handleSettings(String[] parts) {
         if (parts.length < 3) {
             view.showError("Usage: menu settings <change-difficulty|set-speed|"
-                    + "toggle-grid|toggle-debug>");
+                    + "toggle-grid|toggle-debug|toggle-ui-edit>");
             return;
         }
         if (app.getCurrentuser() == null) {
@@ -57,6 +57,9 @@ public class SettingMenuController {
             saves.persist(app.getCurrentuser());
         } else if (parts[2].equals("toggle-debug")) {
             app.getCurrentuser().setDebugMode(!app.getCurrentuser().isDebugMode());
+            saves.persist(app.getCurrentuser());
+        } else if (parts[2].equals("toggle-ui-edit")) {
+            app.getCurrentuser().setUiEditMode(!app.getCurrentuser().isUiEditMode());
             saves.persist(app.getCurrentuser());
         } else {
             handleChangeDifficulty(parts);

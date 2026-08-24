@@ -264,6 +264,7 @@ public class UserRepository {
         num(sb, "gameSpeed", u.getGameSpeed());
         bool(sb, "showGrid", u.isShowGrid());
         bool(sb, "debugMode", u.isDebugMode());
+        bool(sb, "uiEditMode", u.isUiEditMode());
         bool(sb, "stayLoggedIn", u.isStayLoggedIn());
         plants(sb, u);
 
@@ -302,6 +303,7 @@ public class UserRepository {
         u.setGameSpeed(intOf(m, "gameSpeed"));
         u.setShowGrid(boolOf(m, "showGrid"));
         u.setDebugMode(boolOf(m, "debugMode"));
+        u.setUiEditMode(boolOf(m, "uiEditMode"));
         u.setStayLoggedIn(boolOf(m, "stayLoggedIn"));
         readPlants(u, m.get("plants"));
         return u;
