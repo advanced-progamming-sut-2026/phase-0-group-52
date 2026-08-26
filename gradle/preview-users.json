@@ -10,6 +10,7 @@
     "securityAnswerHash": "y",
     "coins": 12480,
     "gems": 85,
+    "seenZombies": ["ZombieTutorialArmor1Default", "ZombieMummyDefault", "ZombieRaDefault", "ZombieIceAgeHunter", "ZombieBeachOctopus", "ZombieDarkKing", "ZombieGargantuarBasic"],
     "seedPacket": 14,
     "plantFoodNum": 2,
     "mostMeowPoint": 9200,

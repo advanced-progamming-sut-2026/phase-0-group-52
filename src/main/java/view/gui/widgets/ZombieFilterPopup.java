@@ -4,12 +4,9 @@ import com.badlogic.gdx.scenes.scene2d.ui.CheckBox;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
-import model.ChapterType;
-import model.entities.plants.PlantData;
-import model.entities.plants.PlantRecord;
-import model.entities.plants.Plants;
-import model.entities.plants.PlantsCategory;
-import view.gui.Animations;
+import model.User;
+import model.entities.zombies.ZombieData;
+import model.entities.zombies.ZombieRecord;
 import view.gui.GameContext;
 import view.gui.Navigator;
 import view.gui.Popup;
@@ -23,9 +20,14 @@ import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
 
-public final class AlmanacFilterPopup extends Popup {
+public final class ZombieFilterPopup extends Popup {
 
-    public enum SortKey { ALPHABETICAL, PROGRESSION, LEVEL, CATEGORY, TOUGHNESS, SUN_COST }
+    public enum SortKey { ALPHABETICAL, DISCOVERY, CHAPTER, TOUGHNESS, SPEED }
+
+    private static final String[] CHAPTERS = {
+        "ANCIENT_EGYPT", "FROSTBITE_CAVES",
+        "BIG_WAVE_BEACH", "DARK_AGES", "ZOMBOSS",
+    };
 
     public static final class Rule {
         private final SortKey key;
@@ -51,10 +53,9 @@ public final class AlmanacFilterPopup extends Popup {
     public static final class Rules {
         private final List<Rule> order = new ArrayList<Rule>();
         private final Set<String> chapters = new LinkedHashSet<String>();
-        private final Set<PlantsCategory> categories = new LinkedHashSet<PlantsCategory>();
         private String query = "";
-        private boolean showLocked = true;
-        private boolean showUnlocked = true;
+        private boolean showSeen = true;
+        private boolean showUnseen = true;
 
         public Rules() {
             for (SortKey key : SortKey.values()) {
@@ -78,24 +79,20 @@ public final class AlmanacFilterPopup extends Popup {
             return chapters;
         }
 
-        public Set<PlantsCategory> getCategories() {
-            return categories;
+        public boolean isShowSeen() {
+            return showSeen;
         }
 
-        public boolean isShowLocked() {
-            return showLocked;
+        public void setShowSeen(boolean value) {
+            showSeen = value;
         }
 
-        public void setShowLocked(boolean value) {
-            showLocked = value;
+        public boolean isShowUnseen() {
+            return showUnseen;
         }
 
-        public boolean isShowUnlocked() {
-            return showUnlocked;
-        }
-
-        public void setShowUnlocked(boolean value) {
-            showUnlocked = value;
+        public void setShowUnseen(boolean value) {
+            showUnseen = value;
         }
 
         public void move(int from, int to) {
@@ -105,43 +102,33 @@ public final class AlmanacFilterPopup extends Popup {
             order.add(to, order.remove(from));
         }
 
-        public List<Plants> apply() {
-            List<Plants> out = new ArrayList<Plants>();
-            for (Plants plant : Plants.values()) {
-                if (keeps(plant)) {
-                    out.add(plant);
+        public List<ZombieRecord> apply(User user, boolean revealAll) {
+            List<ZombieRecord> out = new ArrayList<ZombieRecord>();
+            for (ZombieRecord record : ZombieData.all()) {
+                if (keeps(record, user, revealAll)) {
+                    out.add(record);
                 }
             }
             Collections.sort(out, comparator());
             return out;
         }
 
-        private boolean keeps(Plants plant) {
-            PlantRecord r = PlantData.record(plant);
-            if (r == null) {
-                return false;
-            }
+        private boolean keeps(ZombieRecord record, User user, boolean revealAll) {
             if (!query.isEmpty()
-                    && !plant.getName().toLowerCase().contains(query.toLowerCase())) {
+                    && !record.getName().toLowerCase().contains(query.toLowerCase())) {
                 return false;
             }
-            if (!categories.isEmpty() && !categories.contains(r.getCategory())) {
+            if (!chapters.isEmpty() && !chapters.contains(record.getChapter())) {
                 return false;
             }
-            if (!chapters.isEmpty() && !chapters.contains(tierOf(r))) {
-                return false;
-            }
-            return true;
+            boolean seen = revealAll || ZombieData.isSeen(user, record);
+            return seen ? showSeen : showUnseen;
         }
 
-        private static String tierOf(PlantRecord r) {
-            return r.getChapter() == null ? r.getUnlockKind().name() : r.getChapter().name();
-        }
-
-        private Comparator<Plants> comparator() {
-            return new Comparator<Plants>() {
+        private Comparator<ZombieRecord> comparator() {
+            return new Comparator<ZombieRecord>() {
                 @Override
-                public int compare(Plants a, Plants b) {
+                public int compare(ZombieRecord a, ZombieRecord b) {
                     for (Rule rule : order) {
                         int cmp = compareBy(rule.getKey(), a, b);
                         if (cmp != 0) {
@@ -153,22 +140,19 @@ public final class AlmanacFilterPopup extends Popup {
             };
         }
 
-        private int compareBy(SortKey key, Plants a, Plants b) {
-            PlantRecord ra = PlantData.record(a);
-            PlantRecord rb = PlantData.record(b);
+        private int compareBy(SortKey key, ZombieRecord a, ZombieRecord b) {
             switch (key) {
                 case ALPHABETICAL:
                     return a.getName().compareToIgnoreCase(b.getName());
-                case PROGRESSION:
-                    return Integer.compare(ra.getId(), rb.getId());
-                case LEVEL:
-                    return Integer.compare(ra.getChapterOrder(), rb.getChapterOrder());
-                case CATEGORY:
-                    return ra.getCategory().name().compareTo(rb.getCategory().name());
+                case DISCOVERY:
+                    return Integer.compare(a.getId(), b.getId());
+                case CHAPTER:
+                    return a.getChapter().compareTo(b.getChapter());
                 case TOUGHNESS:
-                    return Integer.compare(a.getBaseHP(), b.getBaseHP());
-                case SUN_COST:
-                    return Integer.compare(a.getCost(), b.getCost());
+                    return Integer.compare(a.getToughness().getIndex(),
+                            b.getToughness().getIndex());
+                case SPEED:
+                    return Integer.compare(a.getSpeed().getIndex(), b.getSpeed().getIndex());
                 default:
                     return 0;
             }
@@ -179,7 +163,7 @@ public final class AlmanacFilterPopup extends Popup {
     private final Runnable onChange;
     private final Table columns = new Table();
 
-    public AlmanacFilterPopup(GameContext context, Rules rules, Runnable onChange) {
+    public ZombieFilterPopup(GameContext context, Rules rules, Runnable onChange) {
         super(context.ui(), "Sort and filter", 760f, 560f);
         this.rules = rules;
         this.onChange = onChange;
@@ -249,39 +233,28 @@ public final class AlmanacFilterPopup extends Popup {
         Label head = new Label("Filter", ui.skin(), "rowHeader");
         column.add(head).left().padBottom(Theme.PAD_SMALL).row();
 
-        column.add(lockBox("Unlocked", true)).left().row();
-        column.add(lockBox("Locked", false)).left().padBottom(Theme.PAD_SMALL).row();
+        column.add(seenBox("Discovered", true)).left().row();
+        column.add(seenBox("Not discovered", false)).left().padBottom(Theme.PAD).row();
 
-        Label origin = new Label("Origin", ui.skin(), "muted");
-        column.add(origin).left().padBottom(2f).row();
-        column.add(tierBox("Starter", "STARTER")).left().row();
-        for (ChapterType chapter : ChapterType.values()) {
-            column.add(tierBox(chapter.getDisplayName(), chapter.name())).left().row();
-        }
-        column.add(tierBox("Premium", "PREMIUM")).left().row();
-        column.add(tierBox("Mint", "MINT")).left().padBottom(Theme.PAD_SMALL).row();
-
-        Label cat = new Label("Category", ui.skin(), "muted");
-        column.add(cat).left().padBottom(2f).row();
-        for (PlantsCategory value : PlantsCategory.values()) {
-            if (value != PlantsCategory.MINT) {
-                column.add(categoryBox(value)).left().row();
-            }
+        Label where = new Label("Chapter", ui.skin(), "rowSub");
+        column.add(where).left().padBottom(Theme.PAD_SMALL).row();
+        for (String chapter : CHAPTERS) {
+            column.add(chapterBox(chapter)).left().row();
         }
         return column;
     }
 
-    private CheckBox lockBox(String text, final boolean unlockedSide) {
+    private CheckBox seenBox(String text, final boolean seenSide) {
         CheckBox box = ui.checkBox(text);
-        box.setChecked(unlockedSide ? rules.isShowUnlocked() : rules.isShowLocked());
+        box.setChecked(seenSide ? rules.isShowSeen() : rules.isShowUnseen());
         box.addListener(new ChangeListener() {
             @Override
             public void changed(ChangeEvent event, com.badlogic.gdx.scenes.scene2d.Actor actor) {
                 boolean value = ((CheckBox) actor).isChecked();
-                if (unlockedSide) {
-                    rules.setShowUnlocked(value);
+                if (seenSide) {
+                    rules.setShowSeen(value);
                 } else {
-                    rules.setShowLocked(value);
+                    rules.setShowUnseen(value);
                 }
                 notifyChange();
             }
@@ -289,33 +262,16 @@ public final class AlmanacFilterPopup extends Popup {
         return box;
     }
 
-    private CheckBox tierBox(String text, final String tier) {
-        CheckBox box = ui.checkBox(text);
-        box.setChecked(rules.getChapters().contains(tier));
+    private CheckBox chapterBox(final String chapter) {
+        CheckBox box = ui.checkBox(pretty(chapter));
+        box.setChecked(rules.getChapters().contains(chapter));
         box.addListener(new ChangeListener() {
             @Override
             public void changed(ChangeEvent event, com.badlogic.gdx.scenes.scene2d.Actor actor) {
                 if (((CheckBox) actor).isChecked()) {
-                    rules.getChapters().add(tier);
+                    rules.getChapters().add(chapter);
                 } else {
-                    rules.getChapters().remove(tier);
-                }
-                notifyChange();
-            }
-        });
-        return box;
-    }
-
-    private CheckBox categoryBox(final PlantsCategory value) {
-        CheckBox box = ui.checkBox(pretty(value.name()));
-        box.setChecked(rules.getCategories().contains(value));
-        box.addListener(new ChangeListener() {
-            @Override
-            public void changed(ChangeEvent event, com.badlogic.gdx.scenes.scene2d.Actor actor) {
-                if (((CheckBox) actor).isChecked()) {
-                    rules.getCategories().add(value);
-                } else {
-                    rules.getCategories().remove(value);
+                    rules.getChapters().remove(chapter);
                 }
                 notifyChange();
             }

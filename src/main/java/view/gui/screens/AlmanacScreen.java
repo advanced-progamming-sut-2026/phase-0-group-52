@@ -69,12 +69,10 @@ public final class AlmanacScreen extends BaseScreen {
     private static final float TAB_WIDTH = 54f;
     private static final float TAB_HEIGHT = 54f;
     private static final float TAB_ACTIVE_HEIGHT = 72f;
-    private static final float TAB_ICON = 38f;
     private static final float TAB_ICON_TOP = 5f;
     private static final float TAB_INDENT = 14f;
     private static final float TAB_GAP = 3f;
     private static final float TAB_SEAM = 14f;
-    private static final int TAB_RADIUS = 14;
     private static final float OUTER_PAD = 12f;
     private static final float STRIP_HEIGHT = 160f;
     private static final Color PANEL_SHADE = new Color(0.62f, 0.6f, 0.58f, 1f);
@@ -86,6 +84,10 @@ public final class AlmanacScreen extends BaseScreen {
     private final view.gui.widgets.StatTiles tiles;
 
     private int tileColumn;
+    private boolean zombieTab;
+    private String query = "";
+    private com.badlogic.gdx.scenes.scene2d.ui.TextField searchField;
+    private ZombieAlmanac zombies;
     private Plants selected = Plants.SUNFLOWER;
     private int clipIndex;
     private PamActor stageActor;
@@ -148,11 +150,17 @@ public final class AlmanacScreen extends BaseScreen {
 
         Table body = new Table();
         body.top();
-        body.add(inner(leftColumn())).width(STAGE_WIDTH).growY();
-        body.add(inner(statsPane())).grow();
+        if (zombieTab) {
+            body.add(inner(zombies().statsPanel())).grow();
+            body.add(inner(zombies().stagePanel())).width(STAGE_WIDTH).growY();
+        } else {
+            body.add(inner(leftColumn())).width(STAGE_WIDTH).growY();
+            body.add(inner(statsPane())).grow();
+        }
         panel.add(body).grow().row();
 
-        panel.add(packetStrip()).growX().height(STRIP_HEIGHT)
+        panel.add(zombieTab ? zombies().cardStrip() : packetStrip())
+                .growX().height(STRIP_HEIGHT)
                 .padTop(Theme.PAD).padLeft(Theme.PAD_SMALL).padRight(Theme.PAD_SMALL)
                 .padBottom(Theme.PAD);
 
@@ -179,9 +187,29 @@ public final class AlmanacScreen extends BaseScreen {
         return frame;
     }
 
+    private ZombieAlmanac zombies() {
+        if (zombies == null) {
+            zombies = new ZombieAlmanac(context, new Runnable() {
+                @Override
+                public void run() {
+                    rebuild();
+                }
+            });
+        }
+        return zombies;
+    }
+
+    private void showTab(boolean toZombies) {
+        zombieTab = toZombies;
+        rebuild();
+    }
+
     private void rebuild() {
         if (strip != null) {
             scrollX = strip.getScrollX();
+        }
+        if (zombies != null) {
+            zombies.rememberScroll();
         }
         content.clear();
         build();
@@ -190,57 +218,70 @@ public final class AlmanacScreen extends BaseScreen {
     private Table tabRow() {
         Table row = new Table();
         row.top().left();
-        row.add(artTab("PLANTS", true, null)).size(TAB_WIDTH, TAB_ACTIVE_HEIGHT).top();
-        row.add(artTab("ZOMBIES", false, new Runnable() {
+        row.add(artTab("PLANTS", !zombieTab, zombieTab ? new Runnable() {
             @Override
             public void run() {
-                context.toasts().info("The zombie almanac is not built yet.");
+                showTab(false);
             }
-        })).size(TAB_WIDTH, TAB_HEIGHT).top().padLeft(TAB_GAP);
+        } : null)).size(TAB_WIDTH, zombieTab ? TAB_HEIGHT : TAB_ACTIVE_HEIGHT).top();
+        row.add(artTab("ZOMBIES", zombieTab, zombieTab ? null : new Runnable() {
+            @Override
+            public void run() {
+                showTab(true);
+            }
+        })).size(TAB_WIDTH, zombieTab ? TAB_ACTIVE_HEIGHT : TAB_HEIGHT).top().padLeft(TAB_GAP);
         row.add(new Table()).growX();
-        row.add(filterTab()).height(TAB_HEIGHT).top().padRight(TAB_INDENT);
+        row.add(searchBar()).height(TAB_HEIGHT).top().padRight(TAB_INDENT);
         return row;
     }
 
     private Table artTab(String kind, boolean active, final Runnable onClick) {
-        Table cell = new Table();
-        Drawable face = regionOf("IMAGE_UI_ALMANAC_TABS_" + kind
-                + (active ? "_ACTIVE" : "_DOWN"));
-        if (face != null) {
-            cell.setBackground(face);
-        } else {
-            cell.setBackground(ui.primitives().rounded(TAB_RADIUS,
-                    active ? Theme.GREEN : Theme.PANEL_SUNKEN, Theme.OUTLINE, 2));
-        }
-        Drawable icon = regionOf("IMAGE_UI_STORE_TABICONS_" + kind);
-        if (icon != null) {
-            Image mark = new Image(icon);
-            mark.setScaling(Scaling.fit);
-            cell.add(mark).size(TAB_ICON).top().padTop(TAB_ICON_TOP).expandY();
-        }
-        if (onClick != null) {
-            UiKit.onClick(cell, onClick);
-        }
-        return cell;
+        return view.gui.widgets.AlmanacTab.build(ui,
+                regionOf("IMAGE_UI_ALMANAC_TABS_" + kind + (active ? "_ACTIVE" : "_DOWN")),
+                regionOf("IMAGE_UI_STORE_TABICONS_" + kind), active, TAB_ICON_TOP, onClick);
     }
 
-    private Table filterTab() {
-        Table cell = new Table();
-        cell.setBackground(ui.primitives().rounded(TAB_RADIUS,
-                Theme.PANEL, Theme.OUTLINE_SOFT, 2));
-        Label label = new Label("Filter", ui.skin(), "rowHeader");
-        cell.add(label).pad(Theme.PAD_SMALL, Theme.PAD, Theme.PAD_SMALL, Theme.PAD)
-                .padTop(UiKit.opticalPad(label));
-        UiKit.onClick(cell, new Runnable() {
-            @Override
-            public void run() {
-                openFilter();
-            }
-        });
-        return cell;
+    private Table searchBar() {
+        return view.gui.widgets.SearchBar.build(ui, query, regionOf("IMAGE_UI_ALMANAC_FILTER_BUTTON_UP"),
+                new view.gui.widgets.SearchBar.Sink() {
+                    @Override
+                    public void typed(String text,
+                            com.badlogic.gdx.scenes.scene2d.ui.TextField field) {
+                        query = text;
+                        searchField = field;
+                        applyQuery();
+                        rebuild();
+                    }
+                },
+                new Runnable() {
+                    @Override
+                    public void run() {
+                        openFilter();
+                    }
+                });
+    }
+
+    private void applyQuery() {
+        rules.setQuery(query);
+        if (zombies != null) {
+            zombies.rules().setQuery(query);
+        }
+        if (searchField != null) {
+            stage.setKeyboardFocus(searchField);
+            searchField.setCursorPosition(searchField.getText().length());
+        }
     }
 
     private void openFilter() {
+        if (zombieTab) {
+            new view.gui.widgets.ZombieFilterPopup(context, zombies().rules(), new Runnable() {
+                @Override
+                public void run() {
+                    rebuild();
+                }
+            }).showOn(stage);
+            return;
+        }
         new AlmanacFilterPopup(context, rules, new Runnable() {
             @Override
             public void run() {
