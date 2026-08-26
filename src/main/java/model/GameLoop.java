@@ -116,13 +116,6 @@ public class GameLoop {
     }
 
     private void recordSeenZombies(Game game) {
-        model.User user = (game.getApp() != null) ? game.getApp().getCurrentuser() : null;
-        if (user == null) return;
-        for (Zombie z : game.getZombies()) {
-            String name = z.getDisplayName();
-            if (user.markZombieSeen(name))
-                user.getNewsList().addNews("A new zombie appeared in battle: " + name + "!");
-        }
     }
 
     private boolean allWavesSpawned(Game game) {

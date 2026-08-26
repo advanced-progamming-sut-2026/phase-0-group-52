@@ -147,11 +147,23 @@ public class GameMenuController {
                 + " | Wave: " + (game.getCurrentWaveIndex() + 1) + "/" + game.getWaves().size());
     }
 
+    private void recordZombiesMet(model.User user, Game game) {
+        for (String alias : game.getStats().getKilledZombies()) {
+            model.entities.zombies.ZombieRecord record =
+                    model.entities.zombies.ZombieData.byAlias(alias);
+            if (record != null && user.markZombieSeen(alias)) {
+                user.getNewsList().addNews(
+                        "A new zombie joined your almanac: " + record.getName() + "!");
+            }
+        }
+    }
+
     private void onLevelEnd(Game game) {
         model.User u = app.getCurrentuser();
         if (game.isWon() && u != null) {
             System.out.println("Dear humanz, zis is not done yet; we will come back to eat your brainz, humanz.");
             u.setCoins(u.getCoins() + 500);
+            recordZombiesMet(u, game);
             int score = game.getStats().getZombiesKilled() * 10 + game.getSunAmount();
             if (score > u.getMaxPoint()) u.setMaxPoint(score);
             advanceProgress(u, game);

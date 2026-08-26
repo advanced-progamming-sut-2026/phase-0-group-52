@@ -32,6 +32,14 @@ public abstract class ZombieFactory {
     }
 
     public static Zombie create(Zombies data, int line, Vec2 position, ChapterType chapter, ZombieType type) {
+        Zombie built = build(data, line, position, chapter, type);
+        if (built != null) {
+            built.setOrigin(data);
+        }
+        return built;
+    }
+
+    private static Zombie build(Zombies data, int line, Vec2 position, ChapterType chapter, ZombieType type) {
         switch (data) {
             case ZOMBIE_GARGANTUAR:        return new Gargantuar(line, position, chapter, type);
             case ZOMBIE_IMP:               return new Imp(line, position, chapter, type);

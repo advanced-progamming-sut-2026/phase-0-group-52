@@ -267,6 +267,7 @@ public class UserRepository {
         bool(sb, "uiEditMode", u.isUiEditMode());
         bool(sb, "stayLoggedIn", u.isStayLoggedIn());
         plants(sb, u);
+        seenZombies(sb, u);
 
         if (sb.charAt(sb.length() - 1) == ',') {
             sb.setLength(sb.length() - 1);
@@ -306,7 +307,30 @@ public class UserRepository {
         u.setUiEditMode(boolOf(m, "uiEditMode"));
         u.setStayLoggedIn(boolOf(m, "stayLoggedIn"));
         readPlants(u, m.get("plants"));
+        readSeenZombies(u, m.get("seenZombies"));
         return u;
+    }
+
+    private void seenZombies(StringBuilder sb, User u) {
+        StringBuilder rows = new StringBuilder();
+        for (String alias : u.getSeenZombies()) {
+            if (rows.length() > 0) {
+                rows.append(',');
+            }
+            rows.append('"').append(util.Json.escape(alias)).append('"');
+        }
+        sb.append("\"seenZombies\":[").append(rows).append("],");
+    }
+
+    private void readSeenZombies(User u, Object raw) {
+        if (!(raw instanceof List)) {
+            return;
+        }
+        for (Object row : (List<?>) raw) {
+            if (row != null) {
+                u.markZombieSeen(row.toString());
+            }
+        }
     }
 
     private void plants(StringBuilder sb, User u) {

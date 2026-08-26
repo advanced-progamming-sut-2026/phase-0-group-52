@@ -27,6 +27,8 @@ public class CollectionMenuController {
             Pattern.compile("^menu\\s+collection\\s+show-plant\\s+-p\\s+(.+)$");
     private static final Pattern DOC_SHOW_ZOMBIE =
             Pattern.compile("^menu\\s+collection\\s+show-zombie\\s+-z\\s+(.+)$");
+    private static final Pattern DOC_UNLOCK_ZOMBIE =
+            Pattern.compile("^menu\\s+collection\\s+unlock-zombie\\s+-z\\s+(.+)$");
 
     private static final int PLANT_PURCHASE_PRICE = 2000;
 
@@ -50,6 +52,7 @@ public class CollectionMenuController {
         if ((dm = DOC_BUY.matcher(command)).matches()) { buyPlant(dm.group(1)); return; }
         if ((dm = DOC_SHOW_PLANT.matcher(command)).matches()) { showOnePlant(dm.group(1)); return; }
         if ((dm = DOC_SHOW_ZOMBIE.matcher(command)).matches()) { showOneZombie(dm.group(1)); return; }
+        if ((dm = DOC_UNLOCK_ZOMBIE.matcher(command)).matches()) { unlockZombie(dm.group(1)); return; }
         String[] parts = command.split("\\s+");
         if (parts[0].equals("menu")) {
             handleMenu(parts);
@@ -93,6 +96,21 @@ public class CollectionMenuController {
         int level = app.getCurrentuser() != null ? app.getCurrentuser().getPlantLevel(p) : 1;
         System.out.printf("%s | %s | cost: %d | HP: %d | damage: %d | level: %d%n",
                 p.getName(), p.getCategory(), p.getCost(), p.getBaseHP(), p.getDamage(), level);
+    }
+
+    private void unlockZombie(String alias) {
+        model.User user = app.getLoggedInUser();
+        if (user == null) {
+            System.out.println("Error: no user is signed in.");
+            return;
+        }
+        if (model.entities.zombies.ZombieData.byAlias(alias) == null) {
+            System.out.println("Error: Unknown zombie: " + alias);
+            return;
+        }
+        if (user.markZombieSeen(alias)) {
+            new controller.SaveService().persist();
+        }
     }
 
     private void showOneZombie(String name) {

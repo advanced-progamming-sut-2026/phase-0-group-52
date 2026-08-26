@@ -252,7 +252,11 @@ public class User {
     }
 
     public boolean markZombieSeen(String zombieName) {
-        return seenZombies.add(zombieName);
+        return zombieName != null && seenZombies.add(zombieName);
+    }
+
+    public Set<String> getSeenZombies() {
+        return java.util.Collections.unmodifiableSet(seenZombies);
     }
 
     public boolean markMinigameUnlocked(String minigameName) {
