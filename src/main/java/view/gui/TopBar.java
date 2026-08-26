@@ -92,7 +92,7 @@ public final class TopBar extends Table {
             addLeftButton(Icons.ALMANAC, "Almanac", Theme.BLUE, new Runnable() {
                 @Override
                 public void run() {
-                    game().navigator().goMenu(view.MenuType.COLLECTION_MENU);
+                    game().navigator().goMenu(model.enums.MenuType.COLLECTION_MENU);
                 }
             });
         }
@@ -100,7 +100,7 @@ public final class TopBar extends Table {
             addRightButton(Icons.NEWS, "News", Theme.SUN_DEEP, new Runnable() {
                 @Override
                 public void run() {
-                    game().navigator().goMenu(view.MenuType.NEWS_MENU);
+                    game().navigator().goMenu(model.enums.MenuType.NEWS_MENU);
                 }
             });
         }

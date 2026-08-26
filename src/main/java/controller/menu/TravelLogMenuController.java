@@ -1,10 +1,11 @@
 package controller.menu;
 
+import model.enums.MenuType;
+
 import database.QuestRepository;
 import minigame.MinigameType;
 import model.App;
 import model.User;
-import model.enums.Menu;
 import model.quest.QuestDef;
 import model.quest.QuestProgress;
 import model.quest.QuestState;
@@ -133,6 +134,6 @@ public class TravelLogMenuController {
     }
 
     public void exitMenu() {
-        App.getInstance().setCurrentMenu(Menu.MainMenu);
+        App.getInstance().setCurrentmenu(MenuType.MAIN_MENU);
     }
 }

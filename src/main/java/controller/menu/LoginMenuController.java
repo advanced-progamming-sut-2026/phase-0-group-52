@@ -1,12 +1,13 @@
 package controller.menu;
 
+import model.enums.MenuType;
+
 import controller.HashUtil;
 import controller.Navigation;
 import database.UserRepository;
 import model.App;
 import model.Result;
 import model.User;
-import model.enums.Menu;
 import model.enums.SecurityQuestions;
 
 public class LoginMenuController {
@@ -71,7 +72,7 @@ public class LoginMenuController {
         return new Result(true, "Password changed successfully.", null);
     }
     public Result exitMenu(){
-        App.getInstance().setCurrentMenu(Menu.SignUpMenu);
+        App.getInstance().setCurrentmenu(MenuType.SIGNUP_MENU);
         return new Result(true,"",null);
     }
     public Result showCurrentMenu(){

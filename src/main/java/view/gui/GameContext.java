@@ -60,10 +60,6 @@ public final class GameContext {
             return app == null ? null : app.getLoggedInUser();
         }
 
-        private void send(String... command) {
-            controller.handleCommand(command);
-        }
-
         public int getGameSpeed() {
             model.User user = signedIn();
             return user == null ? gameSpeed : user.getGameSpeed();
@@ -75,7 +71,7 @@ public final class GameContext {
                 gameSpeed = clamped;
                 return;
             }
-            send("menu", "settings", "set-speed", "-v", String.valueOf(clamped));
+            controller.setGameSpeed(clamped);
         }
 
         public boolean isShowGrid() {
@@ -89,7 +85,7 @@ public final class GameContext {
                 return;
             }
             if (signedIn().isShowGrid() != value) {
-                send("menu", "settings", "toggle-grid");
+                controller.toggleGrid();
             }
         }
 
@@ -104,7 +100,7 @@ public final class GameContext {
                 return;
             }
             if (signedIn().isDebugMode() != value) {
-                send("menu", "settings", "toggle-debug");
+                controller.toggleDebug();
             }
         }
 
@@ -119,7 +115,7 @@ public final class GameContext {
                 return;
             }
             if (signedIn().isUiEditMode() != value) {
-                send("menu", "settings", "toggle-ui-edit");
+                controller.toggleUiEditMode();
             }
         }
     }

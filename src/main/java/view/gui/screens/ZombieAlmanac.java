@@ -420,9 +420,9 @@ public final class ZombieAlmanac {
             selected = record;
             clipIndex = 0;
         } else if (context.settings().isDebugMode() && context.user() != null) {
-            new controller.menu.CollectionMenuController(context.app()).handleCommand(
-                    "menu collection unlock-zombie -z " + record.getAlias());
-            context.toasts().info(record.getName() + " added to the almanac.");
+            model.Result unlocked = new controller.menu.CollectionMenuController(context.app())
+                    .unlockZombie(record.getAlias());
+            context.toasts().info(unlocked.message());
         }
         rememberScroll();
         onChange.run();

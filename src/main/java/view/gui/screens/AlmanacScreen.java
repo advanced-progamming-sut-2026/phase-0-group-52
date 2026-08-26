@@ -616,7 +616,7 @@ public final class AlmanacScreen extends BaseScreen {
             context.toasts().error("Not enough diamonds to boost.");
             return;
         }
-        controller.handleCommand("menu collection boost-plant -p " + selected.getName());
+        controller.boostPlant(selected);
         rebuild();
     }
 
@@ -627,7 +627,7 @@ public final class AlmanacScreen extends BaseScreen {
             context.toasts().error(blocker);
             return;
         }
-        controller.handleCommand("menu collection upgrade-plant -p " + selected.getName());
+        controller.upgradePlant(selected);
         celebrate();
         rebuild();
     }

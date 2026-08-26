@@ -2,81 +2,47 @@ package controller.menu;
 
 import controller.Navigation;
 import model.App;
-import view.MainMenu;
-import view.MenuType;
+import model.Leaderboard;
+import model.Result;
+import model.User;
+import model.enums.MenuType;
+
+import java.util.List;
 
 public class MainMenuController {
 
     private final App app;
-    private final MainMenu view;
 
     public MainMenuController(App app) {
         this.app = app;
-        this.view = new MainMenu();
     }
 
-    public void handleCommand(String[] parts) {
-        if (parts.length == 1 && parts[0].equals("logout"))
-            parts = new String[]{"menu", "logout"};
-        if (parts.length < 2) {
-            view.showError("Invalid command.");
-            return;
+    public Result enter(MenuType target) {
+        if (target == null) {
+            return new Result(false, "Unknown menu.", null);
         }
-        switch (parts[1]) {
-            case "show":
-                if (parts.length >= 3 && parts[2].equals("current"))
-                    System.out.println("Current menu: " + app.getCurrentmenu());
-                else
-                    view.showError("Usage: menu show current");
-                break;
-            case "enter":
-                handleEnter(parts);
-                break;
-            case "logout":
-                if (app.getCurrentuser() == null) { view.showError("No user is logged in."); break; }
-                app.getCurrentuser().setLogged(false);
-                app.setCurrentuser(null);
-                view.showLoggedOut();
-                app.setCurrentmenu(MenuType.LOGIN_MENU);
-                app.setCurrentMenu(model.enums.Menu.LoginMenu);
-                break;
-            case "leaderboard":
-                handleLeaderboard(parts);
-                break;
-            case "greenhouse": {
-                String e = Navigation.enter(app, "greenhouse_menu");
-                if (e != null) view.showError(e);
-                break;
-            }
-            case "travel-log":
-            case "travel_log": {
-                String e = Navigation.enter(app, "travel_log_menu");
-                if (e != null) view.showError(e);
-                break;
-            }
-            default:
-                view.showError("Unknown command: " + parts[1]);
-        }
+        String error = Navigation.enter(app, target);
+        return error == null
+                ? new Result(true, "Entered " + target + ".", target)
+                : new Result(false, error, null);
     }
 
-    private void handleLeaderboard(String[] parts) {
-        String column = "score";
-        boolean ascending = false;
-        for (int i = 2; i + 1 < parts.length; i += 2) {
-            if (parts[i].equals("-s")) column = parts[i + 1].toLowerCase();
-            else if (parts[i].equals("-o")) ascending = parts[i + 1].equalsIgnoreCase("asc");
+    public Result logout() {
+        User user = app.getCurrentuser();
+        if (user == null) {
+            return new Result(false, "No user is signed in.", null);
         }
-        java.util.List<model.Leaderboard.Entry> entries =
-                new model.Leaderboard().getEntries(column, ascending);
-        view.showLeaderboard(entries, column, ascending);
+        user.setLogged(false);
+        app.setCurrentuser(null);
+        app.setCurrentmenu(MenuType.LOGIN_MENU);
+        return new Result(true, "Signed out.", null);
     }
 
-    private void handleEnter(String[] parts) {
-        if (parts.length < 3) {
-            view.showError("Usage: menu enter <menu_name>");
-            return;
-        }
-        String navError = Navigation.enter(app, parts[2]);
-        if (navError != null) view.showError(navError);
+    public List<Leaderboard.Entry> leaderboard(String column, boolean ascending) {
+        return new Leaderboard().getEntries(column, ascending);
+    }
+
+    public MenuType currentMenu() {
+        return app.getCurrentmenu();
     }
 }

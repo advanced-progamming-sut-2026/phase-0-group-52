@@ -4,7 +4,7 @@ import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Screen;
 import model.App;
 import util.Log;
-import view.MenuType;
+import model.enums.MenuType;
 import view.gui.screens.AdventureScreen;
 import view.gui.screens.ChoosePlantScreen;
 import view.gui.screens.AlmanacScreen;

@@ -19,7 +19,7 @@ import model.entities.zombies.Zombies;
 import model.level.ConveyorBeltLevel;
 import model.level.PlantWhatYouGet;
 import view.GameMenu;
-import view.MenuType;
+import model.enums.MenuType;
 
 import java.util.ArrayList;
 import java.util.Arrays;

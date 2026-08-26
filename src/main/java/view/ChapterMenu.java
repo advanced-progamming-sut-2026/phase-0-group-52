@@ -1,21 +1,11 @@
 package view;
 
-import controller.menu.ChapterMenuController;
 import model.App;
 
-import java.util.Scanner;
 
-public class ChapterMenu implements AppMenu {
+public class ChapterMenu {
 
-    private ChapterMenuController controller;
 
-    @Override
-    public void check(Scanner scanner) {
-        if (controller == null) controller = new ChapterMenuController(App.getInstance());
-        String line = scanner.nextLine().trim();
-        if (line.isEmpty()) return;
-        controller.handleCommand(line.split("\\s+"));
-    }
 
     public void showEnteredChapter(String chapterName) {
         System.out.println("Entered chapter: " + chapterName);

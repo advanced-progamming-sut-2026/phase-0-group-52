@@ -2,9 +2,6 @@ package model.enums.commands;
 
 public enum SignUpCommands implements Commands {
 
-    REGISTER_REGEX("^\\s*register\\s+-u\\s+(?<username>\\S+)\\s+-p\\s+(?<password>\\S+)\\s+(?<passwordConfirm>\\S+)" +
-        "\\s+-n\\s+(?<nickname>\\S+)\\s+-e\\s+(?<email>\\S+)\\s+-g\\s+(?<gender>\\S+)\\s*$"),
-    PICK_SECURITY_QUESTION_REGEX("^\\s*pick\\s+question\\s+-q\\s+(?<questionNumber>\\S+)\\s+-a\\s+(?<answer>\\S+)\\s+-c\\s+(?<answerConfirm>\\S+)\\s*$"),
 
     USERNAME_REGEX("^[a-zA-Z0-9\\-]+$"),
     NICKNAME_REGEX("^.{3,30}$"),
