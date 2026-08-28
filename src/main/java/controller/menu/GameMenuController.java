@@ -223,7 +223,7 @@ public class GameMenuController {
         int levelsPerChapter = 4;
         int chapterNum = 1;
         if (game.getField() != null && game.getField().getChapter() != null)
-            chapterNum = game.getField().getChapter().number();
+            chapterNum = game.getField().getChapter().ordinal() + 1;
         int levelNum = app.getSelectedLevel();
         int completed = (chapterNum - 1) * levelsPerChapter + levelNum;
         int curChapter = Math.max(1, u.getLastChapter());
@@ -232,8 +232,7 @@ public class GameMenuController {
         if (completed > currentPassed) {
             u.setLastChapter(completed / levelsPerChapter + 1);
             u.setLastLevel(completed % levelsPerChapter + 1);
-            System.out.println("Progress saved: chapter " + u.getLastChapter()
-                    + ", level " + u.getLastLevel() + " unlocked.");
+            System.out.println("Progress saved: chapter " + u.getLastChapter() + ", level " + u.getLastLevel() + " unlocked.");
         }
     }
 
