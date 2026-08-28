@@ -314,6 +314,9 @@ public final class UiKit implements Disposable {
         skin.add("smallOnDark", new Label.LabelStyle(fontSmall, Theme.TEXT_ON_DARK));
         skin.add("error", new Label.LabelStyle(fontSmall, Theme.RED));
         skin.add("value", new Label.LabelStyle(fontBody, Theme.OUTLINE));
+        skin.add("almanacBody", new Label.LabelStyle(fontBody, Theme.INK));
+        skin.add("zombieStatLabel", new Label.LabelStyle(fontBody,
+                new Color(0.83f, 0.81f, 0.95f, 1f)));
         skin.add("story", new Label.LabelStyle(
                 fontHand != null ? fontHand : fontBody, Theme.INK));
         skin.add("statLabel", new Label.LabelStyle(fontSmall, Theme.INK));

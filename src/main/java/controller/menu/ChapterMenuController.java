@@ -7,9 +7,8 @@ import model.Game;
 import model.LevelBuilder;
 import model.User;
 import model.entities.plants.Plants;
-import model.enums.Menu;
 import view.ChapterMenu;
-import view.MenuType;
+import model.enums.MenuType;
 
 public class ChapterMenuController {
 
@@ -143,7 +142,7 @@ public class ChapterMenuController {
             sgame.setApp(app);
             app.setGame(sgame);
             app.setCurrentmenu(MenuType.GAME_MENU);
-            app.setCurrentMenu(Menu.GameMenu);
+            app.setCurrentmenu(MenuType.GAME_MENU);
             System.out.println("Special level '" + sp + "' started in " + chapter + " (level "
                     + levelNumber + "). Starting sun: " + sgame.getSunAmount() + ".");
             return;
@@ -155,7 +154,7 @@ public class ChapterMenuController {
         game.setApp(app);
         app.setGame(game);
         app.setCurrentmenu(MenuType.GAME_MENU);
-        app.setCurrentMenu(Menu.GameMenu);
+        app.setCurrentmenu(MenuType.GAME_MENU);
         System.out.println("Level started in " + chapter + " (level " + levelNumber
                 + "). Starting sun: " + game.getSunAmount() + ".");
         System.out.println("Commands: plant plant -t <type> -l (x, y) | collect sun | tick [n]"
@@ -228,7 +227,7 @@ public class ChapterMenuController {
         game.setApp(app);
         app.setGame(game);
         app.setCurrentmenu(MenuType.GAME_MENU);
-        app.setCurrentMenu(Menu.GameMenu);
+        app.setCurrentmenu(MenuType.GAME_MENU);
         System.out.println("Special level '" + special + "' started in " + chapter
                 + ". Starting sun: " + game.getSunAmount() + ".");
         System.out.println("Commands: plant plant -t <type> -l (x, y) | collect sun | tick [n]"

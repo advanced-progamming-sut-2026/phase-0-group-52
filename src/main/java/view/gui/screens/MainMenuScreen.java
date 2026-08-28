@@ -12,6 +12,7 @@ import com.badlogic.gdx.utils.Align;
 import com.badlogic.gdx.utils.Scaling;
 import controller.menu.ChapterMenuController;
 import controller.menu.MainMenuController;
+import model.enums.MenuType;
 import database.QuestRepository;
 import model.ChapterType;
 import model.User;
@@ -267,7 +268,7 @@ public final class MainMenuScreen extends BaseScreen {
         side.add(greenhouseButton(new Runnable() {
             @Override
             public void run() {
-                controller.handleCommand(new String[]{"menu", "enter", "greenhouse_menu"});
+                controller.enter(MenuType.GREENHOUSE_MENU);
             }
         })).size(GREENHOUSE_WIDTH, GREENHOUSE_HEIGHT).row();
         side.add(shopButton(new Runnable() {
@@ -313,7 +314,7 @@ public final class MainMenuScreen extends BaseScreen {
         UiKit.onClick(panel, new Runnable() {
             @Override
             public void run() {
-                controller.handleCommand(new String[]{"menu", "enter", "travel_log_menu"});
+                controller.enter(MenuType.TRAVEL_LOG_MENU);
             }
         });
 

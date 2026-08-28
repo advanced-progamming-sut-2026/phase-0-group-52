@@ -7,8 +7,7 @@ import model.Game;
 import model.LevelBuilder;
 import model.User;
 import model.entities.plants.Plants;
-import model.enums.Menu;
-import view.MenuType;
+import model.enums.MenuType;
 
 import java.util.List;
 import java.util.regex.Matcher;
@@ -97,7 +96,7 @@ public class ChoosePlantMenuController {
         game.setApp(app);
         app.setGame(game);
         app.setCurrentmenu(MenuType.GAME_MENU);
-        app.setCurrentMenu(Menu.GameMenu);
+        app.setCurrentmenu(MenuType.GAME_MENU);
         if (special != null) {
             System.out.println("Special level '" + special + "' started in " + chapter + " (level "
                     + levelNumber + ") with " + app.getPlantSelection().size()

@@ -4,7 +4,7 @@ import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import util.Log;
-import view.MenuType;
+import model.enums.MenuType;
 
 import java.util.ArrayDeque;
 import java.util.Deque;

@@ -1,0 +1,4022 @@
+[
+  {
+    "id": 1,
+    "alias": "ZombieTutorialDefault",
+    "enumName": "ZOMBIE_DEFAULT",
+    "name": "Basic Zombie",
+    "chapter": "ALL_CHAPTERS",
+    "description": "Basic zombie; moves and eats plants.",
+    "flavor": "Shambles forward and eats whatever green thing is nearest. He hates the word \"basic\" and insists he is going places.",
+    "toughness": {
+      "index": 0,
+      "label": "Average",
+      "steps": 7
+    },
+    "speed": {
+      "index": 2,
+      "label": "Basic",
+      "steps": 6
+    },
+    "hp": 190.0,
+    "eatDps": 100.0,
+    "moveSpeed": 0.185,
+    "waveCost": 100,
+    "weight": 1000,
+    "armor": "DEFAULT",
+    "statSource": "enum",
+    "spawnable": true,
+    "packet": {
+      "background": "IMAGE_UI_ALMANAC_PACKETS_ZOMBIES_READY",
+      "icon": "IMAGE_UI_ALMANAC_PACKETS_ZOMBIES_TUTORIAL",
+      "backgroundOffset": [
+        1,
+        1
+      ],
+      "backgroundSize": [
+        112,
+        157
+      ],
+      "iconOffset": [
+        55,
+        84
+      ],
+      "iconSize": [
+        61,
+        102
+      ]
+    },
+    "animations": {
+      "name": "ZOMBIE_TUTORIAL",
+      "zombie": "768/INITIAL/ZOMBIE/ZOMBIE_TUTORIAL/ZOMBIE_TUTORIAL.PAM",
+      "canvas": [
+        390,
+        390
+      ],
+      "clips": [
+        "die",
+        "eat",
+        "idle",
+        "particles",
+        "walk"
+      ]
+    },
+    "armorParts": []
+  },
+  {
+    "id": 2,
+    "alias": "ZombieTutorialArmor1Default",
+    "enumName": "ZOMBIE_ARMOR1",
+    "name": "Conehead Zombie",
+    "chapter": "ALL_CHAPTERS",
+    "description": "Conehead zombie; has a cone armor that absorbs damage before health is affected.",
+    "flavor": "A traffic cone doubles his staying power. He found it on the road and has never once considered giving it back.",
+    "toughness": {
+      "index": 1,
+      "label": "Protected",
+      "steps": 7
+    },
+    "speed": {
+      "index": 2,
+      "label": "Basic",
+      "steps": 6
+    },
+    "hp": 190.0,
+    "eatDps": 100.0,
+    "moveSpeed": 0.185,
+    "waveCost": 200,
+    "weight": 3000,
+    "armor": "CONEHEAD",
+    "statSource": "enum",
+    "spawnable": true,
+    "packet": {
+      "background": "IMAGE_UI_ALMANAC_PACKETS_ZOMBIES_READY",
+      "icon": "IMAGE_UI_ALMANAC_PACKETS_ZOMBIES_TUTORIAL_ARMOR1",
+      "backgroundOffset": [
+        1,
+        1
+      ],
+      "backgroundSize": [
+        112,
+        157
+      ],
+      "iconOffset": [
+        55,
+        41
+      ],
+      "iconSize": [
+        61,
+        123
+      ]
+    },
+    "animations": {
+      "name": "ZOMBIE_TUTORIAL",
+      "zombie": "768/INITIAL/ZOMBIE/ZOMBIE_TUTORIAL/ZOMBIE_TUTORIAL.PAM",
+      "canvas": [
+        390,
+        390
+      ],
+      "clips": [
+        "die",
+        "eat",
+        "idle",
+        "particles",
+        "walk"
+      ]
+    },
+    "armorParts": [
+      "zombie_armor_cone_norm"
+    ]
+  },
+  {
+    "id": 3,
+    "alias": "ZombieTutorialArmor2Default",
+    "enumName": "ZOMBIE_ARMOR2",
+    "name": "Buckethead Zombie",
+    "chapter": "ALL_CHAPTERS",
+    "description": "Buckethead zombie; stronger armor than Conehead.",
+    "flavor": "The bucket turns him into a walking dent magnet. He cannot see a thing and considers this a fair trade.",
+    "toughness": {
+      "index": 3,
+      "label": "Hardened",
+      "steps": 7
+    },
+    "speed": {
+      "index": 2,
+      "label": "Basic",
+      "steps": 6
+    },
+    "hp": 190.0,
+    "eatDps": 100.0,
+    "moveSpeed": 0.185,
+    "waveCost": 400,
+    "weight": 4000,
+    "armor": "BUCKETHEAD",
+    "statSource": "enum",
+    "spawnable": true,
+    "packet": {
+      "background": "IMAGE_UI_ALMANAC_PACKETS_ZOMBIES_READY",
+      "icon": "IMAGE_UI_ALMANAC_PACKETS_ZOMBIES_TUTORIAL_ARMOR2",
+      "backgroundOffset": [
+        1,
+        1
+      ],
+      "backgroundSize": [
+        112,
+        157
+      ],
+      "iconOffset": [
+        37,
+        52
+      ],
+      "iconSize": [
+        70,
+        118
+      ]
+    },
+    "animations": {
+      "name": "ZOMBIE_TUTORIAL",
+      "zombie": "768/INITIAL/ZOMBIE/ZOMBIE_TUTORIAL/ZOMBIE_TUTORIAL.PAM",
+      "canvas": [
+        390,
+        390
+      ],
+      "clips": [
+        "die",
+        "eat",
+        "idle",
+        "particles",
+        "walk"
+      ]
+    },
+    "armorParts": [
+      "zombie_armor_bucket_norm"
+    ]
+  },
+  {
+    "id": 4,
+    "alias": "ZombieTutorialArmor4Default",
+    "enumName": "ZOMBIE_ARMOR4",
+    "name": "Brickhead Zombie",
+    "chapter": "ALL_CHAPTERS",
+    "description": "Brickhead zombie; even tougher armor.",
+    "flavor": "Wears an actual screen door's worth of masonry on his head. Peas simply give up on contact.",
+    "toughness": {
+      "index": 5,
+      "label": "Great",
+      "steps": 7
+    },
+    "speed": {
+      "index": 2,
+      "label": "Basic",
+      "steps": 6
+    },
+    "hp": 190.0,
+    "eatDps": 100.0,
+    "moveSpeed": 0.185,
+    "waveCost": 700,
+    "weight": 3000,
+    "armor": "BRICKHEAD",
+    "statSource": "enum",
+    "spawnable": true,
+    "packet": {
+      "background": "IMAGE_UI_ALMANAC_PACKETS_ZOMBIES_READY",
+      "icon": "IMAGE_UI_ALMANAC_PACKETS_ZOMBIES_TUTORIAL_ARMOR4",
+      "backgroundOffset": [
+        1,
+        1
+      ],
+      "backgroundSize": [
+        112,
+        157
+      ],
+      "iconOffset": [
+        46,
+        60
+      ],
+      "iconSize": [
+        67,
+        111
+      ]
+    },
+    "animations": {
+      "name": "ZOMBIE_TUTORIAL",
+      "zombie": "768/INITIAL/ZOMBIE/ZOMBIE_TUTORIAL/ZOMBIE_TUTORIAL.PAM",
+      "canvas": [
+        390,
+        390
+      ],
+      "clips": [
+        "die",
+        "eat",
+        "idle",
+        "particles",
+        "walk"
+      ]
+    },
+    "armorParts": [
+      "zombie_armor_brick_norm"
+    ]
+  },
+  {
+    "id": 5,
+    "alias": "ZombieGargantuarBasic",
+    "enumName": "ZOMBIE_GARGANTUAR",
+    "name": "Gargantuar",
+    "chapter": "ALL_CHAPTERS",
+    "description": "Huge zombie; smashes plants instantly and throws an Imp when damaged or near the house.",
+    "flavor": "Enormous, unhurried, and carrying a telephone pole. He does not eat plants so much as file them under \"gone\".",
+    "toughness": {
+      "index": 6,
+      "label": "Undying",
+      "steps": 7
+    },
+    "speed": {
+      "index": 4,
+      "label": "Speedy",
+      "steps": 6
+    },
+    "hp": 3600.0,
+    "eatDps": 0,
+    "moveSpeed": 0.24,
+    "waveCost": 1500,
+    "weight": 3000,
+    "armor": "DEFAULT",
+    "statSource": "enum",
+    "spawnable": true,
+    "packet": {
+      "background": "IMAGE_UI_ALMANAC_PACKETS_ZOMBIES_READY",
+      "icon": "IMAGE_UI_ALMANAC_PACKETS_ZOMBIES_TUTORIAL_GARGANTUAR",
+      "backgroundOffset": [
+        1,
+        1
+      ],
+      "backgroundSize": [
+        112,
+        157
+      ],
+      "iconOffset": [
+        18,
+        22
+      ],
+      "iconSize": [
+        92,
+        134
+      ]
+    },
+    "animations": {
+      "name": "TUTORIAL_GARGANTUAR",
+      "zombie": "768/INITIAL/ZOMBIE/TUTORIAL_GARGANTUAR/TUTORIAL_GARGANTUAR.PAM",
+      "canvas": [
+        390,
+        390
+      ],
+      "clips": [
+        "cannon_fire",
+        "die",
+        "eat",
+        "fire",
+        "idle",
+        "particles",
+        "smash_left",
+        "walk"
+      ]
+    },
+    "armorParts": []
+  },
+  {
+    "id": 6,
+    "alias": "ZombieTutorialImpDefault",
+    "enumName": "ZOMBIE_IMP",
+    "name": "Imp",
+    "chapter": "ALL_CHAPTERS",
+    "description": "Small, fast zombie thrown by Gargantuar; runs after landing.",
+    "flavor": "Small, quick, and airborne against his will. He lands running because stopping was never an option.",
+    "toughness": {
+      "index": 0,
+      "label": "Average",
+      "steps": 7
+    },
+    "speed": {
+      "index": 3,
+      "label": "Hungry",
+      "steps": 6
+    },
+    "hp": 190.0,
+    "eatDps": 100.0,
+    "moveSpeed": 0.22,
+    "waveCost": 100,
+    "weight": 1000,
+    "armor": "DEFAULT",
+    "statSource": "enum",
+    "spawnable": true,
+    "packet": {
+      "background": "IMAGE_UI_ALMANAC_PACKETS_ZOMBIES_READY",
+      "icon": "IMAGE_UI_ALMANAC_PACKETS_ZOMBIES_TUTORIAL_IMP",
+      "backgroundOffset": [
+        1,
+        1
+      ],
+      "backgroundSize": [
+        112,
+        157
+      ],
+      "iconOffset": [
+        58,
+        144
+      ],
+      "iconSize": [
+        53,
+        70
+      ]
+    },
+    "animations": {
+      "name": "ZOMBIE_TUTORIAL_IMP",
+      "zombie": "768/INITIAL/ZOMBIE/ZOMBIE_TUTORIAL_IMP/ZOMBIE_TUTORIAL_IMP.PAM",
+      "canvas": [
+        390,
+        390
+      ],
+      "clips": [
+        "die",
+        "eat",
+        "fly",
+        "idle",
+        "land",
+        "particles",
+        "walk"
+      ]
+    },
+    "armorParts": []
+  },
+  {
+    "id": 7,
+    "alias": "ZombieTutorialFlagDefault",
+    "enumName": "ZOMBIE_TUTORIAL_FLAG",
+    "name": "Flag Zombie",
+    "chapter": "ALL_CHAPTERS",
+    "description": "Flag zombie; same as basic but used to mark wave starts.",
+    "flavor": "Carries the banner that says the wave has started. Nobody elected him; he simply picked up the flag and kept walking.",
+    "toughness": {
+      "index": 0,
+      "label": "Average",
+      "steps": 7
+    },
+    "speed": {
+      "index": 2,
+      "label": "Basic",
+      "steps": 6
+    },
+    "hp": null,
+    "eatDps": 0,
+    "moveSpeed": 0,
+    "waveCost": 0,
+    "weight": 0,
+    "armor": "DEFAULT",
+    "statSource": "derived",
+    "spawnable": false,
+    "packet": {
+      "background": "IMAGE_UI_ALMANAC_PACKETS_ZOMBIES_READY",
+      "icon": "IMAGE_UI_ALMANAC_PACKETS_ZOMBIES_TUTORIAL_FLAG",
+      "backgroundOffset": [
+        1,
+        1
+      ],
+      "backgroundSize": [
+        112,
+        157
+      ],
+      "iconOffset": [
+        19,
+        18
+      ],
+      "iconSize": [
+        87,
+        135
+      ]
+    },
+    "animations": {
+      "name": "ZOMBIE_TUTORIAL_FLAG",
+      "zombie": "768/INITIAL/ZOMBIE/ZOMBIE_TUTORIAL_FLAG/ZOMBIE_TUTORIAL_FLAG.PAM",
+      "canvas": [
+        390,
+        390
+      ],
+      "clips": [
+        "die",
+        "eat",
+        "idle",
+        "particles",
+        "walk"
+      ]
+    },
+    "armorParts": []
+  },
+  {
+    "id": 8,
+    "alias": "ZombieMummyDefault",
+    "enumName": "ZOMBIE_MUMMY",
+    "name": "Mummy Zombie",
+    "chapter": "ANCIENT_EGYPT",
+    "description": "Basic Egyptian zombie.",
+    "flavor": "Wrapped, dusty, and four thousand years late for lunch. The bandages are less armour and more a lifestyle.",
+    "toughness": {
+      "index": 0,
+      "label": "Average",
+      "steps": 7
+    },
+    "speed": {
+      "index": 2,
+      "label": "Basic",
+      "steps": 6
+    },
+    "hp": 190,
+    "eatDps": 100,
+    "moveSpeed": 0.185,
+    "waveCost": 100,
+    "weight": 1000,
+    "armor": "DEFAULT",
+    "statSource": "properties",
+    "spawnable": false,
+    "packet": {
+      "background": "IMAGE_UI_ALMANAC_PACKETS_ZOMBIES_READY",
+      "icon": "IMAGE_UI_ALMANAC_PACKETS_ZOMBIES_MUMMY",
+      "backgroundOffset": [
+        1,
+        1
+      ],
+      "backgroundSize": [
+        112,
+        157
+      ],
+      "iconOffset": [
+        37,
+        77
+      ],
+      "iconSize": [
+        64,
+        104
+      ]
+    },
+    "animations": {
+      "name": "ZOMBIE_EGYPT_BASIC",
+      "zombie": "768/INITIAL/ZOMBIE/ZOMBIE_EGYPT_BASIC/ZOMBIE_EGYPT_BASIC.PAM",
+      "canvas": [
+        390,
+        390
+      ],
+      "clips": [
+        "die",
+        "eat",
+        "idle",
+        "particles",
+        "walk"
+      ]
+    },
+    "armorParts": []
+  },
+  {
+    "id": 9,
+    "alias": "ZombieMummyArmor1Default",
+    "enumName": "ZOMBIE_MUMMY_ARMOR1",
+    "name": "Conehead Mummy",
+    "chapter": "ANCIENT_EGYPT",
+    "description": "Conehead Egyptian zombie.",
+    "flavor": "An ancient cone over ancient wrappings. Archaeologists are still arguing about which came first.",
+    "toughness": {
+      "index": 2,
+      "label": "Solid",
+      "steps": 7
+    },
+    "speed": {
+      "index": 2,
+      "label": "Basic",
+      "steps": 6
+    },
+    "hp": 190,
+    "eatDps": 100,
+    "moveSpeed": 0.185,
+    "waveCost": 200,
+    "weight": 3000,
+    "armor": "DEFAULT",
+    "statSource": "properties",
+    "spawnable": false,
+    "packet": {
+      "background": "IMAGE_UI_ALMANAC_PACKETS_ZOMBIES_READY",
+      "icon": "IMAGE_UI_ALMANAC_PACKETS_ZOMBIES_MUMMY_ARMOR1",
+      "backgroundOffset": [
+        1,
+        1
+      ],
+      "backgroundSize": [
+        112,
+        157
+      ],
+      "iconOffset": [
+        38,
+        30
+      ],
+      "iconSize": [
+        64,
+        128
+      ]
+    },
+    "animations": {
+      "name": "ZOMBIE_EGYPT_BASIC",
+      "zombie": "768/INITIAL/ZOMBIE/ZOMBIE_EGYPT_BASIC/ZOMBIE_EGYPT_BASIC.PAM",
+      "canvas": [
+        390,
+        390
+      ],
+      "clips": [
+        "die",
+        "eat",
+        "idle",
+        "particles",
+        "walk"
+      ]
+    },
+    "armorParts": [
+      "zombie_armor_cone_norm"
+    ]
+  },
+  {
+    "id": 10,
+    "alias": "ZombieMummyArmor2Default",
+    "enumName": "ZOMBIE_MUMMY_ARMOR2",
+    "name": "Buckethead Mummy",
+    "chapter": "ANCIENT_EGYPT",
+    "description": "Buckethead Egyptian zombie.",
+    "flavor": "The bucket predates the wheel and outlasts most peashooters. He is very proud of both facts.",
+    "toughness": {
+      "index": 4,
+      "label": "Dense",
+      "steps": 7
+    },
+    "speed": {
+      "index": 2,
+      "label": "Basic",
+      "steps": 6
+    },
+    "hp": 190,
+    "eatDps": 100,
+    "moveSpeed": 0.185,
+    "waveCost": 400,
+    "weight": 4000,
+    "armor": "DEFAULT",
+    "statSource": "properties",
+    "spawnable": false,
+    "packet": {
+      "background": "IMAGE_UI_ALMANAC_PACKETS_ZOMBIES_READY",
+      "icon": "IMAGE_UI_ALMANAC_PACKETS_ZOMBIES_MUMMY_ARMOR2",
+      "backgroundOffset": [
+        1,
+        1
+      ],
+      "backgroundSize": [
+        112,
+        157
+      ],
+      "iconOffset": [
+        37,
+        46
+      ],
+      "iconSize": [
+        64,
+        120
+      ]
+    },
+    "animations": {
+      "name": "ZOMBIE_EGYPT_BASIC",
+      "zombie": "768/INITIAL/ZOMBIE/ZOMBIE_EGYPT_BASIC/ZOMBIE_EGYPT_BASIC.PAM",
+      "canvas": [
+        390,
+        390
+      ],
+      "clips": [
+        "die",
+        "eat",
+        "idle",
+        "particles",
+        "walk"
+      ]
+    },
+    "armorParts": [
+      "zombie_armor_bucket_norm"
+    ]
+  },
+  {
+    "id": 11,
+    "alias": "ZombieMummyArmor4Default",
+    "enumName": "ZOMBIE_MUMMY_ARMOR4",
+    "name": "Brickhead Mummy",
+    "chapter": "ANCIENT_EGYPT",
+    "description": "Brickhead Egyptian zombie.",
+    "flavor": "Stone headgear quarried from a pyramid nobody was using. Extremely heavy, extremely effective.",
+    "toughness": {
+      "index": 5,
+      "label": "Great",
+      "steps": 7
+    },
+    "speed": {
+      "index": 2,
+      "label": "Basic",
+      "steps": 6
+    },
+    "hp": 190,
+    "eatDps": 100,
+    "moveSpeed": 0.185,
+    "waveCost": 700,
+    "weight": 3000,
+    "armor": "DEFAULT",
+    "statSource": "properties",
+    "spawnable": false,
+    "packet": {
+      "background": "IMAGE_UI_ALMANAC_PACKETS_ZOMBIES_READY",
+      "icon": "IMAGE_UI_ALMANAC_PACKETS_ZOMBIES_MUMMY_ARMOR4",
+      "backgroundOffset": [
+        1,
+        1
+      ],
+      "backgroundSize": [
+        112,
+        157
+      ],
+      "iconOffset": [
+        40,
+        37
+      ],
+      "iconSize": [
+        70,
+        123
+      ]
+    },
+    "animations": {
+      "name": "ZOMBIE_EGYPT_BASIC",
+      "zombie": "768/INITIAL/ZOMBIE/ZOMBIE_EGYPT_BASIC/ZOMBIE_EGYPT_BASIC.PAM",
+      "canvas": [
+        390,
+        390
+      ],
+      "clips": [
+        "die",
+        "eat",
+        "idle",
+        "particles",
+        "walk"
+      ]
+    },
+    "armorParts": [
+      "zombie_armor_brick_norm"
+    ]
+  },
+  {
+    "id": 12,
+    "alias": "ZombiePharaohDefault",
+    "enumName": "ZOMBIE_PHARAOH",
+    "name": "Pharaoh Zombie",
+    "chapter": "ANCIENT_EGYPT",
+    "description": "Walks slowly inside a sarcophagus; after it breaks, the zombie runs faster.",
+    "flavor": "Rides inside a sarcophagus until it cracks open, then discovers he is much faster without a coffin strapped to him.",
+    "toughness": {
+      "index": 0,
+      "label": "Average",
+      "steps": 7
+    },
+    "speed": {
+      "index": 2,
+      "label": "Basic",
+      "steps": 6
+    },
+    "hp": null,
+    "eatDps": 0,
+    "moveSpeed": 0,
+    "waveCost": 0,
+    "weight": 0,
+    "armor": "DEFAULT",
+    "statSource": "derived",
+    "spawnable": false,
+    "packet": {
+      "background": "IMAGE_UI_ALMANAC_PACKETS_ZOMBIES_READY",
+      "icon": "IMAGE_UI_ALMANAC_PACKETS_ZOMBIES_PHARAOH",
+      "backgroundOffset": [
+        1,
+        1
+      ],
+      "backgroundSize": [
+        112,
+        157
+      ],
+      "iconOffset": [
+        19,
+        37
+      ],
+      "iconSize": [
+        92,
+        126
+      ]
+    },
+    "animations": {
+      "name": "ZOMBIE_EGYPT_SARCOPHAGUS",
+      "zombie": "768/INITIAL/ZOMBIE/ZOMBIE_EGYPT_SARCOPHAGUS/ZOMBIE_EGYPT_SARCOPHAGUS.PAM",
+      "canvas": [
+        390,
+        390
+      ],
+      "clips": [
+        "break_power",
+        "die",
+        "eat",
+        "eat_norm",
+        "idle",
+        "idle_norm",
+        "particles",
+        "walk",
+        "walk_norm"
+      ]
+    },
+    "armorParts": []
+  },
+  {
+    "id": 13,
+    "alias": "ZombieRaDefault",
+    "enumName": "ZOMBIE_RA",
+    "name": "Ra Zombie",
+    "chapter": "ANCIENT_EGYPT",
+    "description": "Steals sun from the player’s reserve.",
+    "flavor": "Steals sun straight out of your reserve with a golden staff. He insists it is a tax, not theft.",
+    "toughness": {
+      "index": 0,
+      "label": "Average",
+      "steps": 7
+    },
+    "speed": {
+      "index": 2,
+      "label": "Basic",
+      "steps": 6
+    },
+    "hp": 190,
+    "eatDps": 100,
+    "moveSpeed": 0.2,
+    "waveCost": 100,
+    "weight": 700,
+    "armor": "DEFAULT",
+    "statSource": "properties",
+    "spawnable": true,
+    "packet": {
+      "background": "IMAGE_UI_ALMANAC_PACKETS_ZOMBIES_READY",
+      "icon": "IMAGE_UI_ALMANAC_PACKETS_ZOMBIES_RA",
+      "backgroundOffset": [
+        1,
+        1
+      ],
+      "backgroundSize": [
+        112,
+        157
+      ],
+      "iconOffset": [
+        19,
+        79
+      ],
+      "iconSize": [
+        90,
+        104
+      ]
+    },
+    "animations": {
+      "name": "ZOMBIE_EGYPT_RA",
+      "zombie": "768/INITIAL/ZOMBIE/ZOMBIE_EGYPT_RA/ZOMBIE_EGYPT_RA.PAM",
+      "canvas": [
+        390,
+        390
+      ],
+      "clips": [
+        "die",
+        "eat",
+        "idle",
+        "particles",
+        "power",
+        "power_down",
+        "power_up",
+        "walk"
+      ]
+    },
+    "armorParts": []
+  },
+  {
+    "id": 14,
+    "alias": "ZombieExplorerDefault",
+    "enumName": "ZOMBIE_EXPLORER",
+    "name": "Explorer Zombie",
+    "chapter": "ANCIENT_EGYPT",
+    "description": "Carries a torch that instantly destroys specific plants (e.g., Frost Bonnet).",
+    "flavor": "Carries a torch that turns delicate plants into cinders on contact. He has never once read a fire safety notice.",
+    "toughness": {
+      "index": 1,
+      "label": "Protected",
+      "steps": 7
+    },
+    "speed": {
+      "index": 3,
+      "label": "Hungry",
+      "steps": 6
+    },
+    "hp": 250,
+    "eatDps": 100,
+    "moveSpeed": 0.25,
+    "waveCost": 250,
+    "weight": 3000,
+    "armor": "DEFAULT",
+    "statSource": "properties",
+    "spawnable": true,
+    "packet": {
+      "background": "IMAGE_UI_ALMANAC_PACKETS_ZOMBIES_READY",
+      "icon": "IMAGE_UI_ALMANAC_PACKETS_ZOMBIES_EXPLORER",
+      "backgroundOffset": [
+        1,
+        1
+      ],
+      "backgroundSize": [
+        112,
+        157
+      ],
+      "iconOffset": [
+        19,
+        49
+      ],
+      "iconSize": [
+        91,
+        118
+      ]
+    },
+    "animations": {
+      "name": "ZOMBIE_EXPLORER",
+      "zombie": "768/INITIAL/ZOMBIE/ZOMBIE_EXPLORER/ZOMBIE_EXPLORER.PAM",
+      "canvas": [
+        390,
+        390
+      ],
+      "clips": [
+        "die",
+        "eat",
+        "idle",
+        "particles",
+        "walk"
+      ]
+    },
+    "armorParts": []
+  },
+  {
+    "id": 15,
+    "alias": "ZombieTombRaiserDefault",
+    "enumName": "ZOMBIE_TOMB_RAISER",
+    "name": "Tomb Raiser Zombie",
+    "chapter": "ANCIENT_EGYPT",
+    "description": "Summons graves (tombs) on the lawn.",
+    "flavor": "Summons gravestones out of bare lawn. Where he gets them is a question nobody wants answered.",
+    "toughness": {
+      "index": 3,
+      "label": "Hardened",
+      "steps": 7
+    },
+    "speed": {
+      "index": 2,
+      "label": "Basic",
+      "steps": 6
+    },
+    "hp": 380,
+    "eatDps": 100,
+    "moveSpeed": 0.185,
+    "waveCost": 300,
+    "weight": 2000,
+    "armor": "DEFAULT",
+    "statSource": "properties",
+    "spawnable": true,
+    "packet": {
+      "background": "IMAGE_UI_ALMANAC_PACKETS_ZOMBIES_READY",
+      "icon": "IMAGE_UI_ALMANAC_PACKETS_ZOMBIES_TOMB_RAISER",
+      "backgroundOffset": [
+        1,
+        1
+      ],
+      "backgroundSize": [
+        112,
+        157
+      ],
+      "iconOffset": [
+        36,
+        80
+      ],
+      "iconSize": [
+        73,
+        103
+      ]
+    },
+    "animations": {
+      "name": "ZOMBIE_EGYPT_TOMBRAISER",
+      "zombie": "768/INITIAL/ZOMBIE/ZOMBIE_EGYPT_TOMBRAISER/ZOMBIE_EGYPT_TOMBRAISER.PAM",
+      "canvas": [
+        390,
+        390
+      ],
+      "clips": [
+        "die",
+        "eat",
+        "idle",
+        "particles",
+        "power",
+        "walk"
+      ]
+    },
+    "armorParts": []
+  },
+  {
+    "id": 16,
+    "alias": "ZombieCamelDefault",
+    "enumName": "ZOMBIE_CAMEL",
+    "name": "Camel Zombie",
+    "chapter": "ANCIENT_EGYPT",
+    "description": "Three-segment camel zombie; only the front segment eats, rear segments follow.",
+    "flavor": "Three zombies in one camel costume. Only the front one eats; the back two are there for moral support.",
+    "toughness": {
+      "index": 0,
+      "label": "Average",
+      "steps": 7
+    },
+    "speed": {
+      "index": 2,
+      "label": "Basic",
+      "steps": 6
+    },
+    "hp": null,
+    "eatDps": 0,
+    "moveSpeed": 0,
+    "waveCost": 0,
+    "weight": 0,
+    "armor": "DEFAULT",
+    "statSource": "derived",
+    "spawnable": false,
+    "packet": {
+      "background": "IMAGE_UI_ALMANAC_PACKETS_ZOMBIES_READY",
+      "icon": "IMAGE_UI_ALMANAC_PACKETS_ZOMBIES_CAMEL_ALMANAC",
+      "backgroundOffset": [
+        1,
+        1
+      ],
+      "backgroundSize": [
+        112,
+        157
+      ],
+      "iconOffset": [
+        43,
+        49
+      ],
+      "iconSize": [
+        69,
+        119
+      ]
+    },
+    "animations": {
+      "name": "ZOMBIE_EGYPT_CAMEL",
+      "zombie": "768/INITIAL/ZOMBIE/ZOMBIE_EGYPT_CAMEL/ZOMBIE_EGYPT_CAMEL.PAM",
+      "canvas": [
+        390,
+        390
+      ],
+      "clips": [
+        "die",
+        "eat",
+        "idle",
+        "walk"
+      ]
+    },
+    "armorParts": []
+  },
+  {
+    "id": 17,
+    "alias": "ZombieEgyptGargantuar",
+    "enumName": "ZOMBIE_EGYPT_GARGANTUAR",
+    "name": "Egypt Gargantuar",
+    "chapter": "ANCIENT_EGYPT",
+    "description": "Egyptian Gargantuar; smashes plants and throws an Egyptian Imp.",
+    "flavor": "A Gargantuar with a sarcophagus lid for a club. He throws an equally bandaged Imp when the mood takes him.",
+    "toughness": {
+      "index": 6,
+      "label": "Undying",
+      "steps": 7
+    },
+    "speed": {
+      "index": 3,
+      "label": "Hungry",
+      "steps": 6
+    },
+    "hp": 3600,
+    "eatDps": 0,
+    "moveSpeed": 0.24,
+    "waveCost": 1500,
+    "weight": 3000,
+    "armor": "DEFAULT",
+    "statSource": "properties",
+    "spawnable": false,
+    "packet": {
+      "background": "IMAGE_UI_ALMANAC_PACKETS_ZOMBIES_READY",
+      "icon": "IMAGE_UI_ALMANAC_PACKETS_ZOMBIES_EGYPT_GARGANTUAR",
+      "backgroundOffset": [
+        1,
+        1
+      ],
+      "backgroundSize": [
+        112,
+        157
+      ],
+      "iconOffset": [
+        18,
+        18
+      ],
+      "iconSize": [
+        94,
+        138
+      ]
+    },
+    "animations": {
+      "name": "EGYPT_GARGANTUAR",
+      "zombie": "768/INITIAL/ZOMBIE/EGYPT_GARGANTUAR/EGYPT_GARGANTUAR.PAM",
+      "canvas": [
+        390,
+        390
+      ],
+      "clips": [
+        "cannon_fire",
+        "die",
+        "eat",
+        "fire",
+        "idle",
+        "particles",
+        "smash_left",
+        "walk"
+      ]
+    },
+    "armorParts": []
+  },
+  {
+    "id": 18,
+    "alias": "ZombieEgyptImpDefault",
+    "enumName": "ZOMBIE_EGYPT_IMP",
+    "name": "Egypt Imp",
+    "chapter": "ANCIENT_EGYPT",
+    "description": "Imp thrown by Egyptian Gargantuar.",
+    "flavor": "A tiny mummy launched at speed. He has no plan beyond landing and running.",
+    "toughness": {
+      "index": 0,
+      "label": "Average",
+      "steps": 7
+    },
+    "speed": {
+      "index": 3,
+      "label": "Hungry",
+      "steps": 6
+    },
+    "hp": 190,
+    "eatDps": 100,
+    "moveSpeed": 0.22,
+    "waveCost": 100,
+    "weight": 1000,
+    "armor": "DEFAULT",
+    "statSource": "properties",
+    "spawnable": false,
+    "packet": {
+      "background": "IMAGE_UI_ALMANAC_PACKETS_ZOMBIES_READY",
+      "icon": "IMAGE_UI_ALMANAC_PACKETS_ZOMBIES_EGYPT_IMP",
+      "backgroundOffset": [
+        1,
+        1
+      ],
+      "backgroundSize": [
+        112,
+        157
+      ],
+      "iconOffset": [
+        40,
+        132
+      ],
+      "iconSize": [
+        79,
+        76
+      ]
+    },
+    "animations": {
+      "name": "ZOMBIE_EGYPT_IMP",
+      "zombie": "768/INITIAL/ZOMBIE/ZOMBIE_EGYPT_IMP/ZOMBIE_EGYPT_IMP.PAM",
+      "canvas": [
+        390,
+        390
+      ],
+      "clips": [
+        "die",
+        "eat",
+        "fly",
+        "idle",
+        "land",
+        "particles",
+        "walk"
+      ]
+    },
+    "armorParts": []
+  },
+  {
+    "id": 19,
+    "alias": "ZombieIceageDefault",
+    "enumName": "ZOMBIE_ICEAGE",
+    "name": "Cave Zombie",
+    "chapter": "FROSTBITE_CAVES",
+    "description": "Basic ice-age zombie.",
+    "flavor": "Frozen solid for millennia and still grumpy about the thaw. Fire barely improves his mood.",
+    "toughness": {
+      "index": 0,
+      "label": "Average",
+      "steps": 7
+    },
+    "speed": {
+      "index": 2,
+      "label": "Basic",
+      "steps": 6
+    },
+    "hp": null,
+    "eatDps": 0,
+    "moveSpeed": 0,
+    "waveCost": 0,
+    "weight": 0,
+    "armor": "DEFAULT",
+    "statSource": "derived",
+    "spawnable": false,
+    "packet": {
+      "background": "IMAGE_UI_ALMANAC_PACKETS_ZOMBIES_READY",
+      "icon": "IMAGE_UI_ALMANAC_PACKETS_ZOMBIES_ICEAGE",
+      "backgroundOffset": [
+        1,
+        1
+      ],
+      "backgroundSize": [
+        112,
+        157
+      ],
+      "iconOffset": [
+        30,
+        61
+      ],
+      "iconSize": [
+        81,
+        115
+      ]
+    },
+    "animations": {
+      "name": "ZOMBIE_ICEAGE_BASIC",
+      "zombie": "768/FULL/ZOMBIE/ZOMBIE_ICEAGE_BASIC/ZOMBIE_ICEAGE_BASIC.PAM",
+      "canvas": [
+        390,
+        390
+      ],
+      "clips": [
+        "die",
+        "eat",
+        "idle",
+        "particles",
+        "walk"
+      ]
+    },
+    "armorParts": []
+  },
+  {
+    "id": 20,
+    "alias": "ZombieIceageArmor1Default",
+    "enumName": "ZOMBIE_ICEAGE_ARMOR1",
+    "name": "Conehead Cave Zombie",
+    "chapter": "FROSTBITE_CAVES",
+    "description": "Conehead ice-age zombie.",
+    "flavor": "A cone that has been iced over so long it counts as geology. Chips rather than dents.",
+    "toughness": {
+      "index": 1,
+      "label": "Protected",
+      "steps": 7
+    },
+    "speed": {
+      "index": 2,
+      "label": "Basic",
+      "steps": 6
+    },
+    "hp": null,
+    "eatDps": 0,
+    "moveSpeed": 0,
+    "waveCost": 0,
+    "weight": 0,
+    "armor": "DEFAULT",
+    "statSource": "derived",
+    "spawnable": false,
+    "packet": {
+      "background": "IMAGE_UI_ALMANAC_PACKETS_ZOMBIES_READY",
+      "icon": "IMAGE_UI_ALMANAC_PACKETS_ZOMBIES_ICEAGE_ARMOR1",
+      "backgroundOffset": [
+        1,
+        1
+      ],
+      "backgroundSize": [
+        112,
+        157
+      ],
+      "iconOffset": [
+        30,
+        26
+      ],
+      "iconSize": [
+        80,
+        132
+      ]
+    },
+    "animations": {
+      "name": "ZOMBIE_ICEAGE_BASIC",
+      "zombie": "768/FULL/ZOMBIE/ZOMBIE_ICEAGE_BASIC/ZOMBIE_ICEAGE_BASIC.PAM",
+      "canvas": [
+        390,
+        390
+      ],
+      "clips": [
+        "die",
+        "eat",
+        "idle",
+        "particles",
+        "walk"
+      ]
+    },
+    "armorParts": [
+      "zombie_armor_cone_norm"
+    ]
+  },
+  {
+    "id": 21,
+    "alias": "ZombieIceageArmor2Default",
+    "enumName": "ZOMBIE_ICEAGE_ARMOR2",
+    "name": "Buckethead Cave Zombie",
+    "chapter": "FROSTBITE_CAVES",
+    "description": "Buckethead ice-age zombie.",
+    "flavor": "The bucket froze to his head some centuries ago. Removing it is no longer on the table.",
+    "toughness": {
+      "index": 3,
+      "label": "Hardened",
+      "steps": 7
+    },
+    "speed": {
+      "index": 2,
+      "label": "Basic",
+      "steps": 6
+    },
+    "hp": null,
+    "eatDps": 0,
+    "moveSpeed": 0,
+    "waveCost": 0,
+    "weight": 0,
+    "armor": "DEFAULT",
+    "statSource": "derived",
+    "spawnable": false,
+    "packet": {
+      "background": "IMAGE_UI_ALMANAC_PACKETS_ZOMBIES_READY",
+      "icon": "IMAGE_UI_ALMANAC_PACKETS_ZOMBIES_ICEAGE_ARMOR2",
+      "backgroundOffset": [
+        1,
+        1
+      ],
+      "backgroundSize": [
+        112,
+        157
+      ],
+      "iconOffset": [
+        30,
+        35
+      ],
+      "iconSize": [
+        80,
+        128
+      ]
+    },
+    "animations": {
+      "name": "ZOMBIE_ICEAGE_BASIC",
+      "zombie": "768/FULL/ZOMBIE/ZOMBIE_ICEAGE_BASIC/ZOMBIE_ICEAGE_BASIC.PAM",
+      "canvas": [
+        390,
+        390
+      ],
+      "clips": [
+        "die",
+        "eat",
+        "idle",
+        "particles",
+        "walk"
+      ]
+    },
+    "armorParts": [
+      "zombie_armor_bucket_norm"
+    ]
+  },
+  {
+    "id": 22,
+    "alias": "ZombieIceageArmor3Default",
+    "enumName": "ZOMBIE_ICEAGE_ARMOR3",
+    "name": "Blockhead Zombie",
+    "chapter": "FROSTBITE_CAVES",
+    "description": "Wears an ice block as armor; the block also chills plants that attack it.",
+    "flavor": "Wears a solid block of ice as a helmet, and the block chills whatever hits it. Attacking him is its own punishment.",
+    "toughness": {
+      "index": 4,
+      "label": "Dense",
+      "steps": 7
+    },
+    "speed": {
+      "index": 2,
+      "label": "Basic",
+      "steps": 6
+    },
+    "hp": null,
+    "eatDps": 0,
+    "moveSpeed": 0,
+    "waveCost": 0,
+    "weight": 0,
+    "armor": "DEFAULT",
+    "statSource": "derived",
+    "spawnable": false,
+    "packet": {
+      "background": "IMAGE_UI_ALMANAC_PACKETS_ZOMBIES_READY",
+      "icon": "IMAGE_UI_ALMANAC_PACKETS_ZOMBIES_ICEAGE_ARMOR3",
+      "backgroundOffset": [
+        1,
+        1
+      ],
+      "backgroundSize": [
+        112,
+        157
+      ],
+      "iconOffset": [
+        26,
+        47
+      ],
+      "iconSize": [
+        83,
+        122
+      ]
+    },
+    "animations": {
+      "name": "ZOMBIE_ICEAGE_BASIC",
+      "zombie": "768/FULL/ZOMBIE/ZOMBIE_ICEAGE_BASIC/ZOMBIE_ICEAGE_BASIC.PAM",
+      "canvas": [
+        390,
+        390
+      ],
+      "clips": [
+        "die",
+        "eat",
+        "idle",
+        "particles",
+        "walk"
+      ]
+    },
+    "armorParts": [
+      "zombie_armor_iceblock_norm"
+    ]
+  },
+  {
+    "id": 23,
+    "alias": "ZombieIceAgeHunter",
+    "enumName": "ZOMBIE_ICE_AGE_HUNTER",
+    "name": "Hunter Zombie",
+    "chapter": "FROSTBITE_CAVES",
+    "description": "Ranged zombie; throws snowballs that chill or freeze plants from a distance.",
+    "flavor": "Lobs snowballs from well out of reach, freezing plants where they stand. He has excellent aim and no sense of fair play.",
+    "toughness": {
+      "index": 3,
+      "label": "Hardened",
+      "steps": 7
+    },
+    "speed": {
+      "index": 0,
+      "label": "Sluggish",
+      "steps": 6
+    },
+    "hp": 700.0,
+    "eatDps": 100.0,
+    "moveSpeed": 0.12,
+    "waveCost": 500,
+    "weight": 3500,
+    "armor": "DEFAULT",
+    "statSource": "enum",
+    "spawnable": true,
+    "packet": {
+      "background": "IMAGE_UI_ALMANAC_PACKETS_ZOMBIES_READY",
+      "icon": "IMAGE_UI_ALMANAC_PACKETS_ZOMBIES_ICEAGE_HUNTER",
+      "backgroundOffset": [
+        1,
+        1
+      ],
+      "backgroundSize": [
+        112,
+        157
+      ],
+      "iconOffset": [
+        18,
+        57
+      ],
+      "iconSize": [
+        93,
+        107
+      ]
+    },
+    "animations": {
+      "name": "ZOMBIE_ICEAGE_HUNTER",
+      "zombie": "768/FULL/ZOMBIE/ZOMBIE_ICEAGE_HUNTER/ZOMBIE_ICEAGE_HUNTER.PAM",
+      "canvas": [
+        390,
+        390
+      ],
+      "clips": [
+        "die",
+        "eat",
+        "idle",
+        "particles",
+        "throw",
+        "walk"
+      ]
+    },
+    "armorParts": []
+  },
+  {
+    "id": 24,
+    "alias": "ZombieIceAgeTroglobite",
+    "enumName": "ZOMBIE_ICE_AGE_TROGLOBITE",
+    "name": "Troglobite",
+    "chapter": "FROSTBITE_CAVES",
+    "description": "Pushes ice blocks down the lane; blocks crush plants and absorb damage.",
+    "flavor": "Shoves a block of ice down the lane, flattening anything under it. The block does the work; he takes the credit.",
+    "toughness": {
+      "index": 3,
+      "label": "Hardened",
+      "steps": 7
+    },
+    "speed": {
+      "index": 2,
+      "label": "Basic",
+      "steps": 6
+    },
+    "hp": 470,
+    "eatDps": 100,
+    "moveSpeed": 0.185,
+    "waveCost": 600,
+    "weight": 3500,
+    "armor": "DEFAULT",
+    "statSource": "properties",
+    "spawnable": true,
+    "packet": {
+      "background": "IMAGE_UI_ALMANAC_PACKETS_ZOMBIES_READY",
+      "icon": "IMAGE_UI_ALMANAC_PACKETS_ZOMBIES_ICEAGE_TROGLOBITE",
+      "backgroundOffset": [
+        1,
+        1
+      ],
+      "backgroundSize": [
+        112,
+        157
+      ],
+      "iconOffset": [
+        22,
+        21
+      ],
+      "iconSize": [
+        91,
+        135
+      ]
+    },
+    "animations": {
+      "name": "ZOMBIE_ICEAGE_TROGLOBITE",
+      "zombie": "768/FULL/ZOMBIE/ZOMBIE_ICEAGE_TROGLOBITE/ZOMBIE_ICEAGE_TROGLOBITE.PAM",
+      "canvas": [
+        390,
+        390
+      ],
+      "clips": [
+        "die",
+        "eat",
+        "idle",
+        "particles",
+        "push",
+        "walk"
+      ]
+    },
+    "armorParts": []
+  },
+  {
+    "id": 25,
+    "alias": "ZombieIceAgeDodo",
+    "enumName": "ZOMBIE_ICE_AGE_DODO",
+    "name": "Dodo Rider Zombie",
+    "chapter": "FROSTBITE_CAVES",
+    "description": "Flies over certain plants and obstacles.",
+    "flavor": "Rides a dodo clean over your defences. The dodo is extinct and appears entirely unbothered by this.",
+    "toughness": {
+      "index": 2,
+      "label": "Solid",
+      "steps": 7
+    },
+    "speed": {
+      "index": 4,
+      "label": "Speedy",
+      "steps": 6
+    },
+    "hp": 490,
+    "eatDps": 100,
+    "moveSpeed": 0.3,
+    "waveCost": 600,
+    "weight": 3500,
+    "armor": "DEFAULT",
+    "statSource": "properties",
+    "spawnable": true,
+    "packet": {
+      "background": "IMAGE_UI_ALMANAC_PACKETS_ZOMBIES_READY",
+      "icon": "IMAGE_UI_ALMANAC_PACKETS_ZOMBIES_ICEAGE_DODO",
+      "backgroundOffset": [
+        1,
+        1
+      ],
+      "backgroundSize": [
+        112,
+        157
+      ],
+      "iconOffset": [
+        28,
+        22
+      ],
+      "iconSize": [
+        88,
+        134
+      ]
+    },
+    "animations": {
+      "name": "ZOMBIE_ICEAGE_DODORIDER",
+      "zombie": "768/FULL/ZOMBIE/ZOMBIE_ICEAGE_DODORIDER/ZOMBIE_ICEAGE_DODORIDER.PAM",
+      "canvas": [
+        390,
+        390
+      ],
+      "clips": [
+        "die",
+        "eat",
+        "fly_end",
+        "fly_loop",
+        "fly_start",
+        "idle",
+        "idle2",
+        "idle3",
+        "walk"
+      ]
+    },
+    "armorParts": []
+  },
+  {
+    "id": 26,
+    "alias": "ZombieWeaselHoarderDefault",
+    "enumName": "ZOMBIE_WEASEL_HOARDER",
+    "name": "Weasel Hoarder",
+    "chapter": "FROSTBITE_CAVES",
+    "description": "When damaged, releases fast, weak weasels (similar to chickens).",
+    "flavor": "Hoards weasels. When struck, the weasels leave in a hurry and in all directions at once.",
+    "toughness": {
+      "index": 0,
+      "label": "Average",
+      "steps": 7
+    },
+    "speed": {
+      "index": 2,
+      "label": "Basic",
+      "steps": 6
+    },
+    "hp": null,
+    "eatDps": 0,
+    "moveSpeed": 0,
+    "waveCost": 0,
+    "weight": 0,
+    "armor": "DEFAULT",
+    "statSource": "derived",
+    "spawnable": false,
+    "packet": {
+      "background": "IMAGE_UI_ALMANAC_PACKETS_ZOMBIES_READY",
+      "icon": "IMAGE_UI_ALMANAC_PACKETS_ZOMBIES_ICEAGE_WEASELHOARDER",
+      "backgroundOffset": [
+        1,
+        1
+      ],
+      "backgroundSize": [
+        112,
+        157
+      ],
+      "iconOffset": [
+        32,
+        38
+      ],
+      "iconSize": [
+        71,
+        124
+      ]
+    },
+    "animations": {
+      "name": "ZOMBIE_ICEAGE_WEASELHOARDER",
+      "zombie": "768/FULL/ZOMBIE/ZOMBIE_ICEAGE_WEASELHOARDER/ZOMBIE_ICEAGE_WEASELHOARDER.PAM",
+      "canvas": [
+        390,
+        390
+      ],
+      "clips": [
+        "die",
+        "eat",
+        "idle",
+        "particles",
+        "tree_eat",
+        "tree_idle",
+        "tree_idle_02",
+        "tree_idle_03",
+        "tree_walk",
+        "walk",
+        "weasel_attack"
+      ]
+    },
+    "armorParts": []
+  },
+  {
+    "id": 27,
+    "alias": "ZombieWeaselDefault",
+    "enumName": "ZOMBIE_WEASEL",
+    "name": "Weasel",
+    "chapter": "FROSTBITE_CAVES",
+    "description": "The small, fast weasel unit.",
+    "flavor": "Fast, small, and extremely committed. He was hoarded against his will and intends to make it everyone's problem.",
+    "toughness": {
+      "index": 0,
+      "label": "Average",
+      "steps": 7
+    },
+    "speed": {
+      "index": 2,
+      "label": "Basic",
+      "steps": 6
+    },
+    "hp": null,
+    "eatDps": 0,
+    "moveSpeed": 0,
+    "waveCost": 0,
+    "weight": 0,
+    "armor": "DEFAULT",
+    "statSource": "derived",
+    "spawnable": false,
+    "packet": {
+      "background": "IMAGE_UI_ALMANAC_PACKETS_ZOMBIES_READY",
+      "icon": "IMAGE_UI_ALMANAC_PACKETS_ZOMBIES_ICEAGE_WEASEL",
+      "backgroundOffset": [
+        1,
+        1
+      ],
+      "backgroundSize": [
+        112,
+        157
+      ],
+      "iconOffset": [
+        80,
+        182
+      ],
+      "iconSize": [
+        43,
+        52
+      ]
+    },
+    "animations": {
+      "name": "ZOMBIE_ICEAGE_WEASEL",
+      "zombie": "768/FULL/ZOMBIE/ZOMBIE_ICEAGE_WEASEL/ZOMBIE_ICEAGE_WEASEL.PAM",
+      "canvas": [
+        390,
+        390
+      ],
+      "clips": [
+        "eat stop",
+        "eat_loop",
+        "eat_start",
+        "idle",
+        "walk",
+        "weasel_burn",
+        "weasel_die",
+        "weasel_shock"
+      ]
+    },
+    "armorParts": []
+  },
+  {
+    "id": 28,
+    "alias": "ZombieIceAgeGargantuar",
+    "enumName": "ZOMBIE_ICE_AGE_GARGANTUAR",
+    "name": "Ice Age Gargantuar",
+    "chapter": "FROSTBITE_CAVES",
+    "description": "Gargantuar of Frostbite Caves; throws an ice-age Imp.",
+    "flavor": "A Gargantuar in a fur coat swinging a frozen mammoth leg. Winter has not slowed him down in the slightest.",
+    "toughness": {
+      "index": 6,
+      "label": "Undying",
+      "steps": 7
+    },
+    "speed": {
+      "index": 2,
+      "label": "Basic",
+      "steps": 6
+    },
+    "hp": null,
+    "eatDps": 0,
+    "moveSpeed": 0,
+    "waveCost": 0,
+    "weight": 0,
+    "armor": "DEFAULT",
+    "statSource": "derived",
+    "spawnable": false,
+    "packet": {
+      "background": "IMAGE_UI_ALMANAC_PACKETS_ZOMBIES_READY",
+      "icon": "IMAGE_UI_ALMANAC_PACKETS_ZOMBIES_ICEAGE_GARGANTUAR",
+      "backgroundOffset": [
+        1,
+        1
+      ],
+      "backgroundSize": [
+        112,
+        157
+      ],
+      "iconOffset": [
+        18,
+        18
+      ],
+      "iconSize": [
+        93,
+        137
+      ]
+    },
+    "animations": {
+      "name": "ZOMBIE_ICEAGE_GARGANTUAR",
+      "zombie": "768/FULL/ZOMBIE/ZOMBIE_ICEAGE_GARGANTUAR/ZOMBIE_ICEAGE_GARGANTUAR.PAM",
+      "canvas": [
+        390,
+        390
+      ],
+      "clips": [
+        "cannon_fire",
+        "die",
+        "eat",
+        "fire",
+        "idle",
+        "particles",
+        "smash_left",
+        "walk"
+      ]
+    },
+    "armorParts": []
+  },
+  {
+    "id": 29,
+    "alias": "ZombieIceageImpDefault",
+    "enumName": "ZOMBIE_ICEAGE_IMP",
+    "name": "Ice Age Imp",
+    "chapter": "FROSTBITE_CAVES",
+    "description": "Imp thrown by ice-age Gargantuar.",
+    "flavor": "A tiny zombie in a very large parka, thrown a very long way.",
+    "toughness": {
+      "index": 0,
+      "label": "Average",
+      "steps": 7
+    },
+    "speed": {
+      "index": 2,
+      "label": "Basic",
+      "steps": 6
+    },
+    "hp": null,
+    "eatDps": 0,
+    "moveSpeed": 0,
+    "waveCost": 0,
+    "weight": 0,
+    "armor": "DEFAULT",
+    "statSource": "derived",
+    "spawnable": false,
+    "packet": {
+      "background": "IMAGE_UI_ALMANAC_PACKETS_ZOMBIES_READY",
+      "icon": "IMAGE_UI_ALMANAC_PACKETS_ZOMBIES_ICEAGE_IMP",
+      "backgroundOffset": [
+        1,
+        1
+      ],
+      "backgroundSize": [
+        112,
+        157
+      ],
+      "iconOffset": [
+        46,
+        132
+      ],
+      "iconSize": [
+        59,
+        78
+      ]
+    },
+    "animations": {
+      "name": "ZOMBIE_ICEAGE_IMP",
+      "zombie": "768/FULL/ZOMBIE/ZOMBIE_ICEAGE_IMP/ZOMBIE_ICEAGE_IMP.PAM",
+      "canvas": [
+        390,
+        390
+      ],
+      "clips": [
+        "die",
+        "eat",
+        "fly",
+        "idle",
+        "land",
+        "particles",
+        "walk"
+      ]
+    },
+    "armorParts": []
+  },
+  {
+    "id": 30,
+    "alias": "ZombieBeachDefault",
+    "enumName": "ZOMBIE_BEACH",
+    "name": "Pompadour Zombie",
+    "chapter": "BIG_WAVE_BEACH",
+    "description": "Basic beach zombie.",
+    "flavor": "Perfect hair, ruined complexion. He came for the surf and stayed for the brains.",
+    "toughness": {
+      "index": 0,
+      "label": "Average",
+      "steps": 7
+    },
+    "speed": {
+      "index": 2,
+      "label": "Basic",
+      "steps": 6
+    },
+    "hp": null,
+    "eatDps": 0,
+    "moveSpeed": 0,
+    "waveCost": 0,
+    "weight": 0,
+    "armor": "DEFAULT",
+    "statSource": "derived",
+    "spawnable": false,
+    "packet": {
+      "background": "IMAGE_UI_ALMANAC_PACKETS_ZOMBIES_READY",
+      "icon": "IMAGE_UI_ALMANAC_PACKETS_ZOMBIES_BEACH",
+      "backgroundOffset": [
+        1,
+        1
+      ],
+      "backgroundSize": [
+        112,
+        157
+      ],
+      "iconOffset": [
+        50,
+        49
+      ],
+      "iconSize": [
+        67,
+        121
+      ]
+    },
+    "animations": {
+      "name": "ZOMBIE_BEACH_BASIC",
+      "zombie": "768/FULL/ZOMBIE/ZOMBIE_BEACH_BASIC/ZOMBIE_BEACH_BASIC.PAM",
+      "canvas": [
+        390,
+        390
+      ],
+      "clips": [
+        "die",
+        "eat",
+        "idle",
+        "particles",
+        "walk"
+      ]
+    },
+    "armorParts": []
+  },
+  {
+    "id": 31,
+    "alias": "ZombieBeachArmor1Default",
+    "enumName": "ZOMBIE_BEACH_ARMOR1",
+    "name": "Conehead Pompadour",
+    "chapter": "BIG_WAVE_BEACH",
+    "description": "Conehead beach zombie.",
+    "flavor": "A cone on a pompadour. He believes the silhouette works and nobody has the heart to correct him.",
+    "toughness": {
+      "index": 1,
+      "label": "Protected",
+      "steps": 7
+    },
+    "speed": {
+      "index": 2,
+      "label": "Basic",
+      "steps": 6
+    },
+    "hp": null,
+    "eatDps": 0,
+    "moveSpeed": 0,
+    "waveCost": 0,
+    "weight": 0,
+    "armor": "DEFAULT",
+    "statSource": "derived",
+    "spawnable": false,
+    "packet": {
+      "background": "IMAGE_UI_ALMANAC_PACKETS_ZOMBIES_READY",
+      "icon": "IMAGE_UI_ALMANAC_PACKETS_ZOMBIES_BEACH_ARMOR1",
+      "backgroundOffset": [
+        1,
+        1
+      ],
+      "backgroundSize": [
+        112,
+        157
+      ],
+      "iconOffset": [
+        45,
+        18
+      ],
+      "iconSize": [
+        69,
+        136
+      ]
+    },
+    "animations": {
+      "name": "ZOMBIE_BEACH_BASIC",
+      "zombie": "768/FULL/ZOMBIE/ZOMBIE_BEACH_BASIC/ZOMBIE_BEACH_BASIC.PAM",
+      "canvas": [
+        390,
+        390
+      ],
+      "clips": [
+        "die",
+        "eat",
+        "idle",
+        "particles",
+        "walk"
+      ]
+    },
+    "armorParts": [
+      "zombie_armor_cone_norm"
+    ]
+  },
+  {
+    "id": 32,
+    "alias": "ZombieBeachArmor2Default",
+    "enumName": "ZOMBIE_BEACH_ARMOR2",
+    "name": "Buckethead Pompadour",
+    "chapter": "BIG_WAVE_BEACH",
+    "description": "Buckethead beach zombie.",
+    "flavor": "A bucket over the hairstyle. Hours of work, gone, and he is at peace with it.",
+    "toughness": {
+      "index": 3,
+      "label": "Hardened",
+      "steps": 7
+    },
+    "speed": {
+      "index": 2,
+      "label": "Basic",
+      "steps": 6
+    },
+    "hp": null,
+    "eatDps": 0,
+    "moveSpeed": 0,
+    "waveCost": 0,
+    "weight": 0,
+    "armor": "DEFAULT",
+    "statSource": "derived",
+    "spawnable": false,
+    "packet": {
+      "background": "IMAGE_UI_ALMANAC_PACKETS_ZOMBIES_READY",
+      "icon": "IMAGE_UI_ALMANAC_PACKETS_ZOMBIES_BEACH_ARMOR2",
+      "backgroundOffset": [
+        1,
+        1
+      ],
+      "backgroundSize": [
+        112,
+        157
+      ],
+      "iconOffset": [
+        41,
+        18
+      ],
+      "iconSize": [
+        70,
+        137
+      ]
+    },
+    "animations": {
+      "name": "ZOMBIE_BEACH_BASIC",
+      "zombie": "768/FULL/ZOMBIE/ZOMBIE_BEACH_BASIC/ZOMBIE_BEACH_BASIC.PAM",
+      "canvas": [
+        390,
+        390
+      ],
+      "clips": [
+        "die",
+        "eat",
+        "idle",
+        "particles",
+        "walk"
+      ]
+    },
+    "armorParts": [
+      "zombie_armor_bucket_norm"
+    ]
+  },
+  {
+    "id": 33,
+    "alias": "ZombieBeachSnorkel",
+    "enumName": "ZOMBIE_BEACH_SNORKEL",
+    "name": "Snorkel Zombie",
+    "chapter": "BIG_WAVE_BEACH",
+    "description": "Walks underwater; invulnerable to most plants except when surfacing to eat.",
+    "flavor": "Swims below the surface where almost nothing can touch him, and only comes up when it is time to bite.",
+    "toughness": {
+      "index": 2,
+      "label": "Solid",
+      "steps": 7
+    },
+    "speed": {
+      "index": 2,
+      "label": "Basic",
+      "steps": 6
+    },
+    "hp": 350,
+    "eatDps": 100,
+    "moveSpeed": 0.185,
+    "waveCost": 200,
+    "weight": 3000,
+    "armor": "DEFAULT",
+    "statSource": "properties",
+    "spawnable": true,
+    "packet": {
+      "background": "IMAGE_UI_ALMANAC_PACKETS_ZOMBIES_READY",
+      "icon": "IMAGE_UI_ALMANAC_PACKETS_ZOMBIES_BEACH_SNORKEL",
+      "backgroundOffset": [
+        1,
+        1
+      ],
+      "backgroundSize": [
+        112,
+        157
+      ],
+      "iconOffset": [
+        22,
+        18
+      ],
+      "iconSize": [
+        90,
+        136
+      ]
+    },
+    "animations": {
+      "name": "ZOMBIE_BEACH_SNORKELER",
+      "zombie": "768/FULL/ZOMBIE/ZOMBIE_BEACH_SNORKELER/ZOMBIE_BEACH_SNORKELER.PAM",
+      "canvas": [
+        390,
+        390
+      ],
+      "clips": [
+        "die",
+        "eat",
+        "idle",
+        "particles",
+        "walk"
+      ]
+    },
+    "armorParts": []
+  },
+  {
+    "id": 34,
+    "alias": "ZombieBeachSurfer",
+    "enumName": "ZOMBIE_BEACH_SURFER",
+    "name": "Surfer Zombie",
+    "chapter": "BIG_WAVE_BEACH",
+    "description": "Rides a surfboard; moves very fast and crushes plants. After losing the board, becomes a normal zombie.",
+    "flavor": "Rides his board straight over your lawn, flattening whatever is under it. Once he is off the board he is just a wet zombie.",
+    "toughness": {
+      "index": 0,
+      "label": "Average",
+      "steps": 7
+    },
+    "speed": {
+      "index": 2,
+      "label": "Basic",
+      "steps": 6
+    },
+    "hp": null,
+    "eatDps": 0,
+    "moveSpeed": 0,
+    "waveCost": 0,
+    "weight": 0,
+    "armor": "DEFAULT",
+    "statSource": "derived",
+    "spawnable": false,
+    "packet": {
+      "background": "IMAGE_UI_ALMANAC_PACKETS_ZOMBIES_READY",
+      "icon": "IMAGE_UI_ALMANAC_PACKETS_ZOMBIES_BEACH_SURFER",
+      "backgroundOffset": [
+        1,
+        1
+      ],
+      "backgroundSize": [
+        112,
+        157
+      ],
+      "iconOffset": [
+        18,
+        20
+      ],
+      "iconSize": [
+        92,
+        135
+      ]
+    },
+    "animations": {
+      "name": "ZOMBIE_BEACH_SURFER",
+      "zombie": "768/FULL/ZOMBIE/ZOMBIE_BEACH_SURFER/ZOMBIE_BEACH_SURFER.PAM",
+      "canvas": [
+        390,
+        390
+      ],
+      "clips": [
+        "die",
+        "die_board",
+        "eat",
+        "idle",
+        "particles",
+        "slam",
+        "surf_die",
+        "surf_idle",
+        "surf_transition",
+        "walk",
+        "walk_board"
+      ]
+    },
+    "armorParts": []
+  },
+  {
+    "id": 35,
+    "alias": "ZombieBeachFisherman",
+    "enumName": "ZOMBIE_BEACH_FISHERMAN",
+    "name": "Fisherman Zombie",
+    "chapter": "BIG_WAVE_BEACH",
+    "description": "Casts a fishing line to hook plants and pull them toward himself.",
+    "flavor": "Casts a line, hooks a plant, and reels it away from your defences. Deeply unsporting and very good at it.",
+    "toughness": {
+      "index": 4,
+      "label": "Dense",
+      "steps": 7
+    },
+    "speed": {
+      "index": 2,
+      "label": "Basic",
+      "steps": 6
+    },
+    "hp": 1000,
+    "eatDps": 100,
+    "moveSpeed": 0.185,
+    "waveCost": 700,
+    "weight": 2500,
+    "armor": "DEFAULT",
+    "statSource": "properties",
+    "spawnable": true,
+    "packet": {
+      "background": "IMAGE_UI_ALMANAC_PACKETS_ZOMBIES_READY",
+      "icon": "IMAGE_UI_ALMANAC_PACKETS_ZOMBIES_BEACH_FISHERMAN",
+      "backgroundOffset": [
+        1,
+        1
+      ],
+      "backgroundSize": [
+        112,
+        157
+      ],
+      "iconOffset": [
+        19,
+        51
+      ],
+      "iconSize": [
+        92,
+        110
+      ]
+    },
+    "animations": {
+      "name": "ZOMBIE_BEACH_FISHERMAN",
+      "zombie": "768/FULL/ZOMBIE/ZOMBIE_BEACH_FISHERMAN/ZOMBIE_BEACH_FISHERMAN.PAM",
+      "canvas": [
+        390,
+        390
+      ],
+      "clips": [
+        "cast",
+        "cast_loop",
+        "die",
+        "die2",
+        "idle",
+        "intro",
+        "particles",
+        "reel",
+        "toss"
+      ]
+    },
+    "armorParts": []
+  },
+  {
+    "id": 36,
+    "alias": "ZombieBeachOctopus",
+    "enumName": "ZOMBIE_BEACH_OCTOPUS",
+    "name": "Octo Zombie",
+    "chapter": "BIG_WAVE_BEACH",
+    "description": "Throws octopi that disable plants.",
+    "flavor": "Throws octopi that latch on and shut plants down completely. The octopi seem fine with the arrangement.",
+    "toughness": {
+      "index": 4,
+      "label": "Dense",
+      "steps": 7
+    },
+    "speed": {
+      "index": 0,
+      "label": "Sluggish",
+      "steps": 6
+    },
+    "hp": 910,
+    "eatDps": 100,
+    "moveSpeed": 0.12,
+    "waveCost": 900,
+    "weight": 3500,
+    "armor": "DEFAULT",
+    "statSource": "properties",
+    "spawnable": true,
+    "packet": {
+      "background": "IMAGE_UI_ALMANAC_PACKETS_ZOMBIES_READY",
+      "icon": "IMAGE_UI_ALMANAC_PACKETS_ZOMBIES_BEACH_OCTOPUS",
+      "backgroundOffset": [
+        1,
+        1
+      ],
+      "backgroundSize": [
+        112,
+        157
+      ],
+      "iconOffset": [
+        23,
+        25
+      ],
+      "iconSize": [
+        90,
+        133
+      ]
+    },
+    "animations": {
+      "name": "ZOMBIE_BEACH_OCTOPUS",
+      "zombie": "768/FULL/ZOMBIE/ZOMBIE_BEACH_OCTOPUS/ZOMBIE_BEACH_OCTOPUS.PAM",
+      "canvas": [
+        390,
+        390
+      ],
+      "clips": [
+        "die",
+        "eat",
+        "idle",
+        "idle2",
+        "idle3",
+        "idle4",
+        "idle5",
+        "particles",
+        "toss",
+        "walk"
+      ]
+    },
+    "armorParts": []
+  },
+  {
+    "id": 37,
+    "alias": "ZombieBeachGargantuar",
+    "enumName": "ZOMBIE_BEACH_GARGANTUAR",
+    "name": "Beach Gargantuar",
+    "chapter": "BIG_WAVE_BEACH",
+    "description": "Beach Gargantuar; throws a beach Imp.",
+    "flavor": "A Gargantuar in board shorts wielding an anchor. Neither the tide nor your lawn slows him down.",
+    "toughness": {
+      "index": 6,
+      "label": "Undying",
+      "steps": 7
+    },
+    "speed": {
+      "index": 2,
+      "label": "Basic",
+      "steps": 6
+    },
+    "hp": null,
+    "eatDps": 0,
+    "moveSpeed": 0,
+    "waveCost": 0,
+    "weight": 0,
+    "armor": "DEFAULT",
+    "statSource": "derived",
+    "spawnable": false,
+    "packet": {
+      "background": "IMAGE_UI_ALMANAC_PACKETS_ZOMBIES_READY",
+      "icon": "IMAGE_UI_ALMANAC_PACKETS_ZOMBIES_BEACH_GARGANTUAR",
+      "backgroundOffset": [
+        1,
+        1
+      ],
+      "backgroundSize": [
+        112,
+        157
+      ],
+      "iconOffset": [
+        8,
+        18
+      ],
+      "iconSize": [
+        97,
+        136
+      ]
+    },
+    "animations": {
+      "name": "BEACH_GARGANTUAR",
+      "zombie": "768/FULL/ZOMBIE/BEACH_GARGANTUAR/BEACH_GARGANTUAR.PAM",
+      "canvas": [
+        390,
+        390
+      ],
+      "clips": [
+        "cannon_fire",
+        "die",
+        "eat",
+        "fire",
+        "idle",
+        "particles",
+        "smash_left",
+        "walk"
+      ]
+    },
+    "armorParts": []
+  },
+  {
+    "id": 38,
+    "alias": "ZombieBeachImpDefault",
+    "enumName": "ZOMBIE_BEACH_IMP",
+    "name": "Beach Imp",
+    "chapter": "BIG_WAVE_BEACH",
+    "description": "Imp thrown by beach Gargantuar.",
+    "flavor": "A tiny zombie in a mermaid tail, thrown over the water. He is having a better time than anyone else here.",
+    "toughness": {
+      "index": 0,
+      "label": "Average",
+      "steps": 7
+    },
+    "speed": {
+      "index": 2,
+      "label": "Basic",
+      "steps": 6
+    },
+    "hp": null,
+    "eatDps": 0,
+    "moveSpeed": 0,
+    "waveCost": 0,
+    "weight": 0,
+    "armor": "DEFAULT",
+    "statSource": "derived",
+    "spawnable": false,
+    "packet": {
+      "background": "IMAGE_UI_ALMANAC_PACKETS_ZOMBIES_READY",
+      "icon": "IMAGE_UI_ALMANAC_PACKETS_ZOMBIES_BEACH_IMP",
+      "backgroundOffset": [
+        1,
+        1
+      ],
+      "backgroundSize": [
+        112,
+        157
+      ],
+      "iconOffset": [
+        21,
+        125
+      ],
+      "iconSize": [
+        90,
+        82
+      ]
+    },
+    "animations": {
+      "name": "ZOMBIE_BEACH_IMP_MERMAID",
+      "zombie": "768/FULL/ZOMBIE/ZOMBIE_BEACH_IMP_MERMAID/ZOMBIE_BEACH_IMP_MERMAID.PAM",
+      "canvas": [
+        390,
+        390
+      ],
+      "clips": [
+        "die",
+        "eat",
+        "fly",
+        "idle",
+        "land",
+        "particles",
+        "walk"
+      ]
+    },
+    "armorParts": []
+  },
+  {
+    "id": 39,
+    "alias": "ZombieDarkDefault",
+    "enumName": "ZOMBIE_DARK",
+    "name": "Peasant Zombie",
+    "chapter": "DARK_AGES",
+    "description": "Basic Dark Ages zombie.",
+    "flavor": "A medieval peasant with medieval hygiene. His life was hard before he died and has not improved much since.",
+    "toughness": {
+      "index": 0,
+      "label": "Average",
+      "steps": 7
+    },
+    "speed": {
+      "index": 2,
+      "label": "Basic",
+      "steps": 6
+    },
+    "hp": null,
+    "eatDps": 0,
+    "moveSpeed": 0,
+    "waveCost": 0,
+    "weight": 0,
+    "armor": "DEFAULT",
+    "statSource": "derived",
+    "spawnable": false,
+    "packet": {
+      "background": "IMAGE_UI_ALMANAC_PACKETS_ZOMBIES_READY",
+      "icon": "IMAGE_UI_ALMANAC_PACKETS_ZOMBIES_DARK",
+      "backgroundOffset": [
+        1,
+        1
+      ],
+      "backgroundSize": [
+        112,
+        157
+      ],
+      "iconOffset": [
+        56,
+        81
+      ],
+      "iconSize": [
+        62,
+        105
+      ]
+    },
+    "animations": {
+      "name": "ZOMBIE_DARK_BASIC",
+      "zombie": "768/FULL/ZOMBIE/ZOMBIE_DARK_BASIC/ZOMBIE_DARK_BASIC.PAM",
+      "canvas": [
+        390,
+        390
+      ],
+      "clips": [
+        "die",
+        "eat",
+        "idle",
+        "particles",
+        "walk"
+      ]
+    },
+    "armorParts": []
+  },
+  {
+    "id": 40,
+    "alias": "ZombieDarkArmor1Default",
+    "enumName": "ZOMBIE_DARK_ARMOR1",
+    "name": "Conehead Peasant",
+    "chapter": "DARK_AGES",
+    "description": "Conehead Dark Ages zombie.",
+    "flavor": "A cone in the Dark Ages, which locals insist is a helmet. Nobody argues with a peasant holding a cone.",
+    "toughness": {
+      "index": 1,
+      "label": "Protected",
+      "steps": 7
+    },
+    "speed": {
+      "index": 2,
+      "label": "Basic",
+      "steps": 6
+    },
+    "hp": null,
+    "eatDps": 0,
+    "moveSpeed": 0,
+    "waveCost": 0,
+    "weight": 0,
+    "armor": "DEFAULT",
+    "statSource": "derived",
+    "spawnable": false,
+    "packet": {
+      "background": "IMAGE_UI_ALMANAC_PACKETS_ZOMBIES_READY",
+      "icon": "IMAGE_UI_ALMANAC_PACKETS_ZOMBIES_DARK_ARMOR1",
+      "backgroundOffset": [
+        1,
+        1
+      ],
+      "backgroundSize": [
+        112,
+        157
+      ],
+      "iconOffset": [
+        53,
+        28
+      ],
+      "iconSize": [
+        63,
+        132
+      ]
+    },
+    "animations": {
+      "name": "ZOMBIE_DARK_BASIC",
+      "zombie": "768/FULL/ZOMBIE/ZOMBIE_DARK_BASIC/ZOMBIE_DARK_BASIC.PAM",
+      "canvas": [
+        390,
+        390
+      ],
+      "clips": [
+        "die",
+        "eat",
+        "idle",
+        "particles",
+        "walk"
+      ]
+    },
+    "armorParts": [
+      "zombie_armor_cone_norm"
+    ]
+  },
+  {
+    "id": 41,
+    "alias": "ZombieDarkArmor2Default",
+    "enumName": "ZOMBIE_DARK_ARMOR2",
+    "name": "Buckethead Peasant",
+    "chapter": "DARK_AGES",
+    "description": "Buckethead Dark Ages zombie.",
+    "flavor": "A bucket, or possibly a family heirloom. In this century the distinction hardly matters.",
+    "toughness": {
+      "index": 3,
+      "label": "Hardened",
+      "steps": 7
+    },
+    "speed": {
+      "index": 2,
+      "label": "Basic",
+      "steps": 6
+    },
+    "hp": null,
+    "eatDps": 0,
+    "moveSpeed": 0,
+    "waveCost": 0,
+    "weight": 0,
+    "armor": "DEFAULT",
+    "statSource": "derived",
+    "spawnable": false,
+    "packet": {
+      "background": "IMAGE_UI_ALMANAC_PACKETS_ZOMBIES_READY",
+      "icon": "IMAGE_UI_ALMANAC_PACKETS_ZOMBIES_DARK_ARMOR2",
+      "backgroundOffset": [
+        1,
+        1
+      ],
+      "backgroundSize": [
+        112,
+        157
+      ],
+      "iconOffset": [
+        37,
+        43
+      ],
+      "iconSize": [
+        71,
+        125
+      ]
+    },
+    "animations": {
+      "name": "ZOMBIE_DARK_BASIC",
+      "zombie": "768/FULL/ZOMBIE/ZOMBIE_DARK_BASIC/ZOMBIE_DARK_BASIC.PAM",
+      "canvas": [
+        390,
+        390
+      ],
+      "clips": [
+        "die",
+        "eat",
+        "idle",
+        "particles",
+        "walk"
+      ]
+    },
+    "armorParts": [
+      "zombie_armor_bucket_norm"
+    ]
+  },
+  {
+    "id": 42,
+    "alias": "ZombieDarkArmor3Default",
+    "enumName": "ZOMBIE_DARK_ARMOR3",
+    "name": "Knight Zombie",
+    "chapter": "DARK_AGES",
+    "description": "Wears shoulder armor and a crown; higher durability.",
+    "flavor": "Proper plate armour and a crown to match. Takes a serious beating before anything gets through to the zombie inside.",
+    "toughness": {
+      "index": 5,
+      "label": "Great",
+      "steps": 7
+    },
+    "speed": {
+      "index": 2,
+      "label": "Basic",
+      "steps": 6
+    },
+    "hp": 190,
+    "eatDps": 100,
+    "moveSpeed": 0.185,
+    "waveCost": 550,
+    "weight": 4500,
+    "armor": "KNIGHT",
+    "statSource": "properties",
+    "spawnable": true,
+    "packet": {
+      "background": "IMAGE_UI_ALMANAC_PACKETS_ZOMBIES_READY",
+      "icon": "IMAGE_UI_ALMANAC_PACKETS_ZOMBIES_DARK_ARMOR3",
+      "backgroundOffset": [
+        1,
+        1
+      ],
+      "backgroundSize": [
+        112,
+        157
+      ],
+      "iconOffset": [
+        47,
+        61
+      ],
+      "iconSize": [
+        66,
+        115
+      ]
+    },
+    "animations": {
+      "name": "ZOMBIE_DARK_BASIC",
+      "zombie": "768/FULL/ZOMBIE/ZOMBIE_DARK_BASIC/ZOMBIE_DARK_BASIC.PAM",
+      "canvas": [
+        390,
+        390
+      ],
+      "clips": [
+        "die",
+        "eat",
+        "idle",
+        "particles",
+        "walk"
+      ]
+    },
+    "armorParts": [
+      "zombie_armor_crown_norm",
+      "zombie_shoulder_armor_norm"
+    ]
+  },
+  {
+    "id": 43,
+    "alias": "ZombieDarkArmor4Default",
+    "enumName": "ZOMBIE_DARK_ARMOR4",
+    "name": "Brickhead Peasant",
+    "chapter": "DARK_AGES",
+    "description": "Brickhead Dark Ages zombie.",
+    "flavor": "Stonework on the head, mud on everything else. Extremely durable, extremely slow to reconsider.",
+    "toughness": {
+      "index": 5,
+      "label": "Great",
+      "steps": 7
+    },
+    "speed": {
+      "index": 2,
+      "label": "Basic",
+      "steps": 6
+    },
+    "hp": null,
+    "eatDps": 0,
+    "moveSpeed": 0,
+    "waveCost": 0,
+    "weight": 0,
+    "armor": "DEFAULT",
+    "statSource": "derived",
+    "spawnable": false,
+    "packet": {
+      "background": "IMAGE_UI_ALMANAC_PACKETS_ZOMBIES_READY",
+      "icon": "IMAGE_UI_ALMANAC_PACKETS_ZOMBIES_DARK_ARMOR4",
+      "backgroundOffset": [
+        1,
+        1
+      ],
+      "backgroundSize": [
+        112,
+        157
+      ],
+      "iconOffset": [
+        49,
+        17
+      ],
+      "iconSize": [
+        72,
+        136
+      ]
+    },
+    "animations": {
+      "name": "ZOMBIE_DARK_BASIC_BRICK",
+      "zombie": "768/FULL/ZOMBIE/ZOMBIE_DARK_BASIC_BRICK/ZOMBIE_DARK_BASIC_BRICK.PAM",
+      "canvas": [
+        390,
+        390
+      ],
+      "clips": [
+        "die",
+        "eat",
+        "idle",
+        "particles",
+        "walk"
+      ]
+    },
+    "armorParts": [
+      "zombie_armor_brick_norm"
+    ]
+  },
+  {
+    "id": 44,
+    "alias": "ZombieWizardDefault",
+    "enumName": "ZOMBIE_WIZARD",
+    "name": "Wizard Zombie",
+    "chapter": "DARK_AGES",
+    "description": "Casts a spell to transform plants into harmless sheep.",
+    "flavor": "Casts a spell that turns your plants into sheep. The sheep are harmless, which is precisely the problem.",
+    "toughness": {
+      "index": 3,
+      "label": "Hardened",
+      "steps": 7
+    },
+    "speed": {
+      "index": 0,
+      "label": "Sluggish",
+      "steps": 6
+    },
+    "hp": 490,
+    "eatDps": 100,
+    "moveSpeed": 0.12,
+    "waveCost": 800,
+    "weight": 3500,
+    "armor": "DEFAULT",
+    "statSource": "properties",
+    "spawnable": true,
+    "packet": {
+      "background": "IMAGE_UI_ALMANAC_PACKETS_ZOMBIES_READY",
+      "icon": "IMAGE_UI_ALMANAC_PACKETS_ZOMBIES_DARK_WIZARD",
+      "backgroundOffset": [
+        1,
+        1
+      ],
+      "backgroundSize": [
+        112,
+        157
+      ],
+      "iconOffset": [
+        24,
+        49
+      ],
+      "iconSize": [
+        87,
+        117
+      ]
+    },
+    "animations": {
+      "name": "ZOMBIE_DARK_WIZARD",
+      "zombie": "768/FULL/ZOMBIE/ZOMBIE_DARK_WIZARD/ZOMBIE_DARK_WIZARD.PAM",
+      "canvas": [
+        390,
+        390
+      ],
+      "clips": [
+        "die",
+        "eat",
+        "idle",
+        "particles",
+        "sheep",
+        "walk"
+      ]
+    },
+    "armorParts": []
+  },
+  {
+    "id": 45,
+    "alias": "ZombieDarkJugglerDefault",
+    "enumName": "ZOMBIE_DARK_JUGGLER",
+    "name": "Jester Zombie",
+    "chapter": "DARK_AGES",
+    "description": "Catches and reflects many projectiles back at plants.",
+    "flavor": "Catches your projectiles and throws them straight back. Years of practice and no other marketable skills.",
+    "toughness": {
+      "index": 2,
+      "label": "Solid",
+      "steps": 7
+    },
+    "speed": {
+      "index": 2,
+      "label": "Basic",
+      "steps": 6
+    },
+    "hp": 420,
+    "eatDps": 100,
+    "moveSpeed": 0.2,
+    "waveCost": 450,
+    "weight": 3500,
+    "armor": "DEFAULT",
+    "statSource": "properties",
+    "spawnable": true,
+    "packet": {
+      "background": "IMAGE_UI_ALMANAC_PACKETS_ZOMBIES_READY",
+      "icon": "IMAGE_UI_ALMANAC_PACKETS_ZOMBIES_DARK_JUGGLER",
+      "backgroundOffset": [
+        1,
+        1
+      ],
+      "backgroundSize": [
+        112,
+        157
+      ],
+      "iconOffset": [
+        36,
+        52
+      ],
+      "iconSize": [
+        72,
+        116
+      ]
+    },
+    "animations": {
+      "name": "ZOMBIE_DARK_JESTER",
+      "zombie": "768/FULL/ZOMBIE/ZOMBIE_DARK_JESTER/ZOMBIE_DARK_JESTER.PAM",
+      "canvas": [
+        390,
+        390
+      ],
+      "clips": [
+        "die",
+        "eat",
+        "idle",
+        "particles",
+        "spin",
+        "spin_walk",
+        "spindown",
+        "spinup",
+        "walk"
+      ]
+    },
+    "armorParts": []
+  },
+  {
+    "id": 46,
+    "alias": "ZombieDarkKing",
+    "enumName": "ZOMBIE_DARK_KING",
+    "name": "Zombie King",
+    "chapter": "DARK_AGES",
+    "description": "Buffs nearby Dark Ages zombies (e.g., increases speed or damage).",
+    "flavor": "Rules from the back of the lane and makes every zombie near him better at their job. Leadership, of a sort.",
+    "toughness": {
+      "index": 4,
+      "label": "Dense",
+      "steps": 7
+    },
+    "speed": {
+      "index": 2,
+      "label": "Basic",
+      "steps": 6
+    },
+    "hp": 1000,
+    "eatDps": 100,
+    "moveSpeed": 0.185,
+    "waveCost": 750,
+    "weight": 2000,
+    "armor": "DEFAULT",
+    "statSource": "properties",
+    "spawnable": true,
+    "packet": {
+      "background": "IMAGE_UI_ALMANAC_PACKETS_ZOMBIES_READY",
+      "icon": "IMAGE_UI_ALMANAC_PACKETS_ZOMBIES_DARK_KING",
+      "backgroundOffset": [
+        1,
+        1
+      ],
+      "backgroundSize": [
+        112,
+        157
+      ],
+      "iconOffset": [
+        20,
+        60
+      ],
+      "iconSize": [
+        91,
+        114
+      ]
+    },
+    "animations": {
+      "name": "ZOMBIE_DARK_KING",
+      "zombie": "768/FULL/ZOMBIE/ZOMBIE_DARK_KING/ZOMBIE_DARK_KING.PAM",
+      "canvas": [
+        390,
+        390
+      ],
+      "clips": [
+        "die",
+        "idle",
+        "idle2",
+        "intro",
+        "particles",
+        "special"
+      ]
+    },
+    "armorParts": []
+  },
+  {
+    "id": 47,
+    "alias": "ZombieDarkGargantuar",
+    "enumName": "ZOMBIE_DARK_GARGANTUAR",
+    "name": "Dark Ages Gargantuar",
+    "chapter": "DARK_AGES",
+    "description": "Dark Ages Gargantuar; throws a Dark Ages Imp.",
+    "flavor": "A Gargantuar in chainmail with a lamppost for a mace. The Dark Ages did not prepare anyone for this.",
+    "toughness": {
+      "index": 6,
+      "label": "Undying",
+      "steps": 7
+    },
+    "speed": {
+      "index": 2,
+      "label": "Basic",
+      "steps": 6
+    },
+    "hp": null,
+    "eatDps": 0,
+    "moveSpeed": 0,
+    "waveCost": 0,
+    "weight": 0,
+    "armor": "DEFAULT",
+    "statSource": "derived",
+    "spawnable": false,
+    "packet": {
+      "background": "IMAGE_UI_ALMANAC_PACKETS_ZOMBIES_READY",
+      "icon": "IMAGE_UI_ALMANAC_PACKETS_ZOMBIES_DARK_GARGANTUAR",
+      "backgroundOffset": [
+        1,
+        1
+      ],
+      "backgroundSize": [
+        112,
+        157
+      ],
+      "iconOffset": [
+        18,
+        19
+      ],
+      "iconSize": [
+        92,
+        136
+      ]
+    },
+    "animations": {
+      "name": "DARK_GARGANTUAR",
+      "zombie": "768/FULL/ZOMBIE/DARK_GARGANTUAR/DARK_GARGANTUAR.PAM",
+      "canvas": [
+        390,
+        390
+      ],
+      "clips": [
+        "cannon_fire",
+        "die",
+        "eat",
+        "fire",
+        "idle",
+        "particles",
+        "smash_left",
+        "walk"
+      ]
+    },
+    "armorParts": []
+  },
+  {
+    "id": 48,
+    "alias": "ZombieDarkImpDefault",
+    "enumName": "ZOMBIE_DARK_IMP",
+    "name": "Dark Ages Imp",
+    "chapter": "DARK_AGES",
+    "description": "Imp thrown by Dark Ages Gargantuar.",
+    "flavor": "A tiny zombie in a monk's habit, thrown with great enthusiasm and no particular aim.",
+    "toughness": {
+      "index": 0,
+      "label": "Average",
+      "steps": 7
+    },
+    "speed": {
+      "index": 2,
+      "label": "Basic",
+      "steps": 6
+    },
+    "hp": null,
+    "eatDps": 0,
+    "moveSpeed": 0,
+    "waveCost": 0,
+    "weight": 0,
+    "armor": "DEFAULT",
+    "statSource": "derived",
+    "spawnable": false,
+    "packet": {
+      "background": "IMAGE_UI_ALMANAC_PACKETS_ZOMBIES_READY",
+      "icon": "IMAGE_UI_ALMANAC_PACKETS_ZOMBIES_DARK_IMP",
+      "backgroundOffset": [
+        1,
+        1
+      ],
+      "backgroundSize": [
+        112,
+        157
+      ],
+      "iconOffset": [
+        57,
+        148
+      ],
+      "iconSize": [
+        54,
+        68
+      ]
+    },
+    "animations": {
+      "name": "ZOMBIE_DARK_IMP_MONK",
+      "zombie": "768/FULL/ZOMBIE/ZOMBIE_DARK_IMP_MONK/ZOMBIE_DARK_IMP_MONK.PAM",
+      "canvas": [
+        390,
+        390
+      ],
+      "clips": [
+        "die",
+        "eat",
+        "fly",
+        "idle",
+        "land",
+        "particles",
+        "walk"
+      ]
+    },
+    "armorParts": []
+  },
+  {
+    "id": 49,
+    "alias": "ZombieZombossMechEgypt",
+    "enumName": "ZOMBIE_ZOMBOSS_MECH_EGYPT",
+    "name": "Zomboss: Ancient Egypt",
+    "chapter": "ZOMBOSS",
+    "description": "Zomboss of chapter Ancient Egypt  .",
+    "flavor": "Dr. Zomboss in a scarab-plated war machine. He has waited four thousand years for this and intends to enjoy it.",
+    "toughness": {
+      "index": 6,
+      "label": "Undying",
+      "steps": 7
+    },
+    "speed": {
+      "index": 2,
+      "label": "Basic",
+      "steps": 6
+    },
+    "hp": null,
+    "eatDps": 0,
+    "moveSpeed": 0,
+    "waveCost": 0,
+    "weight": 0,
+    "armor": "DEFAULT",
+    "statSource": "derived",
+    "spawnable": false,
+    "packet": {
+      "background": "IMAGE_UI_ALMANAC_PACKETS_ZOMBIES_READY",
+      "icon": "IMAGE_UI_ALMANAC_PACKETS_ZOMBIES_ZOMBOSSMECH_EGYPT",
+      "backgroundOffset": [
+        1,
+        1
+      ],
+      "backgroundSize": [
+        112,
+        157
+      ],
+      "iconOffset": [
+        18,
+        20
+      ],
+      "iconSize": [
+        92,
+        135
+      ]
+    },
+    "animations": {
+      "name": "ZOMBIE_EGYPT_ZOMBOSS",
+      "zombie": "768/INITIAL/ZOMBIE/ZOMBIE_EGYPT_ZOMBOSS/ZOMBIE_EGYPT_ZOMBOSS.PAM",
+      "canvas": [
+        390,
+        390
+      ],
+      "clips": [
+        "Pre_Intro",
+        "die",
+        "die_exit",
+        "die_idle",
+        "die_talk",
+        "idle",
+        "intro",
+        "jump_land",
+        "jump_mid",
+        "jump_start",
+        "missile_start",
+        "rocket_launch",
+        "stomp",
+        "stun_end",
+        "stun_loop",
+        "stun_start",
+        "walk_backwards",
+        "walk_down",
+        "walk_forward",
+        "walk_up",
+        "zombie_portal_end",
+        "zombie_portal_loop",
+        "zombie_portal_start"
+      ]
+    },
+    "armorParts": []
+  },
+  {
+    "id": 50,
+    "alias": "ZombieZombossMechDark",
+    "enumName": "ZOMBIE_ZOMBOSS_MECH_DARK",
+    "name": "Zomboss: Dark Ages",
+    "chapter": "ZOMBOSS",
+    "description": "Zomboss of chapter Dark Ages.",
+    "flavor": "Dr. Zomboss in a dragon mech that breathes actual fire. Subtlety was never the plan.",
+    "toughness": {
+      "index": 6,
+      "label": "Undying",
+      "steps": 7
+    },
+    "speed": {
+      "index": 2,
+      "label": "Basic",
+      "steps": 6
+    },
+    "hp": null,
+    "eatDps": 0,
+    "moveSpeed": 0,
+    "waveCost": 0,
+    "weight": 0,
+    "armor": "DEFAULT",
+    "statSource": "derived",
+    "spawnable": false,
+    "packet": {
+      "background": "IMAGE_UI_ALMANAC_PACKETS_ZOMBIES_READY",
+      "icon": "IMAGE_UI_ALMANAC_PACKETS_ZOMBIES_ZOMBOSSMECH_DARK",
+      "backgroundOffset": [
+        1,
+        1
+      ],
+      "backgroundSize": [
+        112,
+        157
+      ],
+      "iconOffset": [
+        26,
+        19
+      ],
+      "iconSize": [
+        88,
+        134
+      ]
+    },
+    "animations": {
+      "name": "ZOMBIE_DARK_ZOMBOSS",
+      "zombie": "768/FULL/ZOMBIE/ZOMBIE_DARK_ZOMBOSS/ZOMBIE_DARK_ZOMBOSS.PAM",
+      "canvas": [
+        390,
+        390
+      ],
+      "clips": [
+        "die",
+        "die_exit",
+        "die_talk",
+        "fire_attack",
+        "fire_attack_end",
+        "fire_attack_idle",
+        "fire_bomb",
+        "fire_bomb_end",
+        "fire_bomb_loop",
+        "idle",
+        "intro",
+        "stun_end",
+        "stun_loop",
+        "stun_start",
+        "summoning",
+        "vulnerable",
+        "vulnerable_end",
+        "vulnerable_loop"
+      ]
+    },
+    "armorParts": []
+  },
+  {
+    "id": 51,
+    "alias": "ZombieZombossMechIceage",
+    "enumName": "ZOMBIE_ZOMBOSS_MECH_ICEAGE",
+    "name": "Zomboss: Frostbite Caves",
+    "chapter": "ZOMBOSS",
+    "description": "Zomboss in his ice mech; freezes whole columns and drops snow blocks.",
+    "flavor": "Dr. Zomboss in an ice mech, freezing whole columns at a time. He finds the cold invigorating and your defences disappointing.",
+    "toughness": {
+      "index": 6,
+      "label": "Undying",
+      "steps": 7
+    },
+    "speed": {
+      "index": 2,
+      "label": "Basic",
+      "steps": 6
+    },
+    "hp": null,
+    "eatDps": 0,
+    "moveSpeed": 0,
+    "waveCost": 0,
+    "weight": 0,
+    "armor": "DEFAULT",
+    "statSource": "derived",
+    "spawnable": false,
+    "packet": {
+      "background": "IMAGE_UI_ALMANAC_PACKETS_ZOMBIES_READY",
+      "icon": "IMAGE_UI_ALMANAC_PACKETS_ZOMBIES_ZOMBOSSMECH_ICEAGE",
+      "backgroundOffset": [
+        1,
+        1
+      ],
+      "backgroundSize": [
+        112,
+        157
+      ],
+      "iconOffset": [
+        19,
+        34
+      ],
+      "iconSize": [
+        93,
+        117
+      ]
+    },
+    "animations": {
+      "name": "ZOMBIE_ICEAGE_ZOMBOSS",
+      "zombie": "768/FULL/ZOMBIE/ZOMBIE_ICEAGE_ZOMBOSS/ZOMBIE_ICEAGE_ZOMBOSS.PAM",
+      "canvas": [
+        390,
+        390
+      ],
+      "clips": [
+        "almanac_idle",
+        "cover_up",
+        "die",
+        "die_exit",
+        "die_talk",
+        "glacier_column_1",
+        "glacier_column_2",
+        "glacier_column_3",
+        "glacier_column_4",
+        "glacier_column_5",
+        "glacier_column_6",
+        "idle",
+        "intro",
+        "reveal",
+        "slingshot",
+        "stun",
+        "wind_1",
+        "wind_2",
+        "wind_3",
+        "wind_4"
+      ]
+    },
+    "armorParts": []
+  },
+  {
+    "id": 52,
+    "alias": "ZombieZombossMechBeach",
+    "enumName": "ZOMBIE_ZOMBOSS_MECH_BEACH",
+    "name": "Zomboss: Big Wave Beach",
+    "chapter": "ZOMBOSS",
+    "description": "Zomboss in his shark mech; floods lanes and spits tidal blasts.",
+    "flavor": "Dr. Zomboss in a shark mech, flooding lanes as he goes. He calls it a tidal strategy; everyone else calls it cheating.",
+    "toughness": {
+      "index": 6,
+      "label": "Undying",
+      "steps": 7
+    },
+    "speed": {
+      "index": 2,
+      "label": "Basic",
+      "steps": 6
+    },
+    "hp": null,
+    "eatDps": 0,
+    "moveSpeed": 0,
+    "waveCost": 0,
+    "weight": 0,
+    "armor": "DEFAULT",
+    "statSource": "derived",
+    "spawnable": false,
+    "packet": {
+      "background": "IMAGE_UI_ALMANAC_PACKETS_ZOMBIES_READY",
+      "icon": "IMAGE_UI_ALMANAC_PACKETS_ZOMBIES_ZOMBOSSMECH_BEACH",
+      "backgroundOffset": [
+        1,
+        1
+      ],
+      "backgroundSize": [
+        112,
+        157
+      ],
+      "iconOffset": [
+        17,
+        65
+      ],
+      "iconSize": [
+        93,
+        98
+      ]
+    },
+    "animations": {
+      "name": "ZOMBIE_BEACH_ZOMBOSS",
+      "zombie": "768/FULL/ZOMBIE/ZOMBIE_BEACH_ZOMBOSS/ZOMBIE_BEACH_ZOMBOSS.PAM",
+      "canvas": [
+        390,
+        390
+      ],
+      "clips": [
+        "die",
+        "die_exit",
+        "die_talk",
+        "emerge",
+        "idle",
+        "intro",
+        "spawn",
+        "stun_end",
+        "stun_loop",
+        "stun_start",
+        "submerge",
+        "suction_loop",
+        "suction_off",
+        "suction_on",
+        "tangled_loop",
+        "tangled_off",
+        "tangled_on"
+      ]
+    },
+    "armorParts": []
+  },
+  {
+    "id": 53,
+    "alias": "ZombieBarrelRoller",
+    "enumName": "ZOMBIE_BARREL_ROLLER",
+    "name": "Barrel Roller Zombie",
+    "chapter": "FROSTBITE_CAVES",
+    "description": "Pushes a barrel ahead of him; the barrel crushes plants and keeps rolling if he dies before it breaks.",
+    "flavor": "Pushes a barrel ahead of him and lets it do the flattening. Kill him early and the barrel keeps rolling regardless.",
+    "toughness": {
+      "index": 2,
+      "label": "Solid",
+      "steps": 7
+    },
+    "speed": {
+      "index": 2,
+      "label": "Basic",
+      "steps": 6
+    },
+    "hp": 470.0,
+    "eatDps": 100.0,
+    "moveSpeed": 0.185,
+    "waveCost": 600,
+    "weight": 3500,
+    "armor": "DEFAULT",
+    "statSource": "enum",
+    "spawnable": true,
+    "packet": {
+      "background": "IMAGE_UI_ALMANAC_PACKETS_ZOMBIES_READY",
+      "icon": "IMAGE_UI_ALMANAC_PACKETS_ZOMBIES_BARRELROLLER",
+      "backgroundOffset": [
+        1,
+        1
+      ],
+      "backgroundSize": [
+        112,
+        157
+      ],
+      "iconOffset": [
+        19,
+        87
+      ],
+      "iconSize": [
+        92,
+        101
+      ]
+    },
+    "animations": {
+      "name": "ZOMBIE_PIRATE_BARREL_PUSHER",
+      "zombie": "768/FULL/ZOMBIE/ZOMBIE_PIRATE_BARREL_PUSHER/ZOMBIE_PIRATE_BARREL_PUSHER.PAM",
+      "canvas": [
+        390,
+        390
+      ],
+      "clips": [
+        "die",
+        "die2",
+        "eat",
+        "eat2",
+        "idle",
+        "idle2",
+        "particles",
+        "walk",
+        "walk2"
+      ]
+    },
+    "armorParts": []
+  },
+  {
+    "id": 54,
+    "alias": "ZombieDarkImpDragon",
+    "enumName": "ZOMBIE_DARK_IMP_DRAGON",
+    "name": "Imp Dragon Zombie",
+    "chapter": "DARK_AGES",
+    "description": "Small dragon-suited imp; flies over the lawn and resists fire.",
+    "flavor": "A tiny zombie in a dragon suit who genuinely believes he can fly. He is not entirely wrong.",
+    "toughness": {
+      "index": 0,
+      "label": "Average",
+      "steps": 7
+    },
+    "speed": {
+      "index": 2,
+      "label": "Basic",
+      "steps": 6
+    },
+    "hp": 190.0,
+    "eatDps": 100.0,
+    "moveSpeed": 0.185,
+    "waveCost": 150,
+    "weight": 2000,
+    "armor": "DEFAULT",
+    "statSource": "enum",
+    "spawnable": true,
+    "packet": {
+      "background": "IMAGE_UI_ALMANAC_PACKETS_ZOMBIES_READY",
+      "icon": "IMAGE_UI_ALMANAC_PACKETS_ZOMBIES_DARK_IMP_DRAGON",
+      "backgroundOffset": [
+        1,
+        1
+      ],
+      "backgroundSize": [
+        112,
+        157
+      ],
+      "iconOffset": [
+        42,
+        111
+      ],
+      "iconSize": [
+        71,
+        87
+      ]
+    },
+    "animations": {
+      "name": "ZOMBIE_DARK_IMP_DRAGON",
+      "zombie": "768/FULL/ZOMBIE/ZOMBIE_DARK_IMP_DRAGON/ZOMBIE_DARK_IMP_DRAGON.PAM",
+      "canvas": [
+        390,
+        390
+      ],
+      "clips": [
+        "die",
+        "eat",
+        "fly",
+        "idle",
+        "land",
+        "particles",
+        "transition",
+        "walk"
+      ]
+    },
+    "armorParts": []
+  },
+  {
+    "id": 55,
+    "alias": "ZombieModernAllStar",
+    "enumName": "ZOMBIE_MODERN_ALL_STAR",
+    "name": "All-Star Zombie",
+    "chapter": "ALL_CHAPTERS",
+    "description": "Charges down the lane and tackles the first plant it reaches.",
+    "flavor": "Charges down the lane and tackles the first plant he meets. He has been training for this since long before he died.",
+    "toughness": {
+      "index": 4,
+      "label": "Dense",
+      "steps": 7
+    },
+    "speed": {
+      "index": 1,
+      "label": "Creeper",
+      "steps": 6
+    },
+    "hp": 1100.0,
+    "eatDps": 100.0,
+    "moveSpeed": 0.16,
+    "waveCost": 1000,
+    "weight": 3500,
+    "armor": "DEFAULT",
+    "statSource": "enum",
+    "spawnable": true,
+    "packet": {
+      "background": "IMAGE_UI_ALMANAC_PACKETS_ZOMBIES_READY",
+      "icon": "IMAGE_UI_ALMANAC_PACKETS_ZOMBIES_MODERN_ALLSTAR",
+      "backgroundOffset": [
+        1,
+        1
+      ],
+      "backgroundSize": [
+        112,
+        157
+      ],
+      "iconOffset": [
+        20,
+        47
+      ],
+      "iconSize": [
+        91,
+        117
+      ]
+    },
+    "animations": {
+      "name": "ZOMBIE_MODERN_ALLSTAR",
+      "zombie": "768/FULL/ZOMBIE/ZOMBIE_MODERN_ALLSTAR/ZOMBIE_MODERN_ALLSTAR.PAM",
+      "canvas": [
+        390,
+        390
+      ],
+      "clips": [
+        "die",
+        "eat",
+        "idle",
+        "kick",
+        "particles",
+        "run",
+        "tackle",
+        "walk"
+      ]
+    },
+    "armorParts": []
+  },
+  {
+    "id": 56,
+    "alias": "ZombieLostCityJane",
+    "enumName": "ZOMBIE_LOST_CITY_JANE",
+    "name": "Turquoise Jane Zombie",
+    "chapter": "ALL_CHAPTERS",
+    "description": "Swings past obstacles on a vine and lands deeper in the lawn.",
+    "flavor": "Swings past your front line on a vine and lands somewhere inconvenient. Style points awarded, none deserved.",
+    "toughness": {
+      "index": 1,
+      "label": "Protected",
+      "steps": 7
+    },
+    "speed": {
+      "index": 4,
+      "label": "Speedy",
+      "steps": 6
+    },
+    "hp": 350.0,
+    "eatDps": 100.0,
+    "moveSpeed": 0.25,
+    "waveCost": 200,
+    "weight": 3000,
+    "armor": "DEFAULT",
+    "statSource": "enum",
+    "spawnable": true,
+    "packet": {
+      "background": "IMAGE_UI_ALMANAC_PACKETS_ZOMBIES_READY",
+      "icon": "IMAGE_UI_ALMANAC_PACKETS_ZOMBIES_LOSTCITY_JANE",
+      "backgroundOffset": [
+        1,
+        1
+      ],
+      "backgroundSize": [
+        112,
+        157
+      ],
+      "iconOffset": [
+        16,
+        19
+      ],
+      "iconSize": [
+        94,
+        134
+      ]
+    },
+    "animations": {
+      "name": "ZOMBIE_LOSTCITY_JANE",
+      "zombie": "768/FULL/ZOMBIE/ZOMBIE_LOSTCITY_JANE/ZOMBIE_LOSTCITY_JANE.PAM",
+      "canvas": [
+        390,
+        390
+      ],
+      "clips": [
+        "die",
+        "eat",
+        "idle",
+        "particles",
+        "walk"
+      ]
+    },
+    "armorParts": []
+  },
+  {
+    "id": 57,
+    "alias": "ZombieCrystalSkull",
+    "enumName": "ZOMBIE_CRYSTAL_SKULL",
+    "name": "Crystal Skull Zombie",
+    "chapter": "ALL_CHAPTERS",
+    "description": "Carries a crystal skull that shields it until the skull shatters.",
+    "flavor": "Carries a crystal skull that soaks up damage until it shatters. He is quite attached to it, in every sense.",
+    "toughness": {
+      "index": 1,
+      "label": "Protected",
+      "steps": 7
+    },
+    "speed": {
+      "index": 2,
+      "label": "Basic",
+      "steps": 6
+    },
+    "hp": 250.0,
+    "eatDps": 100.0,
+    "moveSpeed": 0.185,
+    "waveCost": 500,
+    "weight": 3000,
+    "armor": "DEFAULT",
+    "statSource": "enum",
+    "spawnable": true,
+    "packet": {
+      "background": "IMAGE_UI_ALMANAC_PACKETS_ZOMBIES_READY",
+      "icon": "IMAGE_UI_ALMANAC_PACKETS_ZOMBIES_LOSTCITY_CRYSTALSKULL",
+      "backgroundOffset": [
+        1,
+        1
+      ],
+      "backgroundSize": [
+        112,
+        157
+      ],
+      "iconOffset": [
+        42,
+        48
+      ],
+      "iconSize": [
+        75,
+        114
+      ]
+    },
+    "animations": {
+      "name": "ZOMBIE_LOSTCITY_CRYSTALSKULL",
+      "zombie": "768/FULL/ZOMBIE/ZOMBIE_LOSTCITY_CRYSTALSKULL/ZOMBIE_LOSTCITY_CRYSTALSKULL.PAM",
+      "canvas": [
+        390,
+        390
+      ],
+      "clips": [
+        "attack",
+        "die",
+        "eat",
+        "idle",
+        "particles",
+        "power",
+        "power_down",
+        "power_up",
+        "walk"
+      ]
+    },
+    "armorParts": []
+  },
+  {
+    "id": 58,
+    "alias": "ZombieProspector",
+    "enumName": "ZOMBIE_PROSPECTOR",
+    "name": "Prospector Zombie",
+    "chapter": "ALL_CHAPTERS",
+    "description": "Blasts himself to the far end of the lane, then walks back the other way.",
+    "flavor": "Blasts himself to the far end of the lane with dynamite, then strolls back the wrong way. It works more often than it should.",
+    "toughness": {
+      "index": 0,
+      "label": "Average",
+      "steps": 7
+    },
+    "speed": {
+      "index": 1,
+      "label": "Creeper",
+      "steps": 6
+    },
+    "hp": 190.0,
+    "eatDps": 100.0,
+    "moveSpeed": 0.16,
+    "waveCost": 200,
+    "weight": 3000,
+    "armor": "DEFAULT",
+    "statSource": "enum",
+    "spawnable": true,
+    "packet": {
+      "background": "IMAGE_UI_ALMANAC_PACKETS_ZOMBIES_READY",
+      "icon": "IMAGE_UI_ALMANAC_PACKETS_ZOMBIES_PROSPECTOR",
+      "backgroundOffset": [
+        1,
+        1
+      ],
+      "backgroundSize": [
+        112,
+        157
+      ],
+      "iconOffset": [
+        33,
+        65
+      ],
+      "iconSize": [
+        85,
+        111
+      ]
+    },
+    "animations": {
+      "name": "ZOMBIE_PROSPECTOR",
+      "zombie": "768/FULL/ZOMBIE/ZOMBIE_PROSPECTOR/ZOMBIE_PROSPECTOR.PAM",
+      "canvas": [
+        390,
+        390
+      ],
+      "clips": [
+        "blastoff",
+        "die",
+        "eat",
+        "fly",
+        "idle",
+        "land",
+        "particles",
+        "walk"
+      ]
+    },
+    "armorParts": []
+  },
+  {
+    "id": 59,
+    "alias": "ZombiePiano",
+    "enumName": "ZOMBIE_PIANO",
+    "name": "Pianist Zombie",
+    "chapter": "ALL_CHAPTERS",
+    "description": "Plays a piano that shuffles nearby zombies between lanes every few seconds.",
+    "flavor": "Plays a piano while his colleagues rearrange themselves between lanes. Nobody requested the music.",
+    "toughness": {
+      "index": 3,
+      "label": "Hardened",
+      "steps": 7
+    },
+    "speed": {
+      "index": 0,
+      "label": "Sluggish",
+      "steps": 6
+    },
+    "hp": 840.0,
+    "eatDps": 4000.0,
+    "moveSpeed": 0.12,
+    "waveCost": 450,
+    "weight": 2000,
+    "armor": "DEFAULT",
+    "statSource": "enum",
+    "spawnable": true,
+    "packet": {
+      "background": "IMAGE_UI_ALMANAC_PACKETS_ZOMBIES_READY",
+      "icon": "IMAGE_UI_ALMANAC_PACKETS_ZOMBIES_PIANO",
+      "backgroundOffset": [
+        1,
+        1
+      ],
+      "backgroundSize": [
+        112,
+        157
+      ],
+      "iconOffset": [
+        19,
+        34
+      ],
+      "iconSize": [
+        92,
+        128
+      ]
+    },
+    "animations": {
+      "name": "ZOMBIE_PIANO",
+      "zombie": "768/FULL/ZOMBIE/ZOMBIE_PIANO/ZOMBIE_PIANO.PAM",
+      "canvas": [
+        390,
+        390
+      ],
+      "clips": [
+        "die",
+        "idle",
+        "particles",
+        "play"
+      ]
+    },
+    "armorParts": []
+  },
+  {
+    "id": 60,
+    "alias": "ZombieNewspaper",
+    "enumName": "ZOMBIE_NEWSPAPER",
+    "name": "Newspaper Zombie",
+    "chapter": "ALL_CHAPTERS",
+    "description": "Reads while he walks; destroy the paper and he sprints in a rage.",
+    "flavor": "Reads while he walks and takes it very badly when the paper is destroyed. The rage is real and so is the speed.",
+    "toughness": {
+      "index": 2,
+      "label": "Solid",
+      "steps": 7
+    },
+    "speed": {
+      "index": 3,
+      "label": "Hungry",
+      "steps": 6
+    },
+    "hp": 460.0,
+    "eatDps": 200.0,
+    "moveSpeed": 0.22,
+    "waveCost": 700,
+    "weight": 4000,
+    "armor": "DEFAULT",
+    "statSource": "enum",
+    "spawnable": true,
+    "packet": {
+      "background": "IMAGE_UI_ALMANAC_PACKETS_ZOMBIES_READY",
+      "icon": "IMAGE_UI_ALMANAC_PACKETS_ZOMBIES_MODERN_NEWSPAPER",
+      "backgroundOffset": [
+        1,
+        1
+      ],
+      "backgroundSize": [
+        112,
+        157
+      ],
+      "iconOffset": [
+        29,
+        54
+      ],
+      "iconSize": [
+        82,
+        107
+      ]
+    },
+    "animations": {
+      "name": "ZOMBIE_MODERN_NEWSPAPER",
+      "zombie": "768/FULL/ZOMBIE/ZOMBIE_MODERN_NEWSPAPER/ZOMBIE_MODERN_NEWSPAPER.PAM",
+      "canvas": [
+        390,
+        390
+      ],
+      "clips": [
+        "die",
+        "eat",
+        "eat_newspaper",
+        "idle_newspaper",
+        "newspaper_defeat",
+        "particles",
+        "walk",
+        "walk_newspaper"
+      ]
+    },
+    "armorParts": []
+  },
+  {
+    "id": 61,
+    "alias": "ZombieArcade",
+    "enumName": "ZOMBIE_ARCADE",
+    "name": "Arcade Zombie",
+    "chapter": "ALL_CHAPTERS",
+    "description": "Pushes an arcade cabinet that crushes whatever it touches.",
+    "flavor": "Pushes an arcade cabinet that crushes anything in its path. He has not put a coin in it once.",
+    "toughness": {
+      "index": 2,
+      "label": "Solid",
+      "steps": 7
+    },
+    "speed": {
+      "index": 2,
+      "label": "Basic",
+      "steps": 6
+    },
+    "hp": 490.0,
+    "eatDps": 100.0,
+    "moveSpeed": 0.19,
+    "waveCost": 600,
+    "weight": 1000,
+    "armor": "DEFAULT",
+    "statSource": "enum",
+    "spawnable": true,
+    "packet": {
+      "background": "IMAGE_UI_ALMANAC_PACKETS_ZOMBIES_READY",
+      "icon": "IMAGE_UI_ALMANAC_PACKETS_ZOMBIES_EIGHTIES_ARCADE",
+      "backgroundOffset": [
+        1,
+        1
+      ],
+      "backgroundSize": [
+        112,
+        157
+      ],
+      "iconOffset": [
+        23,
+        43
+      ],
+      "iconSize": [
+        90,
+        122
+      ]
+    },
+    "animations": {
+      "name": "ZOMBIE_80S_ARCADE",
+      "zombie": "768/FULL/ZOMBIE/ZOMBIE_80S_ARCADE/ZOMBIE_80S_ARCADE.PAM",
+      "canvas": [
+        390,
+        390
+      ],
+      "clips": [
+        "die",
+        "eat",
+        "idle",
+        "particles",
+        "push",
+        "walk"
+      ]
+    },
+    "armorParts": []
+  }
+]

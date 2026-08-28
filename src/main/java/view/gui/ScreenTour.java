@@ -3,7 +3,7 @@ package view.gui;
 import com.badlogic.gdx.Gdx;
 import controller.Navigation;
 import util.Log;
-import view.MenuType;
+import model.enums.MenuType;
 import view.gui.screens.TitleScreen;
 
 final class ScreenTour {
@@ -94,7 +94,7 @@ final class ScreenTour {
 
     private void captureSignedOut() {
         new controller.menu.PlayerListController(game.context().app()).signOut();
-        game.navigator().goMenu(view.MenuType.COLLECTION_MENU);
+        game.navigator().goMenu(model.enums.MenuType.COLLECTION_MENU);
         pump(6);
         Screenshots.capture("screenshots/tour-27-signed-out-topbar.png");
     }

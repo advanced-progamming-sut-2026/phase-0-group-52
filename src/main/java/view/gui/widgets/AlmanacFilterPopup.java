@@ -52,6 +52,7 @@ public final class AlmanacFilterPopup extends Popup {
         private final List<Rule> order = new ArrayList<Rule>();
         private final Set<String> chapters = new LinkedHashSet<String>();
         private final Set<PlantsCategory> categories = new LinkedHashSet<PlantsCategory>();
+        private String query = "";
         private boolean showLocked = true;
         private boolean showUnlocked = true;
 
@@ -59,6 +60,14 @@ public final class AlmanacFilterPopup extends Popup {
             for (SortKey key : SortKey.values()) {
                 order.add(new Rule(key));
             }
+        }
+
+        public String getQuery() {
+            return query;
+        }
+
+        public void setQuery(String value) {
+            query = value == null ? "" : value;
         }
 
         public List<Rule> getOrder() {
@@ -89,16 +98,11 @@ public final class AlmanacFilterPopup extends Popup {
             showUnlocked = value;
         }
 
-        public void raise(int index) {
-            if (index > 0) {
-                Collections.swap(order, index, index - 1);
+        public void move(int from, int to) {
+            if (from < 0 || to < 0 || from >= order.size() || to >= order.size()) {
+                return;
             }
-        }
-
-        public void lower(int index) {
-            if (index >= 0 && index < order.size() - 1) {
-                Collections.swap(order, index, index + 1);
-            }
+            order.add(to, order.remove(from));
         }
 
         public List<Plants> apply() {
@@ -115,6 +119,10 @@ public final class AlmanacFilterPopup extends Popup {
         private boolean keeps(Plants plant) {
             PlantRecord r = PlantData.record(plant);
             if (r == null) {
+                return false;
+            }
+            if (!query.isEmpty()
+                    && !plant.getName().toLowerCase().contains(query.toLowerCase())) {
                 return false;
             }
             if (!categories.isEmpty() && !categories.contains(r.getCategory())) {
@@ -197,59 +205,42 @@ public final class AlmanacFilterPopup extends Popup {
         Label head = new Label("Sort", ui.skin(), "rowHeader");
         column.add(head).left().padBottom(Theme.PAD_SMALL).row();
 
-        Label hint = new Label("Higher rules win first.", ui.skin(), "muted");
+        Label hint = new Label("Drag to reorder. Click to flip direction.",
+                ui.skin(), "muted");
         column.add(hint).left().padBottom(Theme.PAD_SMALL).row();
 
-        List<Rule> order = rules.getOrder();
-        for (int i = 0; i < order.size(); i++) {
-            column.add(sortRow(order.get(i), i)).growX().padBottom(3f).row();
-        }
+        column.add(new SortList(ui, new SortList.Model() {
+            @Override
+            public int size() {
+                return rules.getOrder().size();
+            }
+
+            @Override
+            public String label(int index) {
+                return pretty(rules.getOrder().get(index).getKey().name());
+            }
+
+            @Override
+            public boolean ascending(int index) {
+                return rules.getOrder().get(index).isAscending();
+            }
+
+            @Override
+            public void flip(int index) {
+                rules.getOrder().get(index).flip();
+            }
+
+            @Override
+            public void move(int from, int to) {
+                rules.move(from, to);
+            }
+        }, new Runnable() {
+            @Override
+            public void run() {
+                notifyChange();
+            }
+        })).growX();
         return column;
-    }
-
-    private Table sortRow(final Rule rule, final int index) {
-        Table row = new Table();
-        row.setBackground(ui.primitives().rounded(Theme.RADIUS,
-                Theme.PANEL_SUNKEN, Theme.OUTLINE, 2));
-        row.pad(Theme.PAD_SMALL);
-
-        Label name = new Label(pretty(rule.getKey().name()), ui.skin(), "rowSub");
-        row.add(name).left().growX().padTop(UiKit.opticalPad(name));
-
-        row.add(miniButton(rule.isAscending() ? "Asc" : "Desc", new Runnable() {
-            @Override
-            public void run() {
-                rule.flip();
-                refresh();
-            }
-        })).padRight(3f);
-        row.add(miniButton("Up", new Runnable() {
-            @Override
-            public void run() {
-                rules.raise(index);
-                refresh();
-            }
-        })).padRight(3f);
-        row.add(miniButton("Down", new Runnable() {
-            @Override
-            public void run() {
-                rules.lower(index);
-                refresh();
-            }
-        }));
-        return row;
-    }
-
-    private Table miniButton(String text, Runnable action) {
-        Table cell = new Table();
-        cell.setBackground(ui.primitives().rounded(Theme.RADIUS,
-                Theme.PANEL, Theme.OUTLINE, 2));
-        Label label = new Label(text, ui.skin(), "muted");
-        cell.add(label).pad(2f, Theme.PAD_SMALL, 2f, Theme.PAD_SMALL)
-                .padTop(UiKit.opticalPad(label));
-        Animations.attachPress(cell);
-        UiKit.onClick(cell, action);
-        return cell;
     }
 
     private Table filterColumn() {
@@ -336,11 +327,6 @@ public final class AlmanacFilterPopup extends Popup {
         if (onChange != null) {
             onChange.run();
         }
-    }
-
-    private void refresh() {
-        notifyChange();
-        rebuild();
     }
 
     private static String pretty(String name) {

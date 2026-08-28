@@ -101,7 +101,7 @@ public final class PlantCombat {
         for (int i = game.getZombies().size() - 1; i >= 0; i--) {
             Zombie z = game.getZombies().get(i);
             if (z.isDead()) {
-                game.getStats().recordKill(game.getCurrentTick());
+                game.getStats().recordKill(game.getCurrentTick(), z.getAlias());
                 if (z.getCol() <= 0 && !hasActiveMower(game, z.getRow()))
                     game.getStats().recordKillAtColZeroNoMower();
                 if (game.getLevel() instanceof model.level.TimedWar)

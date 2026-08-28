@@ -170,8 +170,7 @@ public final class SettingsPopup extends Popup {
             context.toasts().error("Sign in to change difficulty.");
             return;
         }
-        controller.handleCommand(new String[]{
-                "menu", "settings", "change-difficulty", "-l", String.valueOf(level)});
+        controller.setDifficulty(level);
         rebuild();
     }
 

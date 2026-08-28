@@ -14,6 +14,7 @@ public abstract class Zombie {
     private double armorHp;
     private ChapterType chapter;
     private ZombieType type;
+    private Zombies origin;
     private ZombieState state;
     private ZombieAbility ability;
 
@@ -132,6 +133,14 @@ public abstract class Zombie {
 
     public ChapterType getChapter() { return chapter; }
     public void setChapter(ChapterType chapter) { this.chapter = chapter; }
+
+    public Zombies getOrigin() { return origin; }
+    public void setOrigin(Zombies origin) { this.origin = origin; }
+
+    public String getAlias() {
+        ZombieRecord record = ZombieData.of(origin);
+        return record == null ? null : record.getAlias();
+    }
 
     public ZombieType getType() { return type; }
     public void setType(ZombieType type) { this.type = type; }
