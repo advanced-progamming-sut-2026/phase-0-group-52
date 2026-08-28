@@ -2,6 +2,7 @@ package view.gui.layout;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.files.FileHandle;
+import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.Group;
@@ -34,6 +35,7 @@ public final class UiLayout {
     private static final Tweak IDENTITY = new Tweak();
     private static final Map<String, Tweak> TWEAKS = new LinkedHashMap<String, Tweak>();
     private static final Set<String> BROKEN = new HashSet<String>();
+    private static final Rectangle BOX = new Rectangle();
     private static final Vector2 POINT = new Vector2();
     private static final int SHORT_TAIL = 3;
 
@@ -49,6 +51,24 @@ public final class UiLayout {
         private float dy;
         private float dw;
         private float dh;
+        private String image;
+        private boolean hidden;
+
+        public String getImage() {
+            return image;
+        }
+
+        public void setImage(String value) {
+            this.image = value;
+        }
+
+        public boolean isHidden() {
+            return hidden;
+        }
+
+        public void setHidden(boolean value) {
+            this.hidden = value;
+        }
 
         public float getDx() {
             return dx;
@@ -67,12 +87,15 @@ public final class UiLayout {
         }
 
         public boolean isIdentity() {
-            return dx == 0f && dy == 0f && dw == 0f && dh == 0f;
+            return dx == 0f && dy == 0f && dw == 0f && dh == 0f
+                    && image == null && !hidden;
         }
 
         public Tweak copy() {
             Tweak made = new Tweak();
             made.set(dx, dy, dw, dh);
+            made.image = image;
+            made.hidden = hidden;
             return made;
         }
 
@@ -197,6 +220,11 @@ public final class UiLayout {
             made.set((float) Json.doubleOf(row, "dx"), (float) Json.doubleOf(row, "dy"),
                     (float) Json.doubleOf(row, "dw"), (float) Json.doubleOf(row, "dh"));
             if (!made.isIdentity()) {
+                Object art = ((Map<?, ?>) entry.getValue()).get("image");
+                if (art != null) {
+                    made.setImage(String.valueOf(art));
+                }
+                made.setHidden(Json.boolOf((Map<?, ?>) entry.getValue(), "hidden"));
                 TWEAKS.put(String.valueOf(entry.getKey()), made);
             }
         }
@@ -223,7 +251,14 @@ public final class UiLayout {
         sb.append("  \"").append(Json.escape(id)).append("\": {\"dx\": ")
                 .append((int) value.getDx()).append(", \"dy\": ").append((int) value.getDy())
                 .append(", \"dw\": ").append((int) value.getDw())
-                .append(", \"dh\": ").append((int) value.getDh()).append('}');
+                .append(", \"dh\": ").append((int) value.getDh());
+        if (value.getImage() != null) {
+            sb.append(", \"image\": \"").append(Json.escape(value.getImage())).append('"');
+        }
+        if (value.isHidden()) {
+            sb.append(", \"hidden\": true");
+        }
+        sb.append('}');
     }
 
     private static void write(String text) {
@@ -257,8 +292,7 @@ public final class UiLayout {
         if (parent == null || parent.getParent() == null) {
             return false;
         }
-        if (parent instanceof ScrollPane || parent instanceof Container
-                || parent instanceof SplitPane) {
+        if (parent instanceof SplitPane) {
             return false;
         }
         for (Group up = parent; up != null; up = up.getParent()) {
@@ -272,6 +306,9 @@ public final class UiLayout {
     public static String pathOf(Actor actor) {
         if (actor == null || actor.getParent() == null) {
             return null;
+        }
+        if (isExtra(actor.getName())) {
+            return actor.getName();
         }
         List<String> parts = new ArrayList<String>();
         Actor node = actor;
@@ -349,32 +386,63 @@ public final class UiLayout {
                 && POINT.y >= 0f && POINT.y < actor.getHeight();
     }
 
-    public static Actor pickAt(Group root, float stageX, float stageY) {
-        return root == null ? null : search(root, stageX, stageY, 0);
+    public static Rectangle stageBounds(Actor actor) {
+        BOX.set(0f, 0f, 0f, 0f);
+        if (actor == null) {
+            return BOX;
+        }
+        POINT.set(0f, 0f);
+        actor.localToStageCoordinates(POINT);
+        float left = POINT.x;
+        float bottom = POINT.y;
+        POINT.set(actor.getWidth(), actor.getHeight());
+        actor.localToStageCoordinates(POINT);
+        return BOX.set(Math.min(left, POINT.x), Math.min(bottom, POINT.y),
+                Math.abs(POINT.x - left), Math.abs(POINT.y - bottom));
     }
 
-    private static Actor search(Group parent, float x, float y, int depth) {
+    public static Actor pickAt(Group root, float stageX, float stageY) {
+        List<Actor> found = candidatesAt(root, stageX, stageY);
+        return found.isEmpty() ? null : found.get(0);
+    }
+
+    public static List<Actor> candidatesAt(Group root, float stageX, float stageY) {
+        List<Actor> out = new ArrayList<Actor>();
+        List<Actor> oversized = new ArrayList<Actor>();
+        if (root != null) {
+            collect(root, stageX, stageY, 0, out, oversized);
+        }
+        out.addAll(oversized);
+        return out;
+    }
+
+    private static void collect(Group parent, float x, float y, int depth,
+            List<Actor> out, List<Actor> oversized) {
         if (depth > MAX_DEPTH) {
-            return null;
+            return;
         }
         SnapshotArray<Actor> children = parent.getChildren();
-        Actor fallback = null;
+        List<Actor> shallow = new ArrayList<Actor>();
         for (int i = children.size - 1; i >= 0; i--) {
             Actor child = children.get(i);
             if (!child.isVisible() || child instanceof LayoutEditor
                     || child instanceof view.gui.Toasts) {
                 continue;
             }
-            Actor deeper = child instanceof Group
-                    ? search((Group) child, x, y, depth + 1) : null;
-            if (deeper != null && fitsInside(deeper, child)) {
-                return deeper;
+            int mark = out.size();
+            if (child instanceof Group) {
+                collect((Group) child, x, y, depth + 1, out, oversized);
             }
-            if (fallback == null && isTunable(child) && covers(child, x, y)) {
-                fallback = child;
+            for (int k = out.size() - 1; k >= mark; k--) {
+                if (!fitsInside(out.get(k), child)) {
+                    oversized.add(out.remove(k));
+                }
+            }
+            if (isTunable(child) && covers(child, x, y)) {
+                shallow.add(child);
             }
         }
-        return fallback;
+        out.addAll(shallow);
     }
 
     private static boolean fitsInside(Actor inner, Actor outer) {
@@ -395,6 +463,77 @@ public final class UiLayout {
             sb.append('/').append(parts[i]);
         }
         return sb.toString();
+    }
+
+    public static void placeAt(Group parent, Actor child,
+            float x, float y, float width, float height) {
+        Actor target = positioned(parent, child);
+        target.setBounds(x, y, width, height);
+        if (target instanceof Tunable) {
+            ((Tunable) target).invalidate();
+        }
+    }
+
+    public static Actor positioned(Group parent, Actor child) {
+        if (parent == null || child == null) {
+            return child;
+        }
+        Actor target = child;
+        for (int depth = 0; depth <= MAX_DEPTH; depth++) {
+            Group holder = target.getParent();
+            if (holder == null) {
+                return child;
+            }
+            if (holder == parent) {
+                return target;
+            }
+            target = holder;
+        }
+        return child;
+    }
+
+    public static String scopeName() {
+        return scope;
+    }
+
+    public static String addImage(String file, float width, float height) {
+        int index = 0;
+        String id;
+        do {
+            id = scope + "|extra#" + index++;
+        } while (TWEAKS.containsKey(id) && index < MAX_ENTRIES);
+        Tweak made = edit(id);
+        made.setImage(file);
+        made.set(0f, 0f, width, height);
+        return id;
+    }
+
+    public static List<String> extrasFor(String owner) {
+        List<String> out = new ArrayList<String>();
+        for (Map.Entry<String, Tweak> entry : TWEAKS.entrySet()) {
+            if (entry.getValue().getImage() != null
+                    && entry.getKey().startsWith(owner + "|extra#")) {
+                out.add(entry.getKey());
+            }
+        }
+        return out;
+    }
+
+    public static boolean isExtra(String id) {
+        return id != null && id.contains("|extra#");
+    }
+
+    public static void drop(String id) {
+        if (id != null && TWEAKS.remove(id) != null) {
+            dirty = true;
+        }
+    }
+
+    public static void hide(String id, boolean value) {
+        if (id == null || isExtra(id)) {
+            return;
+        }
+        edit(id).setHidden(value);
     }
 
     public static void apply(Group root) {
@@ -437,11 +576,16 @@ public final class UiLayout {
     }
 
     private static void consider(Group parent, Actor child) {
-        if (!isTunable(child)) {
+        if (!isTunable(child) || isExtra(child.getName())
+                || view.gui.layout.Extras.LAYER.equals(parent.getName())) {
             return;
         }
         String id = pathOf(child);
         if (id == null || BROKEN.contains(id) || !TWEAKS.containsKey(id)) {
+            return;
+        }
+        child.setVisible(!TWEAKS.get(id).isHidden());
+        if (TWEAKS.get(id).isIdentity()) {
             return;
         }
         try {
@@ -455,18 +599,48 @@ public final class UiLayout {
     private static void wrap(Group parent, Actor child, String id) {
         int index = parent.getChildren().indexOf(child, true);
         Cell<Actor> cell = parent instanceof Table ? ((Table) parent).getCell(child) : null;
-        if (parent instanceof Table && cell == null) {
-            return;
-        }
         Tunable holder = new Tunable(id, child);
-        if (cell == null) {
-            parent.addActorAt(index, holder);
-        } else {
+        if (cell != null) {
             cell.setActor(holder);
             holder.setZIndex(index);
+        } else if (parent instanceof ScrollPane) {
+            ((ScrollPane) parent).setActor(holder);
+        } else if (parent instanceof Container) {
+            asContainer(parent).setActor(holder);
+        } else {
+            parent.addActorAt(index, holder);
         }
         if (parent instanceof Layout) {
             ((Layout) parent).invalidate();
+        }
+    }
+
+    @SuppressWarnings("unchecked")
+    private static Container<Actor> asContainer(Group parent) {
+        return (Container<Actor>) parent;
+    }
+
+    public static String blocked(Actor actor) {
+        if (actor == null) {
+            return "Nothing selected.";
+        }
+        String id = pathOf(actor);
+        if (id == null) {
+            return "This widget has no stable id and cannot be tuned.";
+        }
+        if (BROKEN.contains(id)) {
+            return "This widget failed to wrap once and is being skipped.";
+        }
+        Group parent = actor.getParent();
+        if (parent instanceof SplitPane) {
+            return "Split panes position their own halves; tune a child instead.";
+        }
+        return null;
+    }
+
+    public static void unbreak(String id) {
+        if (id != null) {
+            BROKEN.remove(id);
         }
     }
 }

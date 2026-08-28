@@ -23,8 +23,8 @@ public final class SeedPacket extends WidgetGroup {
 
     public enum Mode { ALMANAC, GAME }
 
-    private static final float ART_W = 119f;
-    private static final float ART_H = 75f;
+    public static final float ART_W = 119f;
+    public static final float ART_H = 75f;
     private static final float BADGE_SCALE = 0.62f;
     private static final float LOCK_SCALE = 1.75f;
     private static final float BANNER_SCALE = 0.58f;

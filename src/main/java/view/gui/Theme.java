@@ -14,6 +14,12 @@ public final class Theme {
 
     public static final Color PORTAL_VOID = rgb(0x06283A);
 
+    public static final Color PORTAL_DEEP = rgb(0x0F6274);
+
+    public static final Color PORTAL_HAZE = rgb(0x2FA9BE);
+
+    public static final Color PORTAL_FOG = rgb(0x6B2FA0);
+
     public static final Color QUEST_DAILY = rgb(0x1FAE96);
     public static final Color QUEST_MAIN = rgb(0xC4761C);
     public static final Color QUEST_EPIC = rgb(0x3B62C4);

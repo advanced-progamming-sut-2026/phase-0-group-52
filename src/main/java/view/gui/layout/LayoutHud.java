@@ -76,6 +76,18 @@ final class LayoutHud extends Table {
                 editor.selectChild();
             }
         })).padRight(4f);
+        row.add(button("Under", Theme.GREEN, new Runnable() {
+            @Override
+            public void run() {
+                editor.stepUnder(1);
+            }
+        })).padRight(4f);
+        row.add(button("Over", Theme.GREEN, new Runnable() {
+            @Override
+            public void run() {
+                editor.stepUnder(-1);
+            }
+        })).padRight(4f);
         addActions(row);
         return row;
     }

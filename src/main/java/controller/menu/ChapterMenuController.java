@@ -211,10 +211,7 @@ public class ChapterMenuController {
             app.getBoostedSelection().clear();
             app.getLockedPlants().clear();
             if (key.equals("lockedplants") || key.equals("locked")) {
-                app.getLockedPlants().addAll(java.util.Arrays.asList(
-                        model.entities.plants.Plants.CHERRY_BOMB, model.entities.plants.Plants.JALAPENO,
-                        model.entities.plants.Plants.SQUASH, model.entities.plants.Plants.REPEATER,
-                        model.entities.plants.Plants.WINTER_MELON));
+                app.getLockedPlants().addAll(model.level.LockedPlantsLevel.defaultLocked());
             }
             app.setPendingSpecial(special);
             Navigation.go(app, MenuType.CHOOSE_PLANT_MENU);

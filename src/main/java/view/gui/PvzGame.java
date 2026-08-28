@@ -5,7 +5,6 @@ import com.badlogic.gdx.Screen;
 import model.App;
 import util.Log;
 import model.enums.MenuType;
-import view.gui.screens.AdventureScreen;
 import view.gui.screens.ChoosePlantScreen;
 import view.gui.screens.AlmanacScreen;
 import view.gui.screens.GreenhouseScreen;
@@ -15,6 +14,7 @@ import view.gui.screens.NewsScreen;
 import view.gui.screens.QuestsScreen;
 import view.gui.screens.ShopScreen;
 import view.gui.screens.TitleScreen;
+import view.gui.screens.WorldMapScreen;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -142,6 +142,7 @@ public final class PvzGame extends Game {
         com.badlogic.gdx.scenes.scene2d.Stage stage = ((Navigator.Hosted) screen).uiStage();
         view.gui.layout.UiLayout.setScope(screen.getClass().getSimpleName());
         view.gui.layout.UiLayout.apply(stage.getRoot());
+        view.gui.layout.Extras.sync(stage, context.assets());
         if (!context.settings().isUiEditMode()) {
             if (layoutEditor != null && layoutEditor.getStage() != null) {
                 layoutEditor.detach();
@@ -197,7 +198,7 @@ public final class PvzGame extends Game {
         switch (type) {
             case MAIN_MENU:        return new MainMenuScreen(context);
             case NEWS_MENU:        return new NewsScreen(context);
-            case CHAPTER_MENU:     return new AdventureScreen(context);
+            case CHAPTER_MENU:     return new WorldMapScreen(context);
             case COLLECTION_MENU:  return new AlmanacScreen(context);
             case GREENHOUSE_MENU:  return new GreenhouseScreen(context);
             case TRAVEL_LOG_MENU:  return new QuestsScreen(context);

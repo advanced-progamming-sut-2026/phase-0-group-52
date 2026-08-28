@@ -1,5 +1,6 @@
 package database;
 
+import model.ChapterType;
 import model.User;
 import model.entities.plants.PlantCollection;
 import model.entities.plants.PlantProgress;
@@ -235,7 +236,7 @@ public class UserRepository {
         }
     }
 
-    private String toJson(User u) {
+    String toJson(User u) {
         StringBuilder sb = new StringBuilder();
         sb.append('{');
         num(sb, "id", u.getId());
@@ -268,6 +269,7 @@ public class UserRepository {
         bool(sb, "stayLoggedIn", u.isStayLoggedIn());
         plants(sb, u);
         seenZombies(sb, u);
+        adventure(sb, u);
 
         if (sb.charAt(sb.length() - 1) == ',') {
             sb.setLength(sb.length() - 1);
@@ -276,7 +278,7 @@ public class UserRepository {
         return sb.toString();
     }
 
-    private User fromMap(Map<?, ?> m) {
+    User fromMap(Map<?, ?> m) {
         User u = new User();
         u.setId(intOf(m, "id"));
         u.setUsername(strOf(m, "username"));
@@ -308,6 +310,7 @@ public class UserRepository {
         u.setStayLoggedIn(boolOf(m, "stayLoggedIn"));
         readPlants(u, m.get("plants"));
         readSeenZombies(u, m.get("seenZombies"));
+        readAdventure(u, m.get("adventure"));
         return u;
     }
 
@@ -330,6 +333,49 @@ public class UserRepository {
             if (row != null) {
                 u.markZombieSeen(row.toString());
             }
+        }
+    }
+
+    private void adventure(StringBuilder sb, User u) {
+        StringBuilder rows = new StringBuilder();
+        for (ChapterType chapter : ChapterType.values()) {
+            for (Map.Entry<Integer, Plants> slot : u.getAdventure().slots(chapter).entrySet()) {
+                if (rows.length() > 0) {
+                    rows.append(',');
+                }
+                rows.append("{\"chapter\":\"").append(chapter.name())
+                        .append("\",\"slot\":").append(slot.getKey())
+                        .append(",\"plant\":\"").append(slot.getValue().name()).append("\"}");
+            }
+        }
+        sb.append("\"adventure\":[").append(rows).append("],");
+    }
+
+    private void readAdventure(User u, Object raw) {
+        if (!(raw instanceof List)) {
+            return;
+        }
+        for (Object item : (List<?>) raw) {
+            if (!(item instanceof Map)) {
+                continue;
+            }
+            Map<?, ?> row = (Map<?, ?>) item;
+            ChapterType chapter = chapterOf(strOf(row, "chapter"));
+            Plants plant = plantOf(strOf(row, "plant"));
+            if (chapter != null && plant != null) {
+                u.getAdventure().record(chapter, intOf(row, "slot"), plant);
+            }
+        }
+    }
+
+    private static ChapterType chapterOf(String name) {
+        if (name == null) {
+            return null;
+        }
+        try {
+            return ChapterType.valueOf(name);
+        } catch (IllegalArgumentException e) {
+            return null;
         }
     }
 

@@ -35,8 +35,7 @@ public final class LevelBuilder {
     }
 
     public static String specialTypes() {
-        return "conveyor, plant_what_you_get, locked_plants, save_our_seeds, deadline," +
-                " love_your_plants, night_ops, timed_war";
+        return model.level.SpecialLevel.keys();
     }
 
     public static Game buildSpecial(App app, ChapterType chapter, int levelNumber, String special) {

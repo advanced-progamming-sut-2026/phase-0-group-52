@@ -1,5 +1,6 @@
 package model;
 
+import model.adventure.AdventureProgress;
 import model.entities.plants.PlantCollection;
 import model.entities.plants.Plants;
 import model.level.Level;
@@ -47,6 +48,7 @@ public class User {
     private int plantFoodNum;
     private final Set<Plants> storedBoosts = new HashSet<>();
     private final PlantCollection plants = new PlantCollection();
+    private final AdventureProgress adventure = new AdventureProgress();
     private final Set<String> seenZombies = new HashSet<>();
     private final Set<String> unlockedMinigames = new HashSet<>();
     private boolean stayLoggedIn;
@@ -109,6 +111,10 @@ public class User {
 
     public PlantCollection getPlants() {
         return plants;
+    }
+
+    public AdventureProgress getAdventure() {
+        return adventure;
     }
 
     public int getPlantLevel(Plants type) {
