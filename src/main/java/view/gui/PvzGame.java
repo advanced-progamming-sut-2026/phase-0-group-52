@@ -4,10 +4,9 @@ import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Screen;
 import model.App;
 import util.Log;
-import view.MenuType;
-import view.gui.screens.AdventureScreen;
+import model.enums.MenuType;
 import view.gui.screens.ChoosePlantScreen;
-import view.gui.screens.CollectionScreen;
+import view.gui.screens.AlmanacScreen;
 import view.gui.screens.GreenhouseScreen;
 import view.gui.screens.LeaderboardScreen;
 import view.gui.screens.MainMenuScreen;
@@ -15,6 +14,7 @@ import view.gui.screens.NewsScreen;
 import view.gui.screens.QuestsScreen;
 import view.gui.screens.ShopScreen;
 import view.gui.screens.TitleScreen;
+import view.gui.screens.WorldMapScreen;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -23,12 +23,13 @@ public final class PvzGame extends Game {
     private final Map<MenuType, Screen> screens = new HashMap<MenuType, Screen>();
 
     private UiKit ui;
-    private Pam pam;
+    private Assets assets;
     private Toasts toasts;
     private GameContext context;
     private MenuType displayed;
     private MenuType unmapped;
 
+    private view.gui.layout.LayoutEditor layoutEditor;
     private boolean firstFrameLogged;
     private TitleScreen titleScreen;
     private Navigator navigator;
@@ -48,13 +49,13 @@ public final class PvzGame extends Game {
         Log.info("gui", "Window ready after "
                 + (System.currentTimeMillis() - DesktopLauncher.PROCESS_START) + " ms");
 
-        ui = new UiKit();
-        pam = new Pam();
+        assets = new Assets();
+        ui = new UiKit(assets);
         toasts = new Toasts(ui);
         toasts.listenToLog();
 
         context = new GameContext(App.getInstance(), ui, toasts,
-                new GameContext.Settings(App.getInstance()), pam);
+                new GameContext.Settings(App.getInstance()), assets);
         navigator = new Navigator(this);
 
         if (runTour) {
@@ -115,8 +116,12 @@ public final class PvzGame extends Game {
                     + (System.currentTimeMillis() - DesktopLauncher.PROCESS_START) + " ms");
         }
         syncToModel(false);
+        syncLayoutEditor();
         super.render();
 
+        if (com.badlogic.gdx.Gdx.input.isKeyJustPressed(com.badlogic.gdx.Input.Keys.F10)) {
+            context.settings().setUiEditMode(!context.settings().isUiEditMode());
+        }
         if (com.badlogic.gdx.Gdx.input.isKeyJustPressed(com.badlogic.gdx.Input.Keys.F11)) {
             Display.toggle();
         }
@@ -127,6 +132,28 @@ public final class PvzGame extends Game {
         if (tour != null) {
             tour.step();
         }
+    }
+
+    private void syncLayoutEditor() {
+        Screen screen = getScreen();
+        if (!(screen instanceof Navigator.Hosted)) {
+            return;
+        }
+        com.badlogic.gdx.scenes.scene2d.Stage stage = ((Navigator.Hosted) screen).uiStage();
+        view.gui.layout.UiLayout.setScope(screen.getClass().getSimpleName());
+        view.gui.layout.UiLayout.apply(stage.getRoot());
+        view.gui.layout.Extras.sync(stage, context.assets());
+        if (!context.settings().isUiEditMode()) {
+            if (layoutEditor != null && layoutEditor.getStage() != null) {
+                layoutEditor.detach();
+            }
+            return;
+        }
+        if (layoutEditor == null) {
+            layoutEditor = new view.gui.layout.LayoutEditor(context);
+        }
+        layoutEditor.attach(stage);
+        layoutEditor.poll();
     }
 
     public void startScreenTour() {
@@ -171,8 +198,8 @@ public final class PvzGame extends Game {
         switch (type) {
             case MAIN_MENU:        return new MainMenuScreen(context);
             case NEWS_MENU:        return new NewsScreen(context);
-            case CHAPTER_MENU:     return new AdventureScreen(context);
-            case COLLECTION_MENU:  return new CollectionScreen(context);
+            case CHAPTER_MENU:     return new WorldMapScreen(context);
+            case COLLECTION_MENU:  return new AlmanacScreen(context);
             case GREENHOUSE_MENU:  return new GreenhouseScreen(context);
             case TRAVEL_LOG_MENU:  return new QuestsScreen(context);
             case CHOOSE_PLANT_MENU: return new ChoosePlantScreen(context);
@@ -194,6 +221,7 @@ public final class PvzGame extends Game {
 
     @Override
     public void dispose() {
+        view.gui.layout.UiLayout.save();
         new controller.SaveService().persist();
         for (Screen screen : screens.values()) {
             screen.dispose();
@@ -205,8 +233,8 @@ public final class PvzGame extends Game {
         if (ui != null) {
             ui.dispose();
         }
-        if (pam != null) {
-            pam.dispose();
+        if (assets != null) {
+            assets.dispose();
         }
         Log.info("gui", "Graphical shell stopped");
     }

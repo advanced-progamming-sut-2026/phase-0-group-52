@@ -19,7 +19,7 @@ import model.entities.zombies.Zombies;
 import model.level.ConveyorBeltLevel;
 import model.level.PlantWhatYouGet;
 import view.GameMenu;
-import view.MenuType;
+import model.enums.MenuType;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -147,11 +147,23 @@ public class GameMenuController {
                 + " | Wave: " + (game.getCurrentWaveIndex() + 1) + "/" + game.getWaves().size());
     }
 
+    private void recordZombiesMet(model.User user, Game game) {
+        for (String alias : game.getStats().getKilledZombies()) {
+            model.entities.zombies.ZombieRecord record =
+                    model.entities.zombies.ZombieData.byAlias(alias);
+            if (record != null && user.markZombieSeen(alias)) {
+                user.getNewsList().addNews(
+                        "A new zombie joined your almanac: " + record.getName() + "!");
+            }
+        }
+    }
+
     private void onLevelEnd(Game game) {
         model.User u = app.getCurrentuser();
         if (game.isWon() && u != null) {
             System.out.println("Dear humanz, zis is not done yet; we will come back to eat your brainz, humanz.");
             u.setCoins(u.getCoins() + 500);
+            recordZombiesMet(u, game);
             int score = game.getStats().getZombiesKilled() * 10 + game.getSunAmount();
             if (score > u.getMaxPoint()) u.setMaxPoint(score);
             advanceProgress(u, game);
@@ -340,6 +352,14 @@ public class GameMenuController {
         cell.getPlants().add(plant);
         game.getPlants().add(plant);
         game.getStats().recordPlantPlanted(type, x - 1, y - 1);
+        finishPlanting(game, plant, type, plantLevel, conveyor, x, y);
+    }
+
+    private void finishPlanting(Game game, Plant plant, Plants type, int plantLevel,
+            boolean conveyor, int x, int y) {
+        if (app.getCurrentuser() != null) {
+            app.getCurrentuser().getPlants().addXp(type, 1);
+        }
         if (!conveyor && !game.isCooldownsRemoved())
             game.startCooldown(type, PlantData.effectiveRecharge(type, plantLevel));
         plant.onPlanted(game);

@@ -20,8 +20,7 @@ tasks.withType(JavaCompile).configureEach {
 }
 
 application {
-    // The graphical shell. The console build is still available via "runConsole".
-    mainClass = 'view.gui.DesktopLauncher'
+        mainClass = 'view.gui.DesktopLauncher'
 }
 
 // The application plugin's run task doesn't forward stdin by default, which
@@ -68,14 +67,14 @@ tasks.register('preview', JavaExec) {
     }
 }
 
-tasks.register('runConsole', JavaExec) {
+tasks.register('tunePackets', JavaExec) {
     group = 'application'
-    description = 'Runs the text/console version of the game.'
+    description = 'Hand-places each plant on its seed packet; writes assets/packet-layout.json.'
     classpath = sourceSets.main.runtimeClasspath
-    mainClass = 'Main'
-    standardInput = System.in
+    mainClass = 'tools.PacketTuner'
     javaLauncher = javaToolchains.launcherFor(java.toolchain)
 }
+
 
 repositories {
     mavenCentral()

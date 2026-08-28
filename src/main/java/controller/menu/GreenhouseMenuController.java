@@ -6,7 +6,7 @@ import model.entities.plants.PlantData;
 import model.entities.plants.Plants;
 import model.greenhouse.Greenhouse;
 import model.shop.Shop;
-import view.MenuType;
+import model.enums.MenuType;
 
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -93,7 +93,7 @@ public class GreenhouseMenuController {
                 return;
             }
             app.setCurrentmenu(target);
-            if (target.toMenu() != null) app.setCurrentMenu(target.toMenu());
+            app.setCurrentmenu(target);
             return;
         }
         System.out.println("Error: Usage: menu show current  |  menu enter <menu_name>");

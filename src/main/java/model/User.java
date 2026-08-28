@@ -1,5 +1,7 @@
 package model;
 
+import model.adventure.AdventureProgress;
+import model.entities.plants.PlantCollection;
 import model.entities.plants.Plants;
 import model.level.Level;
 import model.news.NewsList;
@@ -43,10 +45,10 @@ public class User {
     private int maxPoint;
     private int questDailyNum;
     private int questNonDailyNum;
-    private int seedPacket;
     private int plantFoodNum;
     private final Set<Plants> storedBoosts = new HashSet<>();
-    private final Map<Plants, Integer> plantLevels = new HashMap<>();
+    private final PlantCollection plants = new PlantCollection();
+    private final AdventureProgress adventure = new AdventureProgress();
     private final Set<String> seenZombies = new HashSet<>();
     private final Set<String> unlockedMinigames = new HashSet<>();
     private boolean stayLoggedIn;
@@ -55,6 +57,7 @@ public class User {
     private int gameSpeed = 1;
     private boolean showGrid;
     private boolean debugMode;
+    private boolean uiEditMode;
 
     public User() {
         this.difficultyLevel = 3;
@@ -101,46 +104,29 @@ public class User {
         this.newsList = new NewsList();
     }
 
-    public User(int id, String username, String email, String passwordHash, String gender,
-                String nickname, int securityQuestion, String answer, int coins, int gems,
-                int seedPacket, int plantFoodNum, int mostMeowPoint, int maxPoint,
-                int gamesPlayed, int miniGamesPlayed, String lastWonGame, int difficultyLevel) {
-        this.id = id;
-        this.username = username;
-        this.email = email;
-        this.passwordHash = passwordHash;
-        this.gender = gender;
-        this.nickname = nickname;
-        this.securityQuestion = securityQuestion;
-        this.answer = answer;
-        this.coins = coins;
-        this.gems = gems;
-        this.seedPacket = seedPacket;
-        this.plantFoodNum = plantFoodNum;
-        this.mostMeowPoint = mostMeowPoint;
-        this.maxPoint = maxPoint;
-        this.gamesPlayed = gamesPlayed;
-        this.miniGamesPlayed = miniGamesPlayed;
-        this.lastWonGame = lastWonGame;
-        this.difficultyLevel = difficultyLevel;
-        this.newsList = new NewsList();
-    }
 
     public Set<Plants> getStoredBoosts() {
         return storedBoosts;
     }
 
+    public PlantCollection getPlants() {
+        return plants;
+    }
+
+    public AdventureProgress getAdventure() {
+        return adventure;
+    }
+
     public int getPlantLevel(Plants type) {
-        Integer level = plantLevels.get(type);
-        return level == null ? 1 : level;
+        return plants.getLevel(type);
     }
 
     public void setPlantLevel(Plants type, int level) {
-        plantLevels.put(type, level);
+        plants.setLevel(type, level);
     }
 
-    public Map<Plants, Integer> getPlantLevels() {
-        return plantLevels;
+    public int getSeedPacket() {
+        return plants.totalPackets();
     }
 
     public int getPlantFoodNum() {
@@ -149,14 +135,6 @@ public class User {
 
     public void setPlantFoodNum(int plantFoodNum) {
         this.plantFoodNum = plantFoodNum;
-    }
-
-    public int getSeedPacket() {
-        return seedPacket;
-    }
-
-    public void setSeedPacket(int seedPacket) {
-        this.seedPacket = seedPacket;
     }
 
     public int getQuestNonDailyNum() {
@@ -280,7 +258,11 @@ public class User {
     }
 
     public boolean markZombieSeen(String zombieName) {
-        return seenZombies.add(zombieName);
+        return zombieName != null && seenZombies.add(zombieName);
+    }
+
+    public Set<String> getSeenZombies() {
+        return java.util.Collections.unmodifiableSet(seenZombies);
     }
 
     public boolean markMinigameUnlocked(String minigameName) {
@@ -446,6 +428,14 @@ public class User {
 
     public void setDebugMode(boolean debugMode) {
         this.debugMode = debugMode;
+    }
+
+    public boolean isUiEditMode() {
+        return uiEditMode;
+    }
+
+    public void setUiEditMode(boolean uiEditMode) {
+        this.uiEditMode = uiEditMode;
     }
 
     public int getQuestMainNum() {

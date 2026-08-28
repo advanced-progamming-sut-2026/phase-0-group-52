@@ -1,7 +1,7 @@
 package controller;
 
 import model.App;
-import view.MenuType;
+import model.enums.MenuType;
 
 public final class Navigation {
 
@@ -10,6 +10,11 @@ public final class Navigation {
     public static String enter(App app, String targetName) {
         MenuType target = MenuType.fromName(targetName);
         if (target == null) return "Unknown menu: " + targetName;
+        return enter(app, target);
+    }
+
+    public static String enter(App app, MenuType target) {
+        if (target == null) return "Unknown menu.";
 
         boolean loggedIn = app.getCurrentuser() != null;
         boolean authMenu = (target == MenuType.LOGIN_MENU || target == MenuType.SIGNUP_MENU);
@@ -26,12 +31,12 @@ public final class Navigation {
         }
 
         app.setCurrentmenu(target);
-        if (target.toMenu() != null) app.setCurrentMenu(target.toMenu());
+        app.setCurrentmenu(target);
         return null;
     }
 
     public static void go(App app, MenuType target) {
         app.setCurrentmenu(target);
-        if (target.toMenu() != null) app.setCurrentMenu(target.toMenu());
+        app.setCurrentmenu(target);
     }
 }

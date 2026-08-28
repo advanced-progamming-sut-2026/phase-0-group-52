@@ -87,13 +87,13 @@ public class Shop {
                 if (user.getCoins() < RANDOM_SEEDS_PRICE * count) return "Error: Not enough coins.";
                 user.setCoins(user.getCoins() - RANDOM_SEEDS_PRICE * count);
                 Plants plant = randomPlant();
-                user.setSeedPacket(user.getSeedPacket() + RANDOM_SEEDS_COUNT * count);
+                user.getPlants().grant(plant, RANDOM_SEEDS_COUNT * count);
                 return "Bought " + (RANDOM_SEEDS_COUNT * count) + " seed packets for " + plant.getName() + ".";}
             case 4: {
                 if (plantType == null) return "Error: Choice bundles need -t <plant_type>.";
                 if (user.getGems() < CHOICE_SEEDS_PRICE * count) return "Error: Not enough diamonds.";
                 user.setGems(user.getGems() - CHOICE_SEEDS_PRICE * count);
-                user.setSeedPacket(user.getSeedPacket() + CHOICE_SEEDS_COUNT * count);
+                user.getPlants().grant(plantType, CHOICE_SEEDS_COUNT * count);
                 return "Bought " + (CHOICE_SEEDS_COUNT * count) + " seed packets for " + plantType.getName() + ".";}
             case 5: {
                 if (user.getGems() < EXCHANGE_DIAMONDS * count) return "Error: Not enough diamonds.";
@@ -107,7 +107,7 @@ public class Shop {
                     return "Error: The daily offer can only be bought once per day.";
                 if (user.getCoins() < DAILY_PRICE) return "Error: Not enough coins.";
                 user.setCoins(user.getCoins() - DAILY_PRICE);
-                user.setSeedPacket(user.getSeedPacket() + DAILY_COUNT);
+                user.getPlants().grant(dailyPlant, DAILY_COUNT);
                 lastDailyPurchase = offerDate;
                 return "Bought the daily bundle: " + DAILY_COUNT + " seed packets for " + dailyPlant.getName() + ".";}
             default:

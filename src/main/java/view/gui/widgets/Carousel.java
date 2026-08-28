@@ -16,7 +16,7 @@ import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
 import com.badlogic.gdx.utils.Align;
 import com.badlogic.gdx.utils.Scaling;
 import view.gui.Animations;
-import view.gui.Pam;
+import view.gui.Assets;
 import view.gui.Theme;
 import view.gui.UiKit;
 
@@ -76,7 +76,7 @@ public final class Carousel extends WidgetGroup {
     private static final float ENTER_TIME = 0.9f;
     private static final Color DIMMED = new Color(0.42f, 0.48f, 0.62f, 1f);
 
-    private Pam pam;
+    private Assets pam;
     private String lockAnimation;
     private float enterTime = -1f;
 
@@ -207,7 +207,7 @@ public final class Carousel extends WidgetGroup {
         return this;
     }
 
-    public Carousel setLockAnimation(Pam value, String path) {
+    public Carousel setLockAnimation(Assets value, String path) {
         this.pam = value;
         this.lockAnimation = path;
         return this;
@@ -393,7 +393,7 @@ public final class Carousel extends WidgetGroup {
 
     private LevelTrack levelTrack(Item item) {
         return new LevelTrack(ui, item.segments, item.completed, item.special,
-                pam == null ? null : pam.region(Pam.SKULL));
+                pam == null ? null : pam.region(Assets.SKULL));
     }
 
     @Override

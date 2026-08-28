@@ -14,6 +14,12 @@ public final class Theme {
 
     public static final Color PORTAL_VOID = rgb(0x06283A);
 
+    public static final Color PORTAL_DEEP = rgb(0x0F6274);
+
+    public static final Color PORTAL_HAZE = rgb(0x2FA9BE);
+
+    public static final Color PORTAL_FOG = rgb(0x6B2FA0);
+
     public static final Color QUEST_DAILY = rgb(0x1FAE96);
     public static final Color QUEST_MAIN = rgb(0xC4761C);
     public static final Color QUEST_EPIC = rgb(0x3B62C4);
@@ -72,8 +78,8 @@ public final class Theme {
     public static final float BUTTON_HEIGHT = 73f;
     public static final int BORDER = 3;
 
-    public static final int PACKET_WIDTH = 98;
-    public static final int PACKET_HEIGHT = 132;
+    public static final int PACKET_WIDTH = 119;
+    public static final int PACKET_HEIGHT = 75;
 
     public static final float TRANSITION_TIME = 0.22f;
 
@@ -83,12 +89,11 @@ public final class Theme {
         }
         if (categoryName.equals("SUN_PRODUCER")) return rgb(0xF7C948);
         if (categoryName.equals("SHOOTER")) return rgb(0x62A744);
-        if (categoryName.equals("HOMING")) return rgb(0x7E57C2);
         if (categoryName.equals("STRIKE_THROUGH")) return rgb(0x26A69A);
         if (categoryName.equals("LOBBER")) return rgb(0xEF7043);
         if (categoryName.equals("EXPLOSIVE")) return rgb(0xD84315);
         if (categoryName.equals("MELEE")) return rgb(0xAD1457);
-        if (categoryName.equals("MODIFIER")) return rgb(0x5C6BC0);
+        if (categoryName.equals("MAGIC")) return rgb(0x7E57C2);
         if (categoryName.equals("MINT")) return rgb(0x4DB6AC);
         if (categoryName.equals("WALL_NUT")) return rgb(0xA1887F);
         return rgb(0x7CB342);

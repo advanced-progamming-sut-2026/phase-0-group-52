@@ -1,6 +1,11 @@
 package database;
 
+import model.ChapterType;
 import model.User;
+import model.entities.plants.PlantCollection;
+import model.entities.plants.PlantProgress;
+import model.entities.plants.Plants;
+import util.Json;
 
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
@@ -138,8 +143,7 @@ public class UserRepository {
         for (int i = 0; i < users.size(); i++) {
             if (users.get(i).getId() == userId) {
                 users.remove(i);
-                writeAll(users);
-                return true;
+                return writeAll(users, true);
             }
         }
         return false;
@@ -203,10 +207,14 @@ public class UserRepository {
     }
 
     private void writeAll(List<User> users) {
-        if (wouldDestroyData(users)) {
+        writeAll(users, false);
+    }
+
+    private boolean writeAll(List<User> users, boolean allowEmpty) {
+        if (!allowEmpty && wouldDestroyData(users)) {
             System.err.println("Refused to overwrite " + FILE
                     + " with an empty user list; the existing accounts were kept.");
-            return;
+            return false;
         }
         StringBuilder sb = new StringBuilder();
         sb.append("[\n");
@@ -221,12 +229,14 @@ public class UserRepository {
         try {
             Files.createDirectories(FILE.getParent());
             Files.write(FILE, sb.toString().getBytes(StandardCharsets.UTF_8));
+            return true;
         } catch (IOException e) {
             System.err.println("Could not write users file: " + e.getMessage());
+            return false;
         }
     }
 
-    private String toJson(User u) {
+    String toJson(User u) {
         StringBuilder sb = new StringBuilder();
         sb.append('{');
         num(sb, "id", u.getId());
@@ -239,7 +249,6 @@ public class UserRepository {
         str(sb, "securityAnswerHash", u.getSecurityAnswerHash());
         num(sb, "coins", u.getCoins());
         num(sb, "gems", u.getGems());
-        num(sb, "seedPacket", u.getSeedPacket());
         num(sb, "plantFoodNum", u.getPlantFoodNum());
         num(sb, "mostMeowPoint", u.getMostMeowPoint());
         num(sb, "maxPoint", u.getMaxPoint());
@@ -256,7 +265,11 @@ public class UserRepository {
         num(sb, "gameSpeed", u.getGameSpeed());
         bool(sb, "showGrid", u.isShowGrid());
         bool(sb, "debugMode", u.isDebugMode());
+        bool(sb, "uiEditMode", u.isUiEditMode());
         bool(sb, "stayLoggedIn", u.isStayLoggedIn());
+        plants(sb, u);
+        seenZombies(sb, u);
+        adventure(sb, u);
 
         if (sb.charAt(sb.length() - 1) == ',') {
             sb.setLength(sb.length() - 1);
@@ -265,7 +278,7 @@ public class UserRepository {
         return sb.toString();
     }
 
-    private User fromMap(Map<?, ?> m) {
+    User fromMap(Map<?, ?> m) {
         User u = new User();
         u.setId(intOf(m, "id"));
         u.setUsername(strOf(m, "username"));
@@ -277,7 +290,6 @@ public class UserRepository {
         u.setSecurityAnswerHash(strOf(m, "securityAnswerHash"));
         u.setCoins(intOf(m, "coins"));
         u.setGems(intOf(m, "gems"));
-        u.setSeedPacket(intOf(m, "seedPacket"));
         u.setPlantFoodNum(intOf(m, "plantFoodNum"));
         u.setMostMeowPoint(intOf(m, "mostMeowPoint"));
         u.setMaxPoint(intOf(m, "maxPoint"));
@@ -294,8 +306,134 @@ public class UserRepository {
         u.setGameSpeed(intOf(m, "gameSpeed"));
         u.setShowGrid(boolOf(m, "showGrid"));
         u.setDebugMode(boolOf(m, "debugMode"));
+        u.setUiEditMode(boolOf(m, "uiEditMode"));
         u.setStayLoggedIn(boolOf(m, "stayLoggedIn"));
+        readPlants(u, m.get("plants"));
+        readSeenZombies(u, m.get("seenZombies"));
+        readAdventure(u, m.get("adventure"));
         return u;
+    }
+
+    private void seenZombies(StringBuilder sb, User u) {
+        StringBuilder rows = new StringBuilder();
+        for (String alias : u.getSeenZombies()) {
+            if (rows.length() > 0) {
+                rows.append(',');
+            }
+            rows.append('"').append(util.Json.escape(alias)).append('"');
+        }
+        sb.append("\"seenZombies\":[").append(rows).append("],");
+    }
+
+    private void readSeenZombies(User u, Object raw) {
+        if (!(raw instanceof List)) {
+            return;
+        }
+        for (Object row : (List<?>) raw) {
+            if (row != null) {
+                u.markZombieSeen(row.toString());
+            }
+        }
+    }
+
+    private void adventure(StringBuilder sb, User u) {
+        StringBuilder rows = new StringBuilder();
+        for (ChapterType chapter : ChapterType.values()) {
+            for (Map.Entry<Integer, Plants> slot : u.getAdventure().slots(chapter).entrySet()) {
+                if (rows.length() > 0) {
+                    rows.append(',');
+                }
+                rows.append("{\"chapter\":\"").append(chapter.name())
+                        .append("\",\"slot\":").append(slot.getKey())
+                        .append(",\"plant\":\"").append(slot.getValue().name()).append("\"}");
+            }
+        }
+        sb.append("\"adventure\":[").append(rows).append("],");
+    }
+
+    private void readAdventure(User u, Object raw) {
+        if (!(raw instanceof List)) {
+            return;
+        }
+        for (Object item : (List<?>) raw) {
+            if (!(item instanceof Map)) {
+                continue;
+            }
+            Map<?, ?> row = (Map<?, ?>) item;
+            ChapterType chapter = chapterOf(strOf(row, "chapter"));
+            Plants plant = plantOf(strOf(row, "plant"));
+            if (chapter != null && plant != null) {
+                u.getAdventure().record(chapter, intOf(row, "slot"), plant);
+            }
+        }
+    }
+
+    private static ChapterType chapterOf(String name) {
+        if (name == null) {
+            return null;
+        }
+        try {
+            return ChapterType.valueOf(name);
+        } catch (IllegalArgumentException e) {
+            return null;
+        }
+    }
+
+    private void plants(StringBuilder sb, User u) {
+        StringBuilder rows = new StringBuilder();
+        for (Plants plant : Plants.values()) {
+            PlantProgress state = u.getPlants().progress(plant);
+            boolean boosted = u.getStoredBoosts().contains(plant);
+            if (!state.isUnlocked() && state.getPackets() == 0
+                    && state.getXp() == 0 && state.getLevel() <= 1 && !boosted) {
+                continue;
+            }
+            if (rows.length() > 0) {
+                rows.append(',');
+            }
+            rows.append("{\"plant\":\"").append(plant.name()).append("\",\"packets\":")
+                    .append(state.getPackets()).append(",\"xp\":").append(state.getXp())
+                    .append(",\"level\":").append(state.getLevel())
+                    .append(",\"unlocked\":").append(state.isUnlocked())
+                    .append(",\"boosted\":").append(boosted).append('}');
+        }
+        sb.append("\"plants\":[").append(rows).append("],");
+    }
+
+    private void readPlants(User u, Object raw) {
+        if (!(raw instanceof List)) {
+            return;
+        }
+        PlantCollection collection = u.getPlants();
+        for (Object item : (List<?>) raw) {
+            if (!(item instanceof Map)) {
+                continue;
+            }
+            Map<?, ?> row = (Map<?, ?>) item;
+            Plants plant = plantOf(strOf(row, "plant"));
+            if (plant == null) {
+                continue;
+            }
+            PlantProgress state = collection.progress(plant);
+            state.setPackets(intOf(row, "packets"));
+            state.setXp(intOf(row, "xp"));
+            state.setLevel(intOf(row, "level"));
+            state.setUnlocked(boolOf(row, "unlocked"));
+            if (boolOf(row, "boosted")) {
+                u.getStoredBoosts().add(plant);
+            }
+        }
+    }
+
+    private static Plants plantOf(String name) {
+        if (name == null) {
+            return null;
+        }
+        try {
+            return Plants.valueOf(name);
+        } catch (IllegalArgumentException e) {
+            return null;
+        }
     }
 
     private void str(StringBuilder sb, String key, String value) {

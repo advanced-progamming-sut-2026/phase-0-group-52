@@ -12,19 +12,10 @@ import model.entities.zombies.Zombie;
 import model.entities.zombies.ZombieState;
 
 import java.util.List;
-import java.util.Scanner;
 
-public class GameMenu implements AppMenu {
+public class GameMenu {
 
-    private controller.menu.GameMenuController controller;
 
-    @Override
-    public void check(Scanner scanner) {
-        if (controller == null) controller = new controller.menu.GameMenuController(model.App.getInstance());
-        String line = scanner.nextLine().trim();
-        if (line.isEmpty()) return;
-        controller.handleCommand(line.split("\\s+"));
-    }
 
     public void showPlanted(String name, int x, int y) {
         System.out.println(name + " planted at (" + x + ", " + y + ").");

@@ -306,19 +306,19 @@ public final class AccountFormPopup extends Popup {
         editRow(form, "New username", username, new Runnable() {
             @Override
             public void run() {
-                apply("menu profile change-username -u " + username.getText().trim(), username);
+                apply(profile.changeUsername(username.getText().trim()), username);
             }
         });
         editRow(form, "New nickname", nickname, new Runnable() {
             @Override
             public void run() {
-                apply("menu profile change-nickname -u " + nickname.getText().trim(), nickname);
+                apply(profile.changeNickname(nickname.getText().trim()), nickname);
             }
         });
         editRow(form, "New email", email, new Runnable() {
             @Override
             public void run() {
-                apply("menu profile change-email -e " + email.getText().trim(), email);
+                apply(profile.changeEmail(email.getText().trim()), email);
             }
         });
         editRow(form, "New password", password, null);
@@ -406,17 +406,17 @@ public final class AccountFormPopup extends Popup {
             context.toasts().error("Enter both the new and the current password.");
             return;
         }
-        apply("menu profile change-password -p " + next + " -o " + current, password);
+        apply(profile.changePassword(current, next), password);
         passwordConfirm.setText("");
     }
 
-    private void apply(String command, TextField source) {
-        if (source.getText().trim().isEmpty()) {
-            context.toasts().error("Type a value first.");
+    private void apply(model.Result outcome, TextField source) {
+        if (!outcome.success()) {
+            context.toasts().error(outcome.message());
             Animations.shake(source);
             return;
         }
-        profile.handleCommand(command);
+        context.toasts().info(outcome.message());
         source.setText("");
         if (onChanged != null) {
             onChanged.run();

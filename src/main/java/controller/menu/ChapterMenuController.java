@@ -7,9 +7,8 @@ import model.Game;
 import model.LevelBuilder;
 import model.User;
 import model.entities.plants.Plants;
-import model.enums.Menu;
 import view.ChapterMenu;
-import view.MenuType;
+import model.enums.MenuType;
 
 public class ChapterMenuController {
 
@@ -93,8 +92,8 @@ public class ChapterMenuController {
         try {
             chapter = ChapterType.valueOf(parts[4].toUpperCase());
         } catch (IllegalArgumentException e) {
-            view.showError("Invalid chapter: " + parts[4] +
-                    ". Options: ANCIENT_EGYPT, FROSTBITE_CAVES, BIG_WAVE_BEACH, DARK_AGES");
+            view.showError("Invalid chapter: " + parts[4]
+                    + ". Options: " + ChapterType.options());
             return;
         }
         currentChapter = chapter;
@@ -143,7 +142,7 @@ public class ChapterMenuController {
             sgame.setApp(app);
             app.setGame(sgame);
             app.setCurrentmenu(MenuType.GAME_MENU);
-            app.setCurrentMenu(Menu.GameMenu);
+            app.setCurrentmenu(MenuType.GAME_MENU);
             System.out.println("Special level '" + sp + "' started in " + chapter + " (level "
                     + levelNumber + "). Starting sun: " + sgame.getSunAmount() + ".");
             return;
@@ -155,7 +154,7 @@ public class ChapterMenuController {
         game.setApp(app);
         app.setGame(game);
         app.setCurrentmenu(MenuType.GAME_MENU);
-        app.setCurrentMenu(Menu.GameMenu);
+        app.setCurrentmenu(MenuType.GAME_MENU);
         System.out.println("Level started in " + chapter + " (level " + levelNumber
                 + "). Starting sun: " + game.getSunAmount() + ".");
         System.out.println("Commands: plant plant -t <type> -l (x, y) | collect sun | tick [n]"
@@ -212,10 +211,7 @@ public class ChapterMenuController {
             app.getBoostedSelection().clear();
             app.getLockedPlants().clear();
             if (key.equals("lockedplants") || key.equals("locked")) {
-                app.getLockedPlants().addAll(java.util.Arrays.asList(
-                        model.entities.plants.Plants.CHERRY_BOMB, model.entities.plants.Plants.JALAPENO,
-                        model.entities.plants.Plants.SQUASH, model.entities.plants.Plants.REPEATER,
-                        model.entities.plants.Plants.WINTER_MELON));
+                app.getLockedPlants().addAll(model.level.LockedPlantsLevel.defaultLocked());
             }
             app.setPendingSpecial(special);
             Navigation.go(app, MenuType.CHOOSE_PLANT_MENU);
@@ -228,7 +224,7 @@ public class ChapterMenuController {
         game.setApp(app);
         app.setGame(game);
         app.setCurrentmenu(MenuType.GAME_MENU);
-        app.setCurrentMenu(Menu.GameMenu);
+        app.setCurrentmenu(MenuType.GAME_MENU);
         System.out.println("Special level '" + special + "' started in " + chapter
                 + ". Starting sun: " + game.getSunAmount() + ".");
         System.out.println("Commands: plant plant -t <type> -l (x, y) | collect sun | tick [n]"

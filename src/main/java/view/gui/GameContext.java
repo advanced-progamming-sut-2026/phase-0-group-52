@@ -8,14 +8,14 @@ public final class GameContext {
     private final UiKit ui;
     private final Toasts toasts;
     private final Settings settings;
-    private final Pam pam;
+    private final Assets assets;
 
-    public GameContext(App app, UiKit ui, Toasts toasts, Settings settings, Pam pam) {
+    public GameContext(App app, UiKit ui, Toasts toasts, Settings settings, Assets assets) {
         this.app = app;
         this.ui = ui;
         this.toasts = toasts;
         this.settings = settings;
-        this.pam = pam;
+        this.assets = assets;
     }
 
     public App app() {
@@ -34,8 +34,8 @@ public final class GameContext {
         return settings;
     }
 
-    public Pam pam() {
-        return pam;
+    public Assets assets() {
+        return assets;
     }
 
     public User user() {
@@ -49,6 +49,7 @@ public final class GameContext {
         private int gameSpeed = 1;
         private boolean showGrid;
         private boolean debugMode;
+        private boolean uiEditMode;
 
         public Settings(App app) {
             this.app = app;
@@ -57,10 +58,6 @@ public final class GameContext {
 
         private model.User signedIn() {
             return app == null ? null : app.getLoggedInUser();
-        }
-
-        private void send(String... command) {
-            controller.handleCommand(command);
         }
 
         public int getGameSpeed() {
@@ -74,7 +71,7 @@ public final class GameContext {
                 gameSpeed = clamped;
                 return;
             }
-            send("menu", "settings", "set-speed", "-v", String.valueOf(clamped));
+            controller.setGameSpeed(clamped);
         }
 
         public boolean isShowGrid() {
@@ -88,7 +85,7 @@ public final class GameContext {
                 return;
             }
             if (signedIn().isShowGrid() != value) {
-                send("menu", "settings", "toggle-grid");
+                controller.toggleGrid();
             }
         }
 
@@ -103,7 +100,22 @@ public final class GameContext {
                 return;
             }
             if (signedIn().isDebugMode() != value) {
-                send("menu", "settings", "toggle-debug");
+                controller.toggleDebug();
+            }
+        }
+
+        public boolean isUiEditMode() {
+            model.User user = signedIn();
+            return user == null ? uiEditMode : user.isUiEditMode();
+        }
+
+        public void setUiEditMode(boolean value) {
+            if (signedIn() == null) {
+                uiEditMode = value;
+                return;
+            }
+            if (signedIn().isUiEditMode() != value) {
+                controller.toggleUiEditMode();
             }
         }
     }

@@ -1,158 +1,402 @@
 package view.gui.widgets;
 
+import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
+import com.badlogic.gdx.scenes.scene2d.Actor;
+import com.badlogic.gdx.scenes.scene2d.InputEvent;
+import com.badlogic.gdx.scenes.scene2d.InputListener;
 import com.badlogic.gdx.scenes.scene2d.ui.Image;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
-import com.badlogic.gdx.scenes.scene2d.ui.Stack;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
+import com.badlogic.gdx.scenes.scene2d.ui.WidgetGroup;
+import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
 import com.badlogic.gdx.utils.Align;
+import model.entities.plants.PlantData;
+import model.entities.plants.PlantRecord;
 import model.entities.plants.Plants;
-import view.gui.Animations;
+import view.gui.Assets;
+import view.gui.PacketLayout;
 import view.gui.Theme;
 import view.gui.UiKit;
 
-public final class SeedPacket extends Stack {
+public final class SeedPacket extends WidgetGroup {
+
+    public enum Mode { ALMANAC, GAME }
+
+    public static final float ART_W = 119f;
+    public static final float ART_H = 75f;
+    private static final float BADGE_SCALE = 0.62f;
+    private static final float LOCK_SCALE = 1.75f;
+    private static final float BANNER_SCALE = 0.58f;
+    private static final float BADGE_OVERHANG = 0.35f;
+    private static final float TAB_SCALE = 1.12f;
+    private static final float COST_FONT = 0.9f;
+    private static final float COST_INSET = 5f;
+    private static final float BOOST_COVERAGE = 1.18f;
+    private static final float LOCKED_DIM = 0.32f;
+    private static final float SELECTED_DIM = 0.48f;
+    private static final float INSET = 3f;
+    private static final float FRAME_LEFT = 5f;
+    private static final float FRAME_BOTTOM = 8f;
+
+    private static final class ClipGroup extends WidgetGroup {
+        @Override
+        public void draw(com.badlogic.gdx.graphics.g2d.Batch batch, float parentAlpha) {
+            validate();
+            batch.flush();
+            if (clipBegin()) {
+                super.draw(batch, parentAlpha);
+                batch.flush();
+                clipEnd();
+            }
+        }
+    }
+
     private final UiKit ui;
+    private final Assets assets;
     private final Plants plant;
+    private final PlantRecord record;
+    private final Mode mode;
+    private final float scale;
 
-    private final Table face = new Table();
-    private final Table overlay = new Table();
-
+    private Actor background;
+    private ClipGroup iconClip;
+    private Image icon;
+    private Actor mark;
+    private Image banner;
+    private Image badgeIcon;
+    private Image lock;
+    private Actor border;
+    private Table priceTab;
     private Label costLabel;
-    private Label levelLabel;
-    private Image lockShade;
-    private Table boostRing;
-    private Table selectedRing;
-    private Table progressTrack;
-    private Table progressFill;
 
+    private float markWidth;
+    private float markHeight;
+    private float badgeWidth;
+    private float badgeHeight;
+    private float lockWidth;
+    private float lockHeight;
+    private float tabWidth;
+    private float tabHeight;
+    private float borderWidth;
+    private float borderHeight;
+
+    private int level = 1;
     private boolean locked;
     private boolean boosted;
     private boolean selected;
+    private boolean hovered;
 
-    public SeedPacket(UiKit ui, Plants plant) {
+    public SeedPacket(UiKit ui, Assets assets, Plants plant) {
+        this(ui, assets, plant, Mode.ALMANAC, 1f);
+    }
+
+    public SeedPacket(UiKit ui, Assets assets, Plants plant, Mode mode, float scale) {
         this.ui = ui;
+        this.assets = assets;
         this.plant = plant;
-        build();
+        this.record = PlantData.record(plant);
+        this.mode = mode;
+        this.scale = scale;
+
+        setSize(width(), height());
+        setTouchable(com.badlogic.gdx.scenes.scene2d.Touchable.enabled);
+        rebuild();
+
+        addListener(new InputListener() {
+            @Override
+            public void enter(InputEvent event, float x, float y, int pointer, Actor from) {
+                if (pointer == -1) {
+                    hovered = true;
+                    refreshBorder();
+                }
+            }
+
+            @Override
+            public void exit(InputEvent event, float x, float y, int pointer, Actor to) {
+                if (pointer == -1) {
+                    hovered = false;
+                    refreshBorder();
+                }
+            }
+        });
     }
 
-    private void build() {
-        face.setBackground(new com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable(
-                new TextureRegion(ui.primitives().packetFace(
-                        Theme.PACKET_WIDTH, Theme.PACKET_HEIGHT,
-                        Theme.plantFamily(plant.getCategory().name()), false))));
-        face.pad(Theme.PAD_SMALL);
-        face.top();
-
-        face.add(buildPortrait()).size(44f).padTop(7f).row();
-
-        Label name = new Label(shortName(plant.getName()), ui.skin(), "small");
-        name.setAlignment(Align.center);
-        name.setWrap(true);
-        face.add(name).width(Theme.PACKET_WIDTH - 10f).padTop(3f).expandY().top().row();
-
-        costLabel = new Label(String.valueOf(plant.getCost()), ui.skin(), "small");
-        costLabel.setAlignment(Align.center);
-        face.add(costLabel).padBottom(2f);
-
-        add(face);
-
-        overlay.setFillParent(true);
-        add(overlay);
-
-        setSize(Theme.PACKET_WIDTH, Theme.PACKET_HEIGHT);
-        Animations.attachPress(this);
+    public float width() {
+        return ART_W * scale;
     }
 
-    private Image buildPortrait() {
-        return ui.token(42, Theme.plantFamily(plant.getCategory().name()));
+    public float height() {
+        return ART_H * scale;
     }
 
-    private String shortName(String name) {
-        if (name == null) {
-            return "";
+    private TextureRegion region(String id) {
+        if (id == null || assets == null) {
+            return null;
         }
-        return (name.length() <= 15) ? name : name.substring(0, 13) + "..";
+        return assets.region(id);
+    }
+
+    private void rebuild() {
+        clearChildren();
+        background = buildBackground();
+        addActor(background);
+
+        icon = buildIcon();
+        if (icon != null) {
+            iconClip = new ClipGroup();
+            iconClip.addActor(icon);
+            addActor(iconClip);
+        } else {
+            iconClip = null;
+        }
+        mark = buildMark();
+        if (mark != null) {
+            addActor(mark);
+        }
+        lock = buildLock();
+        if (lock != null) {
+            addActor(lock);
+        }
+        priceTab = buildPriceTab();
+        if (priceTab != null) {
+            addActor(priceTab);
+        }
+        refreshBorder();
+        applyDim();
+        for (Actor child : getChildren()) {
+            child.setTouchable(com.badlogic.gdx.scenes.scene2d.Touchable.disabled);
+        }
+        invalidate();
+    }
+
+    private Actor buildBackground() {
+        if (boosted && assets != null) {
+            PamActor anim = new PamActor(assets, Assets.BOOSTCARD_ANIM, "animation")
+                    .setFit(false)
+                    .setCoverage(BOOST_COVERAGE)
+                    .setClipped(true);
+            if (anim.isReady()) {
+                return anim;
+            }
+        }
+        TextureRegion art = region(record == null ? null : record.getPacketBackground());
+        if (art != null) {
+            return new Image(new TextureRegionDrawable(art));
+        }
+        Table fallback = new Table();
+        fallback.setBackground(ui.primitives().rounded(6,
+                Theme.plantFamily(plant.getCategory().name()), Theme.OUTLINE, 2));
+        return fallback;
+    }
+
+    private Image buildIcon() {
+        TextureRegion art = region(record == null ? null : record.getPacketIcon());
+        if (art == null) {
+            return null;
+        }
+        return new Image(new TextureRegionDrawable(art));
+    }
+
+    private Actor buildMark() {
+        if (mode == Mode.ALMANAC) {
+            TextureRegion badge = region(record == null ? null : record.getCategoryBadge());
+            if (badge == null) {
+                return null;
+            }
+            TextureRegion bannerArt = region("IMAGE_UI_PACKETS_MINTFAM_BANNER");
+            WidgetGroup group = new WidgetGroup();
+            if (bannerArt != null) {
+                banner = new Image(new TextureRegionDrawable(bannerArt));
+                banner.setColor(Theme.plantFamily(plant.getCategory().name()));
+                group.addActor(banner);
+                markWidth = bannerArt.getRegionWidth() * BANNER_SCALE;
+                markHeight = bannerArt.getRegionHeight() * BANNER_SCALE;
+            } else {
+                markWidth = badge.getRegionWidth() * BADGE_SCALE;
+                markHeight = badge.getRegionHeight() * BADGE_SCALE;
+            }
+            badgeIcon = new Image(new TextureRegionDrawable(badge));
+            badgeWidth = badge.getRegionWidth() * BADGE_SCALE;
+            badgeHeight = badge.getRegionHeight() * BADGE_SCALE;
+            group.addActor(badgeIcon);
+            return group;
+        }
+        return null;
+    }
+
+    private Image buildLock() {
+        if (!locked) {
+            return null;
+        }
+        TextureRegion art = region("IMAGE_UI_PACKETS_LOCK_SMALL");
+        if (art == null) {
+            return null;
+        }
+        Image image = new Image(new TextureRegionDrawable(art));
+        lockWidth = art.getRegionWidth() * LOCK_SCALE;
+        lockHeight = art.getRegionHeight() * LOCK_SCALE;
+        return image;
+    }
+
+    private Table buildPriceTab() {
+        if (locked) {
+            return null;
+        }
+        String id = premium() ? "IMAGE_UI_PACKETS_PRICE_TAB_PREMIUM" : "IMAGE_UI_PACKETS_PRICE_TAB";
+        TextureRegion art = region(id);
+        Table tab = new Table();
+        if (art != null) {
+            tab.setBackground(new TextureRegionDrawable(art));
+        }
+        costLabel = new Label(String.valueOf(cost()), ui.skin(), "packetCost");
+        costLabel.setAlignment(Align.right);
+        costLabel.setFontScale(COST_FONT);
+        tab.add(costLabel).right().expandX()
+                .padRight(COST_INSET).padBottom(0f);
+        tabWidth = art == null ? 51f : art.getRegionWidth();
+        tabHeight = art == null ? 36f : art.getRegionHeight();
+        return tab;
+    }
+
+    private boolean premium() {
+        return record != null
+                && "IMAGE_UI_PACKETS_READY_PREMIUM".equals(record.getPacketBackground());
+    }
+
+    private int cost() {
+        return PlantData.effectiveCost(plant, level);
+    }
+
+    private void refreshBorder() {
+        if (border != null) {
+            border.remove();
+            border = null;
+        }
+        if (!selected && !hovered) {
+            return;
+        }
+        TextureRegion art = region(selected
+                ? "IMAGE_UI_PACKETS_SELECT" : "IMAGE_UI_ALMANAC_PLANT_SELECT_PKT");
+        if (art != null) {
+            border = new Image(new TextureRegionDrawable(art));
+            borderWidth = art.getRegionWidth();
+            borderHeight = art.getRegionHeight();
+        } else {
+            Table ring = new Table();
+            ring.setBackground(ui.primitives().rounded(6, new Color(0, 0, 0, 0),
+                    selected ? Theme.SELECTED : Theme.SUN, 3));
+            border = ring;
+            borderWidth = ART_W;
+            borderHeight = ART_H;
+        }
+        border.setTouchable(com.badlogic.gdx.scenes.scene2d.Touchable.disabled);
+        addActor(border);
+        if (mark != null) {
+            mark.toFront();
+        }
+        invalidate();
+    }
+
+    private void applyDim() {
+        float shade = locked ? LOCKED_DIM : 1f;
+        float chrome = locked ? LOCKED_DIM : selected ? SELECTED_DIM : 1f;
+        paint(background, chrome);
+        paint(priceTab, chrome);
+        paint(icon, shade);
+        paint(badgeIcon, shade);
+        if (banner != null) {
+            Color base = Theme.plantFamily(plant.getCategory().name());
+            banner.setColor(base.r * shade, base.g * shade, base.b * shade, 1f);
+        }
+        if (locked) {
+            paint(border, chrome);
+        }
+    }
+
+    private static void paint(Actor actor, float shade) {
+        if (actor != null) {
+            actor.setColor(shade, shade, shade, 1f);
+        }
+    }
+
+    @Override
+    public void layout() {
+        float s = getWidth() / ART_W;
+        float cardH = ART_H * s;
+
+        if (background != null) {
+            background.setBounds(0f, 0f, getWidth(), cardH);
+        }
+        if (iconClip != null) {
+            PacketLayout.Placement place = PacketLayout.of(plant);
+            icon.setSize(record.getIconWidth() * place.getScale() * s,
+                    record.getIconHeight() * place.getScale() * s);
+            float left = FRAME_LEFT * s;
+            float bottom = FRAME_BOTTOM * s;
+            iconClip.setBounds(left, bottom, getWidth() * 3f, cardH * 4f);
+            icon.setPosition(place.getX() * s - left,
+                    cardH - place.getY() * s - icon.getHeight() - bottom);
+        }
+        if (mark != null) {
+            mark.setSize(markWidth * s, markHeight * s);
+            mark.setPosition(-mark.getWidth() * BADGE_OVERHANG,
+                    cardH - mark.getHeight() * (1f - BADGE_OVERHANG));
+            if (banner != null) {
+                banner.setBounds(0f, 0f, mark.getWidth(), mark.getHeight());
+            }
+            if (badgeIcon != null) {
+                badgeIcon.setSize(badgeWidth * s, badgeHeight * s);
+                badgeIcon.setPosition((mark.getWidth() - badgeIcon.getWidth()) / 2f,
+                        (mark.getHeight() - badgeIcon.getHeight()) / 2f);
+            }
+        }
+        if (lock != null) {
+            lock.setSize(lockWidth * s, lockHeight * s);
+            lock.setPosition(getWidth() - lock.getWidth() - INSET * s,
+                    FRAME_BOTTOM * s * 0.5f);
+        }
+        if (border != null) {
+            border.setSize(borderWidth * s, borderHeight * s);
+            border.setPosition((getWidth() - border.getWidth()) / 2f,
+                    (cardH - border.getHeight()) / 2f);
+        }
+        if (priceTab != null) {
+            priceTab.setSize(tabWidth * TAB_SCALE * s, tabHeight * TAB_SCALE * s);
+            priceTab.setPosition(getWidth() - priceTab.getWidth() - INSET * s,
+                    INSET * s);
+        }
     }
 
     public SeedPacket setLocked(boolean value) {
-        this.locked = value;
-        if (value && lockShade == null) {
-            lockShade = new Image(ui.primitives().flat(Theme.alpha(Theme.LOCKED, 0.55f)));
-            lockShade.setFillParent(true);
-            overlay.addActor(lockShade);
-            Label label = new Label("LOCKED", ui.skin(), "smallOnDark");
-            label.setAlignment(Align.center);
-            Table holder = new Table();
-            holder.setFillParent(true);
-            holder.center();
-            holder.add(label);
-            overlay.addActor(holder);
-        } else if (!value && lockShade != null) {
-            overlay.clearChildren();
-            lockShade = null;
+        if (this.locked != value) {
+            this.locked = value;
+            rebuild();
         }
         return this;
     }
 
     public SeedPacket setBoosted(boolean value) {
-        this.boosted = value;
-        if (value && boostRing == null) {
-            boostRing = new Table();
-            boostRing.setFillParent(true);
-            boostRing.setBackground(ui.primitives().rounded(8, new com.badlogic.gdx.graphics.Color(0, 0, 0, 0),
-                    Theme.BOOSTED, 3));
-            overlay.addActor(boostRing);
-        } else if (!value && boostRing != null) {
-            boostRing.remove();
-            boostRing = null;
+        if (this.boosted != value) {
+            this.boosted = value;
+            rebuild();
         }
         return this;
     }
 
     public SeedPacket setSelected(boolean value) {
-        this.selected = value;
-        if (value && selectedRing == null) {
-            selectedRing = new Table();
-            selectedRing.setFillParent(true);
-            selectedRing.setBackground(ui.primitives().rounded(8,
-                    new com.badlogic.gdx.graphics.Color(0, 0, 0, 0), Theme.SELECTED, 4));
-            overlay.addActor(selectedRing);
-        } else if (!value && selectedRing != null) {
-            selectedRing.remove();
-            selectedRing = null;
+        if (this.selected != value) {
+            this.selected = value;
+            refreshBorder();
+            applyDim();
         }
         return this;
     }
 
-    public SeedPacket setLevel(int level) {
-        if (levelLabel == null) {
-            levelLabel = new Label("", ui.skin(), "small");
-            Table holder = new Table();
-            holder.setFillParent(true);
-            holder.top().left();
-            holder.add(levelLabel).pad(3f);
-            overlay.addActor(holder);
-        }
-        levelLabel.setText("L" + level);
-        return this;
-    }
-
-    public SeedPacket setProgress(int collected, int needed) {
-        float ratio = (needed <= 0) ? 0f : Math.min(1f, collected / (float) needed);
-        float width = (Theme.PACKET_WIDTH - 6) * Math.max(0.02f, ratio);
-        if (progressFill == null) {
-            progressTrack = new Table();
-            progressTrack.setFillParent(true);
-            progressTrack.bottom().left();
-
-            progressFill = new Table();
-            progressFill.setBackground(ui.primitives().flat(Theme.GREEN));
-            progressTrack.add(progressFill).height(4f).width(width);
-            overlay.addActor(progressTrack);
-        } else {
-            progressTrack.getCell(progressFill).width(width);
-            progressTrack.invalidateHierarchy();
+    public SeedPacket setLevel(int value) {
+        if (this.level != value) {
+            this.level = Math.max(1, value);
+            rebuild();
         }
         return this;
     }
@@ -162,7 +406,7 @@ public final class SeedPacket extends Stack {
             return this;
         }
         if (secondsRemaining > 0f) {
-            costLabel.setText(String.format("%.1fs", secondsRemaining));
+            costLabel.setText(String.format("%.1f", secondsRemaining));
             costLabel.setColor(Theme.TEXT_MUTED);
         } else {
             costLabel.setText(String.valueOf(plant.getCost()));
@@ -172,7 +416,9 @@ public final class SeedPacket extends Stack {
     }
 
     public SeedPacket setAffordable(boolean value) {
-        face.getColor().a = value ? 1f : 0.55f;
+        if (icon != null) {
+            icon.getColor().a = value ? 1f : LOCKED_DIM;
+        }
         return this;
     }
 
@@ -199,11 +445,11 @@ public final class SeedPacket extends Stack {
 
     @Override
     public float getPrefWidth() {
-        return Theme.PACKET_WIDTH;
+        return width();
     }
 
     @Override
     public float getPrefHeight() {
-        return Theme.PACKET_HEIGHT;
+        return height();
     }
 }

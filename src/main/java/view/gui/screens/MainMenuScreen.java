@@ -12,6 +12,7 @@ import com.badlogic.gdx.utils.Align;
 import com.badlogic.gdx.utils.Scaling;
 import controller.menu.ChapterMenuController;
 import controller.menu.MainMenuController;
+import model.enums.MenuType;
 import database.QuestRepository;
 import model.ChapterType;
 import model.User;
@@ -23,7 +24,7 @@ import view.gui.GameContext;
 import view.gui.PvzGame;
 import view.gui.Theme;
 import view.gui.UiKit;
-import view.gui.Pam;
+import view.gui.Assets;
 import view.gui.widgets.Carousel;
 import view.gui.widgets.PamActor;
 import view.gui.widgets.QuestCard;
@@ -54,11 +55,6 @@ public final class MainMenuScreen extends BaseScreen {
             "action3", "action3", "action1", "action2"};
     private static final float VEIL_DELAY = 0.35f;
     private static final float VEIL_FADE = 0.45f;
-    private static final String[] ISLANDS = {
-            "IMAGE_UI_UNIVERSE_WORLDS_EGYPT",
-            "IMAGE_UI_UNIVERSE_WORLDS_ICEAGE",
-            "IMAGE_UI_UNIVERSE_WORLDS_BEACH",
-            "IMAGE_UI_UNIVERSE_WORLDS_DARK"};
     private static final String[] MINIGAMES = {
             "Vasebreaker", "Wallnut Bowling", "I, Zombie", "Beghouled"};
 
@@ -128,11 +124,11 @@ public final class MainMenuScreen extends BaseScreen {
                         enterChapter(index);
                     }
                 });
-        chapterCarousel.setLockAnimation(context.pam(), Pam.WORLD_LOCK);
+        chapterCarousel.setLockAnimation(context.assets(), Assets.WORLD_LOCK);
         syncChapters();
 
         Stack layers = new Stack();
-        portal = new PamActor(context.pam(), Pam.PORTAL, PORTAL_CLIP)
+        portal = new PamActor(context.assets(), Assets.PORTAL, PORTAL_CLIP)
                 .setCoverage(PORTAL_COVERAGE);
         if (portal.isReady()) {
             Table backing = new Table();
@@ -175,19 +171,19 @@ public final class MainMenuScreen extends BaseScreen {
             boolean[] special = new boolean[ChapterType.LEVELS_PER_CHAPTER];
             special[1] = true;
             special[2] = true;
-            result.add(new Carousel.Item(pretty(chapter.name()),
+            result.add(new Carousel.Item(chapter.getDisplayName(),
                     Theme.chapter(chapter.name()), locked[i],
                     ChapterType.LEVELS_PER_CHAPTER, clearedInChapter(chapter), special)
-                    .setArt(island(i)));
+                    .setArt(island(chapter)));
         }
         return result;
     }
 
-    private com.badlogic.gdx.graphics.g2d.TextureRegion island(int index) {
-        if (context.pam() == null || index >= ISLANDS.length) {
+    private com.badlogic.gdx.graphics.g2d.TextureRegion island(ChapterType chapter) {
+        if (context.assets() == null) {
             return null;
         }
-        return context.pam().region(ISLANDS[index]);
+        return context.assets().region(view.gui.ChapterArt.island(chapter));
     }
 
     private boolean[] lockStates() {
@@ -272,7 +268,7 @@ public final class MainMenuScreen extends BaseScreen {
         side.add(greenhouseButton(new Runnable() {
             @Override
             public void run() {
-                controller.handleCommand(new String[]{"menu", "enter", "greenhouse_menu"});
+                controller.enter(MenuType.GREENHOUSE_MENU);
             }
         })).size(GREENHOUSE_WIDTH, GREENHOUSE_HEIGHT).row();
         side.add(shopButton(new Runnable() {
@@ -318,7 +314,7 @@ public final class MainMenuScreen extends BaseScreen {
         UiKit.onClick(panel, new Runnable() {
             @Override
             public void run() {
-                controller.handleCommand(new String[]{"menu", "enter", "travel_log_menu"});
+                controller.enter(MenuType.TRAVEL_LOG_MENU);
             }
         });
 
@@ -337,7 +333,7 @@ public final class MainMenuScreen extends BaseScreen {
             return;
         }
         for (QuestProgress quest : quests) {
-            questList.add(new QuestCard(ui, context.pam(), quest, true, null, null))
+            questList.add(new QuestCard(ui, context.assets(), quest, true, null, null))
                     .height(QUEST_CARD_HEIGHT).row();
         }
     }
@@ -376,7 +372,7 @@ public final class MainMenuScreen extends BaseScreen {
         Stack layers = new Stack();
         layers.add(artLayer("assets/backgrounds/greenhouse.png"));
 
-        PamActor bee = new PamActor(context.pam(), Pam.BEE, "idle")
+        PamActor bee = new PamActor(context.assets(), Assets.BEE, "idle")
                 .setFit(true)
                 .setExtent(-BEE_EXTENT / 2f, -BEE_EXTENT / 2f, BEE_EXTENT, BEE_EXTENT)
                 .cycle(BEE_CLIPS);
@@ -425,8 +421,8 @@ public final class MainMenuScreen extends BaseScreen {
 
     private Table artLayerRegion(String imageId, float dim) {
         Table layer = new Table();
-        com.badlogic.gdx.graphics.g2d.TextureRegion art = context.pam() == null ? null
-                : context.pam().region(imageId);
+        com.badlogic.gdx.graphics.g2d.TextureRegion art = context.assets() == null ? null
+                : context.assets().region(imageId);
         if (art == null) {
             return layer;
         }
@@ -458,17 +454,6 @@ public final class MainMenuScreen extends BaseScreen {
         return layer;
     }
 
-    private Table bigButton(String text, Color face, Runnable action) {
-        Table button = new Table();
-        button.setBackground(ui.buttonFace("green", face));
-        Label label = new Label(text, ui.skin(), "onDark");
-        label.setAlignment(Align.center);
-        label.setWrap(true);
-        button.add(label).width(150f).expand().center();
-        Animations.attachPress(button);
-        UiKit.onClick(button, action);
-        return button;
-    }
 
     private void enterChapter(int index) {
         if (chapterCarousel.isTransitioning()) {
@@ -528,7 +513,7 @@ public final class MainMenuScreen extends BaseScreen {
     private boolean isChapterUnlocked(ChapterType chapter) {
         User user = context.user();
         if (user == null) {
-            return chapter == ChapterType.values()[0];
+            return chapter == ChapterType.first();
         }
         return chapter.ordinal() < Math.max(1, user.getLastChapter());
     }
@@ -540,7 +525,7 @@ public final class MainMenuScreen extends BaseScreen {
         }
         int reachedChapter = Math.max(1, user.getLastChapter());
         int reachedLevel = Math.max(1, user.getLastLevel());
-        int index = chapter.ordinal() + 1;
+        int index = chapter.number();
         if (index < reachedChapter) {
             return ChapterType.LEVELS_PER_CHAPTER;
         }
@@ -550,17 +535,6 @@ public final class MainMenuScreen extends BaseScreen {
         return Math.min(ChapterType.LEVELS_PER_CHAPTER, reachedLevel - 1);
     }
 
-    private String pretty(String enumName) {
-        String[] words = enumName.toLowerCase().split("_");
-        StringBuilder out = new StringBuilder();
-        for (String word : words) {
-            if (out.length() > 0) {
-                out.append(' ');
-            }
-            out.append(Character.toUpperCase(word.charAt(0))).append(word.substring(1));
-        }
-        return out.toString();
-    }
 
     private PvzGame game() {
         return (PvzGame) com.badlogic.gdx.Gdx.app.getApplicationListener();

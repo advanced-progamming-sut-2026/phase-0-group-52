@@ -8,7 +8,6 @@ import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.Image;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.utils.Scaling;
-import com.badlogic.gdx.utils.viewport.FitViewport;
 import util.Log;
 
 public abstract class BaseScreen implements Screen, Navigator.Hosted {
@@ -26,7 +25,7 @@ public abstract class BaseScreen implements Screen, Navigator.Hosted {
     protected BaseScreen(GameContext context, String title) {
         this.context = context;
         this.ui = context.ui();
-        this.stage = new Stage(new FitViewport(Theme.WORLD_WIDTH, Theme.WORLD_HEIGHT));
+        this.stage = context.assets().newStage();
         this.toasts = context.toasts();
 
         Image backdrop = new Image(backdropDrawable());
@@ -45,10 +44,10 @@ public abstract class BaseScreen implements Screen, Navigator.Hosted {
             contentScroll.setScrollingDisabled(true, false);
             contentScroll.setOverscroll(false, false);
             UiKit.focusOnHover(contentScroll);
-            root.add(contentScroll).grow().pad(Theme.PAD_LARGE);
+            root.add(contentScroll).grow().pad(contentPad());
         } else {
             contentScroll = null;
-            root.add(content).grow().pad(Theme.PAD_LARGE);
+            root.add(content).grow().pad(contentPad());
         }
         stage.addActor(root);
     }
@@ -86,6 +85,10 @@ public abstract class BaseScreen implements Screen, Navigator.Hosted {
 
     protected TopBar.Section section() {
         return TopBar.Section.OTHER;
+    }
+
+    protected float contentPad() {
+        return Theme.PAD_LARGE;
     }
 
     protected boolean scrollContent() {

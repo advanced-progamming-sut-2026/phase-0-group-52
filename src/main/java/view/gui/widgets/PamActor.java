@@ -5,10 +5,10 @@ import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.scenes.scene2d.Touchable;
 import com.badlogic.gdx.scenes.scene2d.ui.Widget;
-import view.gui.Pam;
+import view.gui.Assets;
 
 public final class PamActor extends Widget {
-    private final Pam pam;
+    private final Assets pam;
     private final String path;
     private final boolean ready;
     private Rectangle extent;
@@ -22,8 +22,9 @@ public final class PamActor extends Widget {
     private float stateTime;
     private float coverage = 1f;
     private Runnable onFinished;
+    private java.util.Map<String, Boolean> parts;
 
-    public PamActor(Pam pam, String path, String clipName) {
+    public PamActor(Assets pam, String path, String clipName) {
         this.pam = pam;
         this.path = path;
         this.ready = pam != null && pam.load(path);
@@ -74,6 +75,11 @@ public final class PamActor extends Widget {
         return this;
     }
 
+    public PamActor setParts(java.util.Map<String, Boolean> value) {
+        parts = value;
+        return this;
+    }
+
     public PamActor setClipped(boolean value) {
         this.clipped = value;
         return this;
@@ -113,14 +119,16 @@ public final class PamActor extends Widget {
         float y = getY() + getHeight() / 2f - (extent.y + extent.height / 2f) * scale;
 
         if (fit && !clipped) {
-            pam.player().draw(batch, path, clipName, stateTime, x, y, scale, scale, looping);
+            pam.player().draw(batch, path, clipName, stateTime, x, y, scale, scale,
+                    looping, parts);
             return;
         }
         batch.flush();
         if (!clipBegin(getX(), getY(), getWidth(), getHeight())) {
             return;
         }
-        pam.player().draw(batch, path, clipName, stateTime, x, y, scale, scale, looping);
+        pam.player().draw(batch, path, clipName, stateTime, x, y, scale, scale,
+                looping, parts);
         batch.flush();
         clipEnd();
     }

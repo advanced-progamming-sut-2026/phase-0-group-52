@@ -10,10 +10,8 @@ import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.utils.Align;
 import com.badlogic.gdx.utils.Scaling;
-import com.badlogic.gdx.utils.viewport.FitViewport;
 import model.User;
 import view.gui.Animations;
-import view.gui.Backdrops;
 import view.gui.GameContext;
 import view.gui.Icons;
 import view.gui.PlayerListPopup;
@@ -28,7 +26,6 @@ public final class TitleScreen implements Screen, view.gui.Navigator.Hosted {
     private final UiKit ui;
     private final Stage stage;
     private final Runnable onPlay;
-    private final Backdrops backdrops = new Backdrops();
 
     private Label playerName;
 
@@ -36,7 +33,7 @@ public final class TitleScreen implements Screen, view.gui.Navigator.Hosted {
         this.context = context;
         this.ui = context.ui();
         this.onPlay = onPlay;
-        this.stage = new Stage(new FitViewport(Theme.WORLD_WIDTH, Theme.WORLD_HEIGHT));
+        this.stage = context.assets().newStage();
         build();
     }
 
@@ -59,7 +56,7 @@ public final class TitleScreen implements Screen, view.gui.Navigator.Hosted {
     }
 
     private Image backdrop() {
-        TextureRegion region = backdrops.random();
+        TextureRegion region = context.assets().randomBackdrop();
         Image image = (region == null)
                 ? new Image(new TextureRegion(ui.primitives().verticalGradient(
                         64, 256, Theme.BACKDROP_ALT, Theme.BACKDROP)))
@@ -91,7 +88,7 @@ public final class TitleScreen implements Screen, view.gui.Navigator.Hosted {
 
     private Table playButton() {
         Table button = new Table();
-        button.setBackground(ui.buttonFace("green", Theme.plantFamily("MODIFIER")));
+        button.setBackground(ui.buttonFace("green", Theme.plantFamily("MAGIC")));
         Label label = new Label("Play", ui.skin(), "hugeOnDark");
         label.setAlignment(Align.center);
         button.add(label).expand().center().padBottom(UiKit.opticalPad(label));
@@ -203,7 +200,6 @@ public final class TitleScreen implements Screen, view.gui.Navigator.Hosted {
 
     @Override
     public void dispose() {
-        backdrops.dispose();
         stage.dispose();
     }
 }

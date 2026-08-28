@@ -32,10 +32,22 @@ public class GameStats {
 
     private final List<PlantPlacement> plantsPlanted = new ArrayList<>();
     private final List<Integer> killTicks = new ArrayList<>();
+    private final java.util.Set<String> killedZombies = new java.util.LinkedHashSet<>();
 
     public void recordKill(int tick) {
         zombiesKilled++;
         killTicks.add(tick);
+    }
+
+    public void recordKill(int tick, String alias) {
+        recordKill(tick);
+        if (alias != null) {
+            killedZombies.add(alias);
+        }
+    }
+
+    public java.util.Set<String> getKilledZombies() {
+        return java.util.Collections.unmodifiableSet(killedZombies);
     }
 
     public void recordKillAtColZeroNoMower() {

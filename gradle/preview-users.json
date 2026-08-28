@@ -1,4 +1,103 @@
 [
-  {"id":1,"username":"demo_player","passwordHash":"x","nickname":"Demo Player","email":"demo@example.com","gender":"female","securityQuestion":1,"securityAnswerHash":"y","coins":12480,"gems":85,"seedPacket":14,"plantFoodNum":2,"mostMeowPoint":9200,"maxPoint":15400,"lastChapter":3,"lastLevel":3,"gamesPlayed":42,"miniGamesPlayed":11,"questDailyNum":6,"questNonDailyNum":9,"lastWonGame":"Ancient Egypt","difficultyLevel":3,"stayLoggedIn":true},
-  {"id":2,"username":"rookie","passwordHash":"x","nickname":"Rookie","email":"rookie@example.com","gender":"male","securityQuestion":2,"securityAnswerHash":"y","coins":150,"gems":0,"seedPacket":1,"plantFoodNum":0,"mostMeowPoint":0,"maxPoint":320,"lastChapter":1,"lastLevel":2,"gamesPlayed":3,"miniGamesPlayed":0,"questDailyNum":1,"questNonDailyNum":0,"lastWonGame":null,"difficultyLevel":1,"stayLoggedIn":false}
+  {
+    "id": 1,
+    "username": "demo_player",
+    "passwordHash": "x",
+    "nickname": "Demo Player",
+    "email": "demo@example.com",
+    "gender": "female",
+    "securityQuestion": 1,
+    "securityAnswerHash": "y",
+    "coins": 12480,
+    "gems": 85,
+    "seenZombies": ["ZombieTutorialArmor1Default", "ZombieMummyDefault", "ZombieRaDefault", "ZombieIceAgeHunter", "ZombieBeachOctopus", "ZombieDarkKing", "ZombieGargantuarBasic"],
+    "seedPacket": 14,
+    "plantFoodNum": 2,
+    "mostMeowPoint": 9200,
+    "maxPoint": 15400,
+    "lastChapter": 3,
+    "lastLevel": 3,
+    "gamesPlayed": 42,
+    "miniGamesPlayed": 11,
+    "questDailyNum": 6,
+    "questNonDailyNum": 9,
+    "lastWonGame": "Ancient Egypt",
+    "difficultyLevel": 3,
+    "stayLoggedIn": true,
+    "plants": [
+      {
+        "plant": "SUNFLOWER",
+        "packets": 3,
+        "xp": 7,
+        "level": 2,
+        "unlocked": true,
+        "boosted": false
+      },
+      {
+        "plant": "PEASHOOTER",
+        "packets": 1,
+        "xp": 4,
+        "level": 1,
+        "unlocked": true,
+        "boosted": true
+      },
+      {
+        "plant": "WALL_NUT",
+        "packets": 0,
+        "xp": 2,
+        "level": 1,
+        "unlocked": true,
+        "boosted": false
+      },
+      {
+        "plant": "POTATO_MINE",
+        "packets": 6,
+        "xp": 16,
+        "level": 1,
+        "unlocked": true,
+        "boosted": false
+      },
+      {
+        "plant": "CABBAGE_PULT",
+        "packets": 2,
+        "xp": 5,
+        "level": 3,
+        "unlocked": true,
+        "boosted": false
+      },
+      {
+        "plant": "THREEPEATER",
+        "packets": 1,
+        "xp": 0,
+        "level": 1,
+        "unlocked": true,
+        "boosted": false
+      }
+    ]
+  },
+  {
+    "id": 2,
+    "username": "rookie",
+    "passwordHash": "x",
+    "nickname": "Rookie",
+    "email": "rookie@example.com",
+    "gender": "male",
+    "securityQuestion": 2,
+    "securityAnswerHash": "y",
+    "coins": 150,
+    "gems": 0,
+    "seedPacket": 1,
+    "plantFoodNum": 0,
+    "mostMeowPoint": 0,
+    "maxPoint": 320,
+    "lastChapter": 1,
+    "lastLevel": 2,
+    "gamesPlayed": 3,
+    "miniGamesPlayed": 0,
+    "questDailyNum": 1,
+    "questNonDailyNum": 0,
+    "lastWonGame": null,
+    "difficultyLevel": 1,
+    "stayLoggedIn": false
+  }
 ]
