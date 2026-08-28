@@ -16,6 +16,7 @@ public final class Tunable extends WidgetGroup {
         this.kind = UiLayout.kindOf(child);
         this.child = child;
         setTouchable(Touchable.childrenOnly);
+        setName(child.getName());
         addActor(child);
     }
 

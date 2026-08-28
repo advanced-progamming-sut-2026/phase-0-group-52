@@ -229,4 +229,82 @@ class UiLayoutTest {
         assertEquals(".../a/b/c", UiLayout.shortId("Screen|Root/x/y/a/b/c"));
         assertEquals("Screen|Root/a", UiLayout.shortId("Screen|Root/a"));
     }
+
+    @Test
+    void aGroupThatPositionsItsChildrenByHandStillFindsThemThroughATunable() {
+        Group strip = new Group();
+        Actor node = new Actor();
+        strip.addActor(node);
+
+        assertSame(node, UiLayout.positioned(strip, node),
+                "an unwrapped child positions itself");
+
+        Tunable holder = new Tunable("Strip|node", node);
+        strip.addActor(holder);
+
+        assertSame(holder, UiLayout.positioned(strip, node),
+                "a wrapped child must be positioned through its Tunable, "
+                        + "or absolute layouts leave it at 0x0 and it vanishes");
+        assertSame(node, UiLayout.positioned((Group) holder, node),
+                "inside the Tunable the child is still the direct target");
+    }
+
+    @Test
+    void positionedIsSafeWhenTheActorIsNotUnderThatGroupAtAll() {
+        Group strip = new Group();
+        Group elsewhere = new Group();
+        Actor orphan = new Actor();
+        Actor adopted = new Actor();
+        elsewhere.addActor(adopted);
+
+        assertSame(orphan, UiLayout.positioned(strip, orphan));
+        assertSame(adopted, UiLayout.positioned(strip, adopted));
+        assertSame(adopted, UiLayout.positioned(null, adopted));
+    }
+
+    @Test
+    void placeAtReappliesTheTweakWhenOnlyThePositionChanges() {
+        Group strip = new Group();
+        com.badlogic.gdx.scenes.scene2d.ui.Widget node =
+                new com.badlogic.gdx.scenes.scene2d.ui.Widget();
+        node.setSize(40f, 40f);
+        strip.addActor(node);
+
+        UiLayout.edit("Strip|node").set(11f, 7f, 0f, 0f);
+        Tunable holder = new Tunable("Strip|node", node);
+        strip.addActor(holder);
+
+        UiLayout.placeAt(strip, node, 100f, 200f, 40f, 40f);
+        holder.validate();
+        assertEquals(11f, node.getX(), 0.01f);
+        assertEquals(7f, node.getY(), 0.01f);
+
+        UiLayout.placeAt(strip, node, 300f, 200f, 40f, 40f);
+        holder.validate();
+        assertEquals(300f, holder.getX(), 0.01f);
+        assertEquals(11f, node.getX(), 0.01f,
+                "a position-only move must still re-apply the tweak");
+    }
+
+    @Test
+    void wrappingANamedWidgetKeepsItsPathId() {
+        Group strip = new Group();
+        Group host = new Group();
+        strip.addActor(host);
+        Actor node = new Actor();
+        node.setName("node-1");
+        node.setSize(40f, 40f);
+        host.addActor(node);
+
+        String before = UiLayout.pathOf(node);
+        assertNotNull(before);
+        assertTrue(before.endsWith("/node-1"), before);
+
+        Tunable holder = new Tunable("scope|node-1", node);
+        host.addActor(holder);
+
+        assertEquals(before, UiLayout.pathOf(node),
+                "a named widget must keep its id once wrapped, "
+                        + "or the editor writes tweaks the Tunable never reads");
+    }
 }

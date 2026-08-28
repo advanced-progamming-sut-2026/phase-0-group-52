@@ -18,17 +18,20 @@ import com.badlogic.gdx.math.Vector2;
 import view.gui.GameContext;
 
 import java.util.ArrayDeque;
+import java.util.List;
 import java.util.Deque;
 
 public final class LayoutEditor extends WidgetGroup {
 
     private static final float STEP = 1f;
     private static final float BIG_STEP = 10f;
-    private static final float GRIP = 18f;
+    private static final float GRIP = 12f;
+    private static final float CYCLE_SLOP = 16f;
     private static final int MAX_UNDO = 60;
     private static final int MAX_DEPTH = 32;
     private static final Color PICK = new Color(0.15f, 0.95f, 1f, 0.95f);
     private static final Color HOVER = new Color(1f, 0.85f, 0.2f, 0.7f);
+    private static final Color GUIDE = new Color(1f, 0.2f, 0.65f, 0.9f);
 
     private final GameContext context;
     private final LayoutHud hud;
@@ -39,12 +42,19 @@ public final class LayoutEditor extends WidgetGroup {
     private final Vector2 lastPick = new Vector2();
     private final Deque<Step> undo = new ArrayDeque<Step>();
 
+    private final Snap snap = new Snap();
+    private final Vector2 cycleAt = new Vector2(Float.NaN, Float.NaN);
+
     private Actor selected;
     private Actor hovered;
     private String selectedId;
     private UiLayout.Tweak dragBase;
-    private boolean resizing;
+    private Handle handle = Handle.NONE;
     private boolean dragging;
+    private int cycleIndex;
+    private int pictureIndex;
+    private float baseWidth;
+    private float baseHeight;
 
     public LayoutEditor(GameContext context) {
         this.context = context;
@@ -145,7 +155,14 @@ public final class LayoutEditor extends WidgetGroup {
             clearSelection();
             return true;
         }
-        Actor target = UiLayout.pickAt(rootGroup(), lastPick.x, lastPick.y);
+        dropStaleSelection();
+        Handle grabbed = selected == null ? Handle.NONE
+                : Handle.at(boundsOf(selected), lastPick.x, lastPick.y, GRIP);
+        if (grabbed.resizes()) {
+            handle = grabbed;
+            return beginDrag();
+        }
+        Actor target = cycleTarget();
         if (target == null) {
             clearSelection();
             return true;
@@ -156,11 +173,52 @@ public final class LayoutEditor extends WidgetGroup {
         if (selectedId == null) {
             return true;
         }
-        resizing = onGrip(lastPick.x, lastPick.y);
+        handle = Handle.MOVE;
+        return beginDrag();
+    }
+
+    private boolean beginDrag() {
         dragBase = UiLayout.tweak(selectedId).copy();
+        baseWidth = Math.max(1f, selected.getWidth());
+        baseHeight = Math.max(1f, selected.getHeight());
         origin.set(lastPick);
+        snap.release();
+        snap.gather(rootGroup(), selected, hostOf(selected), getWidth(), getHeight());
         dragging = true;
         return true;
+    }
+
+    private static Actor hostOf(Actor actor) {
+        return actor != null && actor.getParent() instanceof Tunable
+                ? actor.getParent() : null;
+    }
+
+    private Actor cycleTarget() {
+        java.util.List<Actor> found =
+                UiLayout.candidatesAt(rootGroup(), lastPick.x, lastPick.y);
+        if (found.isEmpty()) {
+            cycleAt.set(Float.NaN, Float.NaN);
+            return null;
+        }
+        boolean samePlace = !Float.isNaN(cycleAt.x)
+                && Math.abs(cycleAt.x - lastPick.x) <= CYCLE_SLOP
+                && Math.abs(cycleAt.y - lastPick.y) <= CYCLE_SLOP;
+        cycleIndex = samePlace ? (cycleIndex + 1) % found.size() : 0;
+        cycleAt.set(lastPick);
+        if (samePlace && found.size() > 1) {
+            context.toasts().info("Pick " + (cycleIndex + 1) + " of " + found.size()
+                    + ": " + UiLayout.shortId(UiLayout.pathOf(found.get(cycleIndex))));
+        }
+        return found.get(cycleIndex);
+    }
+
+    private void dropStaleSelection() {
+        if (selected != null && selected.getStage() == null) {
+            reconnect();
+        }
+        if (selected != null && selected.getStage() == null) {
+            clearSelection();
+        }
     }
 
     private void stagePoint(float x, float y) {
@@ -181,6 +239,14 @@ public final class LayoutEditor extends WidgetGroup {
         }
         selected = actor;
         selectedId = id;
+        UiLayout.unbreak(id);
+        String why = UiLayout.blocked(actor);
+        if (why != null) {
+            context.toasts().error(why);
+        }
+        if (getStage() != null && getStage().getKeyboardFocus() instanceof TextField) {
+            getStage().setKeyboardFocus(null);
+        }
         hud.refresh();
     }
 
@@ -190,19 +256,17 @@ public final class LayoutEditor extends WidgetGroup {
         hovered = null;
         dragging = false;
         dragBase = null;
+        handle = Handle.NONE;
+        cycleAt.set(Float.NaN, Float.NaN);
+        cycleIndex = 0;
+        snap.release();
         hud.refresh();
     }
 
-    private boolean onGrip(float stageX, float stageY) {
-        if (selected == null) {
-            return false;
-        }
-        Rectangle box = boundsOf(selected);
-        return stageX >= box.x + box.width - GRIP && stageX <= box.x + box.width + GRIP
-                && stageY >= box.y - GRIP && stageY <= box.y + GRIP;
-    }
-
     private Rectangle boundsOf(Actor actor) {
+        if (actor == null || actor.getStage() == null) {
+            return frame.set(0f, 0f, 0f, 0f);
+        }
         point.set(0f, 0f);
         actor.localToStageCoordinates(point);
         float left = point.x;
@@ -215,7 +279,8 @@ public final class LayoutEditor extends WidgetGroup {
 
     private void drag(float x, float y) {
         Group parent = (!dragging || selected == null) ? null : selected.getParent();
-        if (parent == null || dragBase == null) {
+        if (parent == null || dragBase == null || selected.getStage() == null) {
+            dragging = false;
             return;
         }
         stagePoint(x, y);
@@ -228,14 +293,53 @@ public final class LayoutEditor extends WidgetGroup {
         float moveX = point.x - fromX;
         float moveY = point.y - fromY;
         UiLayout.Tweak live = UiLayout.edit(selectedId);
-        if (resizing) {
-            live.set(dragBase.getDx(), dragBase.getDy() + moveY,
-                    dragBase.getDw() + moveX, dragBase.getDh() - moveY);
+        if (handle.resizes()) {
+            resize(live, moveX, moveY);
         } else {
-            live.set(dragBase.getDx() + moveX, dragBase.getDy() + moveY,
-                    dragBase.getDw(), dragBase.getDh());
+            move(live, moveX, moveY);
         }
         applyNow();
+    }
+
+    private void move(UiLayout.Tweak live, float moveX, float moveY) {
+        Rectangle box = boundsOf(selected);
+        float shiftedX = moveX - (live.getDx() - dragBase.getDx());
+        float shiftedY = moveY - (live.getDy() - dragBase.getDy());
+        float wantX = box.x + shiftedX;
+        float wantY = box.y + shiftedY;
+        float fixX = snap.correctX(wantX, wantX + box.width);
+        float fixY = snap.correctY(wantY, wantY + box.height);
+        live.set(dragBase.getDx() + moveX + fixX, dragBase.getDy() + moveY + fixY,
+                dragBase.getDw(), dragBase.getDh());
+    }
+
+    private void resize(UiLayout.Tweak live, float moveX, float moveY) {
+        float dx = dragBase.getDx();
+        float dy = dragBase.getDy();
+        float dw = dragBase.getDw();
+        float dh = dragBase.getDh();
+        if (handle.pullsRight()) {
+            dw += moveX;
+        }
+        if (handle.pullsLeft()) {
+            dx += moveX;
+            dw -= moveX;
+        }
+        if (handle.pullsTop()) {
+            dh += moveY;
+        }
+        if (handle.pullsBottom()) {
+            dy += moveY;
+            dh -= moveY;
+        }
+        if (shift()) {
+            float locked = (dw - dragBase.getDw()) * baseHeight / baseWidth;
+            if (handle.pullsBottom()) {
+                dy = dragBase.getDy() - locked;
+            }
+            dh = dragBase.getDh() + locked;
+        }
+        live.set(dx, dy, dw, dh);
     }
 
     private void finish() {
@@ -246,6 +350,8 @@ public final class LayoutEditor extends WidgetGroup {
         }
         dragging = false;
         dragBase = null;
+        handle = Handle.NONE;
+        snap.release();
         hud.refresh();
     }
 
@@ -286,7 +392,30 @@ public final class LayoutEditor extends WidgetGroup {
             invalidate();
             return;
         }
+        if (layerKeys()) {
+            return;
+        }
+        if (Gdx.input.isKeyJustPressed(Input.Keys.FORWARD_DEL)
+                || Gdx.input.isKeyJustPressed(Input.Keys.DEL)) {
+            removeSelected();
+            return;
+        }
+        if (control() && Gdx.input.isKeyJustPressed(Input.Keys.N)) {
+            addPicture(shift() ? -1 : 1);
+            return;
+        }
+        if (Gdx.input.isKeyJustPressed(Input.Keys.LEFT_BRACKET)) {
+            browse(-1);
+            return;
+        }
+        if (Gdx.input.isKeyJustPressed(Input.Keys.RIGHT_BRACKET)) {
+            browse(1);
+            return;
+        }
         reconnect();
+        if (dragging && !Gdx.input.isButtonPressed(Input.Buttons.LEFT)) {
+            finish();
+        }
         if (control() && Gdx.input.isKeyJustPressed(Input.Keys.Z)) {
             undoLast();
             return;
@@ -298,6 +427,79 @@ public final class LayoutEditor extends WidgetGroup {
         if (selectedId != null && !(getStage().getKeyboardFocus() instanceof TextField)) {
             arrows();
         }
+    }
+
+    private boolean layerKeys() {
+        if (Gdx.input.isKeyJustPressed(Input.Keys.PAGE_DOWN)) {
+            stepUnder(1);
+            return true;
+        }
+        if (Gdx.input.isKeyJustPressed(Input.Keys.PAGE_UP)) {
+            stepUnder(-1);
+            return true;
+        }
+        return false;
+    }
+
+    void stepUnder(int step) {
+        point.set(Gdx.input.getX(), Gdx.input.getY());
+        getStage().screenToStageCoordinates(point);
+        List<Actor> found = UiLayout.candidatesAt(rootGroup(), point.x, point.y);
+        if (found.isEmpty()) {
+            context.toasts().info("Nothing under the cursor.");
+            return;
+        }
+        int at = found.indexOf(selected);
+        cycleIndex = Math.floorMod((at < 0 ? -1 : at) + step, found.size());
+        cycleAt.set(point);
+        select(found.get(cycleIndex));
+        context.toasts().info("Layer " + (cycleIndex + 1) + " of " + found.size()
+                + ": " + UiLayout.shortId(selectedId));
+    }
+
+    private void removeSelected() {
+        if (selectedId == null) {
+            context.toasts().error("Nothing selected.");
+            return;
+        }
+        String id = selectedId;
+        remember(id, UiLayout.tweak(id).copy());
+        if (UiLayout.isExtra(id)) {
+            UiLayout.drop(id);
+            context.toasts().info("Picture removed.");
+        } else {
+            UiLayout.hide(id, true);
+            context.toasts().info("Hidden. Ctrl+Z brings it back.");
+        }
+        clearSelection();
+        refreshFrames();
+    }
+
+    private void browse(int step) {
+        List<String> files = Pictures.available();
+        if (files.isEmpty()) {
+            return;
+        }
+        pictureIndex = Math.floorMod(pictureIndex + step, files.size());
+        context.toasts().info("Ctrl+N adds " + files.get(pictureIndex));
+    }
+
+    private void addPicture(int step) {
+        List<String> files = Pictures.available();
+        if (files.isEmpty()) {
+            context.toasts().error("No PNGs found under assets/.");
+            return;
+        }
+        pictureIndex = Math.floorMod(pictureIndex, files.size());
+        String file = files.get(pictureIndex);
+        float size = Math.min(getWidth(), getHeight()) / 4f;
+        String id = UiLayout.addImage(file, size, size);
+        UiLayout.Tweak made = UiLayout.edit(id);
+        made.set((getWidth() - size) / 2f, (getHeight() - size) / 2f, size, size);
+        remember(id, made.copy());
+        context.toasts().info("Added " + file + ". [ and ] pick another.");
+        refreshFrames();
+        pictureIndex += step;
     }
 
     private void reconnect() {
@@ -312,6 +514,9 @@ public final class LayoutEditor extends WidgetGroup {
     }
 
     private Actor findById(Group parent, String id, int depth) {
+        if (UiLayout.isExtra(id)) {
+            return parent.findActor(id);
+        }
         if (depth > MAX_DEPTH) {
             return null;
         }
@@ -426,7 +631,19 @@ public final class LayoutEditor extends WidgetGroup {
         return UiLayout.kindOf(selected) + "  " + (int) selected.getWidth()
                 + "x" + (int) selected.getHeight()
                 + "     x " + signed(live.getDx()) + "   y " + signed(live.getDy())
-                + "   w " + signed(live.getDw()) + "   h " + signed(live.getDh());
+                + "   w " + signed(live.getDw()) + "   h " + signed(live.getDh())
+                + "     " + fitState();
+    }
+
+    private String fitState() {
+        if (!(selected.getParent() instanceof Tunable)) {
+            return "NOT WRAPPED (" + UiLayout.kindOf(selected.getParent()) + " parent)";
+        }
+        Tunable holder = (Tunable) selected.getParent();
+        boolean moved = Math.abs(selected.getX() - UiLayout.tweak(selectedId).getDx()) < 1f
+                && Math.abs(selected.getY() - UiLayout.tweak(selectedId).getDy()) < 1f;
+        return moved ? "applied" : "OVERWRITTEN by "
+                + UiLayout.kindOf(holder.getParent());
     }
 
     private static String signed(float value) {
@@ -480,10 +697,38 @@ public final class LayoutEditor extends WidgetGroup {
         if (selected != null && selected.getStage() != null) {
             Rectangle box = boundsOf(selected);
             outline(batch, box, PICK, 2f);
-            bar(batch, box.x + box.width - GRIP, box.y, GRIP, GRIP, PICK);
+            handles(batch, box);
+            guides(batch);
         }
         batch.setPackedColor(packed);
         super.draw(batch, parentAlpha);
+    }
+
+    private void handles(Batch batch, Rectangle box) {
+        float mid = GRIP / 2f;
+        float[] xs = {box.x - mid, box.x + box.width / 2f - mid,
+            box.x + box.width - mid};
+        float[] ys = {box.y - mid, box.y + box.height / 2f - mid,
+            box.y + box.height - mid};
+        for (int col = 0; col < xs.length; col++) {
+            for (int row = 0; row < ys.length; row++) {
+                if (col != 1 || row != 1) {
+                    bar(batch, xs[col], ys[row], GRIP, GRIP, PICK);
+                }
+            }
+        }
+    }
+
+    private void guides(Batch batch) {
+        if (!dragging) {
+            return;
+        }
+        if (snap.isHoldingX()) {
+            bar(batch, snap.getGuideX(), 0f, 1f, getHeight(), GUIDE);
+        }
+        if (snap.isHoldingY()) {
+            bar(batch, 0f, snap.getGuideY(), getWidth(), 1f, GUIDE);
+        }
     }
 
     private void outline(Batch batch, Rectangle box, Color tint, float weight) {
