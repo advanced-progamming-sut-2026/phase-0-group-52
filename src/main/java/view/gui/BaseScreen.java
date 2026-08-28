@@ -44,10 +44,10 @@ public abstract class BaseScreen implements Screen, Navigator.Hosted {
             contentScroll.setScrollingDisabled(true, false);
             contentScroll.setOverscroll(false, false);
             UiKit.focusOnHover(contentScroll);
-            root.add(contentScroll).grow().pad(Theme.PAD_LARGE);
+            root.add(contentScroll).grow().pad(contentPad());
         } else {
             contentScroll = null;
-            root.add(content).grow().pad(Theme.PAD_LARGE);
+            root.add(content).grow().pad(contentPad());
         }
         stage.addActor(root);
     }
@@ -85,6 +85,10 @@ public abstract class BaseScreen implements Screen, Navigator.Hosted {
 
     protected TopBar.Section section() {
         return TopBar.Section.OTHER;
+    }
+
+    protected float contentPad() {
+        return Theme.PAD_LARGE;
     }
 
     protected boolean scrollContent() {

@@ -58,6 +58,7 @@ final class ScreenTour {
     private void captureExtras() {
         finished = true;
         captureCheatBar();
+        captureWorldMap();
         captureBackNavigation();
         captureOverlays();
         captureTitleAndPopups();
@@ -117,6 +118,46 @@ final class ScreenTour {
         nav.back();
         pump(8);
         Screenshots.capture("screenshots/tour-26-back-restores-popup.png");
+    }
+
+    private void captureWorldMap() {
+        game.navigator().goMenu(MenuType.CHAPTER_MENU);
+        pump(6);
+        com.badlogic.gdx.Screen screen = game.getScreen();
+        if (!(screen instanceof view.gui.screens.WorldMapScreen)) {
+            return;
+        }
+        view.gui.screens.WorldMapScreen map = (view.gui.screens.WorldMapScreen) screen;
+        float[] stops = {0f, 0.5f, 1f};
+        String[] names = {"start", "middle", "zomboss"};
+        for (int i = 0; i < stops.length; i++) {
+            map.scrollToFraction(stops[i]);
+            pump(6);
+            Screenshots.capture("screenshots/tour-28-worldmap-" + names[i] + ".png");
+        }
+        captureMidProgress(map);
+    }
+
+    private void captureMidProgress(view.gui.screens.WorldMapScreen map) {
+        model.User user = game.context().user();
+        if (user == null) {
+            return;
+        }
+        int chapter = user.getLastChapter();
+        int level = user.getLastLevel();
+        user.setLastChapter(1);
+        for (int stage = 1; stage <= 2; stage++) {
+            user.setLastLevel(stage);
+            map.show();
+            pump(6);
+            map.scrollToFraction(0f);
+            pump(8);
+            Screenshots.capture("screenshots/tour-29-worldmap-level" + stage + ".png");
+        }
+        user.setLastChapter(chapter);
+        user.setLastLevel(level);
+        map.show();
+        pump(4);
     }
 
     private void pump(int frames) {

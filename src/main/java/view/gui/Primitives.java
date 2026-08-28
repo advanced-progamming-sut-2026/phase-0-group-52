@@ -201,6 +201,29 @@ public final class Primitives implements Disposable {
         return texture;
     }
 
+    public Texture radialGlow(int size, Color core) {
+        String key = "glow:" + size + ":" + core;
+        Texture cached = cache.get(key);
+        if (cached != null) {
+            return cached;
+        }
+        Pixmap pixmap = new Pixmap(size, size, Pixmap.Format.RGBA8888);
+        pixmap.setBlending(Pixmap.Blending.None);
+        float centre = (size - 1) / 2f;
+        for (int y = 0; y < size; y++) {
+            for (int x = 0; x < size; x++) {
+                float dx = (x - centre) / centre;
+                float dy = (y - centre) / centre;
+                float fade = 1f - Math.min(1f, (float) Math.sqrt(dx * dx + dy * dy));
+                pixmap.setColor(core.r, core.g, core.b, core.a * fade * fade);
+                pixmap.drawPixel(x, y);
+            }
+        }
+        Texture texture = upload(pixmap);
+        cache.put(key, texture);
+        return texture;
+    }
+
     public Texture verticalGradient(int width, int height, Color top, Color bottom) {
         String key = "grad:" + width + "x" + height + ":" + top + ":" + bottom;
         Texture cached = cache.get(key);
@@ -208,13 +231,14 @@ public final class Primitives implements Disposable {
             return cached;
         }
         Pixmap pixmap = new Pixmap(width, height, Pixmap.Format.RGBA8888);
+        pixmap.setBlending(Pixmap.Blending.None);
         for (int y = 0; y < height; y++) {
             float t = y / (float) Math.max(1, height - 1);
             pixmap.setColor(
                     top.r + (bottom.r - top.r) * t,
                     top.g + (bottom.g - top.g) * t,
                     top.b + (bottom.b - top.b) * t,
-                    1f);
+                    top.a + (bottom.a - top.a) * t);
             pixmap.drawLine(0, y, width, y);
         }
         Texture texture = upload(pixmap);
