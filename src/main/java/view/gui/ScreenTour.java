@@ -136,6 +136,31 @@ final class ScreenTour {
             Screenshots.capture("screenshots/tour-28-worldmap-" + names[i] + ".png");
         }
         captureMidProgress(map);
+        captureWorlds(map);
+    }
+
+    private void captureWorlds(view.gui.screens.WorldMapScreen map) {
+        model.User user = game.context().user();
+        if (user == null) {
+            return;
+        }
+        int chapter = user.getLastChapter();
+        int level = user.getLastLevel();
+        for (model.ChapterType world : model.ChapterType.values()) {
+            game.context().app().setSelectedChapter(world);
+            user.setLastChapter(world.number());
+            user.setLastLevel(2);
+            map.show();
+            pump(8);
+            map.scrollToFraction(0.35f);
+            pump(8);
+            Screenshots.capture("screenshots/tour-32-world-"
+                    + world.name().toLowerCase() + ".png");
+        }
+        user.setLastChapter(chapter);
+        user.setLastLevel(level);
+        map.show();
+        pump(4);
     }
 
     private void captureMidProgress(view.gui.screens.WorldMapScreen map) {
