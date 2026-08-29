@@ -54,7 +54,7 @@ public final class PlantIsland extends WidgetGroup {
     private final Listener listener;
     private final ChapterType world;
 
-    private Image platform;
+    private Actor platform;
     private Image decor;
     private Actor packet;
     private Bobber pinata;
@@ -73,15 +73,15 @@ public final class PlantIsland extends WidgetGroup {
     private int rapidClicks;
     private boolean burst;
 
-    public PlantIsland(UiKit ui, Assets assets, ChapterType chapter, int islandNumber,
-            int decorNumber, State state, Plants prize, Listener listener) {
+    public PlantIsland(UiKit ui, Assets assets, ChapterType chapter, String islandArt,
+            String decorArt, State state, Plants prize, Listener listener) {
         this.state = state;
         this.listener = listener;
         this.world = chapter;
         setTransform(false);
 
-        addPlatform(assets, chapter, islandNumber);
-        addDecor(assets, chapter, decorNumber);
+        addPlatform(assets, islandArt);
+        addDecor(assets, decorArt);
         packetWidth = SeedPacket.ART_W * PACKET_SCALE;
         packetHeight = SeedPacket.ART_H * PACKET_SCALE;
 
@@ -102,23 +102,33 @@ public final class PlantIsland extends WidgetGroup {
         return state;
     }
 
-    private void addPlatform(Assets assets, ChapterType chapter, int islandNumber) {
-        TextureRegion art = assets == null
-                ? null : assets.region(WorldMapArt.island(chapter, islandNumber));
+    private void addPlatform(Assets assets, String islandArt) {
+        TextureRegion art = assets == null ? null : assets.region(islandArt);
         if (art == null) {
             return;
         }
         platformWidth = art.getRegionWidth() * WorldMapArt.MAP_SCALE;
         platformHeight = art.getRegionHeight() * WorldMapArt.MAP_SCALE;
-        platform = new Image(new TextureRegionDrawable(art));
+        String rig = WorldMapArt.animOf(world, islandArt);
+        if (rig != null) {
+            PamActor live = WorldMapArt.rigged(assets, rig, "idle", "idle");
+            if (live.isReady()) {
+                platform = live;
+                platform.setName("platform");
+                addActor(platform);
+                return;
+            }
+        }
+        Image still = new Image(new TextureRegionDrawable(art));
+        still.setScaling(Scaling.stretch);
+        platform = still;
         platform.setName("platform");
-        platform.setScaling(Scaling.stretch);
         addActor(platform);
     }
 
-    private void addDecor(Assets assets, ChapterType chapter, int decorNumber) {
-        TextureRegion trim = assets == null || decorNumber <= 0
-                ? null : assets.region(WorldMapArt.island(chapter, decorNumber));
+    private void addDecor(Assets assets, String decorArt) {
+        TextureRegion trim = assets == null || decorArt == null
+                ? null : assets.region(decorArt);
         if (trim == null) {
             return;
         }
