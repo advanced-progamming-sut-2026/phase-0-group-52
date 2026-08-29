@@ -18,6 +18,67 @@ public final class AdventureProgress {
     private final Map<ChapterType, Map<Integer, Plants>> claimed =
             new EnumMap<ChapterType, Map<Integer, Plants>>(ChapterType.class);
 
+    private final Map<ChapterType, Integer> cleared =
+            new EnumMap<ChapterType, Integer>(ChapterType.class);
+
+    private final java.util.Set<ChapterType> opened =
+            java.util.EnumSet.noneOf(ChapterType.class);
+
+    public int clearedLevels(ChapterType chapter) {
+        Integer value = cleared.get(chapter);
+        return value == null ? 0 : value.intValue();
+    }
+
+    public void recordCleared(ChapterType chapter, int levels) {
+        if (chapter == null) {
+            return;
+        }
+        int capped = Math.max(0, Math.min(ChapterType.LEVELS_PER_CHAPTER, levels));
+        if (capped > clearedLevels(chapter)) {
+            cleared.put(chapter, Integer.valueOf(capped));
+        }
+    }
+
+    public boolean isChapterOpen(ChapterType chapter) {
+        if (chapter == null) {
+            return false;
+        }
+        if (chapter == ChapterType.first() || opened.contains(chapter)) {
+            return true;
+        }
+        ChapterType before = ChapterType.byNumber(chapter.number() - 1);
+        return before != null
+                && clearedLevels(before) >= ChapterType.LEVELS_PER_CHAPTER;
+    }
+
+    public void openChapter(ChapterType chapter) {
+        if (chapter != null) {
+            opened.add(chapter);
+        }
+    }
+
+    public boolean isForced(ChapterType chapter) {
+        return opened.contains(chapter);
+    }
+
+    public boolean hasChapterState() {
+        return !cleared.isEmpty() || !opened.isEmpty();
+    }
+
+    public void seedFrom(int lastChapter, int lastLevel) {
+        int reached = Math.max(1, lastChapter);
+        for (ChapterType chapter : ChapterType.values()) {
+            int index = chapter.number();
+            if (index < reached) {
+                recordCleared(chapter, ChapterType.LEVELS_PER_CHAPTER);
+                openChapter(chapter);
+            } else if (index == reached) {
+                recordCleared(chapter, Math.max(0, lastLevel - 1));
+                openChapter(chapter);
+            }
+        }
+    }
+
     public Plants claimedPlant(ChapterType chapter, int slot) {
         return slots(chapter).get(Integer.valueOf(slot));
     }
