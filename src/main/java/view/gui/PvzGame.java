@@ -140,7 +140,7 @@ public final class PvzGame extends Game {
             return;
         }
         com.badlogic.gdx.scenes.scene2d.Stage stage = ((Navigator.Hosted) screen).uiStage();
-        view.gui.layout.UiLayout.setScope(screen.getClass().getSimpleName());
+        view.gui.layout.UiLayout.setScope(screen);
         view.gui.layout.UiLayout.apply(stage.getRoot());
         view.gui.layout.Extras.sync(stage, context.assets());
         if (!context.settings().isUiEditMode()) {

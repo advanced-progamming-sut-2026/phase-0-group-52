@@ -307,4 +307,23 @@ class UiLayoutTest {
                 "a named widget must keep its id once wrapped, "
                         + "or the editor writes tweaks the Tunable never reads");
     }
+
+    @Test
+    void hidingAWidgetSurvivesASaveAndReload() {
+        UiLayout.edit("Screen|thing").set(4f, 5f, 0f, 0f);
+        UiLayout.save();
+
+        UiLayout.hide("Screen|thing", true);
+        UiLayout.save();
+        UiLayout.reload();
+
+        assertTrue(UiLayout.tweak("Screen|thing").isHidden(),
+                "a hide that only flips the flag must still be written to disk");
+        assertEquals(4f, UiLayout.tweak("Screen|thing").getDx(), 0.01f);
+
+        UiLayout.hide("Screen|thing", false);
+        UiLayout.save();
+        UiLayout.reload();
+        assertFalse(UiLayout.tweak("Screen|thing").isHidden());
+    }
 }
