@@ -17,6 +17,7 @@ import model.entities.zombies.types.ParasolZombie;
 import model.entities.zombies.types.PianistZombie;
 import model.entities.zombies.types.ProspectorZombie;
 import model.entities.zombies.types.RaZombie;
+import model.entities.zombies.types.TombRaiser;
 import model.entities.zombies.types.Troglobite;
 import model.entities.zombies.types.TurquoiseZombie;
 import model.entities.zombies.types.WizardZombie;
@@ -39,7 +40,22 @@ public abstract class ZombieFactory {
         return built;
     }
 
-    private static Zombie build(Zombies data, int line, Vec2 position, ChapterType chapter, ZombieType type) {
+    private static Zombie egyptSpecial(Zombies data, int line, Vec2 position,
+            ChapterType chapter, ZombieType type) {
+        if (data == Zombies.ZOMBIE_TOMB_RAISER) {
+            return new TombRaiser(line, position, chapter, type);
+        }
+        return null;
+    }
+
+    private static Zombie build(Zombies data, int line, Vec2 position, ChapterType chapter,
+            ZombieType type) {
+        Zombie egypt = egyptSpecial(data, line, position, chapter, type);
+        return egypt != null ? egypt : buildCommon(data, line, position, chapter, type);
+    }
+
+    private static Zombie buildCommon(Zombies data, int line, Vec2 position,
+            ChapterType chapter, ZombieType type) {
         switch (data) {
             case ZOMBIE_GARGANTUAR:        return new Gargantuar(line, position, chapter, type);
             case ZOMBIE_IMP:               return new Imp(line, position, chapter, type);

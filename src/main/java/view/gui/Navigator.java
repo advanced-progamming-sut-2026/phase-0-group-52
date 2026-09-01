@@ -46,6 +46,18 @@ public final class Navigator {
         apply(new Entry(Place.TITLE, null, PopupKind.NONE));
     }
 
+    public void dropLevelHistory() {
+        java.util.Iterator<Entry> walk = history.iterator();
+        while (walk.hasNext()) {
+            Entry entry = walk.next();
+            if (entry.place == Place.MENU
+                    && (entry.menu == MenuType.GAME_MENU
+                        || entry.menu == MenuType.CHOOSE_PLANT_MENU)) {
+                walk.remove();
+            }
+        }
+    }
+
     public void goMenu(MenuType menu) {
         if (current.place == Place.MENU && current.menu == menu) {
             return;
@@ -78,6 +90,9 @@ public final class Navigator {
             return;
         }
         push();
+        if (menu == MenuType.CHAPTER_MENU) {
+            dropLevelHistory();
+        }
         current = new Entry(Place.MENU, menu, PopupKind.NONE);
         show(current);
     }

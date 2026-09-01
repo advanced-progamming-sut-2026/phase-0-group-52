@@ -60,6 +60,7 @@ public final class UiLayout {
 
         public void setImage(String value) {
             this.image = value;
+            dirty = true;
         }
 
         public boolean isHidden() {
@@ -68,6 +69,7 @@ public final class UiLayout {
 
         public void setHidden(boolean value) {
             this.hidden = value;
+            dirty = true;
         }
 
         public float getDx() {
@@ -112,6 +114,15 @@ public final class UiLayout {
             }
             return Math.max(-LIMIT, Math.min(LIMIT, Math.round(value)));
         }
+    }
+
+    public interface Scoped {
+        String layoutScope();
+    }
+
+    public static void setScope(Object screen) {
+        setScope(screen instanceof Scoped
+                ? ((Scoped) screen).layoutScope() : screen.getClass().getSimpleName());
     }
 
     public static void setScope(String value) {
@@ -183,6 +194,14 @@ public final class UiLayout {
 
     public static int count() {
         return all().size();
+    }
+
+    public static void reload() {
+        TWEAKS.clear();
+        BROKEN.clear();
+        loaded = false;
+        dirty = false;
+        all();
     }
 
     private static Map<String, Tweak> all() {

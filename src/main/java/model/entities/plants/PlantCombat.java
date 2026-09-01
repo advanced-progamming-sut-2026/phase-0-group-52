@@ -106,30 +106,31 @@ public final class PlantCombat {
                     game.getStats().recordKillAtColZeroNoMower();
                 if (game.getLevel() instanceof model.level.TimedWar)
                     ((model.level.TimedWar) game.getLevel()).onZombieKilled();
-                rollLoot(game);
+                rollLoot(game, z);
                 z.onDeath(game);
                 game.getZombies().remove(i);
             }
         }
     }
 
-    private static void rollLoot(Game game) {
-        if (game.getApp() == null) return;
+    private static void rollLoot(Game game, model.entities.zombies.Zombie z) {
+        if (game.getApp() == null) {
+            return;
+        }
         model.User u = game.getApp().getCurrentuser();
-        if (u == null || RANDOM.nextDouble() >= 0.10) return;
-        int pick = RANDOM.nextInt(3);
-        if (pick == 0) {
+        if (u == null || RANDOM.nextDouble() >= dropChance(z)) {
+            return;
+        }
+        double roll = RANDOM.nextDouble();
+        if (roll < SPROUT_SHARE && game.getApp().getGreenhouse() != null
+                && game.getApp().getGreenhouse().unlockNextPot()) {
+            game.noteDrop("A sprout for the greenhouse!");
+        } else if (roll < SPROUT_SHARE + GEM_SHARE) {
             u.setGems(u.getGems() + 1);
-            System.out.println("A zombie dropeed a diamond; you have " + u.getGems() + " diamonds now.");
-        } else if (pick == 1) {
-            u.setCoins(u.getCoins() + 50);
-            System.out.println("A zombie dropeed a coin; you have " + u.getCoins() + " coins now.");
-        } else if (game.getApp().getGreenhouse() != null && game.getApp().getGreenhouse().unlockNextPot()) {
-            System.out.println("A zombie dropeed a pot; you have "
-                    + game.getApp().getGreenhouse().unlockedPotCount() + " pots now.");
+            game.noteDrop("A diamond!");
         } else {
-            u.setCoins(u.getCoins() + 50);
-            System.out.println("A zombie dropeed a coin; you have " + u.getCoins() + " coins now.");
+            u.setCoins(u.getCoins() + COIN_DROP);
+            game.noteDrop("+" + COIN_DROP + " coins");
         }
     }
 
@@ -138,6 +139,17 @@ public final class PlantCombat {
         for (model.entities.Lawnmower lm : game.getField().getLawnmowers())
             if (lm.getLine() == row && lm.isIsactive()) return true;
         return false;
+    }
+
+    private static final double SPROUT_SHARE = 0.45d;
+    private static final double GEM_SHARE = 0.15d;
+    private static final int COIN_DROP = 50;
+
+    private static double dropChance(model.entities.zombies.Zombie z) {
+        model.entities.zombies.ZombieRecord record = z == null ? null
+                : model.entities.zombies.ZombieData.of(z.getOrigin());
+        double weight = record == null ? 100d : record.getWaveCost();
+        return Math.min(0.45d, 0.08d + weight / 6000d);
     }
 
     public static void removePlant(Game game, Plant plant) {

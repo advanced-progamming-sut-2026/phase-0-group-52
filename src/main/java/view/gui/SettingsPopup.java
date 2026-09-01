@@ -8,9 +8,12 @@ import controller.menu.SettingMenuController;
 import model.User;
 import view.gui.layout.UiLayout;
 
-public final class SettingsPopup extends Popup {
+public class SettingsPopup extends Popup {
     private static final int DIFFICULTY_LEVELS = 5;
     private static final float CHILLI_SIZE = 34f;
+    private static final float TOPPER_WIDTH = 420f;
+    private static final float TOPPER_HEIGHT = 96f;
+    private static final float TOPPER_DROP = -18f;
 
     private final GameContext context;
     private final SettingMenuController controller;
@@ -24,6 +27,42 @@ public final class SettingsPopup extends Popup {
         grid = new Table();
         body().add(grid).grow();
         rebuild();
+        addTopper();
+    }
+
+    private void addTopper() {
+        if (context.assets() == null) {
+            return;
+        }
+        com.badlogic.gdx.graphics.g2d.TextureRegion sunflower =
+                context.assets().region("IMAGE_UI_PAUSEMENU_SUNFLOWER_TOPPER");
+        if (sunflower == null) {
+            return;
+        }
+        com.badlogic.gdx.scenes.scene2d.ui.Stack layers =
+                new com.badlogic.gdx.scenes.scene2d.ui.Stack();
+        com.badlogic.gdx.graphics.g2d.TextureRegion window =
+                context.assets().region("IMAGE_UI_PAUSEMENU_WINDOWTOPPER");
+        if (window != null) {
+            layers.add(fitted(window));
+        }
+        layers.add(fitted(sunflower));
+        Table holder = new Table();
+        holder.top();
+        holder.setFillParent(true);
+        holder.add(layers).size(TOPPER_WIDTH, TOPPER_HEIGHT).padTop(TOPPER_DROP);
+        holder.setTouchable(com.badlogic.gdx.scenes.scene2d.Touchable.disabled);
+        addActor(holder);
+    }
+
+    private static Table fitted(com.badlogic.gdx.graphics.g2d.TextureRegion art) {
+        com.badlogic.gdx.scenes.scene2d.ui.Image image =
+                new com.badlogic.gdx.scenes.scene2d.ui.Image(
+                        new com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable(art));
+        image.setScaling(com.badlogic.gdx.utils.Scaling.fit);
+        Table holder = new Table();
+        holder.add(image).grow();
+        return holder;
     }
 
     @Override

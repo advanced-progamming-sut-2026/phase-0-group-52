@@ -12,9 +12,19 @@ public class BasicZombie extends Zombie {
             data.getArmor(), chapter, type, ZombieState.WALKING, null);
     }
 
+    protected static java.util.ArrayList<Plant> edible(java.util.ArrayList<Plant> here) {
+        java.util.ArrayList<Plant> out = new java.util.ArrayList<Plant>();
+        for (Plant plant : here) {
+            if (model.entities.plants.PlantData.isEdible(plant.getType())) {
+                out.add(plant);
+            }
+        }
+        return out;
+    }
+
     @Override
     public void onTick(Game game) {
-        java.util.ArrayList<Plant> here = game.getPlantsAt(getCol(), getRow());
+        java.util.ArrayList<Plant> here = edible(game.getPlantsAt(getCol(), getRow()));
         if (!here.isEmpty()) {
             setState(ZombieState.ATTACKING);
             Plant target = here.get(here.size() - 1);

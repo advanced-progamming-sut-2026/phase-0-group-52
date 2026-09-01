@@ -32,6 +32,92 @@ public class ChoosePlantMenuController {
         this.app = app;
     }
 
+    public int slots() {
+        return OTHER_LEVEL_SLOTS;
+    }
+
+    public ChapterType chapter() {
+        ChapterType selected = app.getSelectedChapter();
+        if (selected != null) {
+            return selected;
+        }
+        User user = app.getCurrentuser();
+        ChapterType reached = user == null ? null : ChapterType.byNumber(user.getLastChapter());
+        return reached == null ? ChapterType.first() : reached;
+    }
+
+    public int levelNumber() {
+        return app.getSelectedLevel();
+    }
+
+    public java.util.List<model.entities.zombies.ZombieRecord> firstWave() {
+        java.util.List<model.entities.zombies.ZombieRecord> preview =
+                new java.util.ArrayList<model.entities.zombies.ZombieRecord>();
+        for (model.entities.zombies.Zombies zombie
+                : LevelBuilder.firstWave(chapter(), app.getSelectedLevel())) {
+            model.entities.zombies.ZombieRecord record =
+                    model.entities.zombies.ZombieData.of(zombie);
+            if (record != null) {
+                preview.add(record);
+            }
+        }
+        return preview;
+    }
+
+    public java.util.List<Plants> picked() {
+        return app.getPlantSelection();
+    }
+
+    public boolean isPicked(Plants plant) {
+        return app.getPlantSelection().contains(plant);
+    }
+
+    public java.util.List<Plants> owned() {
+        java.util.List<Plants> out = new java.util.ArrayList<Plants>();
+        model.User user = app.getCurrentuser();
+        if (user == null) {
+            return out;
+        }
+        for (Plants plant : Plants.values()) {
+            if (user.getPlants().isUnlocked(plant)) {
+                out.add(plant);
+            }
+        }
+        return out;
+    }
+
+    public boolean isBoosted(Plants plant) {
+        model.User user = app.getCurrentuser();
+        return user != null && user.getStoredBoosts().contains(plant);
+    }
+
+    public int levelOf(Plants plant) {
+        model.User user = app.getCurrentuser();
+        return user == null ? 1 : user.getPlants().getLevel(plant);
+    }
+
+    public model.Result pick(Plants plant) {
+        if (plant == null) {
+            return new model.Result(false, "Unknown plant.", null);
+        }
+        java.util.List<Plants> chosen = app.getPlantSelection();
+        if (chosen.contains(plant)) {
+            return new model.Result(false, plant.getName() + " is already picked.", plant);
+        }
+        if (chosen.size() >= slots()) {
+            return new model.Result(false, "Only " + slots() + " seed slots.", null);
+        }
+        chosen.add(plant);
+        return new model.Result(true, plant.getName() + " added.", plant);
+    }
+
+    public model.Result drop(Plants plant) {
+        if (plant == null || !app.getPlantSelection().remove(plant)) {
+            return new model.Result(false, "That plant is not picked.", null);
+        }
+        return new model.Result(true, plant.getName() + " removed.", plant);
+    }
+
     public void handleCommand(String line) {
         String command = line.trim();
         String[] parts = command.split("\\s+");

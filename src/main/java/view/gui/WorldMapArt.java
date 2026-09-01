@@ -29,43 +29,212 @@ public final class WorldMapArt {
     public static final float MAP_SCALE = 1.34f;
 
     private static final String WORLDMAP = "768/INITIAL/WORLDMAP/";
+    private static final String PAM_ROOT = "assets/pvz/IMAGES/";
+    private static final java.util.regex.Pattern ANIM_ID =
+            java.util.regex.Pattern.compile("IMAGE_WORLDMAP_([A-Z]+)_ANIM(\\d+)_.*");
 
-    private static final int EGYPT_ENTRY = 1;
-    private static final int EGYPT_STATUE = 3;
-    private static final int EGYPT_FACE = 16;
-    private static final int[] EGYPT_PLATFORMS = {9, 4, 5};
-    private static final int[] EGYPT_NEBULAS = {22, 23};
-    private static final int[] EGYPT_DISTANT = {26, 24, 25, 35, 34, 36};
-    private static final int[] EGYPT_DECOR = {37, 21, 18, 17, 20, 19, 36, 34};
+    private static final String[] EGYPT_ROLES = {
+            "IMAGE_WORLDMAP_EGYPT_ISLAND1",
+            "IMAGE_WORLDMAP_EGYPT_ISLAND3",
+            "IMAGE_WORLDMAP_EGYPT_ISLAND16"};
+    private static final String[] EGYPT_PLATFORMS = {
+            "IMAGE_WORLDMAP_EGYPT_ISLAND9",
+            "IMAGE_WORLDMAP_EGYPT_ISLAND4",
+            "IMAGE_WORLDMAP_EGYPT_ISLAND5"};
+    private static final String[] EGYPT_DISTANT = {
+            "IMAGE_WORLDMAP_EGYPT_ISLAND26",
+            "IMAGE_WORLDMAP_EGYPT_ISLAND24",
+            "IMAGE_WORLDMAP_EGYPT_ISLAND25",
+            "IMAGE_WORLDMAP_EGYPT_ISLAND35",
+            "IMAGE_WORLDMAP_EGYPT_ISLAND34",
+            "IMAGE_WORLDMAP_EGYPT_ISLAND36"};
+    private static final String[] EGYPT_DECOR = {
+            "IMAGE_WORLDMAP_EGYPT_ISLAND37",
+            "IMAGE_WORLDMAP_EGYPT_ISLAND21",
+            "IMAGE_WORLDMAP_EGYPT_ISLAND18",
+            "IMAGE_WORLDMAP_EGYPT_ISLAND17",
+            "IMAGE_WORLDMAP_EGYPT_ISLAND20",
+            "IMAGE_WORLDMAP_EGYPT_ISLAND19",
+            "IMAGE_WORLDMAP_EGYPT_ISLAND36",
+            "IMAGE_WORLDMAP_EGYPT_ISLAND34"};
+    private static final String[] EGYPT_NEBULAS = {
+            "IMAGE_WORLDMAP_EGYPT_ISLAND22",
+            "IMAGE_WORLDMAP_EGYPT_ISLAND23"};
+
+    private static final String[] ICEAGE_ROLES = {
+            "IMAGE_WORLDMAP_ICEAGE_ANIM3_ANIM3_1307X1318",
+            "IMAGE_WORLDMAP_ICEAGE_ISLAND22",
+            "IMAGE_WORLDMAP_ICEAGE_ISLAND24"};
+    private static final String[] ICEAGE_PLATFORMS = {
+            "IMAGE_WORLDMAP_ICEAGE_ANIM12_ANIM12_400X500",
+            "IMAGE_WORLDMAP_ICEAGE_ANIM11_ANIM11_400X500",
+            "IMAGE_WORLDMAP_ICEAGE_ANIM10_ANIM10_400X500",
+            "IMAGE_WORLDMAP_ICEAGE_ANIM26_ANIM26_375X281",
+            "IMAGE_WORLDMAP_ICEAGE_ANIM27_ANIM27_301X288"};
+    private static final String[] ICEAGE_DISTANT = {
+            "IMAGE_WORLDMAP_ICEAGE_ISLAND22",
+            "IMAGE_WORLDMAP_ICEAGE_ISLAND23",
+            "IMAGE_WORLDMAP_ICEAGE_ISLAND24",
+            "IMAGE_WORLDMAP_ICEAGE_ISLAND1"};
+    private static final String[] ICEAGE_DECOR = {
+            "IMAGE_WORLDMAP_ICEAGE_ANIM15_ANIM15_119X184",
+            "IMAGE_WORLDMAP_ICEAGE_ANIM3_ANIM3_115X150",
+            "IMAGE_WORLDMAP_ICEAGE_ANIM23_ANIM23_124X118",
+            "IMAGE_WORLDMAP_ICEAGE_ANIM16_ANIM16_117X110",
+            "IMAGE_WORLDMAP_ICEAGE_ANIM28_ANIM28_271X337"};
+    private static final String[] ICEAGE_NEBULAS = {
+            "IMAGE_WORLDMAP_ICEAGE_ISLAND43",
+            "IMAGE_WORLDMAP_ICEAGE_ISLAND41"};
+
+    private static final String[] DARK_ROLES = {
+            "IMAGE_WORLDMAP_DARK_ANIM1_ANIM1_1201X1413",
+            "IMAGE_WORLDMAP_DARK_ISLAND21",
+            "IMAGE_WORLDMAP_DARK_ANIM22_ANIM22_534X1169"};
+    private static final String[] DARK_PLATFORMS = {
+            "IMAGE_WORLDMAP_DARK_ISLAND7",
+            "IMAGE_WORLDMAP_DARK_ISLAND6",
+            "IMAGE_WORLDMAP_DARK_ANIM10_ANIM10_352X358"};
+    private static final String[] DARK_DISTANT = {
+            "IMAGE_WORLDMAP_DARK_ANIM22_ANIM22_534X1169",
+            "IMAGE_WORLDMAP_DARK_ANIM9_ANIM9_373X659",
+            "IMAGE_WORLDMAP_DARK_ISLAND21"};
+    private static final String[] DARK_DECOR = {
+            "IMAGE_WORLDMAP_DARK_ISLAND20",
+            "IMAGE_WORLDMAP_DARK_ANIM13_ANIM13_147X111",
+            "IMAGE_WORLDMAP_DARK_ANIM9_ANIM9_180X89",
+            "IMAGE_WORLDMAP_DARK_ANIM15_ANIM15_102X97"};
+    private static final String[] DARK_NEBULAS = {
+            "IMAGE_WORLDMAP_DARK_ISLAND53",
+            "IMAGE_WORLDMAP_DARK_ISLAND60"};
+
+    private static final String[] BEACH_ROLES = {
+            "IMAGE_WORLDMAP_BEACH_ANIM27_ANIM27_1362X953",
+            "IMAGE_WORLDMAP_BEACH_ANIM1_ANIM1_283X291",
+            "IMAGE_WORLDMAP_BEACH_ISLAND1"};
+    private static final String[] BEACH_PLATFORMS = {
+            "IMAGE_WORLDMAP_BEACH_ANIM14_ANIM14_358X512",
+            "IMAGE_WORLDMAP_BEACH_ANIM13_ANIM13_397X399",
+            "IMAGE_WORLDMAP_BEACH_ANIM15_ANIM15_325X443",
+            "IMAGE_WORLDMAP_BEACH_ANIM12_ANIM12_335X420",
+            "IMAGE_WORLDMAP_BEACH_ANIM16_ANIM16_339X318",
+            "IMAGE_WORLDMAP_BEACH_ANIM11_ANIM11_297X281",
+            "IMAGE_WORLDMAP_BEACH_ANIM17_ANIM17_321X255",
+            "IMAGE_WORLDMAP_BEACH_ANIM10_ANIM10_295X271"};
+    private static final String[] BEACH_DISTANT = {
+            "IMAGE_WORLDMAP_BEACH_ISLAND24",
+            "IMAGE_WORLDMAP_BEACH_ISLAND22",
+            "IMAGE_WORLDMAP_BEACH_ISLAND23"};
+    private static final String[] BEACH_DECOR = {
+            "IMAGE_WORLDMAP_BEACH_ISLAND13",
+            "IMAGE_WORLDMAP_BEACH_ISLAND14",
+            "IMAGE_WORLDMAP_BEACH_ISLAND16",
+            "IMAGE_WORLDMAP_BEACH_ISLAND15",
+            "IMAGE_WORLDMAP_BEACH_ANIM8_ANIM8_91X367",
+            "IMAGE_WORLDMAP_BEACH_ANIM20_ANIM20_233X132"};
+    private static final String[] BEACH_NEBULAS = {
+            "IMAGE_WORLDMAP_BEACH_ISLAND41",
+            "IMAGE_WORLDMAP_BEACH_ISLAND42"};
+
+    private static final int[] EGYPT_ANIMS = {};
+
+    private static final int[] ICEAGE_ANIMS =
+            {13, 14, 15, 16, 17, 22, 23, 28};
+
+    private static final int[] DARK_ANIMS =
+            {1, 3, 4, 5, 6, 7, 9, 10, 12, 13, 14, 15, 16, 22};
+
+    private static final int[] BEACH_ANIMS =
+            {1, 4, 5, 6, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 27, 32, 35};
 
     private WorldMapArt() {}
 
-    public static int entryIsland(ChapterType chapter) {
-        return EGYPT_ENTRY;
+    private static ChapterType safe(ChapterType chapter) {
+        return chapter == null ? ChapterType.ANCIENT_EGYPT : chapter;
     }
 
-    public static int statueIsland(ChapterType chapter) {
-        return EGYPT_STATUE;
+    private static String[] roles(ChapterType chapter) {
+        switch (safe(chapter)) {
+            case FROSTBITE_CAVES: return ICEAGE_ROLES;
+            case DARK_AGES:       return DARK_ROLES;
+            case BIG_WAVE_BEACH:  return BEACH_ROLES;
+            default:              return EGYPT_ROLES;
+        }
     }
 
-    public static int faceIsland(ChapterType chapter) {
-        return EGYPT_FACE;
+    public static String entryIsland(ChapterType chapter) {
+        return roles(chapter)[0];
     }
 
-    public static int[] platforms(ChapterType chapter) {
-        return EGYPT_PLATFORMS.clone();
+    public static String statueIsland(ChapterType chapter) {
+        return roles(chapter)[1];
     }
 
-    public static int[] nebulas(ChapterType chapter) {
-        return EGYPT_NEBULAS.clone();
+    public static String faceIsland(ChapterType chapter) {
+        return roles(chapter)[2];
     }
 
-    public static int[] decor(ChapterType chapter) {
-        return EGYPT_DECOR.clone();
+    public static String[] platforms(ChapterType chapter) {
+        switch (safe(chapter)) {
+            case FROSTBITE_CAVES: return ICEAGE_PLATFORMS.clone();
+            case DARK_AGES:       return DARK_PLATFORMS.clone();
+            case BIG_WAVE_BEACH:  return BEACH_PLATFORMS.clone();
+            default:              return EGYPT_PLATFORMS.clone();
+        }
     }
 
-    public static int[] distant(ChapterType chapter) {
-        return EGYPT_DISTANT.clone();
+    public static String[] distant(ChapterType chapter) {
+        switch (safe(chapter)) {
+            case FROSTBITE_CAVES: return ICEAGE_DISTANT.clone();
+            case DARK_AGES:       return DARK_DISTANT.clone();
+            case BIG_WAVE_BEACH:  return BEACH_DISTANT.clone();
+            default:              return EGYPT_DISTANT.clone();
+        }
+    }
+
+    public static String[] decor(ChapterType chapter) {
+        switch (safe(chapter)) {
+            case FROSTBITE_CAVES: return ICEAGE_DECOR.clone();
+            case DARK_AGES:       return DARK_DECOR.clone();
+            case BIG_WAVE_BEACH:  return BEACH_DECOR.clone();
+            default:              return EGYPT_DECOR.clone();
+        }
+    }
+
+    public static String[] nebulas(ChapterType chapter) {
+        switch (safe(chapter)) {
+            case FROSTBITE_CAVES: return ICEAGE_NEBULAS.clone();
+            case DARK_AGES:       return DARK_NEBULAS.clone();
+            case BIG_WAVE_BEACH:  return BEACH_NEBULAS.clone();
+            default:              return EGYPT_NEBULAS.clone();
+        }
+    }
+
+    public static int[] anims(ChapterType chapter) {
+        switch (safe(chapter)) {
+            case FROSTBITE_CAVES: return ICEAGE_ANIMS.clone();
+            case DARK_AGES:       return DARK_ANIMS.clone();
+            case BIG_WAVE_BEACH:  return BEACH_ANIMS.clone();
+            default:              return EGYPT_ANIMS.clone();
+        }
+    }
+
+    public static String animOf(ChapterType chapter, String imageId) {
+        if (imageId == null) {
+            return null;
+        }
+        java.util.regex.Matcher found = ANIM_ID.matcher(imageId);
+        if (!found.matches()) {
+            return null;
+        }
+        String path = resolve("768/FULL/WORLDMAP/" + found.group(1) + "/ANIM"
+                + found.group(2) + "/ANIM" + found.group(2) + ".PAM");
+        return exists(path) ? path : null;
+    }
+
+    public static String animPath(ChapterType chapter, int number) {
+        String world = ChapterArt.world(safe(chapter));
+        return resolve("768/FULL/WORLDMAP/" + world + "/ANIM" + number
+                + "/ANIM" + number + ".PAM");
     }
 
     public static String bossSkull(ChapterType chapter, boolean unlocked) {
@@ -83,24 +252,23 @@ public final class WorldMapArt {
     }
 
     public static String dangerNode(ChapterType chapter) {
-        return rig(WORLDMAP, "DANGER_NODE_" + ChapterArt.world(chapter));
+        return rig(WORLDMAP, "DANGER_NODE_" + ChapterArt.world(safe(chapter)));
     }
 
     public static String zombossNode(ChapterType chapter) {
-        return rig(WORLDMAP, "ZOMBOSS_NODE_" + ChapterArt.world(chapter));
+        return rig(WORLDMAP, "ZOMBOSS_NODE_" + ChapterArt.world(safe(chapter)));
     }
 
     public static String pinata(ChapterType chapter) {
-        return rig("768/INITIAL/EFFECTS/", "PRIZE_PINATA_"
-                + ChapterArt.world(chapter == null ? ChapterType.ANCIENT_EGYPT : chapter));
+        return rig("768/INITIAL/EFFECTS/", "PRIZE_PINATA_" + ChapterArt.world(safe(chapter)));
     }
 
     public static String island(ChapterType chapter, int number) {
-        return "IMAGE_WORLDMAP_" + ChapterArt.world(chapter) + "_ISLAND" + number;
+        return "IMAGE_WORLDMAP_" + ChapterArt.world(safe(chapter)) + "_ISLAND" + number;
     }
 
     public static String trophy(ChapterType chapter) {
-        return "IMAGE_ENDLEVEL_" + ChapterArt.world(chapter) + "_TROPHY";
+        return "IMAGE_ENDLEVEL_" + ChapterArt.world(safe(chapter)) + "_TROPHY";
     }
 
     public static boolean hasClip(Assets assets, String path, String clip) {
@@ -116,15 +284,18 @@ public final class WorldMapArt {
     }
 
     public static PamActor rigged(Assets assets, String path, String clip, String playing) {
-        String safe = firstClip(assets, path, clip);
-        PamActor actor = new PamActor(assets, path, safe);
-        Rectangle box = assets == null ? null : assets.player().bounds(path, safe);
+        if (!exists(path)) {
+            return new PamActor(assets, path, clip);
+        }
+        String safeClip = firstClip(assets, path, clip);
+        PamActor actor = new PamActor(assets, path, safeClip);
+        Rectangle box = assets == null ? null : assets.player().bounds(path, safeClip);
         if (box != null) {
             actor.setExtent(box.x, -(box.y + box.height), box.width, box.height);
         }
         actor.setFit(true);
         String wanted = firstClip(assets, path, playing);
-        if (wanted != null && !wanted.equals(safe)) {
+        if (wanted != null && !wanted.equals(safeClip)) {
             actor.play(wanted, true, null);
         }
         return actor;
@@ -142,6 +313,20 @@ public final class WorldMapArt {
     }
 
     private static String rig(String folder, String name) {
-        return folder + name + "/" + name + ".PAM";
+        return resolve(folder + name + "/" + name + ".PAM");
+    }
+
+    private static String resolve(String path) {
+        if (exists(path)) {
+            return path;
+        }
+        String swapped = path.contains("/INITIAL/")
+                ? path.replace("/INITIAL/", "/FULL/") : path.replace("/FULL/", "/INITIAL/");
+        return exists(swapped) ? swapped : path;
+    }
+
+    private static boolean exists(String path) {
+        return com.badlogic.gdx.Gdx.files != null
+                && com.badlogic.gdx.Gdx.files.local(PAM_ROOT + path).exists();
     }
 }

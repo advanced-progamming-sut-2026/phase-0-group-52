@@ -10,6 +10,17 @@ import model.enums.MenuType;
 
 public class App {
 
+    private Game suspendedGame;
+
+    public Game getSuspendedGame() {
+        return suspendedGame;
+    }
+
+    public void setSuspendedGame(Game value) {
+        this.suspendedGame = value;
+    }
+
+
     private static App instance;
     private Game game;
     private User currentuser;
