@@ -23,6 +23,9 @@ import com.badlogic.gdx.utils.Scaling;
 import pvz.skin.PvzSkin;
 
 public final class UiKit implements Disposable {
+
+    private static final int CURSOR_HOTSPOT_X = 30;
+    private static final int CURSOR_HOTSPOT_Y = 30;
     private final Assets assets;
     private final Primitives primitives = new Primitives();
     private final Skin skin = new Skin();
@@ -340,6 +343,8 @@ public final class UiKit implements Disposable {
         skin.add("secondary", artButton("brown", Theme.PANEL_SUNKEN, Theme.OUTLINE));
         skin.add("danger", artButton("purple", Theme.RED, Theme.darken(Theme.RED, 0.3f)));
         skin.add("info", blueButton());
+        skin.add("epic", artButton("purple", Theme.PORTAL_FOG,
+                Theme.darken(Theme.PORTAL_FOG, 0.35f)));
 
         TextButton.TextButtonStyle tab = textButton(Theme.PANEL_SUNKEN, Theme.OUTLINE_SOFT, Theme.TEXT_MUTED);
         tab.checked = primitives.rounded(Theme.RADIUS, Theme.PANEL, Theme.OUTLINE, Theme.BORDER);
@@ -598,12 +603,74 @@ public final class UiKit implements Disposable {
 
     public static void onClick(Actor actor, final Runnable action) {
         actor.setTouchable(Touchable.enabled);
+        actor.addListener(new com.badlogic.gdx.scenes.scene2d.InputListener() {
+            @Override
+            public void enter(com.badlogic.gdx.scenes.scene2d.InputEvent event,
+                    float x, float y, int pointer, Actor from) {
+                if (pointer == -1) {
+                    useLinkCursor(true);
+                }
+            }
+
+            @Override
+            public void exit(com.badlogic.gdx.scenes.scene2d.InputEvent event,
+                    float x, float y, int pointer, Actor to) {
+                if (pointer == -1) {
+                    useLinkCursor(false);
+                }
+            }
+        });
         actor.addListener(new ClickListener() {
             @Override
             public void clicked(com.badlogic.gdx.scenes.scene2d.InputEvent event, float x, float y) {
                 action.run();
             }
         });
+    }
+
+    public static void useLinkCursor(boolean over) {
+        install(over ? "ui/cursor-link.png" : "ui/cursor.png");
+    }
+
+    public static void useGameCursor() {
+        if (com.badlogic.gdx.Gdx.graphics == null || com.badlogic.gdx.Gdx.files == null) {
+            return;
+        }
+        install("ui/cursor.png");
+    }
+
+    private static final java.util.Map<String, com.badlogic.gdx.graphics.Cursor> CURSORS =
+            new java.util.HashMap<String, com.badlogic.gdx.graphics.Cursor>();
+
+    private static void install(String path) {
+        if (com.badlogic.gdx.Gdx.graphics == null || com.badlogic.gdx.Gdx.files == null) {
+            return;
+        }
+        com.badlogic.gdx.graphics.Cursor cached = CURSORS.get(path);
+        if (cached != null) {
+            com.badlogic.gdx.Gdx.graphics.setCursor(cached);
+            return;
+        }
+        com.badlogic.gdx.files.FileHandle handle =
+                com.badlogic.gdx.Gdx.files.internal(path);
+        if (!handle.exists()) {
+            handle = com.badlogic.gdx.Gdx.files.local("assets/" + path);
+        }
+        if (!handle.exists()) {
+            util.Log.debug("gui", "No " + path + "; keeping the system pointer");
+            return;
+        }
+        try {
+            com.badlogic.gdx.graphics.Pixmap art =
+                    new com.badlogic.gdx.graphics.Pixmap(handle);
+            com.badlogic.gdx.graphics.Cursor made = com.badlogic.gdx.Gdx.graphics.newCursor(
+                    art, CURSOR_HOTSPOT_X, CURSOR_HOTSPOT_Y);
+            art.dispose();
+            CURSORS.put(path, made);
+            com.badlogic.gdx.Gdx.graphics.setCursor(made);
+        } catch (RuntimeException e) {
+            util.Log.warn("gui", "Could not set the cursor: " + e.getMessage());
+        }
     }
 
     public Drawable drawable(String name) {

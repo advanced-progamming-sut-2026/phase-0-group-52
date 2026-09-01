@@ -201,6 +201,41 @@ public final class Primitives implements Disposable {
         return texture;
     }
 
+    public static final int WEDGE_STEPS = 90;
+    private static final int WEDGE_TEXTURE = 72;
+
+    public Texture wedge(int ignored, int step, Color fill) {
+        int size = WEDGE_TEXTURE;
+        String key = "wedge:" + step + ":" + fill;
+        Texture cached = cache.get(key);
+        if (cached != null) {
+            return cached;
+        }
+        Pixmap pixmap = new Pixmap(size, size, Pixmap.Format.RGBA8888);
+        pixmap.setBlending(Pixmap.Blending.None);
+        pixmap.setColor(0f, 0f, 0f, 0f);
+        pixmap.fill();
+        pixmap.setColor(fill);
+        float swept = (float) (Math.PI * 2f * step / (float) WEDGE_STEPS);
+        float centre = (size - 1) / 2f;
+        for (int y = 0; y < size; y++) {
+            for (int x = 0; x < size; x++) {
+                float dx = x - centre;
+                float dy = centre - y;
+                float angle = (float) Math.atan2(dx, dy);
+                if (angle < 0f) {
+                    angle += (float) (Math.PI * 2f);
+                }
+                if (angle >= (float) (Math.PI * 2f) - swept) {
+                    pixmap.drawPixel(x, y);
+                }
+            }
+        }
+        Texture texture = upload(pixmap);
+        cache.put(key, texture);
+        return texture;
+    }
+
     public Texture radialGlow(int size, Color core) {
         String key = "glow:" + size + ":" + core;
         Texture cached = cache.get(key);

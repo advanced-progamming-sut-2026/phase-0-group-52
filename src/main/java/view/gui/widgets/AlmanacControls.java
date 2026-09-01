@@ -47,6 +47,51 @@ public final class AlmanacControls {
         return out.toString();
     }
 
+    public static Color levelFace(int level) {
+        switch (Math.max(1, level)) {
+            case 2:  return Theme.SUN;
+            case 3:  return Theme.plantFamily("EXPLOSIVE");
+            case 4:  return Theme.plantFamily("MAGIC");
+            default: return Theme.GREEN;
+        }
+    }
+
+    public Table nameHeader(String name, Label state, Color face, float height) {
+        Table header = new Table();
+        header.setBackground(ui.primitives().rounded(Theme.RADIUS, face,
+                Theme.darken(face, 0.45f), 4));
+        header.center();
+
+        Table gloss = new Table();
+        gloss.setBackground(ui.primitives().rounded(Theme.RADIUS,
+                Theme.alpha(Color.WHITE, 0.16f), null, 0));
+
+        Table text = new Table();
+        text.center();
+        Label title = new Label(name, ui.skin(), "titleOnDark");
+        title.setEllipsis(true);
+        title.setAlignment(com.badlogic.gdx.utils.Align.center);
+        float titleHeight = state == null ? height * 0.8f : height * 0.56f;
+        text.add(title).growX().minWidth(0f).height(titleHeight).center()
+                .padLeft(Theme.PAD).padRight(Theme.PAD).row();
+        if (state != null) {
+            state.setAlignment(com.badlogic.gdx.utils.Align.center);
+            text.add(state).center().height(height * 0.34f).padTop(-3f).padBottom(2f);
+        }
+
+        com.badlogic.gdx.scenes.scene2d.ui.Stack stack =
+                new com.badlogic.gdx.scenes.scene2d.ui.Stack();
+        Table glossHolder = new Table();
+        glossHolder.top();
+        glossHolder.add(gloss).growX().height(height * 0.42f).padTop(3f)
+                .padLeft(5f).padRight(5f);
+        stack.add(glossHolder);
+        stack.add(text);
+
+        header.add(stack).grow();
+        return header;
+    }
+
     public void hoverTint(Table cell, final Actor target) {
         cell.addListener(new InputListener() {
             @Override

@@ -24,12 +24,27 @@ import java.util.Arrays;
 
 public final class LevelBuilder {
 
+    public static final int SPAWN_COLUMN = GameField.COLS + 2;
+
+    private static int difficultyOf(App app) {
+        if (app == null || app.getCurrentuser() == null) {
+            return model.level.WavePlan.NORMAL_DIFFICULTY;
+        }
+        return app.getCurrentuser().getDifficultyLevel();
+    }
+
+    private static model.level.SpecialLevel specialOf(App app) {
+        return app == null ? null : model.level.SpecialLevel.byKey(app.getPendingSpecial());
+    }
+
+
     private LevelBuilder() {}
 
     public static Game build(App app, ChapterType chapter, int levelNumber) {
         GameField field = new GameField(chapter);
         applyTerrain(field, chapter);
-        Game game = new Game(app, null, null, field, 50, new ArrayList<Plant>(), buildWaves(chapter, levelNumber));
+        Game game = new Game(app, null, null, field, 50, new ArrayList<Plant>(), buildWaves(chapter, levelNumber,
+                        difficultyOf(app), specialOf(app)));
         if (app != null) game.getChosenPlants().addAll(app.getPlantSelection());
         return game;
     }
@@ -42,7 +57,8 @@ public final class LevelBuilder {
         GameField field = new GameField(chapter);
         applyTerrain(field, chapter);
         int startSun = 150;
-        Game game = new Game(app, null, null, field, startSun, new ArrayList<Plant>(), buildWaves(chapter,levelNumber));
+        Game game = new Game(app, null, null, field, startSun, new ArrayList<Plant>(), buildWaves(chapter, levelNumber,
+                        difficultyOf(app), specialOf(app)));
         if (app != null) game.getChosenPlants().addAll(app.getPlantSelection());
         ArrayList<Plants> pool = new ArrayList<Plants>(Arrays.asList(
                 Plants.PEASHOOTER, Plants.SUNFLOWER, Plants.WALL_NUT, Plants.SNOW_PEA, Plants.CHERRY_BOMB));
@@ -115,19 +131,38 @@ public final class LevelBuilder {
         }
     }
 
-    private static ArrayList<Wave> buildWaves(ChapterType chapter, int levelNumber) {
-        ArrayList<Wave> waves = new ArrayList<Wave>();
-        int waveCount = 3 + levelNumber;
+    public static java.util.List<Zombies> firstWave(ChapterType chapter, int levelNumber) {
+        java.util.List<Zombies> preview = new ArrayList<Zombies>();
         Zombies[] pool = (levelNumber <= 1)
                 ? new Zombies[]{ Zombies.ZOMBIE_DEFAULT }
                 : poolFor(chapter);
-        for (int w = 0; w < waveCount; w++) {
+        java.util.Random pick = new java.util.Random(
+                (chapter == null ? 0 : chapter.ordinal()) * 131L + levelNumber);
+        int count = 1 + levelNumber / 2;
+        for (int i = 0; i < count; i++) {
+            preview.add(pool[pick.nextInt(pool.length)]);
+        }
+        return preview;
+    }
+
+    private static ArrayList<Wave> buildWaves(ChapterType chapter, int levelNumber) {
+        return buildWaves(chapter, levelNumber, model.level.WavePlan.NORMAL_DIFFICULTY, null);
+    }
+
+    private static ArrayList<Wave> buildWaves(ChapterType chapter, int levelNumber,
+            int difficulty, model.level.SpecialLevel special) {
+        ArrayList<Wave> waves = new ArrayList<Wave>();
+        int count = model.level.WavePlan.waveCount(levelNumber);
+        java.util.List<Zombies> roster = model.level.WavePlan.restrict(
+                model.level.WavePlan.roster(chapter, levelNumber), special);
+        java.util.Random random = new java.util.Random(
+                (chapter == null ? 0 : chapter.ordinal()) * 977L + levelNumber * 31L + difficulty);
+        for (int w = 0; w < count; w++) {
+            double budget = model.level.WavePlan.budget(levelNumber, difficulty, w, count);
             ArrayList<Zombie> zs = new ArrayList<Zombie>();
-            int n = 1 + (w / 2) + levelNumber / 2;
-            for (int i = 0; i < n; i++) {
-                Zombies data = pool[PlantCombat.RANDOM.nextInt(pool.length)];
-                int row = PlantCombat.RANDOM.nextInt(GameField.ROWS);
-                zs.add(ZombieFactory.create(data, row, GameField.COLS, chapter));
+            for (Zombies type : model.level.WavePlan.compose(roster, budget, random)) {
+                int row = random.nextInt(GameField.ROWS);
+                zs.add(ZombieFactory.create(type, row, SPAWN_COLUMN, chapter));
             }
             waves.add(new Wave(zs, w + 1, 0));
         }

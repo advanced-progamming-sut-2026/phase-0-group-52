@@ -153,6 +153,16 @@ public final class AlmanacFilterPopup extends Popup {
             };
         }
 
+        private static int progression(PlantRecord ra, PlantRecord rb) {
+            int cmp = Integer.compare(PlantData.progressionRank(ra),
+                    PlantData.progressionRank(rb));
+            if (cmp != 0) {
+                return cmp;
+            }
+            cmp = Integer.compare(ra.getChapterOrder(), rb.getChapterOrder());
+            return cmp != 0 ? cmp : Integer.compare(ra.getId(), rb.getId());
+        }
+
         private int compareBy(SortKey key, Plants a, Plants b) {
             PlantRecord ra = PlantData.record(a);
             PlantRecord rb = PlantData.record(b);
@@ -160,7 +170,7 @@ public final class AlmanacFilterPopup extends Popup {
                 case ALPHABETICAL:
                     return a.getName().compareToIgnoreCase(b.getName());
                 case PROGRESSION:
-                    return Integer.compare(ra.getId(), rb.getId());
+                    return progression(ra, rb);
                 case LEVEL:
                     return Integer.compare(ra.getChapterOrder(), rb.getChapterOrder());
                 case CATEGORY:

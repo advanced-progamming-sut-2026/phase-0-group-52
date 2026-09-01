@@ -58,6 +58,8 @@ final class ScreenTour {
     private void captureExtras() {
         finished = true;
         captureCheatBar();
+        captureLevelIntro();
+        captureLevel();
         captureWorldMap();
         captureBackNavigation();
         captureOverlays();
@@ -118,6 +120,53 @@ final class ScreenTour {
         nav.back();
         pump(8);
         Screenshots.capture("screenshots/tour-26-back-restores-popup.png");
+    }
+
+    private void captureLevelIntro() {
+        game.navigator().goMenu(MenuType.CHOOSE_PLANT_MENU);
+        pump(6);
+        com.badlogic.gdx.Screen screen = game.getScreen();
+        if (!(screen instanceof view.gui.screens.ChoosePlantScreen)) {
+            return;
+        }
+        view.gui.screens.ChoosePlantScreen picker =
+                (view.gui.screens.ChoosePlantScreen) screen;
+        picker.show();
+        picker.poseIntro(1f);
+        pump(2);
+        Screenshots.capture("screenshots/tour-33-level-intro.png");
+        picker.poseReady();
+        pump(2);
+        Screenshots.capture("screenshots/tour-34-choose-plants.png");
+    }
+
+    private void captureLevel() {
+        model.App app = game.context().app();
+        app.setSelectedChapter(model.ChapterType.ANCIENT_EGYPT);
+        app.setSelectedLevel(1);
+        app.getPlantSelection().clear();
+        app.getPlantSelection().add(model.entities.plants.Plants.PEASHOOTER);
+        app.getPlantSelection().add(model.entities.plants.Plants.SUNFLOWER);
+        app.getPlantSelection().add(model.entities.plants.Plants.WALL_NUT);
+        if (!new controller.menu.LevelController(app).start().isSuccess()) {
+            return;
+        }
+        game.render();
+        com.badlogic.gdx.Screen screen = game.getScreen();
+        if (!(screen instanceof view.gui.screens.LevelScreen)) {
+            return;
+        }
+        view.gui.screens.LevelScreen level = (view.gui.screens.LevelScreen) screen;
+        controller.menu.LevelController runner = new controller.menu.LevelController(app);
+        app.getGame().setSunAmount(500);
+        runner.plant(model.entities.plants.Plants.SUNFLOWER, 0, 0);
+        runner.plant(model.entities.plants.Plants.PEASHOOTER, 4, 2);
+        runner.plant(model.entities.plants.Plants.WALL_NUT, 8, 4);
+        level.arm(model.entities.plants.Plants.PEASHOOTER);
+        level.setGrid(true);
+        pump(20);
+        Screenshots.capture("screenshots/tour-35-level.png");
+        app.setGame(null);
     }
 
     private void captureWorldMap() {

@@ -30,6 +30,62 @@
      "ay": 1,
      "aw": 1024,
      "ah": 768
+    },
+    {
+     "type": "Image",
+     "slot": 12424,
+     "id": "IMAGE_BACKGROUNDS_BEACH_BOARDWALK",
+     "path": "images\\768\\full\\backgrounds\\Beach_boardwalk",
+     "parent": "ATLASIMAGE_ATLAS_DELAYLOAD_BACKGROUND_BEACH_COMPRESSED_768_00",
+     "ax": 1,
+     "ay": 1075,
+     "aw": 1747,
+     "ah": 251
+    },
+    {
+     "type": "Image",
+     "slot": 12425,
+     "id": "IMAGE_BACKGROUNDS_BEACH_ROCKS",
+     "path": "images\\768\\full\\backgrounds\\Beach_rocks",
+     "parent": "ATLASIMAGE_ATLAS_DELAYLOAD_BACKGROUND_BEACH_COMPRESSED_768_00",
+     "ax": 1,
+     "ay": 771,
+     "aw": 1499,
+     "ah": 302
+    },
+    {
+     "type": "Image",
+     "slot": 12427,
+     "id": "IMAGE_BACKGROUNDS_BEACH_TEXTURE_LEFT",
+     "path": "images\\768\\full\\backgrounds\\beach\\texture_left",
+     "parent": "ATLASIMAGE_ATLAS_DELAYLOAD_BACKGROUND_BEACH_COMPRESSED_768_00",
+     "ax": 1702,
+     "ay": 1,
+     "aw": 278,
+     "ah": 768
+    },
+    {
+     "type": "Image",
+     "slot": 12428,
+     "id": "IMAGE_BACKGROUNDS_BEACH_TEXTURE_RIGHT",
+     "path": "images\\768\\full\\backgrounds\\beach\\texture_right",
+     "x": 2604,
+     "parent": "ATLASIMAGE_ATLAS_DELAYLOAD_BACKGROUND_BEACH_COMPRESSED_768_00",
+     "ax": 1027,
+     "ay": 1,
+     "aw": 673,
+     "ah": 768
+    },
+    {
+     "type": "Image",
+     "slot": 12429,
+     "id": "IMAGE_BACKGROUNDS_BEACH_WATERSIGN",
+     "path": "images\\768\\full\\backgrounds\\beach_watersign",
+     "parent": "ATLASIMAGE_ATLAS_DELAYLOAD_BACKGROUND_BEACH_COMPRESSED_768_00",
+     "ax": 1684,
+     "ay": 771,
+     "aw": 146,
+     "ah": 263
     }
    ]
   },
@@ -59,6 +115,29 @@
      "ax": 0,
      "ay": 1,
      "aw": 1024,
+     "ah": 768
+    },
+    {
+     "type": "Image",
+     "slot": 12319,
+     "id": "IMAGE_BACKGROUNDS_DARK_TEXTURE_LEFT",
+     "path": "images\\768\\full\\backgrounds\\dark\\texture_left",
+     "parent": "ATLASIMAGE_ATLAS_DELAYLOAD_BACKGROUND_DARK_COMPRESSED_768_00",
+     "ax": 676,
+     "ay": 771,
+     "aw": 278,
+     "ah": 768
+    },
+    {
+     "type": "Image",
+     "slot": 12320,
+     "id": "IMAGE_BACKGROUNDS_DARK_TEXTURE_RIGHT",
+     "path": "images\\768\\full\\backgrounds\\dark\\texture_right",
+     "x": 2604,
+     "parent": "ATLASIMAGE_ATLAS_DELAYLOAD_BACKGROUND_DARK_COMPRESSED_768_00",
+     "ax": 1,
+     "ay": 771,
+     "aw": 673,
      "ah": 768
     }
    ]
@@ -120,6 +199,29 @@
      "ay": 1,
      "aw": 1024,
      "ah": 768
+    },
+    {
+     "type": "Image",
+     "slot": 11910,
+     "id": "IMAGE_BACKGROUNDS_EGYPT_TEXTURE_LEFT",
+     "path": "images\\768\\initial\\backgrounds\\egypt\\texture_left",
+     "parent": "ATLASIMAGE_ATLAS_DELAYLOAD_BACKGROUND_EGYPT_COMPRESSED_768_00",
+     "ax": 676,
+     "ay": 771,
+     "aw": 278,
+     "ah": 768
+    },
+    {
+     "type": "Image",
+     "slot": 11911,
+     "id": "IMAGE_BACKGROUNDS_EGYPT_TEXTURE_RIGHT",
+     "path": "images\\768\\initial\\backgrounds\\egypt\\texture_right",
+     "x": 2604,
+     "parent": "ATLASIMAGE_ATLAS_DELAYLOAD_BACKGROUND_EGYPT_COMPRESSED_768_00",
+     "ax": 1,
+     "ay": 771,
+     "aw": 673,
+     "ah": 768
     }
    ]
   },
@@ -180,6 +282,29 @@
      "ay": 1,
      "aw": 1022,
      "ah": 785
+    },
+    {
+     "type": "Image",
+     "slot": 12548,
+     "id": "IMAGE_BACKGROUNDS_ICEAGE_TEXTURE_LEFT",
+     "path": "images\\768\\full\\backgrounds\\iceage\\texture_left",
+     "parent": "ATLASIMAGE_ATLAS_DELAYLOAD_BACKGROUND_ICEAGE_COMPRESSED_768_00",
+     "ax": 676,
+     "ay": 788,
+     "aw": 281,
+     "ah": 768
+    },
+    {
+     "type": "Image",
+     "slot": 12549,
+     "id": "IMAGE_BACKGROUNDS_ICEAGE_TEXTURE_RIGHT",
+     "path": "images\\768\\full\\backgrounds\\iceage\\texture_right",
+     "x": 2604,
+     "parent": "ATLASIMAGE_ATLAS_DELAYLOAD_BACKGROUND_ICEAGE_COMPRESSED_768_00",
+     "ax": 1,
+     "ay": 788,
+     "aw": 673,
+     "ah": 768
     }
    ]
   },
@@ -35212,6 +35337,259 @@
      "ay": 1326,
      "aw": 45,
      "ah": 33
+    },
+    {
+     "type": "Image",
+     "slot": 47268,
+     "id": "IMAGE_UI_HUD_INGAME_BACKGROUND_3SLICE",
+     "path": "images\\768\\initial\\UI\\hud_ingame\\background_3slice",
+     "parent": "ATLASIMAGE_ATLAS_UI_ALWAYSLOADED_768_01",
+     "ax": 1955,
+     "ay": 1284,
+     "aw": 84,
+     "ah": 42
+    },
+    {
+     "type": "Image",
+     "slot": 47281,
+     "id": "IMAGE_UI_HUD_INGAME_COIN",
+     "path": "images\\768\\initial\\UI\\hud_ingame\\coin",
+     "parent": "ATLASIMAGE_ATLAS_UI_ALWAYSLOADED_768_01",
+     "ax": 1892,
+     "ay": 1284,
+     "aw": 61,
+     "ah": 59
+    },
+    {
+     "type": "Image",
+     "slot": 47282,
+     "id": "IMAGE_UI_HUD_INGAME_COIN_BG",
+     "path": "images\\768\\initial\\UI\\hud_ingame\\coin_bg",
+     "parent": "ATLASIMAGE_ATLAS_UI_ALWAYSLOADED_768_01",
+     "ax": 1,
+     "ay": 1250,
+     "aw": 64,
+     "ah": 64
+    },
+    {
+     "type": "Image",
+     "slot": 47283,
+     "id": "IMAGE_UI_HUD_INGAME_COIN_BUY",
+     "path": "images\\768\\initial\\UI\\hud_ingame\\coin_buy",
+     "parent": "ATLASIMAGE_ATLAS_UI_ALWAYSLOADED_768_01",
+     "ax": 1564,
+     "ay": 1296,
+     "aw": 57,
+     "ah": 57
+    },
+    {
+     "type": "Image",
+     "slot": 47284,
+     "id": "IMAGE_UI_HUD_INGAME_COIN_BUY_DOWN",
+     "path": "images\\768\\initial\\UI\\hud_ingame\\coin_buy_down",
+     "parent": "ATLASIMAGE_ATLAS_UI_ALWAYSLOADED_768_01",
+     "ax": 1623,
+     "ay": 1296,
+     "aw": 57,
+     "ah": 57
+    },
+    {
+     "type": "Image",
+     "slot": 47286,
+     "id": "IMAGE_UI_HUD_INGAME_GEM",
+     "path": "images\\768\\initial\\UI\\hud_ingame\\gem",
+     "parent": "ATLASIMAGE_ATLAS_UI_ALWAYSLOADED_768_01",
+     "ax": 211,
+     "ay": 1261,
+     "aw": 73,
+     "ah": 56
+    },
+    {
+     "type": "Image",
+     "slot": 47289,
+     "id": "IMAGE_UI_HUD_INGAME_PAUSE_BUTTON",
+     "path": "images\\768\\initial\\UI\\hud_ingame\\pause_button",
+     "parent": "ATLASIMAGE_ATLAS_UI_ALWAYSLOADED_768_01",
+     "ax": 1784,
+     "ay": 1212,
+     "aw": 70,
+     "ah": 70
+    },
+    {
+     "type": "Image",
+     "slot": 47290,
+     "id": "IMAGE_UI_HUD_INGAME_PAUSE_BUTTON_DOWN",
+     "path": "images\\768\\initial\\UI\\hud_ingame\\pause_button_down",
+     "parent": "ATLASIMAGE_ATLAS_UI_ALWAYSLOADED_768_01",
+     "ax": 1856,
+     "ay": 1212,
+     "aw": 70,
+     "ah": 70
+    },
+    {
+     "type": "Image",
+     "slot": 47292,
+     "id": "IMAGE_UI_HUD_INGAME_PLANTFOOD_BANK",
+     "path": "images\\768\\initial\\UI\\hud_ingame\\plantfood_bank",
+     "parent": "ATLASIMAGE_ATLAS_UI_ALWAYSLOADED_768_00",
+     "ax": 944,
+     "ay": 1788,
+     "aw": 206,
+     "ah": 88
+    },
+    {
+     "type": "Image",
+     "slot": 47294,
+     "id": "IMAGE_UI_HUD_INGAME_PLANTFOOD_BANK_FILLED_SLOT",
+     "path": "images\\768\\initial\\UI\\hud_ingame\\plantfood_bank_filled_slot",
+     "parent": "ATLASIMAGE_ATLAS_UI_ALWAYSLOADED_768_01",
+     "ax": 1866,
+     "ay": 934,
+     "aw": 25,
+     "ah": 25
+    },
+    {
+     "type": "Image",
+     "slot": 47295,
+     "id": "IMAGE_UI_HUD_INGAME_PLANTFOOD_BANK_FILLING_SLOT",
+     "path": "images\\768\\initial\\UI\\hud_ingame\\plantfood_bank_filling_slot",
+     "parent": "ATLASIMAGE_ATLAS_UI_ALWAYSLOADED_768_01",
+     "ax": 235,
+     "ay": 963,
+     "aw": 30,
+     "ah": 30
+    },
+    {
+     "type": "Image",
+     "slot": 47296,
+     "id": "IMAGE_UI_HUD_INGAME_PLANTFOOD_BUTTON",
+     "path": "images\\768\\initial\\UI\\hud_ingame\\plantfood_button",
+     "parent": "ATLASIMAGE_ATLAS_UI_ALWAYSLOADED_768_00",
+     "ax": 1992,
+     "ay": 1887,
+     "aw": 53,
+     "ah": 56
+    },
+    {
+     "type": "Image",
+     "slot": 47297,
+     "id": "IMAGE_UI_HUD_INGAME_PLANTFOOD_BUTTON_DOWN",
+     "path": "images\\768\\initial\\UI\\hud_ingame\\plantfood_button_down",
+     "parent": "ATLASIMAGE_ATLAS_UI_ALWAYSLOADED_768_01",
+     "ax": 67,
+     "ay": 1264,
+     "aw": 61,
+     "ah": 64
+    },
+    {
+     "type": "Image",
+     "slot": 47307,
+     "id": "IMAGE_UI_HUD_INGAME_PROGRESS_METER",
+     "path": "images\\768\\initial\\UI\\hud_ingame\\progress_meter",
+     "parent": "ATLASIMAGE_ATLAS_UI_ALWAYSLOADED_768_01",
+     "ax": 1433,
+     "ay": 584,
+     "aw": 273,
+     "ah": 33
+    },
+    {
+     "type": "Image",
+     "slot": 47308,
+     "id": "IMAGE_UI_HUD_INGAME_PROGRESS_METER_FILL",
+     "path": "images\\768\\initial\\UI\\hud_ingame\\progress_meter_fill",
+     "parent": "ATLASIMAGE_ATLAS_UI_ALWAYSLOADED_768_01",
+     "ax": 1560,
+     "ay": 243,
+     "aw": 22,
+     "ah": 17
+    },
+    {
+     "type": "Image",
+     "slot": 47310,
+     "id": "IMAGE_UI_HUD_INGAME_PROGRESS_METER_FLAG_DEFAULT",
+     "path": "images\\768\\initial\\UI\\hud_ingame\\progress_meter_flag_default",
+     "parent": "ATLASIMAGE_ATLAS_UI_ALWAYSLOADED_768_00",
+     "ax": 1509,
+     "ay": 1999,
+     "aw": 27,
+     "ah": 22
+    },
+    {
+     "type": "Image",
+     "slot": 47311,
+     "id": "IMAGE_UI_HUD_INGAME_PROGRESS_METER_FLAG_POLE",
+     "path": "images\\768\\initial\\UI\\hud_ingame\\progress_meter_flag_pole",
+     "parent": "ATLASIMAGE_ATLAS_UI_ALWAYSLOADED_768_01",
+     "ax": 761,
+     "ay": 1346,
+     "aw": 29,
+     "ah": 38
+    },
+    {
+     "type": "Image",
+     "slot": 47312,
+     "id": "IMAGE_UI_HUD_INGAME_PROGRESS_METER_ZOMBIEHEAD",
+     "path": "images\\768\\initial\\UI\\hud_ingame\\progress_meter_zombiehead",
+     "parent": "ATLASIMAGE_ATLAS_UI_ALWAYSLOADED_768_01",
+     "ax": 1985,
+     "ay": 439,
+     "aw": 42,
+     "ah": 45
+    },
+    {
+     "type": "Image",
+     "slot": 47322,
+     "id": "IMAGE_UI_HUD_INGAME_SHOVEL_BUTTON",
+     "path": "images\\768\\initial\\UI\\hud_ingame\\shovel_button",
+     "parent": "ATLASIMAGE_ATLAS_UI_ALWAYSLOADED_768_01",
+     "ax": 1151,
+     "ay": 851,
+     "aw": 79,
+     "ah": 79
+    },
+    {
+     "type": "Image",
+     "slot": 47323,
+     "id": "IMAGE_UI_HUD_INGAME_SHOVEL_BUTTON_DOWN",
+     "path": "images\\768\\initial\\UI\\hud_ingame\\shovel_button_down",
+     "parent": "ATLASIMAGE_ATLAS_UI_ALWAYSLOADED_768_01",
+     "ax": 1733,
+     "ay": 853,
+     "aw": 79,
+     "ah": 79
+    },
+    {
+     "type": "Image",
+     "slot": 47324,
+     "id": "IMAGE_UI_HUD_INGAME_SHOVEL_ICON",
+     "path": "images\\768\\initial\\UI\\hud_ingame\\shovel_icon",
+     "parent": "ATLASIMAGE_ATLAS_UI_ALWAYSLOADED_768_00",
+     "ax": 804,
+     "ay": 1970,
+     "aw": 133,
+     "ah": 76
+    },
+    {
+     "type": "Image",
+     "slot": 47329,
+     "id": "IMAGE_UI_HUD_INGAME_SUN",
+     "path": "images\\768\\initial\\UI\\hud_ingame\\sun",
+     "parent": "ATLASIMAGE_ATLAS_UI_ALWAYSLOADED_768_01",
+     "ax": 1290,
+     "ay": 1166,
+     "aw": 70,
+     "ah": 71
+    },
+    {
+     "type": "Image",
+     "slot": 47330,
+     "id": "IMAGE_UI_HUD_INGAME_SUN_DOWN",
+     "path": "images\\768\\initial\\UI\\hud_ingame\\sun_down",
+     "parent": "ATLASIMAGE_ATLAS_UI_ALWAYSLOADED_768_01",
+     "ax": 1,
+     "ay": 1177,
+     "aw": 70,
+     "ah": 71
     }
    ]
   },
@@ -83847,6 +84225,1674 @@
      "ay": 390,
      "aw": 6,
      "ah": 6
+    }
+   ]
+  },
+  {
+   "type": "simple",
+   "id": "UI_PauseMenu_768",
+   "res": "768",
+   "parent": "UI_PauseMenu",
+   "resources": [
+    {
+     "type": "Image",
+     "slot": 7201,
+     "id": "ATLASIMAGE_ATLAS_UI_PAUSEMENU_768_00",
+     "path": "atlases\\UI_PauseMenu_768_00",
+     "atlas": true,
+     "runtime": true,
+     "width": 1024,
+     "height": 1024
+    },
+    {
+     "type": "Image",
+     "slot": 45525,
+     "id": "IMAGE_UI_PAUSEMENU_SUNFLOWER_TOPPER",
+     "path": "images\\768\\initial\\UI\\pausemenu\\sunflower_topper",
+     "parent": "ATLASIMAGE_ATLAS_UI_PAUSEMENU_768_00",
+     "ax": 872,
+     "ay": 1,
+     "aw": 124,
+     "ah": 103
+    },
+    {
+     "type": "Image",
+     "slot": 45526,
+     "id": "IMAGE_UI_PAUSEMENU_WINDOWTOPPER",
+     "path": "images\\768\\initial\\UI\\pausemenu\\windowtopper",
+     "parent": "ATLASIMAGE_ATLAS_UI_PAUSEMENU_768_00",
+     "ax": 1,
+     "ay": 351,
+     "aw": 551,
+     "ah": 108
+    },
+    {
+     "type": "Image",
+     "slot": 45527,
+     "id": "IMAGE_UI_PAUSEMENU_WINDOWTOPPER_BACK_HALF",
+     "path": "images\\768\\initial\\UI\\pausemenu\\windowtopper_back_half",
+     "parent": "ATLASIMAGE_ATLAS_UI_PAUSEMENU_768_00",
+     "ax": 726,
+     "ay": 229,
+     "aw": 155,
+     "ah": 71
+    }
+   ]
+  },
+  {
+   "type": "simple",
+   "id": "ZombieBigHeadEffectsGroup_768",
+   "res": "768",
+   "parent": "ZombieBigHeadEffectsGroup",
+   "resources": [
+    {
+     "type": "Image",
+     "slot": 7366,
+     "id": "ATLASIMAGE_ATLAS_ZOMBIEBIGHEADEFFECTSGROUP_768_00",
+     "path": "atlases\\ZombieBigHeadEffectsGroup_768_00",
+     "atlas": true,
+     "runtime": true,
+     "width": 1024,
+     "height": 1024
+    },
+    {
+     "type": "Image",
+     "slot": 44344,
+     "id": "IMAGE_EFFECTS_ZOMBIE_BIGHEAD_SHOCK_ZOMBIE_BIGHEAD_SHOCK_192X300",
+     "path": "images\\768\\full\\effects\\zombie_bighead_shock\\zombie_bighead_shock_192x300",
+     "parent": "ATLASIMAGE_ATLAS_ZOMBIEBIGHEADEFFECTSGROUP_768_00",
+     "ax": 687,
+     "ay": 389,
+     "aw": 123,
+     "ah": 192
+    },
+    {
+     "type": "Image",
+     "slot": 44345,
+     "id": "IMAGE_EFFECTS_ZOMBIE_BIGHEAD_SHOCK_ZOMBIE_BIGHEAD_SHOCK_1X1",
+     "path": "images\\768\\full\\effects\\zombie_bighead_shock\\zombie_bighead_shock_1x1",
+     "parent": "ATLASIMAGE_ATLAS_ZOMBIEBIGHEADEFFECTSGROUP_768_00",
+     "ax": 1022,
+     "ay": 142,
+     "aw": 1,
+     "ah": 1
+    },
+    {
+     "type": "Image",
+     "slot": 44346,
+     "id": "IMAGE_EFFECTS_ZOMBIE_BIGHEAD_SHOCK_ZOMBIE_BIGHEAD_SHOCK_209X317",
+     "path": "images\\768\\full\\effects\\zombie_bighead_shock\\zombie_bighead_shock_209x317",
+     "parent": "ATLASIMAGE_ATLAS_ZOMBIEBIGHEADEFFECTSGROUP_768_00",
+     "ax": 1,
+     "ay": 296,
+     "aw": 134,
+     "ah": 203
+    },
+    {
+     "type": "Image",
+     "slot": 44347,
+     "id": "IMAGE_EFFECTS_ZOMBIE_BIGHEAD_SHOCK_ZOMBIE_BIGHEAD_SHOCK_6X10",
+     "path": "images\\768\\full\\effects\\zombie_bighead_shock\\zombie_bighead_shock_6x10",
+     "parent": "ATLASIMAGE_ATLAS_ZOMBIEBIGHEADEFFECTSGROUP_768_00",
+     "ax": 1010,
+     "ay": 193,
+     "aw": 4,
+     "ah": 7
+    }
+   ]
+  },
+  {
+   "type": "simple",
+   "id": "LevelCommon_768",
+   "res": "768",
+   "parent": "LevelCommon",
+   "resources": [
+    {
+     "type": "Image",
+     "slot": 6442,
+     "id": "ATLASIMAGE_ATLAS_LEVELCOMMON_768_00",
+     "path": "atlases\\LevelCommon_768_00",
+     "atlas": true,
+     "runtime": true,
+     "width": 1024,
+     "height": 2048
+    },
+    {
+     "type": "Image",
+     "slot": 11456,
+     "id": "IMAGE_EFFECTS_SUN_SUN_110X110",
+     "path": "images\\768\\initial\\effects\\sun\\sun_110x110",
+     "parent": "ATLASIMAGE_ATLAS_LEVELCOMMON_768_00",
+     "ax": 212,
+     "ay": 1626,
+     "aw": 71,
+     "ah": 71
+    },
+    {
+     "type": "Image",
+     "slot": 11457,
+     "id": "IMAGE_EFFECTS_SUN_SUN_110X110_2",
+     "path": "images\\768\\initial\\effects\\sun\\sun_110x110_2",
+     "parent": "ATLASIMAGE_ATLAS_LEVELCOMMON_768_00",
+     "ax": 363,
+     "ay": 1643,
+     "aw": 71,
+     "ah": 71
+    },
+    {
+     "type": "Image",
+     "slot": 11458,
+     "id": "IMAGE_EFFECTS_SUN_SUN_166X166",
+     "path": "images\\768\\initial\\effects\\sun\\sun_166x166",
+     "parent": "ATLASIMAGE_ATLAS_LEVELCOMMON_768_00",
+     "ax": 917,
+     "ay": 1342,
+     "aw": 106,
+     "ah": 106
+    },
+    {
+     "type": "Image",
+     "slot": 11459,
+     "id": "IMAGE_EFFECTS_SUN_SUN_1X1",
+     "path": "images\\768\\initial\\effects\\sun\\sun_1x1",
+     "parent": "ATLASIMAGE_ATLAS_LEVELCOMMON_768_00",
+     "ax": 1022,
+     "ay": 49,
+     "aw": 1,
+     "ah": 1
+    },
+    {
+     "type": "Image",
+     "slot": 11460,
+     "id": "IMAGE_EFFECTS_SUN_SUN_1X1_2",
+     "path": "images\\768\\initial\\effects\\sun\\sun_1x1_2",
+     "parent": "ATLASIMAGE_ATLAS_LEVELCOMMON_768_00",
+     "ax": 1022,
+     "ay": 52,
+     "aw": 1,
+     "ah": 1
+    },
+    {
+     "type": "Image",
+     "slot": 11461,
+     "id": "IMAGE_EFFECTS_SUN_SUN_203X203",
+     "path": "images\\768\\initial\\effects\\sun\\sun_203x203",
+     "parent": "ATLASIMAGE_ATLAS_LEVELCOMMON_768_00",
+     "ax": 564,
+     "ay": 444,
+     "aw": 130,
+     "ah": 130
+    },
+    {
+     "type": "Image",
+     "slot": 11462,
+     "id": "IMAGE_EFFECTS_SUN_SUN_203X203_2",
+     "path": "images\\768\\initial\\effects\\sun\\sun_203x203_2",
+     "parent": "ATLASIMAGE_ATLAS_LEVELCOMMON_768_00",
+     "ax": 696,
+     "ay": 444,
+     "aw": 130,
+     "ah": 130
+    },
+    {
+     "type": "Image",
+     "slot": 11463,
+     "id": "IMAGE_EFFECTS_SUN_SUN_203X203_3",
+     "path": "images\\768\\initial\\effects\\sun\\sun_203x203_3",
+     "parent": "ATLASIMAGE_ATLAS_LEVELCOMMON_768_00",
+     "ax": 828,
+     "ay": 444,
+     "aw": 130,
+     "ah": 130
+    },
+    {
+     "type": "Image",
+     "slot": 11464,
+     "id": "IMAGE_EFFECTS_SUN_SUN_78X78",
+     "path": "images\\768\\initial\\effects\\sun\\sun_78x78",
+     "parent": "ATLASIMAGE_ATLAS_LEVELCOMMON_768_00",
+     "ax": 843,
+     "ay": 1910,
+     "aw": 50,
+     "ah": 50
+    },
+    {
+     "type": "Image",
+     "slot": 11541,
+     "id": "IMAGE_EFFECTS_MOWER_SPAWN_MOWER_SPAWN_1X1",
+     "path": "images\\768\\initial\\effects\\mower_spawn\\mower_spawn_1x1",
+     "parent": "ATLASIMAGE_ATLAS_LEVELCOMMON_768_00",
+     "ax": 1022,
+     "ay": 31,
+     "aw": 1,
+     "ah": 1
+    },
+    {
+     "type": "Image",
+     "slot": 11542,
+     "id": "IMAGE_EFFECTS_MOWER_SPAWN_MOWER_SPAWN_293X263",
+     "path": "images\\768\\initial\\effects\\mower_spawn\\mower_spawn_293x263",
+     "parent": "ATLASIMAGE_ATLAS_LEVELCOMMON_768_00",
+     "ax": 361,
+     "ay": 1,
+     "aw": 188,
+     "ah": 169
+    },
+    {
+     "type": "Image",
+     "slot": 11543,
+     "id": "IMAGE_EFFECTS_MOWER_SPAWN_MOWER_SPAWN_61X134",
+     "path": "images\\768\\initial\\effects\\mower_spawn\\mower_spawn_61x134",
+     "parent": "ATLASIMAGE_ATLAS_LEVELCOMMON_768_00",
+     "ax": 111,
+     "ay": 1767,
+     "aw": 39,
+     "ah": 86
+    },
+    {
+     "type": "Image",
+     "slot": 11544,
+     "id": "IMAGE_EFFECTS_MOWER_SPAWN_MOWER_SPAWN_65X50",
+     "path": "images\\768\\initial\\effects\\mower_spawn\\mower_spawn_65x50",
+     "parent": "ATLASIMAGE_ATLAS_LEVELCOMMON_768_00",
+     "ax": 969,
+     "ay": 409,
+     "aw": 42,
+     "ah": 32
+    },
+    {
+     "type": "Image",
+     "slot": 11545,
+     "id": "IMAGE_EFFECTS_MOWER_SPAWN_MOWER_SPAWN_85X81",
+     "path": "images\\768\\initial\\effects\\mower_spawn\\mower_spawn_85x81",
+     "parent": "ATLASIMAGE_ATLAS_LEVELCOMMON_768_00",
+     "ax": 845,
+     "ay": 1856,
+     "aw": 55,
+     "ah": 52
+    }
+   ]
+  },
+  {
+   "type": "simple",
+   "id": "PowerupTutorial_768",
+   "res": "768",
+   "parent": "PowerupTutorial",
+   "resources": [
+    {
+     "type": "Image",
+     "slot": 6961,
+     "id": "ATLASIMAGE_ATLAS_POWERUPTUTORIAL_768_00",
+     "path": "atlases\\PowerupTutorial_768_00",
+     "atlas": true,
+     "runtime": true,
+     "width": 256,
+     "height": 512
+    },
+    {
+     "type": "Image",
+     "slot": 11997,
+     "id": "IMAGE_EFFECTS_TUTORIAL_GLOVE_TUTORIAL_GLOVE_105X136",
+     "path": "images\\768\\initial\\effects\\tutorial_glove\\tutorial_glove_105x136",
+     "parent": "ATLASIMAGE_ATLAS_POWERUPTUTORIAL_768_00",
+     "ax": 182,
+     "ay": 1,
+     "aw": 67,
+     "ah": 87
+    }
+   ]
+  },
+  {
+   "type": "simple",
+   "id": "BeachMowerGroup_768",
+   "res": "768",
+   "parent": "BeachMowerGroup",
+   "resources": [
+    {
+     "type": "Image",
+     "slot": 6236,
+     "id": "ATLASIMAGE_ATLAS_BEACHMOWERGROUP_768_00",
+     "path": "atlases\\BeachMowerGroup_768_00",
+     "atlas": true,
+     "runtime": true,
+     "width": 256,
+     "height": 512
+    },
+    {
+     "type": "Image",
+     "slot": 12478,
+     "id": "IMAGE_MOWERS_MOWER_BEACH_MOWER_BEACH_117X82",
+     "path": "images\\768\\full\\mowers\\mower_beach\\mower_beach_117x82",
+     "parent": "ATLASIMAGE_ATLAS_BEACHMOWERGROUP_768_00",
+     "ax": 1,
+     "ay": 115,
+     "aw": 75,
+     "ah": 53
+    },
+    {
+     "type": "Image",
+     "slot": 12479,
+     "id": "IMAGE_MOWERS_MOWER_BEACH_MOWER_BEACH_11X9",
+     "path": "images\\768\\full\\mowers\\mower_beach\\mower_beach_11x9",
+     "parent": "ATLASIMAGE_ATLAS_BEACHMOWERGROUP_768_00",
+     "ax": 240,
+     "ay": 28,
+     "aw": 7,
+     "ah": 6
+    },
+    {
+     "type": "Image",
+     "slot": 12480,
+     "id": "IMAGE_MOWERS_MOWER_BEACH_MOWER_BEACH_130X159",
+     "path": "images\\768\\full\\mowers\\mower_beach\\mower_beach_130x159",
+     "parent": "ATLASIMAGE_ATLAS_BEACHMOWERGROUP_768_00",
+     "ax": 109,
+     "ay": 89,
+     "aw": 83,
+     "ah": 102
+    },
+    {
+     "type": "Image",
+     "slot": 12481,
+     "id": "IMAGE_MOWERS_MOWER_BEACH_MOWER_BEACH_157X134",
+     "path": "images\\768\\full\\mowers\\mower_beach\\mower_beach_157x134",
+     "parent": "ATLASIMAGE_ATLAS_BEACHMOWERGROUP_768_00",
+     "ax": 109,
+     "ay": 1,
+     "aw": 101,
+     "ah": 86
+    },
+    {
+     "type": "Image",
+     "slot": 12482,
+     "id": "IMAGE_MOWERS_MOWER_BEACH_MOWER_BEACH_15X10",
+     "path": "images\\768\\full\\mowers\\mower_beach\\mower_beach_15x10",
+     "parent": "ATLASIMAGE_ATLAS_BEACHMOWERGROUP_768_00",
+     "ax": 240,
+     "ay": 19,
+     "aw": 10,
+     "ah": 7
+    },
+    {
+     "type": "Image",
+     "slot": 12483,
+     "id": "IMAGE_MOWERS_MOWER_BEACH_MOWER_BEACH_166X175",
+     "path": "images\\768\\full\\mowers\\mower_beach\\mower_beach_166x175",
+     "parent": "ATLASIMAGE_ATLAS_BEACHMOWERGROUP_768_00",
+     "ax": 1,
+     "ay": 1,
+     "aw": 106,
+     "ah": 112
+    },
+    {
+     "type": "Image",
+     "slot": 12484,
+     "id": "IMAGE_MOWERS_MOWER_BEACH_MOWER_BEACH_17X78",
+     "path": "images\\768\\full\\mowers\\mower_beach\\mower_beach_17x78",
+     "parent": "ATLASIMAGE_ATLAS_BEACHMOWERGROUP_768_00",
+     "ax": 242,
+     "ay": 160,
+     "aw": 11,
+     "ah": 50
+    },
+    {
+     "type": "Image",
+     "slot": 12485,
+     "id": "IMAGE_MOWERS_MOWER_BEACH_MOWER_BEACH_1X1",
+     "path": "images\\768\\full\\mowers\\mower_beach\\mower_beach_1x1",
+     "parent": "ATLASIMAGE_ATLAS_BEACHMOWERGROUP_768_00",
+     "ax": 252,
+     "ay": 19,
+     "aw": 1,
+     "ah": 1
+    },
+    {
+     "type": "Image",
+     "slot": 12486,
+     "id": "IMAGE_MOWERS_MOWER_BEACH_MOWER_BEACH_206X83",
+     "path": "images\\768\\full\\mowers\\mower_beach\\mower_beach_206x83",
+     "parent": "ATLASIMAGE_ATLAS_BEACHMOWERGROUP_768_00",
+     "ax": 1,
+     "ay": 193,
+     "aw": 132,
+     "ah": 53
+    },
+    {
+     "type": "Image",
+     "slot": 12487,
+     "id": "IMAGE_MOWERS_MOWER_BEACH_MOWER_BEACH_209X75",
+     "path": "images\\768\\full\\mowers\\mower_beach\\mower_beach_209x75",
+     "parent": "ATLASIMAGE_ATLAS_BEACHMOWERGROUP_768_00",
+     "ax": 1,
+     "ay": 248,
+     "aw": 134,
+     "ah": 48
+    },
+    {
+     "type": "Image",
+     "slot": 12488,
+     "id": "IMAGE_MOWERS_MOWER_BEACH_MOWER_BEACH_22X25",
+     "path": "images\\768\\full\\mowers\\mower_beach\\mower_beach_22x25",
+     "parent": "ATLASIMAGE_ATLAS_BEACHMOWERGROUP_768_00",
+     "ax": 240,
+     "ay": 1,
+     "aw": 14,
+     "ah": 16
+    },
+    {
+     "type": "Image",
+     "slot": 12489,
+     "id": "IMAGE_MOWERS_MOWER_BEACH_MOWER_BEACH_31X31",
+     "path": "images\\768\\full\\mowers\\mower_beach\\mower_beach_31x31",
+     "parent": "ATLASIMAGE_ATLAS_BEACHMOWERGROUP_768_00",
+     "ax": 78,
+     "ay": 159,
+     "aw": 20,
+     "ah": 20
+    },
+    {
+     "type": "Image",
+     "slot": 12490,
+     "id": "IMAGE_MOWERS_MOWER_BEACH_MOWER_BEACH_34X28",
+     "path": "images\\768\\full\\mowers\\mower_beach\\mower_beach_34x28",
+     "parent": "ATLASIMAGE_ATLAS_BEACHMOWERGROUP_768_00",
+     "ax": 194,
+     "ay": 186,
+     "aw": 22,
+     "ah": 18
+    },
+    {
+     "type": "Image",
+     "slot": 12491,
+     "id": "IMAGE_MOWERS_MOWER_BEACH_MOWER_BEACH_34X65",
+     "path": "images\\768\\full\\mowers\\mower_beach\\mower_beach_34x65",
+     "parent": "ATLASIMAGE_ATLAS_BEACHMOWERGROUP_768_00",
+     "ax": 194,
+     "ay": 128,
+     "aw": 22,
+     "ah": 42
+    },
+    {
+     "type": "Image",
+     "slot": 12492,
+     "id": "IMAGE_MOWERS_MOWER_BEACH_MOWER_BEACH_37X68",
+     "path": "images\\768\\full\\mowers\\mower_beach\\mower_beach_37x68",
+     "parent": "ATLASIMAGE_ATLAS_BEACHMOWERGROUP_768_00",
+     "ax": 212,
+     "ay": 82,
+     "aw": 24,
+     "ah": 44
+    },
+    {
+     "type": "Image",
+     "slot": 12493,
+     "id": "IMAGE_MOWERS_MOWER_BEACH_MOWER_BEACH_39X65",
+     "path": "images\\768\\full\\mowers\\mower_beach\\mower_beach_39x65",
+     "parent": "ATLASIMAGE_ATLAS_BEACHMOWERGROUP_768_00",
+     "ax": 78,
+     "ay": 115,
+     "aw": 25,
+     "ah": 42
+    },
+    {
+     "type": "Image",
+     "slot": 12494,
+     "id": "IMAGE_MOWERS_MOWER_BEACH_MOWER_BEACH_41X69",
+     "path": "images\\768\\full\\mowers\\mower_beach\\mower_beach_41x69",
+     "parent": "ATLASIMAGE_ATLAS_BEACHMOWERGROUP_768_00",
+     "ax": 212,
+     "ay": 1,
+     "aw": 26,
+     "ah": 44
+    },
+    {
+     "type": "Image",
+     "slot": 12495,
+     "id": "IMAGE_MOWERS_MOWER_BEACH_MOWER_BEACH_46X46",
+     "path": "images\\768\\full\\mowers\\mower_beach\\mower_beach_46x46",
+     "parent": "ATLASIMAGE_ATLAS_BEACHMOWERGROUP_768_00",
+     "ax": 218,
+     "ay": 128,
+     "aw": 30,
+     "ah": 30
+    },
+    {
+     "type": "Image",
+     "slot": 12496,
+     "id": "IMAGE_MOWERS_MOWER_BEACH_MOWER_BEACH_51X51",
+     "path": "images\\768\\full\\mowers\\mower_beach\\mower_beach_51x51",
+     "parent": "ATLASIMAGE_ATLAS_BEACHMOWERGROUP_768_00",
+     "ax": 212,
+     "ay": 47,
+     "aw": 33,
+     "ah": 33
+    },
+    {
+     "type": "Image",
+     "slot": 12497,
+     "id": "IMAGE_MOWERS_MOWER_BEACH_MOWER_BEACH_72X19",
+     "path": "images\\768\\full\\mowers\\mower_beach\\mower_beach_72x19",
+     "parent": "ATLASIMAGE_ATLAS_BEACHMOWERGROUP_768_00",
+     "ax": 194,
+     "ay": 172,
+     "aw": 46,
+     "ah": 12
+    },
+    {
+     "type": "Image",
+     "slot": 12498,
+     "id": "IMAGE_MOWERS_MOWER_BEACH_MOWER_BEACH_99X29",
+     "path": "images\\768\\full\\mowers\\mower_beach\\mower_beach_99x29",
+     "parent": "ATLASIMAGE_ATLAS_BEACHMOWERGROUP_768_00",
+     "ax": 1,
+     "ay": 170,
+     "aw": 64,
+     "ah": 19
+    }
+   ]
+  },
+  {
+   "type": "simple",
+   "id": "DarkMowerGroup_768",
+   "res": "768",
+   "parent": "DarkMowerGroup",
+   "resources": [
+    {
+     "type": "Image",
+     "slot": 6284,
+     "id": "ATLASIMAGE_ATLAS_DARKMOWERGROUP_768_00",
+     "path": "atlases\\DarkMowerGroup_768_00",
+     "atlas": true,
+     "runtime": true,
+     "width": 128,
+     "height": 256
+    },
+    {
+     "type": "Image",
+     "slot": 12367,
+     "id": "IMAGE_MOWERS_MOWER_DARK_MOWER_DARK_101X53",
+     "path": "images\\768\\full\\mowers\\Mower_Dark\\Mower_Dark_101x53",
+     "parent": "ATLASIMAGE_ATLAS_DARKMOWERGROUP_768_00",
+     "ax": 1,
+     "ay": 176,
+     "aw": 65,
+     "ah": 34
+    },
+    {
+     "type": "Image",
+     "slot": 12368,
+     "id": "IMAGE_MOWERS_MOWER_DARK_MOWER_DARK_107X70",
+     "path": "images\\768\\full\\mowers\\Mower_Dark\\Mower_Dark_107x70",
+     "parent": "ATLASIMAGE_ATLAS_DARKMOWERGROUP_768_00",
+     "ax": 1,
+     "ay": 129,
+     "aw": 69,
+     "ah": 45
+    },
+    {
+     "type": "Image",
+     "slot": 12369,
+     "id": "IMAGE_MOWERS_MOWER_DARK_MOWER_DARK_130X103",
+     "path": "images\\768\\full\\mowers\\Mower_Dark\\Mower_Dark_130x103",
+     "parent": "ATLASIMAGE_ATLAS_DARKMOWERGROUP_768_00",
+     "ax": 1,
+     "ay": 1,
+     "aw": 83,
+     "ah": 66
+    },
+    {
+     "type": "Image",
+     "slot": 12370,
+     "id": "IMAGE_MOWERS_MOWER_DARK_MOWER_DARK_140X91",
+     "path": "images\\768\\full\\mowers\\Mower_Dark\\Mower_Dark_140x91",
+     "parent": "ATLASIMAGE_ATLAS_DARKMOWERGROUP_768_00",
+     "ax": 1,
+     "ay": 69,
+     "aw": 90,
+     "ah": 58
+    },
+    {
+     "type": "Image",
+     "slot": 12371,
+     "id": "IMAGE_MOWERS_MOWER_DARK_MOWER_DARK_24X26",
+     "path": "images\\768\\full\\mowers\\Mower_Dark\\Mower_Dark_24x26",
+     "parent": "ATLASIMAGE_ATLAS_DARKMOWERGROUP_768_00",
+     "ax": 72,
+     "ay": 145,
+     "aw": 16,
+     "ah": 17
+    },
+    {
+     "type": "Image",
+     "slot": 12372,
+     "id": "IMAGE_MOWERS_MOWER_DARK_MOWER_DARK_46X75",
+     "path": "images\\768\\full\\mowers\\Mower_Dark\\Mower_Dark_46x75",
+     "parent": "ATLASIMAGE_ATLAS_DARKMOWERGROUP_768_00",
+     "ax": 86,
+     "ay": 1,
+     "aw": 30,
+     "ah": 48
+    },
+    {
+     "type": "Image",
+     "slot": 12373,
+     "id": "IMAGE_MOWERS_MOWER_DARK_MOWER_DARK_48X48",
+     "path": "images\\768\\full\\mowers\\Mower_Dark\\Mower_Dark_48x48",
+     "parent": "ATLASIMAGE_ATLAS_DARKMOWERGROUP_768_00",
+     "ax": 93,
+     "ay": 86,
+     "aw": 31,
+     "ah": 31
+    },
+    {
+     "type": "Image",
+     "slot": 12374,
+     "id": "IMAGE_MOWERS_MOWER_DARK_MOWER_DARK_51X51",
+     "path": "images\\768\\full\\mowers\\Mower_Dark\\Mower_Dark_51x51",
+     "parent": "ATLASIMAGE_ATLAS_DARKMOWERGROUP_768_00",
+     "ax": 93,
+     "ay": 51,
+     "aw": 33,
+     "ah": 33
+    },
+    {
+     "type": "Image",
+     "slot": 12375,
+     "id": "IMAGE_MOWERS_MOWER_DARK_MOWER_DARK_66X21",
+     "path": "images\\768\\full\\mowers\\Mower_Dark\\Mower_Dark_66x21",
+     "parent": "ATLASIMAGE_ATLAS_DARKMOWERGROUP_768_00",
+     "ax": 72,
+     "ay": 129,
+     "aw": 42,
+     "ah": 14
+    },
+    {
+     "type": "Image",
+     "slot": 12376,
+     "id": "IMAGE_MOWERS_MOWER_DARK_MOWER_DARK_99X29",
+     "path": "images\\768\\full\\mowers\\Mower_Dark\\Mower_Dark_99x29",
+     "parent": "ATLASIMAGE_ATLAS_DARKMOWERGROUP_768_00",
+     "ax": 1,
+     "ay": 212,
+     "aw": 64,
+     "ah": 19
+    }
+   ]
+  },
+  {
+   "type": "simple",
+   "id": "IceageMowerGroup_768",
+   "res": "768",
+   "parent": "IceageMowerGroup",
+   "resources": [
+    {
+     "type": "Image",
+     "slot": 6434,
+     "id": "ATLASIMAGE_ATLAS_ICEAGEMOWERGROUP_768_00",
+     "path": "atlases\\IceageMowerGroup_768_00",
+     "atlas": true,
+     "runtime": true,
+     "width": 256,
+     "height": 256
+    },
+    {
+     "type": "Image",
+     "slot": 12622,
+     "id": "IMAGE_MOWERS_MOWER_ICEAGE_MOWER_ICEAGE_11X11",
+     "path": "images\\768\\full\\mowers\\mower_iceage\\mower_iceage_11x11",
+     "parent": "ATLASIMAGE_ATLAS_ICEAGEMOWERGROUP_768_00",
+     "ax": 228,
+     "ay": 43,
+     "aw": 7,
+     "ah": 7
+    },
+    {
+     "type": "Image",
+     "slot": 12623,
+     "id": "IMAGE_MOWERS_MOWER_ICEAGE_MOWER_ICEAGE_13X10",
+     "path": "images\\768\\full\\mowers\\mower_iceage\\mower_iceage_13x10",
+     "parent": "ATLASIMAGE_ATLAS_ICEAGEMOWERGROUP_768_00",
+     "ax": 217,
+     "ay": 43,
+     "aw": 9,
+     "ah": 7
+    },
+    {
+     "type": "Image",
+     "slot": 12624,
+     "id": "IMAGE_MOWERS_MOWER_ICEAGE_MOWER_ICEAGE_147X160",
+     "path": "images\\768\\full\\mowers\\mower_iceage\\mower_iceage_147x160",
+     "parent": "ATLASIMAGE_ATLAS_ICEAGEMOWERGROUP_768_00",
+     "ax": 1,
+     "ay": 1,
+     "aw": 94,
+     "ah": 103
+    },
+    {
+     "type": "Image",
+     "slot": 12625,
+     "id": "IMAGE_MOWERS_MOWER_ICEAGE_MOWER_ICEAGE_24X24",
+     "path": "images\\768\\full\\mowers\\mower_iceage\\mower_iceage_24x24",
+     "parent": "ATLASIMAGE_ATLAS_ICEAGEMOWERGROUP_768_00",
+     "ax": 179,
+     "ay": 137,
+     "aw": 16,
+     "ah": 16
+    },
+    {
+     "type": "Image",
+     "slot": 12626,
+     "id": "IMAGE_MOWERS_MOWER_ICEAGE_MOWER_ICEAGE_24X25",
+     "path": "images\\768\\full\\mowers\\mower_iceage\\mower_iceage_24x25",
+     "parent": "ATLASIMAGE_ATLAS_ICEAGEMOWERGROUP_768_00",
+     "ax": 53,
+     "ay": 138,
+     "aw": 16,
+     "ah": 16
+    },
+    {
+     "type": "Image",
+     "slot": 12627,
+     "id": "IMAGE_MOWERS_MOWER_ICEAGE_MOWER_ICEAGE_25X21",
+     "path": "images\\768\\full\\mowers\\mower_iceage\\mower_iceage_25x21",
+     "parent": "ATLASIMAGE_ATLAS_ICEAGEMOWERGROUP_768_00",
+     "ax": 71,
+     "ay": 138,
+     "aw": 16,
+     "ah": 14
+    },
+    {
+     "type": "Image",
+     "slot": 12628,
+     "id": "IMAGE_MOWERS_MOWER_ICEAGE_MOWER_ICEAGE_27X27",
+     "path": "images\\768\\full\\mowers\\mower_iceage\\mower_iceage_27x27",
+     "parent": "ATLASIMAGE_ATLAS_ICEAGEMOWERGROUP_768_00",
+     "ax": 33,
+     "ay": 126,
+     "aw": 18,
+     "ah": 18
+    },
+    {
+     "type": "Image",
+     "slot": 12629,
+     "id": "IMAGE_MOWERS_MOWER_ICEAGE_MOWER_ICEAGE_28X28",
+     "path": "images\\768\\full\\mowers\\mower_iceage\\mower_iceage_28x28",
+     "parent": "ATLASIMAGE_ATLAS_ICEAGEMOWERGROUP_768_00",
+     "ax": 231,
+     "ay": 133,
+     "aw": 18,
+     "ah": 18
+    },
+    {
+     "type": "Image",
+     "slot": 12630,
+     "id": "IMAGE_MOWERS_MOWER_ICEAGE_MOWER_ICEAGE_28X28_2",
+     "path": "images\\768\\full\\mowers\\mower_iceage\\mower_iceage_28x28_2",
+     "parent": "ATLASIMAGE_ATLAS_ICEAGEMOWERGROUP_768_00",
+     "ax": 159,
+     "ay": 137,
+     "aw": 18,
+     "ah": 18
+    },
+    {
+     "type": "Image",
+     "slot": 12631,
+     "id": "IMAGE_MOWERS_MOWER_ICEAGE_MOWER_ICEAGE_38X44",
+     "path": "images\\768\\full\\mowers\\mower_iceage\\mower_iceage_38x44",
+     "parent": "ATLASIMAGE_ATLAS_ICEAGEMOWERGROUP_768_00",
+     "ax": 231,
+     "ay": 103,
+     "aw": 25,
+     "ah": 28
+    },
+    {
+     "type": "Image",
+     "slot": 12632,
+     "id": "IMAGE_MOWERS_MOWER_ICEAGE_MOWER_ICEAGE_39X87",
+     "path": "images\\768\\full\\mowers\\mower_iceage\\mower_iceage_39x87",
+     "parent": "ATLASIMAGE_ATLAS_ICEAGEMOWERGROUP_768_00",
+     "ax": 144,
+     "ay": 65,
+     "aw": 25,
+     "ah": 56
+    },
+    {
+     "type": "Image",
+     "slot": 12633,
+     "id": "IMAGE_MOWERS_MOWER_ICEAGE_MOWER_ICEAGE_40X62",
+     "path": "images\\768\\full\\mowers\\mower_iceage\\mower_iceage_40x62",
+     "parent": "ATLASIMAGE_ATLAS_ICEAGEMOWERGROUP_768_00",
+     "ax": 203,
+     "ay": 98,
+     "aw": 26,
+     "ah": 40
+    },
+    {
+     "type": "Image",
+     "slot": 12634,
+     "id": "IMAGE_MOWERS_MOWER_ICEAGE_MOWER_ICEAGE_43X36",
+     "path": "images\\768\\full\\mowers\\mower_iceage\\mower_iceage_43x36",
+     "parent": "ATLASIMAGE_ATLAS_ICEAGEMOWERGROUP_768_00",
+     "ax": 129,
+     "ay": 123,
+     "aw": 28,
+     "ah": 23
+    },
+    {
+     "type": "Image",
+     "slot": 12635,
+     "id": "IMAGE_MOWERS_MOWER_ICEAGE_MOWER_ICEAGE_43X43",
+     "path": "images\\768\\full\\mowers\\mower_iceage\\mower_iceage_43x43",
+     "parent": "ATLASIMAGE_ATLAS_ICEAGEMOWERGROUP_768_00",
+     "ax": 171,
+     "ay": 107,
+     "aw": 28,
+     "ah": 28
+    },
+    {
+     "type": "Image",
+     "slot": 12636,
+     "id": "IMAGE_MOWERS_MOWER_ICEAGE_MOWER_ICEAGE_44X47",
+     "path": "images\\768\\full\\mowers\\mower_iceage\\mower_iceage_44x47",
+     "parent": "ATLASIMAGE_ATLAS_ICEAGEMOWERGROUP_768_00",
+     "ax": 65,
+     "ay": 106,
+     "aw": 28,
+     "ah": 30
+    },
+    {
+     "type": "Image",
+     "slot": 12637,
+     "id": "IMAGE_MOWERS_MOWER_ICEAGE_MOWER_ICEAGE_46X25",
+     "path": "images\\768\\full\\mowers\\mower_iceage\\mower_iceage_46x25",
+     "parent": "ATLASIMAGE_ATLAS_ICEAGEMOWERGROUP_768_00",
+     "ax": 95,
+     "ay": 135,
+     "aw": 30,
+     "ah": 16
+    },
+    {
+     "type": "Image",
+     "slot": 12638,
+     "id": "IMAGE_MOWERS_MOWER_ICEAGE_MOWER_ICEAGE_46X46",
+     "path": "images\\768\\full\\mowers\\mower_iceage\\mower_iceage_46x46",
+     "parent": "ATLASIMAGE_ATLAS_ICEAGEMOWERGROUP_768_00",
+     "ax": 97,
+     "ay": 103,
+     "aw": 30,
+     "ah": 30
+    },
+    {
+     "type": "Image",
+     "slot": 12639,
+     "id": "IMAGE_MOWERS_MOWER_ICEAGE_MOWER_ICEAGE_46X62",
+     "path": "images\\768\\full\\mowers\\mower_iceage\\mower_iceage_46x62",
+     "parent": "ATLASIMAGE_ATLAS_ICEAGEMOWERGROUP_768_00",
+     "ax": 171,
+     "ay": 65,
+     "aw": 30,
+     "ah": 40
+    },
+    {
+     "type": "Image",
+     "slot": 12640,
+     "id": "IMAGE_MOWERS_MOWER_ICEAGE_MOWER_ICEAGE_47X32",
+     "path": "images\\768\\full\\mowers\\mower_iceage\\mower_iceage_47x32",
+     "parent": "ATLASIMAGE_ATLAS_ICEAGEMOWERGROUP_768_00",
+     "ax": 1,
+     "ay": 126,
+     "aw": 30,
+     "ah": 21
+    },
+    {
+     "type": "Image",
+     "slot": 12641,
+     "id": "IMAGE_MOWERS_MOWER_ICEAGE_MOWER_ICEAGE_56X62",
+     "path": "images\\768\\full\\mowers\\mower_iceage\\mower_iceage_56x62",
+     "parent": "ATLASIMAGE_ATLAS_ICEAGEMOWERGROUP_768_00",
+     "ax": 217,
+     "ay": 1,
+     "aw": 36,
+     "ah": 40
+    },
+    {
+     "type": "Image",
+     "slot": 12642,
+     "id": "IMAGE_MOWERS_MOWER_ICEAGE_MOWER_ICEAGE_61X59",
+     "path": "images\\768\\full\\mowers\\mower_iceage\\mower_iceage_61x59",
+     "parent": "ATLASIMAGE_ATLAS_ICEAGEMOWERGROUP_768_00",
+     "ax": 217,
+     "ay": 58,
+     "aw": 39,
+     "ah": 38
+    },
+    {
+     "type": "Image",
+     "slot": 12643,
+     "id": "IMAGE_MOWERS_MOWER_ICEAGE_MOWER_ICEAGE_70X67",
+     "path": "images\\768\\full\\mowers\\mower_iceage\\mower_iceage_70x67",
+     "parent": "ATLASIMAGE_ATLAS_ICEAGEMOWERGROUP_768_00",
+     "ax": 97,
+     "ay": 58,
+     "aw": 45,
+     "ah": 43
+    },
+    {
+     "type": "Image",
+     "slot": 12644,
+     "id": "IMAGE_MOWERS_MOWER_ICEAGE_MOWER_ICEAGE_81X97",
+     "path": "images\\768\\full\\mowers\\mower_iceage\\mower_iceage_81x97",
+     "parent": "ATLASIMAGE_ATLAS_ICEAGEMOWERGROUP_768_00",
+     "ax": 163,
+     "ay": 1,
+     "aw": 52,
+     "ah": 62
+    },
+    {
+     "type": "Image",
+     "slot": 12645,
+     "id": "IMAGE_MOWERS_MOWER_ICEAGE_MOWER_ICEAGE_8X8",
+     "path": "images\\768\\full\\mowers\\mower_iceage\\mower_iceage_8x8",
+     "parent": "ATLASIMAGE_ATLAS_ICEAGEMOWERGROUP_768_00",
+     "ax": 237,
+     "ay": 43,
+     "aw": 5,
+     "ah": 5
+    },
+    {
+     "type": "Image",
+     "slot": 12646,
+     "id": "IMAGE_MOWERS_MOWER_ICEAGE_MOWER_ICEAGE_97X28",
+     "path": "images\\768\\full\\mowers\\mower_iceage\\mower_iceage_97x28",
+     "parent": "ATLASIMAGE_ATLAS_ICEAGEMOWERGROUP_768_00",
+     "ax": 1,
+     "ay": 106,
+     "aw": 62,
+     "ah": 18
+    },
+    {
+     "type": "Image",
+     "slot": 12647,
+     "id": "IMAGE_MOWERS_MOWER_ICEAGE_MOWER_ICEAGE_99X85",
+     "path": "images\\768\\full\\mowers\\mower_iceage\\mower_iceage_99x85",
+     "parent": "ATLASIMAGE_ATLAS_ICEAGEMOWERGROUP_768_00",
+     "ax": 97,
+     "ay": 1,
+     "aw": 64,
+     "ah": 55
+    }
+   ]
+  },
+  {
+   "type": "simple",
+   "id": "ModernMowerGroup_768",
+   "res": "768",
+   "parent": "ModernMowerGroup",
+   "resources": [
+    {
+     "type": "Image",
+     "slot": 6458,
+     "id": "ATLASIMAGE_ATLAS_MODERNMOWERGROUP_768_00",
+     "path": "atlases\\ModernMowerGroup_768_00",
+     "atlas": true,
+     "runtime": true,
+     "width": 128,
+     "height": 256
+    },
+    {
+     "type": "Image",
+     "slot": 13182,
+     "id": "IMAGE_MOWERS_MOWER_MODERN_MOWER_MODERN_110X65",
+     "path": "images\\768\\full\\mowers\\mower_modern\\mower_modern_110x65",
+     "parent": "ATLASIMAGE_ATLAS_MODERNMOWERGROUP_768_00",
+     "ax": 1,
+     "ay": 46,
+     "aw": 71,
+     "ah": 42
+    },
+    {
+     "type": "Image",
+     "slot": 13183,
+     "id": "IMAGE_MOWERS_MOWER_MODERN_MOWER_MODERN_114X67",
+     "path": "images\\768\\full\\mowers\\mower_modern\\mower_modern_114x67",
+     "parent": "ATLASIMAGE_ATLAS_MODERNMOWERGROUP_768_00",
+     "ax": 1,
+     "ay": 1,
+     "aw": 73,
+     "ah": 43
+    },
+    {
+     "type": "Image",
+     "slot": 13184,
+     "id": "IMAGE_MOWERS_MOWER_MODERN_MOWER_MODERN_16X23",
+     "path": "images\\768\\full\\mowers\\mower_modern\\mower_modern_16x23",
+     "parent": "ATLASIMAGE_ATLAS_MODERNMOWERGROUP_768_00",
+     "ax": 112,
+     "ay": 123,
+     "aw": 10,
+     "ah": 15
+    },
+    {
+     "type": "Image",
+     "slot": 13185,
+     "id": "IMAGE_MOWERS_MOWER_MODERN_MOWER_MODERN_26X24",
+     "path": "images\\768\\full\\mowers\\mower_modern\\mower_modern_26x24",
+     "parent": "ATLASIMAGE_ATLAS_MODERNMOWERGROUP_768_00",
+     "ax": 110,
+     "ay": 105,
+     "aw": 17,
+     "ah": 16
+    },
+    {
+     "type": "Image",
+     "slot": 13186,
+     "id": "IMAGE_MOWERS_MOWER_MODERN_MOWER_MODERN_27X14",
+     "path": "images\\768\\full\\mowers\\mower_modern\\mower_modern_27x14",
+     "parent": "ATLASIMAGE_ATLAS_MODERNMOWERGROUP_768_00",
+     "ax": 44,
+     "ay": 90,
+     "aw": 18,
+     "ah": 9
+    },
+    {
+     "type": "Image",
+     "slot": 13187,
+     "id": "IMAGE_MOWERS_MOWER_MODERN_MOWER_MODERN_29X22",
+     "path": "images\\768\\full\\mowers\\mower_modern\\mower_modern_29x22",
+     "parent": "ATLASIMAGE_ATLAS_MODERNMOWERGROUP_768_00",
+     "ax": 53,
+     "ay": 139,
+     "aw": 19,
+     "ah": 14
+    },
+    {
+     "type": "Image",
+     "slot": 13188,
+     "id": "IMAGE_MOWERS_MOWER_MODERN_MOWER_MODERN_30X23",
+     "path": "images\\768\\full\\mowers\\mower_modern\\mower_modern_30x23",
+     "parent": "ATLASIMAGE_ATLAS_MODERNMOWERGROUP_768_00",
+     "ax": 32,
+     "ay": 139,
+     "aw": 19,
+     "ah": 15
+    },
+    {
+     "type": "Image",
+     "slot": 13189,
+     "id": "IMAGE_MOWERS_MOWER_MODERN_MOWER_MODERN_45X27",
+     "path": "images\\768\\full\\mowers\\mower_modern\\mower_modern_45x27",
+     "parent": "ATLASIMAGE_ATLAS_MODERNMOWERGROUP_768_00",
+     "ax": 1,
+     "ay": 124,
+     "aw": 29,
+     "ah": 18
+    },
+    {
+     "type": "Image",
+     "slot": 13190,
+     "id": "IMAGE_MOWERS_MOWER_MODERN_MOWER_MODERN_46X45",
+     "path": "images\\768\\full\\mowers\\mower_modern\\mower_modern_46x45",
+     "parent": "ATLASIMAGE_ATLAS_MODERNMOWERGROUP_768_00",
+     "ax": 78,
+     "ay": 105,
+     "aw": 30,
+     "ah": 29
+    },
+    {
+     "type": "Image",
+     "slot": 13191,
+     "id": "IMAGE_MOWERS_MOWER_MODERN_MOWER_MODERN_49X49",
+     "path": "images\\768\\full\\mowers\\mower_modern\\mower_modern_49x49",
+     "parent": "ATLASIMAGE_ATLAS_MODERNMOWERGROUP_768_00",
+     "ax": 44,
+     "ay": 105,
+     "aw": 32,
+     "ah": 32
+    },
+    {
+     "type": "Image",
+     "slot": 13192,
+     "id": "IMAGE_MOWERS_MOWER_MODERN_MOWER_MODERN_50X17",
+     "path": "images\\768\\full\\mowers\\mower_modern\\mower_modern_50x17",
+     "parent": "ATLASIMAGE_ATLAS_MODERNMOWERGROUP_768_00",
+     "ax": 78,
+     "ay": 136,
+     "aw": 32,
+     "ah": 11
+    },
+    {
+     "type": "Image",
+     "slot": 13193,
+     "id": "IMAGE_MOWERS_MOWER_MODERN_MOWER_MODERN_64X50",
+     "path": "images\\768\\full\\mowers\\mower_modern\\mower_modern_64x50",
+     "parent": "ATLASIMAGE_ATLAS_MODERNMOWERGROUP_768_00",
+     "ax": 1,
+     "ay": 90,
+     "aw": 41,
+     "ah": 32
+    },
+    {
+     "type": "Image",
+     "slot": 13194,
+     "id": "IMAGE_MOWERS_MOWER_MODERN_MOWER_MODERN_65X103",
+     "path": "images\\768\\full\\mowers\\mower_modern\\mower_modern_65x103",
+     "parent": "ATLASIMAGE_ATLAS_MODERNMOWERGROUP_768_00",
+     "ax": 76,
+     "ay": 1,
+     "aw": 42,
+     "ah": 66
+    },
+    {
+     "type": "Image",
+     "slot": 13195,
+     "id": "IMAGE_MOWERS_MOWER_MODERN_MOWER_MODERN_67X52",
+     "path": "images\\768\\full\\mowers\\mower_modern\\mower_modern_67x52",
+     "parent": "ATLASIMAGE_ATLAS_MODERNMOWERGROUP_768_00",
+     "ax": 74,
+     "ay": 69,
+     "aw": 43,
+     "ah": 34
+    }
+   ]
+  },
+  {
+   "type": "simple",
+   "id": "EgyptMowerGroup_768",
+   "res": "768",
+   "parent": "EgyptMowerGroup",
+   "resources": [
+    {
+     "type": "Image",
+     "slot": 6376,
+     "id": "ATLASIMAGE_ATLAS_EGYPTMOWERGROUP_768_00",
+     "path": "atlases\\EgyptMowerGroup_768_00",
+     "atlas": true,
+     "runtime": true,
+     "width": 128,
+     "height": 256
+    },
+    {
+     "type": "Image",
+     "slot": 11927,
+     "id": "IMAGE_MOWERS_MOWER_EGYPT_MOWER_EGYPT_11X7",
+     "path": "images\\768\\initial\\mowers\\mower_egypt\\mower_egypt_11x7",
+     "parent": "ATLASIMAGE_ATLAS_EGYPTMOWERGROUP_768_00",
+     "ax": 116,
+     "ay": 10,
+     "aw": 7,
+     "ah": 5
+    },
+    {
+     "type": "Image",
+     "slot": 11928,
+     "id": "IMAGE_MOWERS_MOWER_EGYPT_MOWER_EGYPT_16X11",
+     "path": "images\\768\\initial\\mowers\\mower_egypt\\mower_egypt_16x11",
+     "parent": "ATLASIMAGE_ATLAS_EGYPTMOWERGROUP_768_00",
+     "ax": 116,
+     "ay": 1,
+     "aw": 10,
+     "ah": 7
+    },
+    {
+     "type": "Image",
+     "slot": 11929,
+     "id": "IMAGE_MOWERS_MOWER_EGYPT_MOWER_EGYPT_22X22",
+     "path": "images\\768\\initial\\mowers\\mower_egypt\\mower_egypt_22x22",
+     "parent": "ATLASIMAGE_ATLAS_EGYPTMOWERGROUP_768_00",
+     "ax": 67,
+     "ay": 136,
+     "aw": 14,
+     "ah": 14
+    },
+    {
+     "type": "Image",
+     "slot": 11930,
+     "id": "IMAGE_MOWERS_MOWER_EGYPT_MOWER_EGYPT_33X33",
+     "path": "images\\768\\initial\\mowers\\mower_egypt\\mower_egypt_33x33",
+     "parent": "ATLASIMAGE_ATLAS_EGYPTMOWERGROUP_768_00",
+     "ax": 1,
+     "ay": 140,
+     "aw": 21,
+     "ah": 21
+    },
+    {
+     "type": "Image",
+     "slot": 11931,
+     "id": "IMAGE_MOWERS_MOWER_EGYPT_MOWER_EGYPT_37X37",
+     "path": "images\\768\\initial\\mowers\\mower_egypt\\mower_egypt_37x37",
+     "parent": "ATLASIMAGE_ATLAS_EGYPTMOWERGROUP_768_00",
+     "ax": 89,
+     "ay": 133,
+     "aw": 24,
+     "ah": 24
+    },
+    {
+     "type": "Image",
+     "slot": 11932,
+     "id": "IMAGE_MOWERS_MOWER_EGYPT_MOWER_EGYPT_38X34",
+     "path": "images\\768\\initial\\mowers\\mower_egypt\\mower_egypt_38x34",
+     "parent": "ATLASIMAGE_ATLAS_EGYPTMOWERGROUP_768_00",
+     "ax": 40,
+     "ay": 136,
+     "aw": 25,
+     "ah": 22
+    },
+    {
+     "type": "Image",
+     "slot": 11933,
+     "id": "IMAGE_MOWERS_MOWER_EGYPT_MOWER_EGYPT_40X39",
+     "path": "images\\768\\initial\\mowers\\mower_egypt\\mower_egypt_40x39",
+     "parent": "ATLASIMAGE_ATLAS_EGYPTMOWERGROUP_768_00",
+     "ax": 89,
+     "ay": 106,
+     "aw": 26,
+     "ah": 25
+    },
+    {
+     "type": "Image",
+     "slot": 11934,
+     "id": "IMAGE_MOWERS_MOWER_EGYPT_MOWER_EGYPT_45X45",
+     "path": "images\\768\\initial\\mowers\\mower_egypt\\mower_egypt_45x45",
+     "parent": "ATLASIMAGE_ATLAS_EGYPTMOWERGROUP_768_00",
+     "ax": 91,
+     "ay": 44,
+     "aw": 29,
+     "ah": 29
+    },
+    {
+     "type": "Image",
+     "slot": 11935,
+     "id": "IMAGE_MOWERS_MOWER_EGYPT_MOWER_EGYPT_45X45_2",
+     "path": "images\\768\\initial\\mowers\\mower_egypt\\mower_egypt_45x45_2",
+     "parent": "ATLASIMAGE_ATLAS_EGYPTMOWERGROUP_768_00",
+     "ax": 91,
+     "ay": 75,
+     "aw": 29,
+     "ah": 29
+    },
+    {
+     "type": "Image",
+     "slot": 11936,
+     "id": "IMAGE_MOWERS_MOWER_EGYPT_MOWER_EGYPT_57X90",
+     "path": "images\\768\\initial\\mowers\\mower_egypt\\mower_egypt_57x90",
+     "parent": "ATLASIMAGE_ATLAS_EGYPTMOWERGROUP_768_00",
+     "ax": 52,
+     "ay": 44,
+     "aw": 37,
+     "ah": 58
+    },
+    {
+     "type": "Image",
+     "slot": 11937,
+     "id": "IMAGE_MOWERS_MOWER_EGYPT_MOWER_EGYPT_57X90_2",
+     "path": "images\\768\\initial\\mowers\\mower_egypt\\mower_egypt_57x90_2",
+     "parent": "ATLASIMAGE_ATLAS_EGYPTMOWERGROUP_768_00",
+     "ax": 1,
+     "ay": 80,
+     "aw": 37,
+     "ah": 58
+    },
+    {
+     "type": "Image",
+     "slot": 11938,
+     "id": "IMAGE_MOWERS_MOWER_EGYPT_MOWER_EGYPT_73X47",
+     "path": "images\\768\\initial\\mowers\\mower_egypt\\mower_egypt_73x47",
+     "parent": "ATLASIMAGE_ATLAS_EGYPTMOWERGROUP_768_00",
+     "ax": 40,
+     "ay": 104,
+     "aw": 47,
+     "ah": 30
+    },
+    {
+     "type": "Image",
+     "slot": 11939,
+     "id": "IMAGE_MOWERS_MOWER_EGYPT_MOWER_EGYPT_76X120",
+     "path": "images\\768\\initial\\mowers\\mower_egypt\\mower_egypt_76x120",
+     "parent": "ATLASIMAGE_ATLAS_EGYPTMOWERGROUP_768_00",
+     "ax": 1,
+     "ay": 1,
+     "aw": 49,
+     "ah": 77
+    },
+    {
+     "type": "Image",
+     "slot": 11940,
+     "id": "IMAGE_MOWERS_MOWER_EGYPT_MOWER_EGYPT_96X63",
+     "path": "images\\768\\initial\\mowers\\mower_egypt\\mower_egypt_96x63",
+     "parent": "ATLASIMAGE_ATLAS_EGYPTMOWERGROUP_768_00",
+     "ax": 52,
+     "ay": 1,
+     "aw": 62,
+     "ah": 41
+    }
+   ]
+  },
+  {
+   "type": "simple",
+   "id": "ZombieLNYBasicGroup_768",
+   "res": "768",
+   "parent": "ZombieLNYBasicGroup",
+   "resources": [
+    {
+     "type": "Image",
+     "slot": 7594,
+     "id": "ATLASIMAGE_ATLAS_ZOMBIELNYBASICGROUP_768_00",
+     "path": "atlases\\ZombieLNYBasicGroup_768_00",
+     "atlas": true,
+     "runtime": true,
+     "width": 512,
+     "height": 512
+    },
+    {
+     "type": "Image",
+     "slot": 33163,
+     "id": "IMAGE_ZOMBIE_LNY_FLAG_ZOMBIE_LNY_FLAG_ZOMBIE_123X95",
+     "path": "images\\768\\full\\zombie\\LNY_flag_zombie\\LNY_flag_zombie_123x95",
+     "parent": "ATLASIMAGE_ATLAS_ZOMBIELNYBASICGROUP_768_00",
+     "ax": 1,
+     "ay": 1,
+     "aw": 79,
+     "ah": 61
+    }
+   ]
+  },
+  {
+   "type": "simple",
+   "id": "Egypt_Gravestone_768",
+   "res": "768",
+   "parent": "Egypt_Gravestone",
+   "resources": [
+    {
+     "type": "Image",
+     "slot": 6372,
+     "id": "ATLASIMAGE_ATLAS_EGYPT_GRAVESTONE_768_00",
+     "path": "atlases\\Egypt_Gravestone_768_00",
+     "atlas": true,
+     "runtime": true,
+     "width": 256,
+     "height": 512
+    },
+    {
+     "type": "Image",
+     "slot": 11917,
+     "id": "IMAGE_EFFECTS_TOMBSTONE_EGYPT_HIEROGLYPH_DAMAGE_TOMBSTONE_EGYPT_HIEROGLYPH_DAMAGE_113X53",
+     "path": "images\\768\\initial\\effects\\tombstone_egypt_hieroglyph_damage\\tombstone_egypt_hieroglyph_damage_113x53",
+     "parent": "ATLASIMAGE_ATLAS_EGYPT_GRAVESTONE_768_00",
+     "ax": 73,
+     "ay": 333,
+     "aw": 73,
+     "ah": 34
+    },
+    {
+     "type": "Image",
+     "slot": 11918,
+     "id": "IMAGE_EFFECTS_TOMBSTONE_EGYPT_HIEROGLYPH_DAMAGE_TOMBSTONE_EGYPT_HIEROGLYPH_DAMAGE_172X96",
+     "path": "images\\768\\initial\\effects\\tombstone_egypt_hieroglyph_damage\\tombstone_egypt_hieroglyph_damage_172x96",
+     "parent": "ATLASIMAGE_ATLAS_EGYPT_GRAVESTONE_768_00",
+     "ax": 1,
+     "ay": 269,
+     "aw": 110,
+     "ah": 62
+    },
+    {
+     "type": "Image",
+     "slot": 11919,
+     "id": "IMAGE_EFFECTS_TOMBSTONE_EGYPT_HIEROGLYPH_DAMAGE_TOMBSTONE_EGYPT_HIEROGLYPH_DAMAGE_1X1",
+     "path": "images\\768\\initial\\effects\\tombstone_egypt_hieroglyph_damage\\tombstone_egypt_hieroglyph_damage_1x1",
+     "parent": "ATLASIMAGE_ATLAS_EGYPT_GRAVESTONE_768_00",
+     "ax": 247,
+     "ay": 1,
+     "aw": 1,
+     "ah": 1
+    },
+    {
+     "type": "Image",
+     "slot": 11920,
+     "id": "IMAGE_EFFECTS_TOMBSTONE_EGYPT_HIEROGLYPH_DAMAGE_TOMBSTONE_EGYPT_HIEROGLYPH_DAMAGE_23X24",
+     "path": "images\\768\\initial\\effects\\tombstone_egypt_hieroglyph_damage\\tombstone_egypt_hieroglyph_damage_23x24",
+     "parent": "ATLASIMAGE_ATLAS_EGYPT_GRAVESTONE_768_00",
+     "ax": 232,
+     "ay": 53,
+     "aw": 15,
+     "ah": 16
+    },
+    {
+     "type": "Image",
+     "slot": 11921,
+     "id": "IMAGE_EFFECTS_TOMBSTONE_EGYPT_HIEROGLYPH_DAMAGE_TOMBSTONE_EGYPT_HIEROGLYPH_DAMAGE_293X263",
+     "path": "images\\768\\initial\\effects\\tombstone_egypt_hieroglyph_damage\\tombstone_egypt_hieroglyph_damage_293x263",
+     "parent": "ATLASIMAGE_ATLAS_EGYPT_GRAVESTONE_768_00",
+     "ax": 1,
+     "ay": 1,
+     "aw": 188,
+     "ah": 169
+    },
+    {
+     "type": "Image",
+     "slot": 11922,
+     "id": "IMAGE_EFFECTS_TOMBSTONE_EGYPT_HIEROGLYPH_DAMAGE_TOMBSTONE_EGYPT_HIEROGLYPH_DAMAGE_39X36",
+     "path": "images\\768\\initial\\effects\\tombstone_egypt_hieroglyph_damage\\tombstone_egypt_hieroglyph_damage_39x36",
+     "parent": "ATLASIMAGE_ATLAS_EGYPT_GRAVESTONE_768_00",
+     "ax": 224,
+     "ay": 132,
+     "aw": 25,
+     "ah": 23
+    },
+    {
+     "type": "Image",
+     "slot": 11923,
+     "id": "IMAGE_EFFECTS_TOMBSTONE_EGYPT_HIEROGLYPH_DAMAGE_TOMBSTONE_EGYPT_HIEROGLYPH_DAMAGE_48X48",
+     "path": "images\\768\\initial\\effects\\tombstone_egypt_hieroglyph_damage\\tombstone_egypt_hieroglyph_damage_48x48",
+     "parent": "ATLASIMAGE_ATLAS_EGYPT_GRAVESTONE_768_00",
+     "ax": 191,
+     "ay": 132,
+     "aw": 31,
+     "ah": 31
+    },
+    {
+     "type": "Image",
+     "slot": 11924,
+     "id": "IMAGE_EFFECTS_TOMBSTONE_EGYPT_HIEROGLYPH_DAMAGE_TOMBSTONE_EGYPT_HIEROGLYPH_DAMAGE_60X67",
+     "path": "images\\768\\initial\\effects\\tombstone_egypt_hieroglyph_damage\\tombstone_egypt_hieroglyph_damage_60x67",
+     "parent": "ATLASIMAGE_ATLAS_EGYPT_GRAVESTONE_768_00",
+     "ax": 191,
+     "ay": 53,
+     "aw": 39,
+     "ah": 43
+    },
+    {
+     "type": "Image",
+     "slot": 11925,
+     "id": "IMAGE_EFFECTS_TOMBSTONE_EGYPT_HIEROGLYPH_DAMAGE_TOMBSTONE_EGYPT_HIEROGLYPH_DAMAGE_65X50",
+     "path": "images\\768\\initial\\effects\\tombstone_egypt_hieroglyph_damage\\tombstone_egypt_hieroglyph_damage_65x50",
+     "parent": "ATLASIMAGE_ATLAS_EGYPT_GRAVESTONE_768_00",
+     "ax": 191,
+     "ay": 98,
+     "aw": 42,
+     "ah": 32
+    },
+    {
+     "type": "Image",
+     "slot": 11926,
+     "id": "IMAGE_EFFECTS_TOMBSTONE_EGYPT_HIEROGLYPH_DAMAGE_TOMBSTONE_EGYPT_HIEROGLYPH_DAMAGE_84X77",
+     "path": "images\\768\\initial\\effects\\tombstone_egypt_hieroglyph_damage\\tombstone_egypt_hieroglyph_damage_84x77",
+     "parent": "ATLASIMAGE_ATLAS_EGYPT_GRAVESTONE_768_00",
+     "ax": 191,
+     "ay": 1,
+     "aw": 54,
+     "ah": 50
+    },
+    {
+     "type": "Image",
+     "slot": 11912,
+     "id": "IMAGE_GRAVESTONES_EGYPT_HIEROGLYPH_EGYPT_HIEROGLYPH_109X119",
+     "path": "images\\768\\initial\\gravestones\\Egypt_Hieroglyph\\Egypt_Hieroglyph_109x119",
+     "parent": "ATLASIMAGE_ATLAS_EGYPT_GRAVESTONE_768_00",
+     "ax": 1,
+     "ay": 333,
+     "aw": 70,
+     "ah": 76
+    },
+    {
+     "type": "Image",
+     "slot": 11913,
+     "id": "IMAGE_GRAVESTONES_EGYPT_HIEROGLYPH_EGYPT_HIEROGLYPH_110X145",
+     "path": "images\\768\\initial\\gravestones\\Egypt_Hieroglyph\\Egypt_Hieroglyph_110x145",
+     "parent": "ATLASIMAGE_ATLAS_EGYPT_GRAVESTONE_768_00",
+     "ax": 157,
+     "ay": 267,
+     "aw": 71,
+     "ah": 93
+    },
+    {
+     "type": "Image",
+     "slot": 11914,
+     "id": "IMAGE_GRAVESTONES_EGYPT_HIEROGLYPH_EGYPT_HIEROGLYPH_113X145",
+     "path": "images\\768\\initial\\gravestones\\Egypt_Hieroglyph\\Egypt_Hieroglyph_113x145",
+     "parent": "ATLASIMAGE_ATLAS_EGYPT_GRAVESTONE_768_00",
+     "ax": 157,
+     "ay": 172,
+     "aw": 73,
+     "ah": 93
+    },
+    {
+     "type": "Image",
+     "slot": 11915,
+     "id": "IMAGE_GRAVESTONES_EGYPT_HIEROGLYPH_EGYPT_HIEROGLYPH_118X148",
+     "path": "images\\768\\initial\\gravestones\\Egypt_Hieroglyph\\Egypt_Hieroglyph_118x148",
+     "parent": "ATLASIMAGE_ATLAS_EGYPT_GRAVESTONE_768_00",
+     "ax": 1,
+     "ay": 172,
+     "aw": 76,
+     "ah": 95
+    },
+    {
+     "type": "Image",
+     "slot": 11916,
+     "id": "IMAGE_GRAVESTONES_EGYPT_HIEROGLYPH_EGYPT_HIEROGLYPH_118X148_2",
+     "path": "images\\768\\initial\\gravestones\\Egypt_Hieroglyph\\Egypt_Hieroglyph_118x148_2",
+     "parent": "ATLASIMAGE_ATLAS_EGYPT_GRAVESTONE_768_00",
+     "ax": 79,
+     "ay": 172,
+     "aw": 76,
+     "ah": 95
+    }
+   ]
+  },
+  {
+   "type": "simple",
+   "id": "SandstormGroup_768",
+   "res": "768",
+   "parent": "SandstormGroup",
+   "resources": [
+    {
+     "type": "Image",
+     "slot": 7059,
+     "id": "ATLASIMAGE_ATLAS_SANDSTORMGROUP_768_00",
+     "path": "atlases\\SandstormGroup_768_00",
+     "atlas": true,
+     "runtime": true,
+     "width": 512,
+     "height": 512
+    },
+    {
+     "type": "Image",
+     "slot": 11988,
+     "id": "IMAGE_EFFECTS_SANDSTORM_REAR_SANDSTORM_BACK1",
+     "path": "images\\768\\initial\\effects\\sandstorm_rear\\sandstorm_back1",
+     "parent": "ATLASIMAGE_ATLAS_SANDSTORMGROUP_768_00",
+     "ax": 1,
+     "ay": 1,
+     "aw": 160,
+     "ah": 188
+    },
+    {
+     "type": "Image",
+     "slot": 11989,
+     "id": "IMAGE_EFFECTS_SANDSTORM_REAR_SANDSTORM_BACK2",
+     "path": "images\\768\\initial\\effects\\sandstorm_rear\\sandstorm_back2",
+     "parent": "ATLASIMAGE_ATLAS_SANDSTORMGROUP_768_00",
+     "ax": 163,
+     "ay": 1,
+     "aw": 159,
+     "ah": 188
+    },
+    {
+     "type": "Image",
+     "slot": 11990,
+     "id": "IMAGE_EFFECTS_SANDSTORM_REAR_SANDSTORM_SPEEDLINE_FILTERED",
+     "path": "images\\768\\initial\\effects\\sandstorm_rear\\sandstorm_speedline_filtered",
+     "parent": "ATLASIMAGE_ATLAS_SANDSTORMGROUP_768_00",
+     "ax": 77,
+     "ay": 191,
+     "aw": 73,
+     "ah": 42
+    },
+    {
+     "type": "Image",
+     "slot": 11991,
+     "id": "IMAGE_EFFECTS_SANDSTORM_REAR_SANDSTORM_STREAKS",
+     "path": "images\\768\\initial\\effects\\sandstorm_rear\\sandstorm_streaks",
+     "parent": "ATLASIMAGE_ATLAS_SANDSTORMGROUP_768_00",
+     "ax": 227,
+     "ay": 191,
+     "aw": 25,
+     "ah": 82
+    },
+    {
+     "type": "Image",
+     "slot": 11992,
+     "id": "IMAGE_EFFECTS_SANDSTORM_TOP_SANDSTORM_CLOUD",
+     "path": "images\\768\\initial\\effects\\sandstorm_top\\sandstorm_cloud",
+     "parent": "ATLASIMAGE_ATLAS_SANDSTORMGROUP_768_00",
+     "ax": 1,
+     "ay": 191,
+     "aw": 74,
+     "ah": 53
+    },
+    {
+     "type": "Image",
+     "slot": 11993,
+     "id": "IMAGE_EFFECTS_SANDSTORM_TOP_SANDSTORM_FRONT1",
+     "path": "images\\768\\initial\\effects\\sandstorm_top\\sandstorm_front1",
+     "parent": "ATLASIMAGE_ATLAS_SANDSTORMGROUP_768_00",
+     "ax": 324,
+     "ay": 1,
+     "aw": 167,
+     "ah": 172
+    },
+    {
+     "type": "Image",
+     "slot": 11994,
+     "id": "IMAGE_EFFECTS_SANDSTORM_TOP_SANDSTORM_FRONT2",
+     "path": "images\\768\\initial\\effects\\sandstorm_top\\sandstorm_front2",
+     "parent": "ATLASIMAGE_ATLAS_SANDSTORMGROUP_768_00",
+     "ax": 324,
+     "ay": 175,
+     "aw": 167,
+     "ah": 172
+    },
+    {
+     "type": "Image",
+     "slot": 11995,
+     "id": "IMAGE_EFFECTS_SANDSTORM_TOP_SANDSTORM_SPEEDLINE_FILTERED",
+     "path": "images\\768\\initial\\effects\\sandstorm_top\\sandstorm_speedline_filtered",
+     "parent": "ATLASIMAGE_ATLAS_SANDSTORMGROUP_768_00",
+     "ax": 152,
+     "ay": 191,
+     "aw": 73,
+     "ah": 42
+    },
+    {
+     "type": "Image",
+     "slot": 11996,
+     "id": "IMAGE_EFFECTS_SANDSTORM_TOP_SANDSTORM_STREAKS",
+     "path": "images\\768\\initial\\effects\\sandstorm_top\\sandstorm_streaks",
+     "parent": "ATLASIMAGE_ATLAS_SANDSTORMGROUP_768_00",
+     "ax": 254,
+     "ay": 191,
+     "aw": 25,
+     "ah": 82
     }
    ]
   }

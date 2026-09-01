@@ -67,6 +67,14 @@ tasks.register('preview', JavaExec) {
     }
 }
 
+tasks.register('tuneEntities', JavaExec) {
+    group = 'application'
+    description = 'Places and scales every plant and zombie on every lawn; writes assets/entity-tuning.json.'
+    classpath = sourceSets.main.runtimeClasspath
+    mainClass = 'tools.EntityTuner'
+    javaLauncher = javaToolchains.launcherFor(java.toolchain)
+}
+
 tasks.register('tunePackets', JavaExec) {
     group = 'application'
     description = 'Hand-places each plant on its seed packet; writes assets/packet-layout.json.'

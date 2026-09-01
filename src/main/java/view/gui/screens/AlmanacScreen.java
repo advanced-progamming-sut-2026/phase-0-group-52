@@ -44,13 +44,9 @@ public final class AlmanacScreen extends BaseScreen {
     private static final float PRICE_ICON = 24f;
     private static final float TILE_HEIGHT = 54f;
     private static final float TILE_GAP = 3f;
-    private static final int STAGE_RADIUS = 12;
-    private static final float STAGE_COVERAGE = 1.72f;
-    private static final float SHADOW_OFFSET = 5f;
     private static final float COST_ROW = 26f;
     private static final int BURST_COPIES = 3;
     private static final float BURST_COVERAGE = 1.2f;
-    private static final float STAGE_DROP = 0.30f;
     private static final float XP_FILL_HEIGHT = 8f;
     private static final float XP_FILL_INSET = 3f;
     private static final float XP_ROW = 36f;
@@ -59,8 +55,6 @@ public final class AlmanacScreen extends BaseScreen {
     private static final float XP_FONT = 1f;
     private static final com.badlogic.gdx.graphics.Color STATE_GREY =
             new com.badlogic.gdx.graphics.Color(0.82f, 0.85f, 0.8f, 1f);
-    private static final int TURF_CROP_W = 420;
-    private static final int TURF_CROP_H = 300;
     private static final float PACKET_SCALE = 0.68f;
     private static final int PACKET_ROWS = 3;
     private static final float INNER_PAD = 9f;
@@ -90,9 +84,7 @@ public final class AlmanacScreen extends BaseScreen {
     private ZombieAlmanac zombies;
     private Plants selected = Plants.SUNFLOWER;
     private int clipIndex;
-    private PamActor stageActor;
-    private PamActor shadowActor;
-    private Table burstLayer;
+    private view.gui.widgets.PlantStage plantStage;
     private Label stateLabel;
     private ScrollPane strip;
     private float scrollX;
@@ -299,49 +291,11 @@ public final class AlmanacScreen extends BaseScreen {
         return column;
     }
 
-    private com.badlogic.gdx.graphics.Color levelColour() {
-        switch (progress().getLevel()) {
-            case 2:  return Theme.SUN;
-            case 3:  return Theme.plantFamily("EXPLOSIVE");
-            case 4:  return Theme.plantFamily("MAGIC");
-            default: return Theme.GREEN;
-        }
-    }
-
     private Table nameHeader() {
-        Color face = levelColour();
-        Table header = new Table();
-        header.setBackground(ui.primitives().rounded(Theme.RADIUS, face,
-                Theme.darken(face, 0.45f), 4));
-        header.center();
-
-        Table gloss = new Table();
-        gloss.setBackground(ui.primitives().rounded(Theme.RADIUS,
-                Theme.alpha(Color.WHITE, 0.16f), null, 0));
-
-        Table text = new Table();
-        text.center();
-        Label name = new Label(selected.getName(), ui.skin(), "titleOnDark");
-        name.setEllipsis(true);
-        name.setAlignment(Align.center);
-        text.add(name).growX().minWidth(0f).height(NAME_HEIGHT * 0.56f).center()
-                .padLeft(Theme.PAD).padRight(Theme.PAD).row();
-
         Label.LabelStyle base = ui.skin().get("smallOnDark", Label.LabelStyle.class);
         stateLabel = new Label(currentClip(), new Label.LabelStyle(base.font, STATE_GREY));
-        stateLabel.setAlignment(Align.center);
-        text.add(stateLabel).center().height(NAME_HEIGHT * 0.34f).padTop(-3f).padBottom(2f);
-
-        Stack stack = new Stack();
-        Table glossHolder = new Table();
-        glossHolder.top();
-        glossHolder.add(gloss).growX().height(NAME_HEIGHT * 0.42f).padTop(3f)
-                .padLeft(5f).padRight(5f);
-        stack.add(glossHolder);
-        stack.add(text);
-
-        header.add(stack).grow();
-        return header;
+        return controls.nameHeader(selected.getName(), stateLabel,
+                view.gui.widgets.AlmanacControls.levelFace(progress().getLevel()), NAME_HEIGHT);
     }
 
     private List<String> clips() {
@@ -361,69 +315,14 @@ public final class AlmanacScreen extends BaseScreen {
         return all.get(Math.floorMod(clipIndex, all.size()));
     }
 
-    private Drawable turf() {
-        TextureRegion base = art() == null ? null : art().region(view.gui.ChapterArt.turf(record()));
-        if (base == null) {
-            return ui.primitives().flat(Theme.PANEL_SUNKEN);
-        }
-        int w = Math.min(base.getRegionWidth(), TURF_CROP_W);
-        int h = Math.min(base.getRegionHeight(), TURF_CROP_H);
-        int x = base.getRegionX() + (base.getRegionWidth() - w) / 2;
-        int y = base.getRegionY() + (base.getRegionHeight() - h) / 2;
-        return new TextureRegionDrawable(new TextureRegion(base.getTexture(), x, y, w, h));
-    }
-
-    private PamActor plantActor(PlantRecord r, boolean shadow) {
-        PamActor actor = new PamActor(art(), r.getAnimations().getPlant(), currentClip())
-                .setFit(true)
-                .setCoverage(STAGE_COVERAGE)
-                .setClipped(true);
-        float half = canvasSize(r) / 2f;
-        actor.setExtent(-half, -half + half * STAGE_DROP, half * 2f, half * 2f);
-        if (shadow) {
-            actor.setColor(0f, 0f, 0f, 0.32f);
-        }
-        return actor;
-    }
-
     private Table stagePanel() {
-        Table frame = new Table();
-        frame.setBackground(ui.primitives().rounded(STAGE_RADIUS, Theme.PANEL_SUNKEN,
-                Theme.OUTLINE_SOFT, PANEL_BORDER));
-        frame.pad(PANEL_BORDER + 1f);
-
-        Stack stack = new Stack();
-        Table turfLayer = new Table();
-        turfLayer.setBackground(turf());
-        stack.add(turfLayer);
-
-        PlantRecord r = record();
-        if (r != null && r.getAnimations().hasPlant() && art() != null) {
-            PamActor shade = plantActor(r, true);
-            if (shade.isReady()) {
-                shadowActor = shade;
-                Table shadow = new Table();
-                shadow.add(shade).grow().padLeft(SHADOW_OFFSET).padTop(SHADOW_OFFSET);
-                stack.add(shadow);
-            }
-            PamActor actor = plantActor(r, false);
-            if (actor.isReady()) {
-                stageActor = actor;
-                Table holder = new Table();
-                holder.add(actor).grow();
-                stack.add(holder);
-            }
-            burstLayer = new Table();
-            stack.add(burstLayer);
-        }
-        frame.add(stack).grow();
-        if (!unlocked()) {
-            frame.setColor(DIMMED);
-        }
+        plantStage = new view.gui.widgets.PlantStage(ui, art());
+        plantStage.show(record(), currentClip());
+        plantStage.setDimmed(!unlocked());
 
         Stack shell = new Stack();
         Table frameHolder = new Table();
-        frameHolder.add(frame).grow().padLeft(ARROW / 2f).padRight(ARROW / 2f);
+        frameHolder.add(plantStage).grow().padLeft(ARROW / 2f).padRight(ARROW / 2f);
         shell.add(frameHolder);
 
         Table arrows = new Table();
@@ -434,12 +333,6 @@ public final class AlmanacScreen extends BaseScreen {
         Table wrap = new Table();
         wrap.add(shell).grow();
         return wrap;
-    }
-
-    private float canvasSize(PlantRecord r) {
-        int widest = Math.max(r.getAnimations().getCanvasWidth(),
-                r.getAnimations().getCanvasHeight());
-        return widest <= 0 ? 390f : widest;
     }
 
     private Table arrow(final boolean forward) {
@@ -470,11 +363,8 @@ public final class AlmanacScreen extends BaseScreen {
         if (stateLabel != null) {
             stateLabel.setText(clip);
         }
-        if (stageActor != null) {
-            stageActor.play(clip, true, null);
-        }
-        if (shadowActor != null) {
-            shadowActor.play(clip, true, null);
+        if (plantStage != null) {
+            plantStage.play(clip);
         }
     }
 
@@ -634,9 +524,10 @@ public final class AlmanacScreen extends BaseScreen {
 
 
     private void celebrate() {
-        if (art() == null || burstLayer == null) {
+        if (art() == null || plantStage == null) {
             return;
         }
+        Table burstLayer = plantStage.overlay();
         burstLayer.clearChildren();
         for (int i = 0; i < BURST_COPIES; i++) {
             PamActor burst = new PamActor(art(), Assets.BOOST_EFFECT, "animation")

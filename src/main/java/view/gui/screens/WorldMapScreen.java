@@ -154,8 +154,7 @@ public final class WorldMapScreen extends BaseScreen
         }
         if (!focused && scroll.getMaxX() > 0f) {
             focused = true;
-            scrollTo(keepScrollX >= 0f
-                    ? keepScrollX : strip.focusX() - scroll.getWidth() / 2f);
+            scrollTo(keepScrollX >= 0f ? keepScrollX : 0f);
             keepScrollX = -1f;
         }
         if (backdrop != null) {

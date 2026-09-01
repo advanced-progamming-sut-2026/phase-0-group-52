@@ -10,7 +10,8 @@ import com.badlogic.gdx.scenes.scene2d.Touchable;
 import com.badlogic.gdx.scenes.scene2d.actions.Actions;
 import com.badlogic.gdx.utils.Align;
 import com.badlogic.gdx.utils.Scaling;
-import controller.menu.ChapterMenuController;
+import controller.Navigation;
+import controller.menu.AdventureMenuController;
 import controller.menu.MainMenuController;
 import model.enums.MenuType;
 import database.QuestRepository;
@@ -59,7 +60,6 @@ public final class MainMenuScreen extends BaseScreen {
             "Vasebreaker", "Wallnut Bowling", "I, Zombie", "Beghouled"};
 
     private final MainMenuController controller;
-    private final ChapterMenuController chapters;
     private final QuestRepository questRepository = new QuestRepository();
 
     private Carousel chapterCarousel;
@@ -72,7 +72,6 @@ public final class MainMenuScreen extends BaseScreen {
     public MainMenuScreen(GameContext context) {
         super(context, "");
         this.controller = new MainMenuController(context.app());
-        this.chapters = new ChapterMenuController(context.app());
     }
 
     @Override
@@ -465,15 +464,27 @@ public final class MainMenuScreen extends BaseScreen {
                 context.toasts().error("Finish the previous chapter first.");
                 return;
             }
-            chapterCarousel.playUnlock(index, new Runnable() {
-                @Override
-                public void run() {
-                    beginEnter(chapter);
-                }
-            });
+            unlockChapter(index, chapter);
             return;
         }
         beginEnter(chapter);
+    }
+
+    private void unlockChapter(int index, ChapterType chapter) {
+        model.Result result =
+                new AdventureMenuController(context.app()).unlockChapter(chapter);
+        if (!result.isSuccess()) {
+            context.toasts().error(result.getMessage());
+            return;
+        }
+        lockState = lockStates();
+        context.toasts().info(result.getMessage());
+        chapterCarousel.playUnlock(index, new Runnable() {
+            @Override
+            public void run() {
+                chapterCarousel.setItems(chapterItems(lockState));
+            }
+        });
     }
 
     private void beginEnter(final ChapterType chapter) {
@@ -493,8 +504,9 @@ public final class MainMenuScreen extends BaseScreen {
     }
 
     private void openChapter(ChapterType chapter) {
-        chapters.handleCommand(new String[]{"menu", "enter", "chapter", "-c", chapter.name()});
-        chapters.handleCommand(new String[]{"menu", "enter", "chapter_menu"});
+        context.app().setSelectedChapter(chapter);
+        context.app().setSelectedLevel(1);
+        Navigation.go(context.app(), MenuType.CHAPTER_MENU);
     }
 
     private Image veil() {
@@ -515,7 +527,7 @@ public final class MainMenuScreen extends BaseScreen {
         if (user == null) {
             return chapter == ChapterType.first();
         }
-        return chapter.ordinal() < Math.max(1, user.getLastChapter());
+        return user.getAdventure().isChapterOpen(chapter);
     }
 
     private int clearedInChapter(ChapterType chapter) {
@@ -523,16 +535,7 @@ public final class MainMenuScreen extends BaseScreen {
         if (user == null) {
             return 0;
         }
-        int reachedChapter = Math.max(1, user.getLastChapter());
-        int reachedLevel = Math.max(1, user.getLastLevel());
-        int index = chapter.number();
-        if (index < reachedChapter) {
-            return ChapterType.LEVELS_PER_CHAPTER;
-        }
-        if (index > reachedChapter) {
-            return 0;
-        }
-        return Math.min(ChapterType.LEVELS_PER_CHAPTER, reachedLevel - 1);
+        return user.getAdventure().clearedLevels(chapter);
     }
 
 

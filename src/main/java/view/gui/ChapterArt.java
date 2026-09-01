@@ -8,6 +8,9 @@ public final class ChapterArt {
     private ChapterArt() {}
 
     public static String world(ChapterType chapter) {
+        if (chapter == null) {
+            return "EGYPT";
+        }
         switch (chapter) {
             case ANCIENT_EGYPT:   return "EGYPT";
             case FROSTBITE_CAVES: return "ICEAGE";

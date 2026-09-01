@@ -18,8 +18,13 @@ public class GraveBuster extends Explosive {
     public void onPlanted(Game game) {
         if (game.getField() != null) {
             Cell cell = game.getField().getCell(getCol(), getRow());
-            if (cell != null && cell.getType() == CellType.TOMBSTONE)
+            if (cell != null && cell.getType() == CellType.TOMBSTONE) {
+                model.entities.Tombstone stone = game.tombstoneAt(getCol(), getRow());
+                if (stone != null) {
+                    stone.shatter();
+                }
                 cell.setType(CellType.NORMAL);
+            }
         }
         setHp(0);
         PlantCombat.removePlant(game, this);

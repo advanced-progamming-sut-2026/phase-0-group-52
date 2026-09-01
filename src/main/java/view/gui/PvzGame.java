@@ -6,6 +6,7 @@ import model.App;
 import util.Log;
 import model.enums.MenuType;
 import view.gui.screens.ChoosePlantScreen;
+import view.gui.screens.LevelScreen;
 import view.gui.screens.AlmanacScreen;
 import view.gui.screens.GreenhouseScreen;
 import view.gui.screens.LeaderboardScreen;
@@ -46,6 +47,7 @@ public final class PvzGame extends Game {
 
     @Override
     public void create() {
+        UiKit.useGameCursor();
         Log.info("gui", "Window ready after "
                 + (System.currentTimeMillis() - DesktopLauncher.PROCESS_START) + " ms");
 
@@ -183,6 +185,11 @@ public final class PvzGame extends Game {
     }
 
     private Screen screenFor(MenuType type) {
+        if (type == MenuType.GAME_MENU || type == MenuType.CHOOSE_PLANT_MENU) {
+            Screen fresh = create(type);
+            screens.put(type, fresh);
+            return fresh;
+        }
         Screen existing = screens.get(type);
         if (existing != null) {
             return existing;
@@ -203,6 +210,7 @@ public final class PvzGame extends Game {
             case GREENHOUSE_MENU:  return new GreenhouseScreen(context);
             case TRAVEL_LOG_MENU:  return new QuestsScreen(context);
             case CHOOSE_PLANT_MENU: return new ChoosePlantScreen(context);
+            case GAME_MENU:        return new LevelScreen(context);
             default:               return null;
         }
     }

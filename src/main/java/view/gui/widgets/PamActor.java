@@ -21,6 +21,8 @@ public final class PamActor extends Widget {
     private float duration;
     private float stateTime;
     private float coverage = 1f;
+    private float rate = 1f;
+    private boolean synced;
     private Runnable onFinished;
     private java.util.Map<String, Boolean> parts;
 
@@ -32,6 +34,40 @@ public final class PamActor extends Widget {
         this.clipName = clipName;
         this.duration = this.ready ? pam.player().clipDurationSeconds(path, clipName) : 0f;
         setTouchable(Touchable.disabled);
+    }
+
+    private static float SHARED;
+    private static long SHARED_FRAME = -1L;
+    private static boolean FROZEN;
+    private static float WORLD_RATE = 1f;
+
+    public static void freezeAll(boolean value) {
+        FROZEN = value;
+    }
+
+    public static void setWorldRate(float value) {
+        WORLD_RATE = Math.max(0.1f, value);
+    }
+
+    private static float sharedClock() {
+        long frame = Gdx.graphics.getFrameId();
+        if (frame != SHARED_FRAME) {
+            SHARED_FRAME = frame;
+            if (!FROZEN) {
+                SHARED += Gdx.graphics.getDeltaTime() * WORLD_RATE;
+            }
+        }
+        return SHARED;
+    }
+
+    public PamActor setSynced(boolean value) {
+        this.synced = value;
+        return this;
+    }
+
+    public PamActor setRate(float value) {
+        this.rate = Math.max(0f, value);
+        return this;
     }
 
     public PamActor setCoverage(float value) {
@@ -137,7 +173,15 @@ public final class PamActor extends Widget {
         if (frozen) {
             return;
         }
-        stateTime += Gdx.graphics.getDeltaTime();
+        if (FROZEN) {
+            return;
+        }
+        float step = Gdx.graphics.getDeltaTime() * rate * WORLD_RATE;
+        if (synced && duration > 0f) {
+            stateTime = sharedClock() % duration;
+        } else {
+            stateTime += step;
+        }
         if (looping || duration <= 0f || stateTime < duration) {
             return;
         }

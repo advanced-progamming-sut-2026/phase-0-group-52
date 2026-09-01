@@ -56,6 +56,10 @@ public abstract class BaseScreen implements Screen, Navigator.Hosted {
         return topBar;
     }
 
+    protected Table rootTable() {
+        return root;
+    }
+
     @Override
     public Stage uiStage() {
         return stage;
