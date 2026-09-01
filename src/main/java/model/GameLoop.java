@@ -15,6 +15,12 @@ import java.util.Map;
 public class GameLoop {
 
     public static final int WAVE_INTERVAL = 15 * Game.TICKS_PER_SECOND;
+    public static final int MIN_WAVE_GAP = 14 * Game.TICKS_PER_SECOND;
+    public static final int MAX_WAVE_GAP = 24 * Game.TICKS_PER_SECOND;
+    public static final int CLEAR_THRESHOLD = 2;
+    public static final int MIN_LEVEL_TICKS = 120 * Game.TICKS_PER_SECOND;
+
+    private int lastWaveTick;
 
     private final ChapterMechanics mechanics;
     private int skySunTimer = 0;
@@ -55,10 +61,12 @@ public class GameLoop {
         if (game.getLevel() != null) game.getLevel().onTick(game);
 
         if (game.getField() != null)
-            for (Lawnmower lm : game.getField().getLawnmowers()) lm.triggerIfZombieAtHouse(game);
+            for (Lawnmower lm : game.getField().getLawnmowers()) {
+                lm.triggerIfZombieAtHouse(game);
+                lm.advance(game);
+            }
 
-        for (Map.Entry<Plants, Double> e : game.getCooldowns().entrySet())
-            if (e.getValue() > 0) e.setValue(Math.max(0, e.getValue() - Game.SECONDS_PER_TICK));
+        coolDown(game);
 
         PlantCombat.removeDeadZombies(game);
         spawnWaves(game, tick);
@@ -69,11 +77,19 @@ public class GameLoop {
         if (defeat != null) return end(game, false, defeat);
         String victory = game.getLevel() != null ? game.getLevel().checkVictory(game) : null;
         if (victory != null) return end(game, true, victory);
-        if (allWavesSpawned(game) && game.getZombies().isEmpty() && tick > WAVE_INTERVAL)
+        if (allWavesSpawned(game) && game.getZombies().isEmpty() && tick > MIN_LEVEL_TICKS)
             return end(game, true, "All zombies defeated. You win!");
         if (anyZombieAtHouse(game))
             return end(game, false, "A zombie reached your house. You lose!");
         return null;
+    }
+
+    private void coolDown(Game game) {
+        for (Map.Entry<Plants, Double> e : game.getCooldowns().entrySet()) {
+            if (e.getValue() > 0) {
+                e.setValue(Math.max(0, e.getValue() - Game.SECONDS_PER_TICK));
+            }
+        }
     }
 
     private boolean skyEnabled(Game game) {
@@ -90,11 +106,11 @@ public class GameLoop {
 
     private void dropSkySun(Game game) {
         SunType type = SunType.pickRandom(PlantCombat.RANDOM.nextDouble());
-        int col = PlantCombat.RANDOM.nextInt(GameField.COLS);
-        int row = PlantCombat.RANDOM.nextInt(GameField.ROWS);
+        double col = PlantCombat.RANDOM.nextDouble() * GameField.COLS;
+        double row = PlantCombat.RANDOM.nextDouble() * GameField.ROWS;
         game.getSuns().add(new Sun(type, new Vec2(col, row)));
         System.out.println("New " + type + " sun is dropping at position ("
-                + (col + 1) + ", " + (row + 1) + ")");
+                + (int) (col + 1) + ", " + (int) (row + 1) + ")");
     }
 
     private void spawnWaves(Game game, int tick) {
@@ -103,10 +119,15 @@ public class GameLoop {
         if (level != null && level.areWavesHeld()) return;
         int nextWave = game.getCurrentWaveIndex() + 1;
 
-        boolean ready = (level != null && level.manualWaves())
+        boolean timed = (level != null && level.manualWaves())
                 ? (tick - level.getWaveStartTick()) >= nextWave * WAVE_INTERVAL
                 : tick >= (nextWave + 1) * WAVE_INTERVAL;
+        boolean cleared = game.getZombies().size() <= CLEAR_THRESHOLD
+                && tick - lastWaveTick >= MIN_WAVE_GAP;
+        boolean overdue = tick - lastWaveTick >= MAX_WAVE_GAP;
+        boolean ready = (timed && game.getZombies().isEmpty()) || cleared || overdue;
         if (nextWave < game.getWaves().size() && ready) {
+            lastWaveTick = tick;
             game.setCurrentWaveIndex(nextWave);
             Wave w = game.getWaves().get(nextWave);
             game.getZombies().addAll(w.getZombies());
@@ -123,7 +144,13 @@ public class GameLoop {
     }
 
     private boolean anyZombieAtHouse(Game game) {
-        for (Zombie z : game.getZombies()) if (z.getPosition().x <= 0) return true;
+        for (Zombie z : game.getZombies()) {
+            if (z.getPosition().x > 0) continue;
+            Lawnmower guard = game.getField() == null ? null
+                    : game.getField().getLawnmower(z.getRow());
+            if (guard != null && (guard.isIsactive() || guard.isRunning())) continue;
+            return true;
+        }
         return false;
     }
 

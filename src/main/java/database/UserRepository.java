@@ -270,6 +270,7 @@ public class UserRepository {
         plants(sb, u);
         seenZombies(sb, u);
         adventure(sb, u);
+        chapters(sb, u);
 
         if (sb.charAt(sb.length() - 1) == ',') {
             sb.setLength(sb.length() - 1);
@@ -311,6 +312,7 @@ public class UserRepository {
         readPlants(u, m.get("plants"));
         readSeenZombies(u, m.get("seenZombies"));
         readAdventure(u, m.get("adventure"));
+        readChapters(u, m.get("chapters"));
         return u;
     }
 
@@ -333,6 +335,48 @@ public class UserRepository {
             if (row != null) {
                 u.markZombieSeen(row.toString());
             }
+        }
+    }
+
+    private void chapters(StringBuilder sb, User u) {
+        StringBuilder rows = new StringBuilder();
+        for (ChapterType chapter : ChapterType.values()) {
+            int done = u.getAdventure().clearedLevels(chapter);
+            boolean forced = u.getAdventure().isForced(chapter);
+            if (done == 0 && !forced) {
+                continue;
+            }
+            if (rows.length() > 0) {
+                rows.append(',');
+            }
+            rows.append("{\"chapter\":\"").append(chapter.name())
+                    .append("\",\"cleared\":").append(done)
+                    .append(",\"opened\":").append(forced).append('}');
+        }
+        sb.append("\"chapters\":[").append(rows).append("],");
+    }
+
+    private void readChapters(User u, Object raw) {
+        if (!(raw instanceof List)) {
+            u.getAdventure().seedFrom(u.getLastChapter(), u.getLastLevel());
+            return;
+        }
+        for (Object item : (List<?>) raw) {
+            if (!(item instanceof Map)) {
+                continue;
+            }
+            Map<?, ?> row = (Map<?, ?>) item;
+            ChapterType chapter = chapterOf(strOf(row, "chapter"));
+            if (chapter == null) {
+                continue;
+            }
+            u.getAdventure().recordCleared(chapter, intOf(row, "cleared"));
+            if (boolOf(row, "opened")) {
+                u.getAdventure().openChapter(chapter);
+            }
+        }
+        if (!u.getAdventure().hasChapterState()) {
+            u.getAdventure().seedFrom(u.getLastChapter(), u.getLastLevel());
         }
     }
 

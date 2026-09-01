@@ -16,7 +16,8 @@ public final class MapBackdrop extends Widget {
 
     private static final float[] PARALLAX = {0.22f, 0.44f};
     private static final float[] HEIGHT = {0.66f, 0.34f};
-    private static final float[] SCALE = {1.5f, 1.1f};
+    private static final float[] SCALE = {1.15f, 0.8f};
+    private static final float MIST_HEIGHT = 620f;
     private static final float[] ALPHA = {0.55f, 0.42f};
     private static final float REPEAT = 1.4f;
     private static final float FAR_PARALLAX = 0.09f;
@@ -39,13 +40,14 @@ public final class MapBackdrop extends Widget {
             return;
         }
         distant(assets, chapter, span);
-        int[] mist = WorldMapArt.nebulas(chapter);
+        String[] mist = WorldMapArt.nebulas(chapter);
         for (int band = 0; band < mist.length; band++) {
-            TextureRegion art = assets.region(WorldMapArt.island(chapter, mist[band]));
+            TextureRegion art = assets.region(mist[band]);
             if (art == null) {
                 continue;
             }
-            float scale = SCALE[band % SCALE.length];
+            float scale = MIST_HEIGHT * SCALE[band % SCALE.length]
+                    / Math.max(1f, art.getRegionHeight());
             float stride = art.getRegionWidth() * scale * REPEAT;
             float reach = span + stride;
             for (float x = -stride; x < reach; x += stride) {
@@ -57,7 +59,7 @@ public final class MapBackdrop extends Widget {
     }
 
     private void distant(Assets assets, ChapterType chapter, float span) {
-        int[] far = WorldMapArt.distant(chapter);
+        String[] far = WorldMapArt.distant(chapter);
         if (far.length == 0) {
             return;
         }
@@ -65,7 +67,7 @@ public final class MapBackdrop extends Widget {
         float step = reach / (FAR_COUNT + 1);
         for (int i = 0; i < FAR_COUNT; i++) {
             TextureRegion art =
-                    assets.region(WorldMapArt.island(chapter, far[i % far.length]));
+                    assets.region(far[i % far.length]);
             if (art != null) {
                 pieces.add(new Piece(art, step * (i + 1) - reach * FAR_SHIFT,
                         FAR_Y[i % FAR_Y.length], FAR_PARALLAX,

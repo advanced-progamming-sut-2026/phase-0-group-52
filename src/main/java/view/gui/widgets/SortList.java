@@ -10,6 +10,7 @@ import java.util.List;
 public final class SortList extends Table {
 
     private static final float PITCH = SortRow.HEIGHT + 3f;
+    private static final float GRAB = 4f;
 
     public interface Model {
         int size();
@@ -35,10 +36,20 @@ public final class SortList extends Table {
         this.onChange = onChange;
         top();
         fill();
-        addListener(new DragListener() {
+        DragListener drags = new DragListener() {
+            @Override
+            public boolean touchDown(InputEvent event, float x, float y, int pointer, int button) {
+                boolean taken = super.touchDown(event, x, y, pointer, button);
+                if (taken) {
+                    event.stop();
+                }
+                return taken;
+            }
+
             @Override
             public void dragStart(InputEvent event, float x, float y, int pointer) {
                 dragging = indexAt(y);
+                fill();
             }
 
             @Override
@@ -57,7 +68,9 @@ public final class SortList extends Table {
                 dragging = -1;
                 fill();
             }
-        });
+        };
+        drags.setTapSquareSize(GRAB);
+        addListener(drags);
     }
 
     private int indexAt(float y) {

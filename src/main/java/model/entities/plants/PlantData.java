@@ -86,6 +86,29 @@ public final class PlantData {
         return null;
     }
 
+    public static int progressionRank(PlantRecord record) {
+        if (record == null) {
+            return Integer.MAX_VALUE;
+        }
+        switch (record.getUnlockKind()) {
+            case STARTER: return 0;
+            case MINT:    return 5;
+            case PREMIUM: return 6;
+            default:      return record.getChapter() == null ? 6 : record.getChapter().number();
+        }
+    }
+
+    public static boolean isEdible(Plants plant) {
+        PlantRecord found = record(plant);
+        if (found == null) {
+            return true;
+        }
+        if (found.getCategory() == model.entities.plants.PlantsCategory.EXPLOSIVE) {
+            return false;
+        }
+        return plant.getBaseHP() > 0;
+    }
+
     public static PlantRecord record(Plants type) {
         return records().get(type);
     }

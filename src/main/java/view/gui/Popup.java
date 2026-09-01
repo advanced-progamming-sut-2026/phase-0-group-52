@@ -41,6 +41,7 @@ public class Popup extends Table {
         scroll.setFadeScrollBars(false);
         scroll.setScrollingDisabled(true, false);
         scroll.setOverscroll(false, false);
+        scroll.setCancelTouchFocus(false);
         UiKit.focusOnHover(scroll);
         frame.add(scroll).grow().row();
 

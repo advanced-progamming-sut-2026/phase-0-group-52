@@ -138,6 +138,33 @@ public final class TopBar extends Table {
         return this;
     }
 
+    public static Table walletFace(GameContext context, Table plusSlot, String iconName,
+            Label amount, boolean showPlus) {
+        UiKit ui = context.ui();
+        Table pill = new Table();
+        pill.setBackground(ui.drawable("counter"));
+        pill.add(amount).expandX().center()
+                .padLeft(WALLET_ICON * 0.7f).padRight(PLUS_ICON * 0.7f);
+        Table icon = new Table();
+        icon.left();
+        Image art = new Image(ui.drawable(iconName));
+        art.setScaling(Scaling.fit);
+        icon.add(art).size(WALLET_ICON).padLeft(-WALLET_ICON * 0.18f);
+        plusSlot.right();
+        if (plusSlot.hasChildren() || showPlus) {
+            Image plus = new Image(ui.drawable("plusIcon"));
+            plus.setScaling(Scaling.fit);
+            plusSlot.add(plus).size(PLUS_ICON).padRight(-PLUS_ICON * 0.12f);
+        }
+        Stack stack = new Stack();
+        stack.add(pill);
+        stack.add(icon);
+        stack.add(plusSlot);
+        Table holder = new Table();
+        holder.add(stack).height(WALLET_ICON);
+        return holder;
+    }
+
     private Table wallet(Table plusSlot, String iconName, Label amount, final int coarse,
             final int fine, final String currency) {
         UiKit ui = context.ui();

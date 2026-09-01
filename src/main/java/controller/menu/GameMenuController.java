@@ -169,6 +169,19 @@ public class GameMenuController {
             advanceProgress(u, game);
             System.out.println("Reward: 500 coins, score " + score + ". Use 'menu enter chapter_menu' to continue.");
             int clearedLevel = game.getLevel() != null ? game.getLevel().getLevelnumber() : u.getLastLevel();
+            model.ChapterType playedIn = game.getLevel() != null
+                    ? game.getLevel().getChaptertype() : app.getSelectedChapter();
+            if (playedIn != null) {
+                u.getAdventure().openChapter(playedIn);
+                u.getAdventure().recordCleared(playedIn, clearedLevel);
+                if (clearedLevel >= model.ChapterType.LEVELS_PER_CHAPTER) {
+                    model.ChapterType next =
+                            model.ChapterType.byNumber(playedIn.number() + 1);
+                    if (next != null) {
+                        u.getAdventure().openChapter(next);
+                    }
+                }
+            }
             if (clearedLevel >= u.getLastLevel()) {
                 if (clearedLevel >= model.ChapterType.LEVELS_PER_CHAPTER) {
                     int nextChapter = Math.min(model.ChapterType.values().length,

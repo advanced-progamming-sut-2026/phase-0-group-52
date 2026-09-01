@@ -28,8 +28,7 @@ public class AdventureMenuController {
 
     public int clearedLevels(ChapterType chapter) {
         User user = app == null ? null : app.getCurrentuser();
-        return user == null ? 0
-                : ChapterMap.clearedLevels(user.getLastChapter(), user.getLastLevel(), chapter);
+        return user == null ? 0 : user.getAdventure().clearedLevels(chapter);
     }
 
     public boolean isChapterUnlocked(ChapterType chapter) {
@@ -37,7 +36,7 @@ public class AdventureMenuController {
         if (user == null) {
             return chapter == ChapterType.first();
         }
-        return chapter != null && chapter.ordinal() < Math.max(1, user.getLastChapter());
+        return user.getAdventure().isChapterOpen(chapter);
     }
 
     public Result claimIsland(ChapterType chapter, int slot) {
@@ -68,6 +67,22 @@ public class AdventureMenuController {
         return new Result(true, prize.getName() + " is yours!", prize);
     }
 
+    public Result unlockChapter(ChapterType chapter) {
+        User user = app == null ? null : app.getCurrentuser();
+        if (user == null) {
+            return failure("No user is signed in.");
+        }
+        if (chapter == null) {
+            return failure("Unknown chapter.");
+        }
+        if (isChapterUnlocked(chapter)) {
+            return failure(chapter.getDisplayName() + " is already open.");
+        }
+        user.getAdventure().openChapter(chapter);
+        saves.persist(user);
+        return new Result(true, chapter.getDisplayName() + " unlocked.", chapter);
+    }
+
     public Result unlockLevel(ChapterType chapter, int levelNumber) {
         User user = app == null ? null : app.getCurrentuser();
         if (user == null) {
@@ -80,13 +95,8 @@ public class AdventureMenuController {
         if (ChapterMap.isLevelPlayable(clearedLevels(chapter), levelNumber)) {
             return failure("That level is already open.");
         }
-        if (chapter.number() > Math.max(1, user.getLastChapter())) {
-            user.setLastChapter(chapter.number());
-            user.setLastLevel(1);
-        }
-        if (levelNumber > Math.max(1, user.getLastLevel())) {
-            user.setLastLevel(levelNumber);
-        }
+        user.getAdventure().openChapter(chapter);
+        user.getAdventure().recordCleared(chapter, levelNumber - 1);
         saves.persist(user);
         return new Result(true, "Level " + levelNumber + " forced open.", chapter);
     }
@@ -103,16 +113,8 @@ public class AdventureMenuController {
         if (levelNumber <= clearedLevels(chapter)) {
             return failure("That level is already cleared.");
         }
-        if (chapter.number() > Math.max(1, user.getLastChapter())) {
-            user.setLastChapter(chapter.number());
-        }
-        if (levelNumber >= ChapterType.LEVELS_PER_CHAPTER) {
-            user.setLastChapter(Math.min(ChapterType.values().length,
-                    chapter.number() + 1));
-            user.setLastLevel(1);
-        } else {
-            user.setLastLevel(levelNumber + 1);
-        }
+        user.getAdventure().openChapter(chapter);
+        user.getAdventure().recordCleared(chapter, levelNumber);
         saves.persist(user);
         return new Result(true, "Level " + levelNumber + " marked cleared.", chapter);
     }

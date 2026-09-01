@@ -1,207 +1,363 @@
 package view.gui.screens;
 
-import com.badlogic.gdx.scenes.scene2d.ui.Label;
+import com.badlogic.gdx.Input;
+import com.badlogic.gdx.scenes.scene2d.InputEvent;
+import com.badlogic.gdx.scenes.scene2d.InputListener;
+import com.badlogic.gdx.scenes.scene2d.Touchable;
+import com.badlogic.gdx.scenes.scene2d.actions.Actions;
+import com.badlogic.gdx.scenes.scene2d.ui.Image;
 import com.badlogic.gdx.scenes.scene2d.ui.ScrollPane;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
-import com.badlogic.gdx.utils.Align;
+import com.badlogic.gdx.scenes.scene2d.ui.TextField;
 import controller.menu.ChoosePlantMenuController;
-import model.entities.plants.PlantData;
+import model.ChapterType;
+import model.Result;
 import model.entities.plants.Plants;
-import view.gui.Animations;
+import model.entities.zombies.ZombieRecord;
 import view.gui.BaseScreen;
 import view.gui.GameContext;
 import view.gui.Theme;
+import view.gui.TopBar;
+import view.gui.UiKit;
+import view.gui.widgets.AlmanacFilterPopup;
+import view.gui.widgets.LawnView;
+import view.gui.widgets.LevelIntro;
+import view.gui.widgets.PlantPickCard;
+import view.gui.widgets.SearchBar;
 import view.gui.widgets.SeedPacket;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public final class ChoosePlantScreen extends BaseScreen {
-    private final ChoosePlantMenuController controller;
 
-    private Table availableArea;
-    private Table slotArea;
-    private Label slotCounter;
+    private static final int COLUMNS = 5;
+    private static final int SLOT_COLUMNS = 2;
+    private static final float PACKET_SCALE = 0.88f;
+    private static final float SLOT_SCALE = 0.9f;
+    private static final float CARD_HEIGHT = 232f;
+    private static final float PANEL_WIDTH = 632f;
+    private static final float ROCK_WIDTH = 400f;
+    private static final float ROCK_HEIGHT = 104f;
+    private static final float ROCK_FONT = 1.45f;
+    private static final float REVEAL = 0.4f;
+
+    private final ChoosePlantMenuController controller;
+    private final AlmanacFilterPopup.Rules rules = new AlmanacFilterPopup.Rules();
+
+    private Table slotGrid;
+    private Table grid;
+    private PlantPickCard card;
+    private Plants shown;
+
+    private LawnView lawn;
+    private Image catcher;
+    private LevelIntro intro;
+    private ChapterType lawnChapter;
 
     public ChoosePlantScreen(GameContext context) {
         super(context, "Choose your plants");
         this.controller = new ChoosePlantMenuController(context.app());
+        stage.addListener(new InputListener() {
+            @Override
+            public boolean keyDown(InputEvent event, int keycode) {
+                if (intro == null || !intro.isRunning()) {
+                    return false;
+                }
+                if (keycode == Input.Keys.ESCAPE || keycode == Input.Keys.SPACE
+                        || keycode == Input.Keys.ENTER) {
+                    intro.skip();
+                    return true;
+                }
+                return false;
+            }
+        });
+    }
+
+    @Override
+    protected TopBar.Section section() {
+        return TopBar.Section.OTHER;
+    }
+
+    @Override
+    protected boolean scrollContent() {
+        return false;
+    }
+
+    @Override
+    protected float contentPad() {
+        return 0f;
     }
 
     @Override
     protected void build() {
-        Table panel = ui.panel();
-        panel.top();
+        buildLawn();
+        muster();
+        content.top().left();
+        slotGrid = new Table();
+        grid = new Table();
+        card = new PlantPickCard(ui, context.assets());
 
-        Table header = new Table();
-        slotCounter = new Label("", ui.skin(), "title");
-        header.add(slotCounter).left().expandX();
-        header.add(ui.secondaryButton("Clear", new Runnable() {
-            @Override
-            public void run() {
-                controller.handleCommand("clear selection");
-                refreshAll();
-            }
-        })).padRight(Theme.PAD_SMALL);
-        panel.add(header).growX().padBottom(Theme.PAD_SMALL).row();
+        content.add(leftColumn()).grow().pad(Theme.PAD);
+        content.add(rightPanel()).width(PANEL_WIDTH).growY();
 
-        slotArea = new Table();
-        panel.add(slotArea).growX().padBottom(Theme.PAD).row();
-
-        panel.add(ui.divider()).height(2f).growX().padBottom(Theme.PAD).row();
-
-        availableArea = new Table();
-        ScrollPane scroll = new ScrollPane(availableArea, ui.skin());
-        scroll.setFadeScrollBars(false);
-        view.gui.UiKit.focusOnHover(scroll);
-        scroll.setScrollingDisabled(true, false);
-        panel.add(scroll).grow().row();
-
-        panel.add(ui.button("Let's Rock!", new Runnable() {
-            @Override
-            public void run() {
-                startLevel();
-            }
-        })).padTop(Theme.PAD).height(48f).width(200f).center();
-
-        refreshAll();
-        content.add(panel).grow();
+        repaint();
     }
 
-    private void refreshAll() {
+    private Table leftColumn() {
+        Table left = new Table();
+        left.top().left();
+        left.add(slotGrid).left().row();
+        left.add().expandY().row();
+        com.badlogic.gdx.scenes.scene2d.ui.TextButton rock =
+                ui.styledButton("Let's Rock!", "epic", new Runnable() {
+                    @Override
+                    public void run() {
+                        rock();
+                    }
+                });
+        rock.getLabel().setFontScale(ROCK_FONT);
+        left.add(rock).size(ROCK_WIDTH, ROCK_HEIGHT).center().padBottom(Theme.PAD_LARGE);
+        return left;
+    }
+
+    private void rock() {
+        Result result = new controller.menu.LevelController(context.app()).start();
+        if (!result.isSuccess()) {
+            context.toasts().error(result.getMessage());
+        }
+    }
+
+    private Table rightPanel() {
+        Table panel = ui.panel();
+        panel.top();
+        panel.add(searchRow()).growX().right().padBottom(Theme.PAD_SMALL).row();
+        panel.add(card).growX().height(CARD_HEIGHT).padBottom(Theme.PAD_SMALL).row();
+        ScrollPane pane = new ScrollPane(grid, ui.skin(), "bare");
+        pane.setScrollingDisabled(true, false);
+        pane.setFadeScrollBars(false);
+        pane.setOverscroll(false, false);
+        UiKit.focusOnHover(pane);
+        panel.add(pane).grow();
+        return panel;
+    }
+
+    private void buildLawn() {
+        ChapterType chapter = controller.chapter();
+        if (lawn != null && chapter == lawnChapter) {
+            return;
+        }
+        if (lawn != null) {
+            lawn.remove();
+            catcher.remove();
+        }
+        lawnChapter = chapter;
+        lawn = new LawnView(context.assets(), chapter);
+        catcher = new Image(ui.primitives().flat(Theme.alpha(Theme.BACKDROP, 0f)));
+        catcher.setFillParent(true);
+        catcher.setTouchable(Touchable.disabled);
+        catcher.addListener(new InputListener() {
+            @Override
+            public boolean touchDown(InputEvent event, float x, float y, int pointer, int button) {
+                intro.skip();
+                return true;
+            }
+        });
+        intro = new LevelIntro(lawn);
+        stage.getRoot().addActorAt(1, lawn);
+        stage.getRoot().addActorAt(2, catcher);
+    }
+
+    private void muster() {
+        lawn.clearPerformers();
+        List<ZombieRecord> wave = controller.firstWave();
+        for (int i = 0; i < wave.size(); i++) {
+            lawn.addZombie(wave.get(i), i);
+        }
+    }
+
+    private void playIntro() {
+        lawn.setCamera(0f);
+        catcher.setTouchable(Touchable.enabled);
+        rootTable().getColor().a = 0f;
+        rootTable().setTouchable(Touchable.disabled);
+        intro.play(new Runnable() {
+            @Override
+            public void run() {
+                reveal();
+            }
+        });
+    }
+
+    public void skipIntro() {
+        if (intro != null) {
+            intro.skip();
+        }
+    }
+
+    public void poseIntro(float fraction) {
+        if (lawn == null) {
+            return;
+        }
+        skipIntro();
+        rootTable().clearActions();
+        rootTable().getColor().a = 0f;
+        lawn.setCamera(fraction * lawn.maxCamera());
+    }
+
+    public void poseReady() {
+        if (lawn == null) {
+            return;
+        }
+        skipIntro();
+        rootTable().clearActions();
+        content.clearActions();
+        rootTable().getColor().a = 1f;
+        content.getColor().a = 1f;
+        lawn.setCamera(0f);
+    }
+
+    private void reveal() {
+        catcher.setTouchable(Touchable.disabled);
+        rootTable().setTouchable(Touchable.childrenOnly);
+        rootTable().addAction(Actions.fadeIn(REVEAL));
+    }
+
+    private Table searchRow() {
+        return SearchBar.build(ui, rules.getQuery(), filterFace(),
+                new SearchBar.Sink() {
+                    @Override
+                    public void typed(String text, TextField field) {
+                        rules.setQuery(text);
+                        rebuildGrid();
+                    }
+                },
+                new Runnable() {
+                    @Override
+                    public void run() {
+                        new AlmanacFilterPopup(context, rules, new Runnable() {
+                            @Override
+                            public void run() {
+                                rebuildGrid();
+                            }
+                        }).showOn(stage);
+                    }
+                });
+    }
+
+    private com.badlogic.gdx.scenes.scene2d.utils.Drawable filterFace() {
+        com.badlogic.gdx.graphics.g2d.TextureRegion found = context.assets() == null
+                ? null : context.assets().region("IMAGE_UI_ALMANAC_FILTER_BUTTON_UP");
+        return found == null ? null
+                : new com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable(found);
+    }
+
+    private void repaint() {
+        if (shown == null) {
+            List<Plants> owned = controller.owned();
+            shown = owned.isEmpty() ? null : owned.get(0);
+        }
         rebuildSlots();
-        rebuildAvailable();
+        rebuildGrid();
+        card.show(shown, shown == null ? 1 : controller.levelOf(shown));
     }
 
     private void rebuildSlots() {
-        slotArea.clear();
-        slotArea.left();
-        slotArea.defaults().pad(Theme.PAD_SMALL);
-
-        List<Plants> selection = context.app().getPlantSelection();
-        int capacity = deckCapacity();
-
-        slotCounter.setText("Deck  " + selection.size() + " / " + capacity);
-
-        for (final Plants plant : selection) {
-            SeedPacket packet = new SeedPacket(ui, context.assets(), plant, SeedPacket.Mode.GAME, 1f);
-            packet.setSelected(true);
-            packet.setBoosted(context.app().getBoostedSelection().contains(plant));
-            packet.onClick(new Runnable() {
-                @Override
-                public void run() {
-                    controller.handleCommand("remove -t " + plant.name());
-                    refreshAll();
-                }
-            });
-            slotArea.add(packet).size(packet.width(), packet.height());
-        }
-
-        for (int i = selection.size(); i < capacity; i++) {
-            slotArea.add(emptySlot()).size(Theme.PACKET_WIDTH, Theme.PACKET_HEIGHT);
-        }
-    }
-
-    private Table emptySlot() {
-        Table slot = new Table();
-        slot.setBackground(ui.primitives().rounded(8,
-                Theme.alpha(Theme.PANEL_SUNKEN, 0.5f), Theme.OUTLINE_SOFT, 2));
-        Label plus = new Label("+", ui.skin(), "title");
-        plus.setColor(Theme.TEXT_DISABLED);
-        plus.setAlignment(Align.center);
-        slot.add(plus).expand().center();
-        return slot;
-    }
-
-    private void rebuildAvailable() {
-        availableArea.clear();
-        availableArea.top().left();
-        availableArea.defaults().pad(Theme.PAD_SMALL);
-
-        List<Plants> selection = context.app().getPlantSelection();
-        int column = 0;
-
-        for (final Plants plant : Plants.values()) {
-            if (context.app().getLockedPlants().contains(plant)) {
-                continue;
-            }
-            final boolean chosen = selection.contains(plant);
-
-            Table cell = new Table();
-            SeedPacket packet = new SeedPacket(ui, context.assets(), plant, SeedPacket.Mode.GAME, 1f);
-            packet.setSelected(chosen);
-            packet.setBoosted(context.app().getBoostedSelection().contains(plant));
-            packet.onClick(new Runnable() {
-                @Override
-                public void run() {
-                    toggle(plant, chosen);
-                }
-            });
-            cell.add(packet).size(packet.width(), packet.height()).row();
-
-            Table tools = new Table();
-            tools.add(compact("Boost", new Runnable() {
-                @Override
-                public void run() {
-                    controller.handleCommand("boost -t " + plant.name());
-                    refreshAll();
-                }
-            })).width(58f).padRight(2f);
-            tools.add(compact("Lv+", new Runnable() {
-                @Override
-                public void run() {
-                    controller.handleCommand("upgrade plant -t " + plant.name());
-                    refreshAll();
-                }
-            })).width(34f);
-            cell.add(tools).padTop(3f);
-
-            availableArea.add(cell);
-            if (++column % 8 == 0) {
-                availableArea.row();
+        slotGrid.clearChildren();
+        List<Plants> picked = new ArrayList<Plants>(controller.picked());
+        for (int i = 0; i < controller.slots(); i++) {
+            slotGrid.add(slot(i < picked.size() ? picked.get(i) : null))
+                    .size(SeedPacket.ART_W * SLOT_SCALE, SeedPacket.ART_H * SLOT_SCALE)
+                    .pad(4f);
+            if ((i + 1) % SLOT_COLUMNS == 0) {
+                slotGrid.row();
             }
         }
     }
 
-    private com.badlogic.gdx.scenes.scene2d.ui.TextButton compact(String text, Runnable action) {
-        com.badlogic.gdx.scenes.scene2d.ui.TextButton button =
-                new com.badlogic.gdx.scenes.scene2d.ui.TextButton(text, ui.skin(), "secondary");
-        button.padLeft(Theme.PAD_SMALL).padRight(Theme.PAD_SMALL);
-        button.getLabelCell().padBottom(view.gui.UiKit.opticalPad(button.getLabel()));
-        button.addListener(new com.badlogic.gdx.scenes.scene2d.utils.ChangeListener() {
+    private Table slot(final Plants plant) {
+        Table cell = new Table();
+        if (plant == null) {
+            cell.setBackground(ui.primitives().rounded(8,
+                    Theme.alpha(Theme.darken(Theme.PANEL_SUNKEN, 0.35f), 0.88f),
+                    Theme.OUTLINE, 3));
+            cell.pad(0f);
+            return cell;
+        }
+        SeedPacket packet = new SeedPacket(ui, context.assets(), plant,
+                SeedPacket.Mode.GAME, SLOT_SCALE);
+        packet.setLevel(controller.levelOf(plant));
+        packet.setBoosted(controller.isBoosted(plant));
+        packet.onClick(new Runnable() {
             @Override
-            public void changed(ChangeEvent event, com.badlogic.gdx.scenes.scene2d.Actor actor) {
-                action.run();
+            public void run() {
+                show(plant);
+                report(controller.drop(plant));
             }
         });
-        view.gui.Animations.attachPress(button);
-        return button;
+        cell.pad(0f);
+        cell.add(packet).grow();
+        return cell;
     }
 
-    private void toggle(Plants plant, boolean currentlyChosen) {
-        controller.handleCommand((currentlyChosen ? "remove -t " : "choose -t ") + plant.name());
-        refreshAll();
-    }
-
-
-    private int deckCapacity() {
-        return context.app().getSelectedLevel() <= 1
-                ? ChoosePlantMenuController.FIRST_LEVEL_SLOTS
-                : ChoosePlantMenuController.OTHER_LEVEL_SLOTS;
-    }
-
-    private void startLevel() {
-        if (context.app().getPlantSelection().isEmpty()) {
-            context.toasts().error("Pick at least one plant before starting.");
-            Animations.shake(slotArea);
-            return;
+    private void rebuildGrid() {
+        grid.clearChildren();
+        grid.top().left();
+        List<Plants> owned = controller.owned();
+        int column = 0;
+        for (Plants plant : rules.apply()) {
+            if (!owned.contains(plant)) {
+                continue;
+            }
+            grid.add(available(plant)).pad(3f);
+            if (++column % COLUMNS == 0) {
+                grid.row();
+            }
         }
-        controller.handleCommand("start");
-        context.toasts().info("The lawn screen arrives in the next milestone.");
+        if (column == 0) {
+            grid.add(ui.muted("No plants match that search.")).pad(Theme.PAD);
+        }
+    }
+
+    private SeedPacket available(final Plants plant) {
+        SeedPacket packet = new SeedPacket(ui, context.assets(), plant,
+                SeedPacket.Mode.GAME, PACKET_SCALE);
+        packet.setLevel(controller.levelOf(plant));
+        packet.setBoosted(controller.isBoosted(plant));
+        packet.setSelected(controller.isPicked(plant));
+        packet.onClick(new Runnable() {
+            @Override
+            public void run() {
+                show(plant);
+                report(controller.isPicked(plant)
+                        ? controller.drop(plant) : controller.pick(plant));
+            }
+        });
+        return packet;
+    }
+
+    private void show(Plants plant) {
+        shown = plant;
+    }
+
+    private void report(Result result) {
+        if (!result.isSuccess()) {
+            context.toasts().error(result.getMessage());
+        }
+        repaint();
     }
 
     @Override
     public void show() {
         super.show();
-        refreshAll();
+        playIntro();
+    }
+
+    @Override
+    public void hide() {
+        super.hide();
+        if (intro != null) {
+            intro.skip();
+        }
     }
 }

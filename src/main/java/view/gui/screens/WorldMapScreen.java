@@ -23,7 +23,8 @@ import view.gui.widgets.PamActor;
 import view.gui.widgets.PlantIsland;
 import view.gui.widgets.WorldMapStrip;
 
-public final class WorldMapScreen extends BaseScreen implements WorldMapStrip.Listener {
+public final class WorldMapScreen extends BaseScreen
+        implements WorldMapStrip.Listener, view.gui.layout.UiLayout.Scoped {
 
     private static final float PORTAL_COVERAGE = 1f;
     private static final float PORTAL_TINT = 0.26f;
@@ -127,6 +128,12 @@ public final class WorldMapScreen extends BaseScreen implements WorldMapStrip.Li
     }
 
     @Override
+    public String layoutScope() {
+        ChapterType world = context.app().getSelectedChapter();
+        return "WorldMapScreen-" + (world == null ? ChapterType.first() : world).name();
+    }
+
+    @Override
     protected String backdropImage() {
         return "assets/backgrounds/main_menu.png";
     }
@@ -147,8 +154,7 @@ public final class WorldMapScreen extends BaseScreen implements WorldMapStrip.Li
         }
         if (!focused && scroll.getMaxX() > 0f) {
             focused = true;
-            scrollTo(keepScrollX >= 0f
-                    ? keepScrollX : strip.focusX() - scroll.getWidth() / 2f);
+            scrollTo(keepScrollX >= 0f ? keepScrollX : 0f);
             keepScrollX = -1f;
         }
         if (backdrop != null) {

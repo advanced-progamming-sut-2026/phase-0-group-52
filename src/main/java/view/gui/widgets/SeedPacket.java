@@ -56,7 +56,6 @@ public final class SeedPacket extends WidgetGroup {
     private final Assets assets;
     private final Plants plant;
     private final PlantRecord record;
-    private final Mode mode;
     private final float scale;
 
     private Actor background;
@@ -96,7 +95,6 @@ public final class SeedPacket extends WidgetGroup {
         this.assets = assets;
         this.plant = plant;
         this.record = PlantData.record(plant);
-        this.mode = mode;
         this.scale = scale;
 
         setSize(width(), height());
@@ -199,8 +197,7 @@ public final class SeedPacket extends WidgetGroup {
     }
 
     private Actor buildMark() {
-        if (mode == Mode.ALMANAC) {
-            TextureRegion badge = region(record == null ? null : record.getCategoryBadge());
+        TextureRegion badge = region(record == null ? null : record.getCategoryBadge());
             if (badge == null) {
                 return null;
             }
@@ -221,8 +218,6 @@ public final class SeedPacket extends WidgetGroup {
             badgeHeight = badge.getRegionHeight() * BADGE_SCALE;
             group.addActor(badgeIcon);
             return group;
-        }
-        return null;
     }
 
     private Image buildLock() {
@@ -299,8 +294,9 @@ public final class SeedPacket extends WidgetGroup {
     }
 
     private void applyDim() {
-        float shade = locked ? LOCKED_DIM : 1f;
-        float chrome = locked ? LOCKED_DIM : selected ? SELECTED_DIM : 1f;
+        boolean dark = locked || unaffordable;
+        float shade = dark ? LOCKED_DIM : 1f;
+        float chrome = dark ? LOCKED_DIM : selected ? SELECTED_DIM : 1f;
         paint(background, chrome);
         paint(priceTab, chrome);
         paint(icon, shade);
@@ -368,6 +364,17 @@ public final class SeedPacket extends WidgetGroup {
         }
     }
 
+    private static final com.badlogic.gdx.graphics.Color COST_DENIED =
+            new com.badlogic.gdx.graphics.Color(1f, 0.13f, 0.11f, 1f);
+    private static final com.badlogic.gdx.graphics.Color RECHARGE_SHADE =
+            new com.badlogic.gdx.graphics.Color(0f, 0f, 0f, 0.62f);
+
+    private static final float BADGE_BLEED = 0.6f;
+
+    private float recharge;
+    private boolean affordable = true;
+    private boolean unaffordable;
+
     public SeedPacket setLocked(boolean value) {
         if (this.locked != value) {
             this.locked = value;
@@ -402,24 +409,53 @@ public final class SeedPacket extends WidgetGroup {
     }
 
     public SeedPacket setCooldown(float secondsRemaining) {
-        if (costLabel == null) {
-            return this;
-        }
-        if (secondsRemaining > 0f) {
-            costLabel.setText(String.format("%.1f", secondsRemaining));
-            costLabel.setColor(Theme.TEXT_MUTED);
-        } else {
-            costLabel.setText(String.valueOf(plant.getCost()));
-            costLabel.setColor(Theme.TEXT);
-        }
         return this;
     }
 
     public SeedPacket setAffordable(boolean value) {
-        if (icon != null) {
-            icon.getColor().a = value ? 1f : LOCKED_DIM;
+        affordable = value;
+        if (unaffordable == !value) {
+            return this;
+        }
+        unaffordable = !value;
+        applyDim();
+        if (costLabel != null) {
+            costLabel.setText(String.valueOf(plant.getCost()));
+            costLabel.setColor(value ? com.badlogic.gdx.graphics.Color.WHITE : COST_DENIED);
         }
         return this;
+    }
+
+    public SeedPacket setRecharge(float remaining) {
+        recharge = Math.max(0f, Math.min(1f, remaining));
+        return this;
+    }
+
+    public boolean isBlocked() {
+        return recharge > 0f || !affordable;
+    }
+
+    @Override
+    public void draw(com.badlogic.gdx.graphics.g2d.Batch batch, float parentAlpha) {
+        super.draw(batch, parentAlpha);
+        if (recharge <= 0f) {
+            return;
+        }
+        int step = Math.max(1, Math.round(recharge * view.gui.Primitives.WEDGE_STEPS));
+        int size = (int) Math.max(8f, (float) Math.hypot(getWidth(), getHeight()) * 1.05f);
+        batch.setColor(1f, 1f, 1f, parentAlpha);
+        batch.flush();
+        float bleedX = badgeWidth * BADGE_BLEED;
+        float bleedY = badgeHeight * BADGE_BLEED;
+        if (clipBegin(getX() - bleedX, getY(),
+                getWidth() + bleedX, getHeight() + bleedY)) {
+            batch.draw(ui.primitives().wedge(size, step, RECHARGE_SHADE),
+                    getX() + getWidth() / 2f - size / 2f,
+                    getY() + getHeight() / 2f - size / 2f, size, size);
+            batch.flush();
+            clipEnd();
+        }
+        batch.setColor(com.badlogic.gdx.graphics.Color.WHITE);
     }
 
     public SeedPacket onClick(Runnable action) {

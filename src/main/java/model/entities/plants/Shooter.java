@@ -27,11 +27,10 @@ public class Shooter extends Plant {
         if (target == null) return;
         int graveCol = tombstoneAhead(game, getRow(), getCol(), target.getPosition().x);
         if (graveCol >= 0) {
-            model.entities.Cell cell = game.getField().getCell(graveCol, getRow());
-            if (cell != null) {
-                cell.setHp(cell.getHp() - shotDamage(game));
-                if (cell.getHp() <= 0) {
-                    cell.setType(model.entities.CellType.NORMAL);
+            model.entities.Tombstone stone = game.tombstoneAt(graveCol, getRow());
+            if (stone != null) {
+                stone.takeDamage(shotDamage(game));
+                if (stone.isDestroyed()) {
                     System.out.println("A grave at (" + (graveCol + 1) + ", " + (getRow() + 1)
                             + ") was destroyed by plant fire.");
                 }

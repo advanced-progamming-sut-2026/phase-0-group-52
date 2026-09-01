@@ -62,6 +62,24 @@ public abstract class Zombie {
 
     public abstract void onTick(Game game);
 
+    private double stormLanding = Double.NaN;
+
+    public boolean isRidingStorm() {
+        return !Double.isNaN(stormLanding);
+    }
+
+    public void rideStorm(double landingColumn) {
+        this.stormLanding = landingColumn;
+    }
+
+    public double stormLanding() {
+        return stormLanding;
+    }
+
+    public void landFromStorm() {
+        this.stormLanding = Double.NaN;
+    }
+
     public void onDeath(Game game) {}
 
     public void move(Game game) {

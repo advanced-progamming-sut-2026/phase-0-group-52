@@ -44,6 +44,10 @@ public final class WorldMapStrip extends WidgetGroup {
     private static final float ENTRY_LIFT = -0.12f;
     private static final float ENTRY_SHIFT = -0.18f;
     private static final float TROPHY_SINK = 0.34f;
+    private static final int ANIM_EVERY = 3;
+    private static final float ANIM_SIZE = 150f;
+    private static final float ANIM_SIDE = 0.55f;
+    private static final float ANIM_LIFT = 0.45f;
     private static final float DECOR_LIFT = 0.26f;
     private static final float DECOR_DIM = 1f;
     private static final float FOG_LEAD = 220f;
@@ -96,6 +100,7 @@ public final class WorldMapStrip extends WidgetGroup {
             }
             if (node.getKind() == MapNodeKind.PLANT) {
                 addIsland(node, x, plant, progress);
+                addAnim(plant, x);
                 plant++;
             } else if (node.getKind() == MapNodeKind.TROPHY) {
                 addTrophy(x);
@@ -126,7 +131,8 @@ public final class WorldMapStrip extends WidgetGroup {
         if (node.getKind() == MapNodeKind.SPECIAL) {
             int slot = Math.min(special, DECOR_SHIFT.length - 1);
             addDecor(slot == 0 ? WorldMapArt.statueIsland(chapter)
-                    : WorldMapArt.faceIsland(chapter), x + LEVEL_STEP * DECOR_SHIFT[slot]);
+                    : WorldMapArt.faceIsland(chapter), x + LEVEL_STEP * DECOR_SHIFT[slot],
+                    slot == 0 ? "landmark-statue" : "landmark-face");
             next = special + 1;
         } else if (node.getKind() == MapNodeKind.LEVEL) {
             addEntry(x);
@@ -152,12 +158,29 @@ public final class WorldMapStrip extends WidgetGroup {
         fogLayer = fog;
     }
 
-    private void addDecor(int islandNumber, float x) {
-        Image decor = atNativeScale(islandNumber);
+    private void addAnim(int plant, float x) {
+        int[] clips = WorldMapArt.anims(chapter);
+        if (clips.length == 0 || plant % ANIM_EVERY != 0) {
+            return;
+        }
+        int pick = (plant / ANIM_EVERY) % clips.length;
+        PamActor anim = WorldMapArt.rigged(assets,
+                WorldMapArt.animPath(chapter, clips[pick]), "idle", "idle");
+        if (!anim.isReady()) {
+            return;
+        }
+        anim.setName("anim-" + clips[pick]);
+        addActorAfter(paths, anim);
+        placed.add(new Placed(anim, x + PLANT_STEP * ANIM_SIDE,
+                ANIM_SIZE, ANIM_SIZE, ANIM_SIZE * ANIM_LIFT));
+    }
+
+    private void addDecor(String art, float x, String id) {
+        Actor decor = atNativeScale(art);
         if (decor == null) {
             return;
         }
-        decor.setName("landmark-" + islandNumber);
+        decor.setName(id);
         decor.getColor().a = DECOR_DIM;
         addActorAfter(paths, decor);
         placed.add(new Placed(decor, x, decor.getWidth(), decor.getHeight(),
@@ -165,7 +188,7 @@ public final class WorldMapStrip extends WidgetGroup {
     }
 
     private void addEntry(float x) {
-        Image entry = atNativeScale(WorldMapArt.entryIsland(chapter));
+        Actor entry = atNativeScale(WorldMapArt.entryIsland(chapter));
         if (entry == null) {
             return;
         }
@@ -175,16 +198,24 @@ public final class WorldMapStrip extends WidgetGroup {
                 entry.getHeight(), entry.getHeight() * ENTRY_LIFT);
     }
 
-    private Image atNativeScale(int islandNumber) {
-        TextureRegion art = assets == null
-                ? null : assets.region(WorldMapArt.island(chapter, islandNumber));
-        if (art == null) {
+    private Actor atNativeScale(String art) {
+        TextureRegion region = assets == null ? null : assets.region(art);
+        if (region == null) {
             return null;
         }
-        Image image = new Image(new TextureRegionDrawable(art));
+        float width = region.getRegionWidth() * WorldMapArt.MAP_SCALE;
+        float height = region.getRegionHeight() * WorldMapArt.MAP_SCALE;
+        String rig = WorldMapArt.animOf(chapter, art);
+        if (rig != null) {
+            PamActor live = WorldMapArt.rigged(assets, rig, "idle", "idle");
+            if (live.isReady()) {
+                live.setSize(width, height);
+                return live;
+            }
+        }
+        Image image = new Image(new TextureRegionDrawable(region));
         image.setScaling(Scaling.stretch);
-        image.setSize(art.getRegionWidth() * WorldMapArt.MAP_SCALE,
-                art.getRegionHeight() * WorldMapArt.MAP_SCALE);
+        image.setSize(width, height);
         return image;
     }
 
@@ -200,8 +231,8 @@ public final class WorldMapStrip extends WidgetGroup {
         Plants claimed = progress == null
                 ? null : progress.claimedPlant(chapter, node.getSlot());
         PlantIsland.State state = islandState(node, claimed);
-        int[] platforms = WorldMapArt.platforms(chapter);
-        int[] trims = WorldMapArt.decor(chapter);
+        String[] platforms = WorldMapArt.platforms(chapter);
+        String[] trims = WorldMapArt.decor(chapter);
         final MapNode owner = node;
         PlantIsland island = new PlantIsland(ui, assets, chapter,
                 platforms[plant % platforms.length],
@@ -226,8 +257,8 @@ public final class WorldMapStrip extends WidgetGroup {
     }
 
     private void addTrophy(float x) {
-        int[] platforms = WorldMapArt.platforms(chapter);
-        Image seat = atNativeScale(platforms[0]);
+        String[] platforms = WorldMapArt.platforms(chapter);
+        Actor seat = atNativeScale(platforms[0]);
         if (seat != null) {
             place(seat, x, seat.getWidth(), seat.getHeight(),
                     -TROPHY_SIZE * TROPHY_SINK);

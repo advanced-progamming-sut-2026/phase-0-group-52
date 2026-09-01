@@ -13,7 +13,7 @@ import java.util.Map;
 import java.util.Set;
 
 public class Game {
-    public static final int MAX_PLANT_FOOD = 3;
+    public static final int MAX_PLANT_FOOD = 5;
     public static final int TICKS_PER_SECOND = 10;
     public static final double SECONDS_PER_TICK = 1.0 / TICKS_PER_SECOND;
 
@@ -148,6 +148,36 @@ public class Game {
     public ArrayList<Plant> getPlants() { return plants; }
     public ArrayList<Zombie> getZombies() { return zombies; }
     public ArrayList<Sun> getSuns() { return suns; }
+    private final ArrayList<model.entities.Tombstone> tombstones =
+            new ArrayList<model.entities.Tombstone>();
+
+    public ArrayList<model.entities.Tombstone> getTombstones() { return tombstones; }
+
+    private String lastDrop;
+
+    public void noteDrop(String text) { this.lastDrop = text; }
+
+    public String takeDrop() {
+        String out = lastDrop;
+        lastDrop = null;
+        return out;
+    }
+
+    private boolean stormPending;
+
+    public boolean isStormPending() { return stormPending; }
+
+    public void setStormPending(boolean value) { this.stormPending = value; }
+
+    public model.entities.Tombstone tombstoneAt(int column, int row) {
+        for (model.entities.Tombstone t : tombstones) {
+            if (t.getColumn() == column && t.getRow() == row && !t.isDestroyed()) {
+                return t;
+            }
+        }
+        return null;
+    }
+
     public ArrayList<Wave> getWaves() { return waves; }
 
     public int getCurrentTick() { return currentTick; }
