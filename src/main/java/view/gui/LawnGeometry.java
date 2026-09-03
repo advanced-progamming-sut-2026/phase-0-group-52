@@ -89,6 +89,10 @@ public final class LawnGeometry {
         return areaY + (ROWS - 1 - row) * cellHeight();
     }
 
+    public static float rowFeet(float row) {
+        return areaY + (ROWS - 1 - row) * cellHeight();
+    }
+
     public static float rowMiddle(int row) {
         return rowFeet(row) + cellHeight() / 2f;
     }

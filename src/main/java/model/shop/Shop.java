@@ -11,11 +11,11 @@ public class Shop {
 
     public static final int POT_PRICE = 2000;
     public static final int PLANT_FOOD_PRICE = 3;
-    public static final int PLANT_FOOD_MAX = 3;
+    public static final int PLANT_FOOD_MAX = model.User.MAX_PLANT_FOOD;
     public static final int RANDOM_SEEDS_PRICE = 1000;
     public static final int RANDOM_SEEDS_COUNT = 5;
     public static final int CHOICE_SEEDS_PRICE = 5;
-    public static final int CHOICE_SEEDS_COUNT = 10;
+    public static final int CHOICE_SEEDS_COUNT = 3;
     public static final int EXCHANGE_DIAMONDS = 5;
     public static final int EXCHANGE_COINS = 500;
     public static final int DAILY_BASE_PRICE = 2000;
@@ -24,23 +24,81 @@ public class Shop {
 
     private LocalDate offerDate;
     private Plants dailyPlant;
+    private Plants lastPacketPlant;
+
+    private String exchange(User user, int count) {
+
+                if (user.getGems() < EXCHANGE_DIAMONDS * count) return "Error: Not enough diamonds.";
+                user.setGems(user.getGems() - EXCHANGE_DIAMONDS * count);
+                user.setCoins(user.getCoins() + EXCHANGE_COINS * count);
+                return "Exchanged " + (EXCHANGE_DIAMONDS * count) + " diamonds for "
+                        + (EXCHANGE_COINS * count) + " coins.";
+    }
+
+    public Plants lastPacketPlant() {
+        return lastPacketPlant;
+    }
     private LocalDate lastDailyPurchase;
 
     private void refreshDaily() {
         LocalDate today = LocalDate.now();
         if (!today.equals(offerDate)) {
             offerDate = today;
-            dailyPlant = randomPlant();
+            dailyPlant = null;
         }
     }
 
-    private Plants randomPlant() {
-        Plants[] all = Plants.values();
-        Plants plant;
-        do {
-            plant = all[PlantCombat.RANDOM.nextInt(all.length)];
-        } while (plant.name().endsWith("MINT"));
-        return plant;
+    public Plants dailyPlant(User user) {
+        refreshDaily();
+        if (dailyPlant == null || (user != null && user.getPlants().isUnlocked(dailyPlant))) {
+            dailyPlant = lockedPremium(user, today());
+        }
+        return dailyPlant;
+    }
+
+    private long today() {
+        return LocalDate.now().toEpochDay();
+    }
+
+    private Plants lockedPremium(User user, long seed) {
+        java.util.List<Plants> offer = new java.util.ArrayList<Plants>();
+        for (Plants plant : Plants.values()) {
+            model.entities.plants.PlantRecord record =
+                    model.entities.plants.PlantData.record(plant);
+            if (record == null) {
+                continue;
+            }
+            boolean premium = record.getUnlockKind()
+                        == model.entities.plants.PlantRecord.UnlockKind.PREMIUM
+                    || record.getUnlockKind()
+                        == model.entities.plants.PlantRecord.UnlockKind.MINT;
+            if (premium && (user == null || !user.getPlants().isUnlocked(plant))) {
+                offer.add(plant);
+            }
+        }
+        if (offer.isEmpty()) {
+            return null;
+        }
+        return offer.get((int) Math.floorMod(seed, offer.size()));
+    }
+
+    public java.util.List<Plants> ownedPlants(User user) {
+        java.util.List<Plants> owned = new java.util.ArrayList<Plants>();
+        if (user == null) {
+            return owned;
+        }
+        for (Plants plant : Plants.values()) {
+            if (user.getPlants().isUnlocked(plant)) {
+                owned.add(plant);
+            }
+        }
+        return owned;
+    }
+
+    public Plants randomOwned(User user) {
+        java.util.List<Plants> owned = ownedPlants(user);
+        return owned.isEmpty() ? null
+                : owned.get(PlantCombat.RANDOM.nextInt(owned.size()));
     }
 
     public void printList() {
@@ -59,7 +117,7 @@ public class Shop {
         refreshDaily();
         System.out.println("Daily offer (" + offerDate + "):");
         System.out.println("  6. Special Seed Packet Bundle | " + DAILY_PRICE + " coins (20% off "
-                + DAILY_BASE_PRICE + ") | " + DAILY_COUNT + " seed packets for " + dailyPlant.getName()
+                + DAILY_BASE_PRICE + ") | unlocks " + String.valueOf(dailyPlant(null))
                 + (offerDate.equals(lastDailyPurchase) ? " | already purchased today" : ""));
     }
 
@@ -86,8 +144,12 @@ public class Shop {
             case 3: {
                 if (user.getCoins() < RANDOM_SEEDS_PRICE * count) return "Error: Not enough coins.";
                 user.setCoins(user.getCoins() - RANDOM_SEEDS_PRICE * count);
-                Plants plant = randomPlant();
+                Plants plant = randomOwned(user);
+                if (plant == null) {
+                    return "Error: You have no plants to get packets for.";
+                }
                 user.getPlants().grant(plant, RANDOM_SEEDS_COUNT * count);
+                lastPacketPlant = plant;
                 return "Bought " + (RANDOM_SEEDS_COUNT * count) + " seed packets for " + plant.getName() + ".";}
             case 4: {
                 if (plantType == null) return "Error: Choice bundles need -t <plant_type>.";
@@ -95,21 +157,16 @@ public class Shop {
                 user.setGems(user.getGems() - CHOICE_SEEDS_PRICE * count);
                 user.getPlants().grant(plantType, CHOICE_SEEDS_COUNT * count);
                 return "Bought " + (CHOICE_SEEDS_COUNT * count) + " seed packets for " + plantType.getName() + ".";}
-            case 5: {
-                if (user.getGems() < EXCHANGE_DIAMONDS * count) return "Error: Not enough diamonds.";
-                user.setGems(user.getGems() - EXCHANGE_DIAMONDS * count);
-                user.setCoins(user.getCoins() + EXCHANGE_COINS * count);
-                return "Exchanged " + (EXCHANGE_DIAMONDS * count) + " diamonds for "
-                        + (EXCHANGE_COINS * count) + " coins.";}
-            case 6: {
+            case 5: return exchange(user, count);
+case 6: {
                 refreshDaily();
                 if (offerDate.equals(lastDailyPurchase))
                     return "Error: The daily offer can only be bought once per day.";
                 if (user.getCoins() < DAILY_PRICE) return "Error: Not enough coins.";
                 user.setCoins(user.getCoins() - DAILY_PRICE);
-                user.getPlants().grant(dailyPlant, DAILY_COUNT);
+                user.getPlants().grant(dailyPlant(user), DAILY_COUNT);
                 lastDailyPurchase = offerDate;
-                return "Bought the daily bundle: " + DAILY_COUNT + " seed packets for " + dailyPlant.getName() + ".";}
+                return "Bought the daily bundle.";}
             default:
                 return "Error: Unknown item id: " + itemId;
         }

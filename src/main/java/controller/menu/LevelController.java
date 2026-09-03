@@ -54,6 +54,7 @@ public class LevelController {
         Game game = LevelBuilder.build(app, chapter, app.getSelectedLevel());
         game.setApp(app);
         app.setGame(game);
+        resetMowers(game);
         app.setCurrentmenu(MenuType.GAME_MENU);
         return new Result(true, "Level started.", null);
     }
@@ -63,6 +64,11 @@ public class LevelController {
     }
 
     public ChapterType chapter() {
+        Game game = game();
+        if (game != null && game.getField() != null
+                && game.getField().getChapter() != null) {
+            return game.getField().getChapter();
+        }
         return app.getSelectedChapter();
     }
 
@@ -103,10 +109,27 @@ public class LevelController {
         for (Plant plant : game.getPlants()) {
             if ((int) plant.getPosition().x == column && (int) plant.getPosition().y == row) {
                 game.setPlantFoodCount(game.getPlantFoodCount() - 1);
+                plant.onPlantFood(game);
                 return new Result(true, plant.getType().getName() + " is supercharged!", plant);
             }
         }
         return new Result(false, "No plant there.", null);
+    }
+
+    public java.util.List<Integer> takeChilledRows() {
+        if (loop == null || !(loop.mechanics()
+                instanceof model.mechanics.FrostbiteCavesMechanics)) {
+            return new java.util.ArrayList<Integer>();
+        }
+        return ((model.mechanics.FrostbiteCavesMechanics) loop.mechanics())
+                .takeChilledRows();
+    }
+
+    public java.util.List<model.entities.Projectile> projectiles() {
+        Game game = game();
+        return game == null
+                ? new java.util.ArrayList<model.entities.Projectile>()
+                : game.getProjectiles();
     }
 
     public String takeDrop() {
@@ -125,6 +148,10 @@ public class LevelController {
 
     public int plantFood() {
         Game game = game();
+        model.User user = app == null ? null : app.getLoggedInUser();
+        if (user != null && game != null) {
+            user.setPlantFood(game.getPlantFoodCount());
+        }
         return game == null ? 0 : game.getPlantFoodCount();
     }
 
@@ -294,9 +321,35 @@ public class LevelController {
         Plant plant = PlantFactory.create(type, new Vec2(column, row));
         game.getField().getCell(column, row).getPlants().add(plant);
         game.getPlants().add(plant);
+        plant.onPlanted(game);
+        applyStoredBoost(game, plant, type);
         game.startCooldown(type);
         award(type);
         return new Result(true, type.getName() + " planted.", type);
+    }
+
+    private void applyStoredBoost(Game game, Plant made, Plants type) {
+        model.User user = app == null ? null : app.getLoggedInUser();
+        if (user == null || !user.getStoredBoosts().remove(type)) {
+            return;
+        }
+        made.boost();
+        made.onPlantFood(game);
+        new controller.SaveService().persist(user);
+    }
+
+    private void resetMowers(Game game) {
+        if (game == null || game.getField() == null) {
+            return;
+        }
+        for (model.entities.Lawnmower mower : game.getField().getLawnmowers()) {
+            mower.reset();
+        }
+    }
+
+    public boolean isBoosted(Plants type) {
+        model.User user = app == null ? null : app.getLoggedInUser();
+        return user != null && user.getStoredBoosts().contains(type);
     }
 
     public Result collect(Sun sun) {
@@ -306,6 +359,10 @@ public class LevelController {
         }
         game.addSun(sun.getAmount());
         return new Result(true, "+" + sun.getAmount() + " sun.", null);
+    }
+
+    public float speed() {
+        return speed;
     }
 
     public void tick(float delta) {

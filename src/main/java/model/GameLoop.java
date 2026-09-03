@@ -30,6 +30,10 @@ public class GameLoop {
                 ? ChapterMechanics.forChapter(game.getField().getChapter()) : null;
     }
 
+    public ChapterMechanics mechanics() {
+        return mechanics;
+    }
+
     public String step(Game game) {
         if (game.isGameOver()) return null;
         int tick = game.getCurrentTick() + 1;
@@ -51,8 +55,15 @@ public class GameLoop {
             }
         }
 
-        for (Plant p : new ArrayList<Plant>(game.getPlants())) p.onTick(game);
+        for (Plant p : new ArrayList<Plant>(game.getPlants())) {
+            p.ageStatesTick();
+            if (p.isFrozenSolid()) {
+                continue;
+            }
+            p.onTick(game);
+        }
         for (Zombie z : new ArrayList<Zombie>(game.getZombies())) {
+            z.ageStatus();
             z.advanceFreeze();
             if (z.isFrozenSolid()) continue;
             z.onTick(game);
@@ -68,11 +79,15 @@ public class GameLoop {
 
         coolDown(game);
 
+        flyProjectiles(game);
         PlantCombat.removeDeadZombies(game);
         spawnWaves(game, tick);
         recordSeenZombies(game);
         if (!game.getZombies().isEmpty()) game.getStats().recordFirstWave(tick);
 
+        if (game.isEndless()) {
+            return null;
+        }
         String defeat = game.getLevel() != null ? game.getLevel().checkDefeat(game) : null;
         if (defeat != null) return end(game, false, defeat);
         String victory = game.getLevel() != null ? game.getLevel().checkVictory(game) : null;
@@ -82,6 +97,19 @@ public class GameLoop {
         if (anyZombieAtHouse(game))
             return end(game, false, "A zombie reached your house. You lose!");
         return null;
+    }
+
+    private void flyProjectiles(Game game) {
+        for (model.entities.Projectile shot
+                : new ArrayList<model.entities.Projectile>(game.getProjectiles())) {
+            shot.advance(game);
+        }
+        java.util.Iterator<model.entities.Projectile> gone = game.getProjectiles().iterator();
+        while (gone.hasNext()) {
+            if (gone.next().isSpent()) {
+                gone.remove();
+            }
+        }
     }
 
     private void coolDown(Game game) {
@@ -105,6 +133,9 @@ public class GameLoop {
     }
 
     private void dropSkySun(Game game) {
+        if (game.lawnIsLitteredWithSun()) {
+            return;
+        }
         SunType type = SunType.pickRandom(PlantCombat.RANDOM.nextDouble());
         double col = PlantCombat.RANDOM.nextDouble() * GameField.COLS;
         double row = PlantCombat.RANDOM.nextDouble() * GameField.ROWS;

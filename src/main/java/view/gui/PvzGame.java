@@ -105,6 +105,25 @@ public final class PvzGame extends Game {
         setScreen(new LeaderboardScreen(context));
     }
 
+    private final java.util.Set<model.greenhouse.Pot> ripenWatch =
+            new java.util.HashSet<model.greenhouse.Pot>();
+
+    private void watchTheGarden() {
+        model.User user = context.app().getLoggedInUser();
+        if (user == null) {
+            return;
+        }
+        for (model.greenhouse.Pot pot : user.getGreenhouse().slots()) {
+            if (pot.isOccupied() && pot.isReady() && ripenWatch.add(pot)) {
+                context.toasts().success((pot.isMarigold() ? "A Marigold"
+                        : pot.getPlantType().getName()) + " is fully grown.");
+            }
+            if (!pot.isOccupied()) {
+                ripenWatch.remove(pot);
+            }
+        }
+    }
+
     void showShopScreen() {
         displayed = null;
         setScreen(new ShopScreen(context));
@@ -112,6 +131,7 @@ public final class PvzGame extends Game {
 
     @Override
     public void render() {
+        watchTheGarden();
         if (!firstFrameLogged) {
             firstFrameLogged = true;
             Log.info("gui", "First frame at "

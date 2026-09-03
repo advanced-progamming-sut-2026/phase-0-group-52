@@ -193,6 +193,51 @@ public class User {
         this.gems = gems;
     }
 
+    private final model.greenhouse.Greenhouse greenhouse = new model.greenhouse.Greenhouse();
+
+    public model.greenhouse.Greenhouse getGreenhouse() {
+        return greenhouse;
+    }
+
+    public static final int MAX_PLANT_FOOD = 5;
+
+    private int plantFood;
+
+    public int getPlantFood() {
+        return plantFood;
+    }
+
+    public void setPlantFood(int value) {
+        this.plantFood = Math.max(0, Math.min(MAX_PLANT_FOOD, value));
+    }
+
+    public void addPlantFood(int value) {
+        setPlantFood(plantFood + value);
+    }
+
+    private int sprouts;
+    private boolean holdingCan;
+
+    public int getSprouts() {
+        return sprouts;
+    }
+
+    public void setSprouts(int value) {
+        this.sprouts = Math.max(0, value);
+    }
+
+    public void addSprouts(int value) {
+        setSprouts(sprouts + value);
+    }
+
+    public boolean isHoldingCan() {
+        return holdingCan;
+    }
+
+    public void setHoldingCan(boolean value) {
+        this.holdingCan = value;
+    }
+
     public int getCoins() {
         return coins;
     }

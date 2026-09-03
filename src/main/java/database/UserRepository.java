@@ -248,6 +248,9 @@ public class UserRepository {
         num(sb, "securityQuestion", u.getSecurityQuestion());
         str(sb, "securityAnswerHash", u.getSecurityAnswerHash());
         num(sb, "coins", u.getCoins());
+        num(sb, "sprouts", u.getSprouts());
+        num(sb, "plantFood", u.getPlantFood());
+        garden(sb, u);
         num(sb, "gems", u.getGems());
         num(sb, "plantFoodNum", u.getPlantFoodNum());
         num(sb, "mostMeowPoint", u.getMostMeowPoint());
@@ -309,11 +312,65 @@ public class UserRepository {
         u.setDebugMode(boolOf(m, "debugMode"));
         u.setUiEditMode(boolOf(m, "uiEditMode"));
         u.setStayLoggedIn(boolOf(m, "stayLoggedIn"));
+        u.setSprouts(intOf(m, "sprouts"));
+        u.setPlantFood(intOf(m, "plantFood"));
+        readGarden(u, m.get("garden"));
         readPlants(u, m.get("plants"));
         readSeenZombies(u, m.get("seenZombies"));
         readAdventure(u, m.get("adventure"));
         readChapters(u, m.get("chapters"));
         return u;
+    }
+
+    private void garden(StringBuilder sb, User u) {
+        StringBuilder rows = new StringBuilder();
+        for (model.greenhouse.Pot pot : u.getGreenhouse().slots()) {
+            if (rows.length() > 0) {
+                rows.append(',');
+            }
+            rows.append("{\"x\":").append(pot.getX())
+                    .append(",\"y\":").append(pot.getY())
+                    .append(",\"unlocked\":").append(pot.isUnlocked())
+                    .append(",\"marigold\":").append(pot.isMarigold())
+                    .append(",\"plant\":\"")
+                    .append(pot.getPlantType() == null ? "" : pot.getPlantType().name())
+                    .append("\",\"planted\":").append(pot.getPlantedAtMillis())
+                    .append(",\"ready\":").append(pot.getReadyAtMillis())
+                    .append('}');
+        }
+        sb.append("\"garden\":[").append(rows).append("],");
+    }
+
+    private void readGarden(User u, Object raw) {
+        if (!(raw instanceof java.util.List)) {
+            return;
+        }
+        for (Object entry : (java.util.List<?>) raw) {
+            if (!(entry instanceof java.util.Map)) {
+                continue;
+            }
+            java.util.Map<?, ?> row = (java.util.Map<?, ?>) entry;
+            model.greenhouse.Pot pot = u.getGreenhouse()
+                    .getPot(intOf(row, "x"), intOf(row, "y"));
+            if (pot == null) {
+                continue;
+            }
+            pot.setUnlocked(util.Json.boolOf(row, "unlocked"));
+            String name = util.Json.str(row, "plant");
+            if (util.Json.boolOf(row, "marigold")) {
+                pot.plantMarigold();
+            } else if (name != null && !name.isEmpty()) {
+                try {
+                    pot.plantSpecial(model.entities.plants.Plants.valueOf(name));
+                } catch (IllegalArgumentException ignored) {
+                    continue;
+                }
+            } else {
+                continue;
+            }
+            pot.setTimestamps((long) util.Json.doubleOf(row, "planted"),
+                    (long) util.Json.doubleOf(row, "ready"));
+        }
     }
 
     private void seenZombies(StringBuilder sb, User u) {

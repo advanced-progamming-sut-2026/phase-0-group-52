@@ -25,6 +25,8 @@ public final class PamActor extends Widget {
     private boolean synced;
     private Runnable onFinished;
     private java.util.Map<String, Boolean> parts;
+    private final com.badlogic.gdx.graphics.Color tint =
+            new com.badlogic.gdx.graphics.Color(com.badlogic.gdx.graphics.Color.WHITE);
 
     public PamActor(Assets pam, String path, String clipName) {
         this.pam = pam;
@@ -116,9 +118,29 @@ public final class PamActor extends Widget {
         return this;
     }
 
+    public PamActor setTint(float r, float g, float b, float a) {
+        tint.set(r, g, b, a);
+        return this;
+    }
+
+    public com.badlogic.gdx.graphics.Color tint() {
+        return tint;
+    }
+
     public PamActor setClipped(boolean value) {
         this.clipped = value;
         return this;
+    }
+
+    public PamActor poseAt(float fraction) {
+        looping = false;
+        frozen = true;
+        stateTime = Math.max(0f, Math.min(1f, fraction)) * duration;
+        return this;
+    }
+
+    public String clipName() {
+        return clipName;
     }
 
     public boolean isReady() {
@@ -154,19 +176,32 @@ public final class PamActor extends Widget {
         float x = getX() + getWidth() / 2f - (extent.x + extent.width / 2f) * scale;
         float y = getY() + getHeight() / 2f - (extent.y + extent.height / 2f) * scale;
 
+        float red = batch.getColor().r;
+        float green = batch.getColor().g;
+        float blue = batch.getColor().b;
+        float alpha = batch.getColor().a;
+        batch.setColor(red * tint.r, green * tint.g, blue * tint.b, alpha * tint.a);
+
         if (fit && !clipped) {
             pam.player().draw(batch, path, clipName, stateTime, x, y, scale, scale,
                     looping, parts);
+            restore(batch, red, green, blue, alpha);
             return;
         }
         batch.flush();
         if (!clipBegin(getX(), getY(), getWidth(), getHeight())) {
+            restore(batch, red, green, blue, alpha);
             return;
         }
         pam.player().draw(batch, path, clipName, stateTime, x, y, scale, scale,
                 looping, parts);
         batch.flush();
         clipEnd();
+        restore(batch, red, green, blue, alpha);
+    }
+
+    private void restore(Batch batch, float red, float green, float blue, float alpha) {
+        batch.setColor(red, green, blue, alpha);
     }
 
     private void advance() {

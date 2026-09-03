@@ -6,6 +6,8 @@ import model.entities.zombies.Zombie;
 
 public class StrikeThrough extends Plant {
 
+    public static final double REACH_ALL = 9d;
+
     public StrikeThrough(Plants type, Vec2 position) {
         super(type, type.getBaseHP(), type.getCost(), position, type.getDamage());
     }
@@ -22,11 +24,17 @@ public class StrikeThrough extends Plant {
         }
     }
 
+    public double reach() {
+        double range = maxRange();
+        return range >= Double.MAX_VALUE / 2d ? REACH_ALL : range;
+    }
+
     protected int maxTargets() { return Integer.MAX_VALUE; }
 
     protected double maxRange() { return Double.MAX_VALUE; }
 
     protected void pierce(Game game, int targets, double range, double dmg) {
+        markStruck();
         int hitCount = 0;
         for (Zombie z : PlantCombat.zombiesInRow(game, getRow())) {
             if (z.getPosition().x < getCol()) continue;

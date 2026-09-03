@@ -12,18 +12,23 @@ public class PuffShroom extends Shooter {
 
     private static final double LIFESPAN = 60;
     private static final double RANGE = 3;
+    private static final int VOLLEYS = 20;
 
-    private double lifeTimer = 0;
+    private double lifeTimer;
 
     public PuffShroom(Vec2 position) {
         super(Plants.PUFF_SHROOM, position);
     }
 
-    public void resetLife() { lifeTimer = 0; }
+    public void resetLife() {
+        lifeTimer = 0;
+    }
 
     @Override
     public void onTick(Game game) {
-        if (isFrozen()) return;
+        if (isFrozen()) {
+            return;
+        }
         lifeTimer += model.Game.SECONDS_PER_TICK;
         if (lifeTimer >= LIFESPAN) {
             setHp(0);
@@ -34,19 +39,22 @@ public class PuffShroom extends Shooter {
     }
 
     @Override
-    protected void shoot(Game game) {
+    protected boolean hasTarget(Game game) {
         Zombie target = PlantCombat.frontmostAhead(game, getRow(), getCol());
-        if (target == null || target.getPosition().x - getCol() > RANGE) return;
-        target.takeDamage(shotDamage(game));
-        PlantCombat.removeDeadZombies(game);
+        return target != null && target.getPosition().x - getCol() <= RANGE;
     }
 
     @Override
-    public void onPlantFood(Game game) {
-        Zombie target = PlantCombat.frontmostAhead(game, getRow(), getCol());
-        if (target != null) target.takeDamage(30 * shotDamage(game));
-        for (Plant p : game.getPlants())
-            if (p instanceof PuffShroom) ((PuffShroom) p).resetLife();
-        PlantCombat.removeDeadZombies(game);
+    protected int foodVolleys() {
+        return VOLLEYS;
+    }
+
+    @Override
+    protected void onFoodBurst(Game game) {
+        for (Plant plant : game.getPlants()) {
+            if (plant instanceof PuffShroom) {
+                ((PuffShroom) plant).resetLife();
+            }
+        }
     }
 }

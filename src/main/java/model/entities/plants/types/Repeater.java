@@ -1,31 +1,31 @@
 package model.entities.plants.types;
 
-import model.Game;
 import model.Vec2;
-import model.entities.plants.PlantCombat;
+import model.entities.plants.Muzzle;
 import model.entities.plants.Plants;
 import model.entities.plants.Shooter;
-import model.entities.zombies.Zombie;
+
+import java.util.Arrays;
+import java.util.List;
 
 public class Repeater extends Shooter {
+
+    private static final int VOLLEYS = 26;
+    private static final double TRAIL_FRAME = 0.35d;
 
     public Repeater(Vec2 position) {
         super(Plants.REPEATER, position);
     }
 
     @Override
-    protected void shoot(Game game) {
-        Zombie target = PlantCombat.frontmostAhead(game, getRow(), getCol());
-        if (target == null) return;
-        target.takeDamage(2 * shotDamage(game));
-        PlantCombat.removeDeadZombies(game);
+    public List<Muzzle> ports() {
+        return Arrays.asList(
+                new Muzzle(Muzzle.MAIN, 0, 1),
+                new Muzzle("trail", 0, 1, TRAIL_FRAME));
     }
 
     @Override
-    public void onPlantFood(Game game) {
-        Zombie target = PlantCombat.frontmostAhead(game, getRow(), getCol());
-        if (target != null)
-            target.takeDamage(60 * shotDamage(game) + 20 * getAttackdamage());
-        PlantCombat.removeDeadZombies(game);
+    protected int foodVolleys() {
+        return VOLLEYS;
     }
 }

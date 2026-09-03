@@ -1,33 +1,35 @@
 package model.entities.plants.types;
 
-import model.Game;
 import model.Vec2;
-import model.entities.plants.PlantCombat;
+import model.entities.plants.Muzzle;
 import model.entities.plants.Plants;
 import model.entities.plants.Shooter;
-import model.entities.zombies.Zombie;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class MegaGatlingPea extends Shooter {
+
+    private static final int BURST = 4;
+    private static final int VOLLEYS = 40;
+    private static final double SPACING = 0.2d;
 
     public MegaGatlingPea(Vec2 position) {
         super(Plants.MEGA_GATLING_PEA, position);
     }
 
     @Override
-    protected void shoot(Game game) {
-        Zombie target = PlantCombat.frontmostAhead(game, getRow(), getCol());
-        if (target == null) return;
-        target.takeDamage(4 * shotDamage(game));
-        PlantCombat.removeDeadZombies(game);
+    public List<Muzzle> ports() {
+        List<Muzzle> all = new ArrayList<Muzzle>();
+        all.add(new Muzzle(Muzzle.MAIN, 0, 1));
+        for (int shot = 1; shot < BURST; shot++) {
+            all.add(new Muzzle("trail" + shot, 0, 1, shot * SPACING));
+        }
+        return all;
     }
 
     @Override
-    public void onPlantFood(Game game) {
-
-        for (Zombie z : PlantCombat.zombiesInRow(game, getRow()))
-            z.takeDamage(20 * shotDamage(game));
-        Zombie target = PlantCombat.frontmostAhead(game, getRow(), getCol());
-        if (target != null) target.takeDamage(4 * 20 * shotDamage(game));
-        PlantCombat.removeDeadZombies(game);
+    protected int foodVolleys() {
+        return VOLLEYS;
     }
 }

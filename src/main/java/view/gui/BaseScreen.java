@@ -19,7 +19,7 @@ public abstract class BaseScreen implements Screen, Navigator.Hosted {
 
     private final Table root = new Table();
     private final TopBar topBar;
-    private final Toasts toasts;
+    protected final Toasts toasts;
     private com.badlogic.gdx.scenes.scene2d.ui.ScrollPane contentScroll;
 
     protected BaseScreen(GameContext context, String title) {
@@ -73,7 +73,18 @@ public abstract class BaseScreen implements Screen, Navigator.Hosted {
         return null;
     }
 
+    protected String backdropRegion() {
+        return null;
+    }
+
     private com.badlogic.gdx.scenes.scene2d.utils.Drawable backdropDrawable() {
+        String region = backdropRegion();
+        if (region != null && context.assets() != null) {
+            TextureRegion art = context.assets().region(region);
+            if (art != null) {
+                return new com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable(art);
+            }
+        }
         String path = backdropImage();
         if (path != null) {
             com.badlogic.gdx.scenes.scene2d.utils.Drawable art = ui.imageFile(path);
