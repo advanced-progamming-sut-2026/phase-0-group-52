@@ -20,6 +20,14 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 class FrostbiteTest {
 
+    private Plant plant(Game game, Plants type, int column, int row) {
+        Plant made = PlantFactory.create(type, new Vec2(column, row));
+        game.getField().getCell(column, row).getPlants().add(made);
+        game.getPlants().add(made);
+        made.onPlanted(game);
+        return made;
+    }
+
     private Game lawn() {
         GameField field = new GameField(ChapterType.FROSTBITE_CAVES);
         Game game = new Game(null, null, null, field, 0, new ArrayList<Plant>(),
@@ -195,5 +203,62 @@ class FrostbiteTest {
         assertEquals(2, dodo.getRow(), "it does not slip out of its lane");
         assertTrue(((model.entities.zombies.types.DodoRider) dodo).isGliding(),
                 "but it is marked as gliding so the view can hop it");
+    }
+
+    @Test
+    void aFirePlantNeverFreezesAndThawsItsNeighbours() {
+        Game game = lawn();
+        Plant torch = plant(game, Plants.FIRE_PEASHOOTER, 3, 2);
+        Plant chilled = plant(game, Plants.PEASHOOTER, 4, 2);
+        for (int i = 0; i < 3; i++) {
+            torch.addFreezeLevel();
+            chilled.addFreezeLevel();
+        }
+        assertEquals(0, torch.getFreezeLevel(), "fire plants do not freeze");
+        assertTrue(chilled.isFrozen(), "the peashooter froze solid");
+
+        FrostbiteCavesMechanics ice = new FrostbiteCavesMechanics();
+        ice.onTick(game);
+        assertFalse(chilled.isFrozen(), "standing beside fire thaws it at once");
+        assertEquals(0, chilled.getFreezeLevel(), "and clears every stage");
+    }
+
+    @Test
+    void fireBreaksTheIceHoldingAZombie() {
+        Game game = lawn();
+        plant(game, Plants.FIRE_PEASHOOTER, 5, 2);
+        model.entities.zombies.Zombie caught = model.entities.zombies.ZombieFactory.create(
+                model.entities.zombies.Zombies.ZOMBIE_DEFAULT, 2, 5,
+                ChapterType.FROSTBITE_CAVES);
+        game.getZombies().add(caught);
+        FrostbiteCavesMechanics ice = new FrostbiteCavesMechanics();
+        ice.freezeZombieAtStart(game, caught);
+        assertTrue(caught.isEncased(), "it starts encased");
+        ice.onTick(game);
+        assertFalse(caught.isEncased(), "the fire beside it shatters the ice");
+    }
+
+    @Test
+    void aFrozenPlantAndZombieDoNothingAtAll() {
+        Game game = lawn();
+        Plant shooter = plant(game, Plants.PEASHOOTER, 1, 2);
+        for (int i = 0; i < 3; i++) {
+            shooter.addFreezeLevel();
+        }
+        model.entities.zombies.Zombie caught = model.entities.zombies.ZombieFactory.create(
+                model.entities.zombies.Zombies.ZOMBIE_DEFAULT, 2, 7,
+                ChapterType.FROSTBITE_CAVES);
+        caught.encaseInIce();
+        game.getZombies().add(caught);
+        double stood = caught.getPosition().x;
+
+        GameLoop loop = new GameLoop(game);
+        for (int i = 0; i < 40; i++) {
+            loop.step(game);
+        }
+        assertTrue(game.getProjectiles().isEmpty(),
+                "a frozen shooter must not fire");
+        assertEquals(stood, caught.getPosition().x, 0.001d,
+                "and an encased zombie must not budge");
     }
 }

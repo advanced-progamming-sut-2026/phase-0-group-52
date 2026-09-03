@@ -77,4 +77,63 @@ class DarkAgesTest {
         assertTrue(view.gui.ChapterArt.gravestone(ChapterType.ANCIENT_EGYPT, null)
                 .contains("EGYPT"), "Egypt keeps its own stone");
     }
+
+    @Test
+    void gravesStayOffTheBackOfTheLawnAndNeverFillIt() {
+        int lastColumn = 0;
+        int nearBack = 0;
+        int total = 0;
+        for (int run = 0; run < 60; run++) {
+            Game game = lawn();
+            DarkAgesMechanics dark = new DarkAgesMechanics();
+            for (int wave = 0; wave < 12; wave++) {
+                dark.onWaveStart(game);
+            }
+            int cols = game.getField().getCols();
+            assertTrue(game.getTombstones().size() <= 5,
+                    "a lawn should never hold more than five graves, saw "
+                            + game.getTombstones().size());
+            for (Tombstone stone : game.getTombstones()) {
+                total++;
+                if (stone.getColumn() == cols - 1) {
+                    lastColumn++;
+                }
+                if (stone.getColumn() >= cols - 3) {
+                    nearBack++;
+                }
+            }
+        }
+        assertEquals(0, lastColumn, "nothing may rise on the very last column");
+        assertTrue(nearBack * 100 < total * 20,
+                "graves near the mowers should be rare, saw " + nearBack + " of " + total);
+    }
+
+    @Test
+    void gravesFavourTheEmptyKindSevenTimesOutOfTen() {
+        int plain = 0;
+        int sun = 0;
+        int food = 0;
+        for (int run = 0; run < 120; run++) {
+            Game game = lawn();
+            DarkAgesMechanics dark = new DarkAgesMechanics();
+            for (int wave = 0; wave < 6; wave++) {
+                dark.onWaveStart(game);
+            }
+            for (Tombstone stone : game.getTombstones()) {
+                if ("sun".equals(stone.getBonus())) {
+                    sun++;
+                } else if (stone.getBonus() != null) {
+                    food++;
+                } else {
+                    plain++;
+                }
+            }
+        }
+        int total = plain + sun + food;
+        assertTrue(plain > sun && sun > food,
+                "plain graves are commonest, then sun, then plant food: "
+                        + plain + "/" + sun + "/" + food);
+        assertTrue(plain * 100 > total * 55,
+                "most graves should be plain, saw " + plain + " of " + total);
+    }
 }

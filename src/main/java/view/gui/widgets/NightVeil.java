@@ -42,6 +42,7 @@ public final class NightVeil extends Widget {
 
     @Override
     public void draw(Batch batch, float parentAlpha) {
+        validate();
         Color was = batch.getColor().cpy();
         batch.setColor(1f, 1f, 1f, parentAlpha);
         batch.draw(ramp, getX(), getY(), getWidth(), getHeight());

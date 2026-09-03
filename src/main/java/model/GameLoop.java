@@ -14,7 +14,7 @@ import java.util.Map;
 
 public class GameLoop {
 
-    public static final int WAVE_INTERVAL = 15 * Game.TICKS_PER_SECOND;
+    public static final int WAVE_INTERVAL = 26 * Game.TICKS_PER_SECOND;
     public static final int MIN_WAVE_GAP = 14 * Game.TICKS_PER_SECOND;
     public static final int MAX_WAVE_GAP = 24 * Game.TICKS_PER_SECOND;
     public static final int CLEAR_THRESHOLD = 2;
