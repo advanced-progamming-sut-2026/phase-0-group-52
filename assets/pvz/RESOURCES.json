@@ -92051,6 +92051,408 @@
      "ah": 101
     }
    ]
+  },
+  {
+   "type": "simple",
+   "id": "Tombstone_Dark_Base_768",
+   "res": "768",
+   "parent": "Tombstone_Dark_Base",
+   "resources": [
+    {
+     "type": "Image",
+     "slot": 7103,
+     "id": "ATLASIMAGE_ATLAS_TOMBSTONE_DARK_BASE_768_00",
+     "path": "atlases\\Tombstone_Dark_Base_768_00",
+     "atlas": true,
+     "runtime": true,
+     "width": 256,
+     "height": 256
+    },
+    {
+     "type": "Image",
+     "slot": 12352,
+     "id": "IMAGE_GRAVESTONES_DARK_NOOP_DARK_NOOP_125X149",
+     "path": "images\\768\\full\\gravestones\\Dark_Noop\\Dark_Noop_125x149",
+     "parent": "ATLASIMAGE_ATLAS_TOMBSTONE_DARK_BASE_768_00",
+     "ax": 175,
+     "ay": 1,
+     "aw": 80,
+     "ah": 96
+    },
+    {
+     "type": "Image",
+     "slot": 12353,
+     "id": "IMAGE_GRAVESTONES_DARK_NOOP_DARK_NOOP_132X156",
+     "path": "images\\768\\full\\gravestones\\Dark_Noop\\Dark_Noop_132x156",
+     "parent": "ATLASIMAGE_ATLAS_TOMBSTONE_DARK_BASE_768_00",
+     "ax": 1,
+     "ay": 106,
+     "aw": 85,
+     "ah": 100
+    },
+    {
+     "type": "Image",
+     "slot": 12354,
+     "id": "IMAGE_GRAVESTONES_DARK_NOOP_DARK_NOOP_132X160",
+     "path": "images\\768\\full\\gravestones\\Dark_Noop\\Dark_Noop_132x160",
+     "parent": "ATLASIMAGE_ATLAS_TOMBSTONE_DARK_BASE_768_00",
+     "ax": 1,
+     "ay": 1,
+     "aw": 85,
+     "ah": 103
+    },
+    {
+     "type": "Image",
+     "slot": 12355,
+     "id": "IMAGE_GRAVESTONES_DARK_NOOP_DARK_NOOP_132X160_2",
+     "path": "images\\768\\full\\gravestones\\Dark_Noop\\Dark_Noop_132x160_2",
+     "parent": "ATLASIMAGE_ATLAS_TOMBSTONE_DARK_BASE_768_00",
+     "ax": 88,
+     "ay": 1,
+     "aw": 85,
+     "ah": 103
+    },
+    {
+     "type": "Image",
+     "slot": 12356,
+     "id": "IMAGE_GRAVESTONES_DARK_NOOP_DARK_NOOP_93X89",
+     "path": "images\\768\\full\\gravestones\\Dark_Noop\\Dark_Noop_93x89",
+     "parent": "ATLASIMAGE_ATLAS_TOMBSTONE_DARK_BASE_768_00",
+     "ax": 175,
+     "ay": 99,
+     "aw": 60,
+     "ah": 57
+    }
+   ]
+  },
+  {
+   "type": "simple",
+   "id": "Tombstone_Dark_Plantfood_768",
+   "res": "768",
+   "parent": "Tombstone_Dark_Plantfood",
+   "resources": [
+    {
+     "type": "Image",
+     "slot": 7107,
+     "id": "ATLASIMAGE_ATLAS_TOMBSTONE_DARK_PLANTFOOD_768_00",
+     "path": "atlases\\Tombstone_Dark_Plantfood_768_00",
+     "atlas": true,
+     "runtime": true,
+     "width": 256,
+     "height": 256
+    },
+    {
+     "type": "Image",
+     "slot": 12362,
+     "id": "IMAGE_GRAVESTONES_DARK_PLANTFOOD_DARK_PLANTFOOD_129X144",
+     "path": "images\\768\\full\\gravestones\\Dark_Plantfood\\Dark_Plantfood_129x144",
+     "parent": "ATLASIMAGE_ATLAS_TOMBSTONE_DARK_PLANTFOOD_768_00",
+     "ax": 88,
+     "ay": 106,
+     "aw": 83,
+     "ah": 92
+    },
+    {
+     "type": "Image",
+     "slot": 12363,
+     "id": "IMAGE_GRAVESTONES_DARK_PLANTFOOD_DARK_PLANTFOOD_132X157",
+     "path": "images\\768\\full\\gravestones\\Dark_Plantfood\\Dark_Plantfood_132x157",
+     "parent": "ATLASIMAGE_ATLAS_TOMBSTONE_DARK_PLANTFOOD_768_00",
+     "ax": 1,
+     "ay": 106,
+     "aw": 85,
+     "ah": 101
+    },
+    {
+     "type": "Image",
+     "slot": 12364,
+     "id": "IMAGE_GRAVESTONES_DARK_PLANTFOOD_DARK_PLANTFOOD_132X160",
+     "path": "images\\768\\full\\gravestones\\Dark_Plantfood\\Dark_Plantfood_132x160",
+     "parent": "ATLASIMAGE_ATLAS_TOMBSTONE_DARK_PLANTFOOD_768_00",
+     "ax": 1,
+     "ay": 1,
+     "aw": 85,
+     "ah": 103
+    },
+    {
+     "type": "Image",
+     "slot": 12365,
+     "id": "IMAGE_GRAVESTONES_DARK_PLANTFOOD_DARK_PLANTFOOD_132X160_2",
+     "path": "images\\768\\full\\gravestones\\Dark_Plantfood\\Dark_Plantfood_132x160_2",
+     "parent": "ATLASIMAGE_ATLAS_TOMBSTONE_DARK_PLANTFOOD_768_00",
+     "ax": 88,
+     "ay": 1,
+     "aw": 85,
+     "ah": 103
+    },
+    {
+     "type": "Image",
+     "slot": 12366,
+     "id": "IMAGE_GRAVESTONES_DARK_PLANTFOOD_DARK_PLANTFOOD_93X95",
+     "path": "images\\768\\full\\gravestones\\Dark_Plantfood\\Dark_Plantfood_93x95",
+     "parent": "ATLASIMAGE_ATLAS_TOMBSTONE_DARK_PLANTFOOD_768_00",
+     "ax": 175,
+     "ay": 1,
+     "aw": 60,
+     "ah": 61
+    }
+   ]
+  },
+  {
+   "type": "simple",
+   "id": "Tombstone_Dark_Sun_768",
+   "res": "768",
+   "parent": "Tombstone_Dark_Sun",
+   "resources": [
+    {
+     "type": "Image",
+     "slot": 7109,
+     "id": "ATLASIMAGE_ATLAS_TOMBSTONE_DARK_SUN_768_00",
+     "path": "atlases\\Tombstone_Dark_Sun_768_00",
+     "atlas": true,
+     "runtime": true,
+     "width": 256,
+     "height": 256
+    },
+    {
+     "type": "Image",
+     "slot": 12357,
+     "id": "IMAGE_GRAVESTONES_DARK_SUN_DARK_SUN_132X144",
+     "path": "images\\768\\full\\gravestones\\Dark_Sun\\Dark_Sun_132x144",
+     "parent": "ATLASIMAGE_ATLAS_TOMBSTONE_DARK_SUN_768_00",
+     "ax": 88,
+     "ay": 106,
+     "aw": 85,
+     "ah": 92
+    },
+    {
+     "type": "Image",
+     "slot": 12358,
+     "id": "IMAGE_GRAVESTONES_DARK_SUN_DARK_SUN_132X157",
+     "path": "images\\768\\full\\gravestones\\Dark_Sun\\Dark_Sun_132x157",
+     "parent": "ATLASIMAGE_ATLAS_TOMBSTONE_DARK_SUN_768_00",
+     "ax": 1,
+     "ay": 106,
+     "aw": 85,
+     "ah": 101
+    },
+    {
+     "type": "Image",
+     "slot": 12359,
+     "id": "IMAGE_GRAVESTONES_DARK_SUN_DARK_SUN_132X160",
+     "path": "images\\768\\full\\gravestones\\Dark_Sun\\Dark_Sun_132x160",
+     "parent": "ATLASIMAGE_ATLAS_TOMBSTONE_DARK_SUN_768_00",
+     "ax": 1,
+     "ay": 1,
+     "aw": 85,
+     "ah": 103
+    },
+    {
+     "type": "Image",
+     "slot": 12360,
+     "id": "IMAGE_GRAVESTONES_DARK_SUN_DARK_SUN_132X160_2",
+     "path": "images\\768\\full\\gravestones\\Dark_Sun\\Dark_Sun_132x160_2",
+     "parent": "ATLASIMAGE_ATLAS_TOMBSTONE_DARK_SUN_768_00",
+     "ax": 88,
+     "ay": 1,
+     "aw": 85,
+     "ah": 103
+    },
+    {
+     "type": "Image",
+     "slot": 12361,
+     "id": "IMAGE_GRAVESTONES_DARK_SUN_DARK_SUN_93X91",
+     "path": "images\\768\\full\\gravestones\\Dark_Sun\\Dark_Sun_93x91",
+     "parent": "ATLASIMAGE_ATLAS_TOMBSTONE_DARK_SUN_768_00",
+     "ax": 175,
+     "ay": 1,
+     "aw": 60,
+     "ah": 58
+    }
+   ]
+  },
+  {
+   "type": "simple",
+   "id": "Tombstone_Dark_Effects_768",
+   "res": "768",
+   "parent": "Tombstone_Dark_Effects",
+   "resources": [
+    {
+     "type": "Image",
+     "slot": 7105,
+     "id": "ATLASIMAGE_ATLAS_TOMBSTONE_DARK_EFFECTS_768_00",
+     "path": "atlases\\Tombstone_Dark_Effects_768_00",
+     "atlas": true,
+     "runtime": true,
+     "width": 256,
+     "height": 512
+    },
+    {
+     "type": "Image",
+     "slot": 12340,
+     "id": "IMAGE_EFFECTS_TOMBSTONE_DARK_BASE_DAMAGE_TOMBSTONE_DARK_BASE_DAMAGE_113X53",
+     "path": "images\\768\\full\\effects\\tombstone_dark_base_damage\\tombstone_dark_base_damage_113x53",
+     "parent": "ATLASIMAGE_ATLAS_TOMBSTONE_DARK_EFFECTS_768_00",
+     "ax": 114,
+     "ay": 275,
+     "aw": 73,
+     "ah": 34
+    },
+    {
+     "type": "Image",
+     "slot": 12341,
+     "id": "IMAGE_EFFECTS_TOMBSTONE_DARK_BASE_DAMAGE_TOMBSTONE_DARK_BASE_DAMAGE_173X96",
+     "path": "images\\768\\full\\effects\\tombstone_dark_base_damage\\tombstone_dark_base_damage_173x96",
+     "parent": "ATLASIMAGE_ATLAS_TOMBSTONE_DARK_EFFECTS_768_00",
+     "ax": 1,
+     "ay": 275,
+     "aw": 111,
+     "ah": 62
+    },
+    {
+     "type": "Image",
+     "slot": 12342,
+     "id": "IMAGE_EFFECTS_TOMBSTONE_DARK_BASE_DAMAGE_TOMBSTONE_DARK_BASE_DAMAGE_1X1",
+     "path": "images\\768\\full\\effects\\tombstone_dark_base_damage\\tombstone_dark_base_damage_1x1",
+     "parent": "ATLASIMAGE_ATLAS_TOMBSTONE_DARK_EFFECTS_768_00",
+     "ax": 254,
+     "ay": 1,
+     "aw": 1,
+     "ah": 1
+    },
+    {
+     "type": "Image",
+     "slot": 12343,
+     "id": "IMAGE_EFFECTS_TOMBSTONE_DARK_BASE_DAMAGE_TOMBSTONE_DARK_BASE_DAMAGE_23X24",
+     "path": "images\\768\\full\\effects\\tombstone_dark_base_damage\\tombstone_dark_base_damage_23x24",
+     "parent": "ATLASIMAGE_ATLAS_TOMBSTONE_DARK_EFFECTS_768_00",
+     "ax": 237,
+     "ay": 1,
+     "aw": 15,
+     "ah": 16
+    },
+    {
+     "type": "Image",
+     "slot": 12344,
+     "id": "IMAGE_EFFECTS_TOMBSTONE_DARK_BASE_DAMAGE_TOMBSTONE_DARK_BASE_DAMAGE_293X263",
+     "path": "images\\768\\full\\effects\\tombstone_dark_base_damage\\tombstone_dark_base_damage_293x263",
+     "parent": "ATLASIMAGE_ATLAS_TOMBSTONE_DARK_EFFECTS_768_00",
+     "ax": 1,
+     "ay": 1,
+     "aw": 188,
+     "ah": 169
+    },
+    {
+     "type": "Image",
+     "slot": 12345,
+     "id": "IMAGE_EFFECTS_TOMBSTONE_DARK_BASE_DAMAGE_TOMBSTONE_DARK_BASE_DAMAGE_35X42",
+     "path": "images\\768\\full\\effects\\tombstone_dark_base_damage\\tombstone_dark_base_damage_35x42",
+     "parent": "ATLASIMAGE_ATLAS_TOMBSTONE_DARK_EFFECTS_768_00",
+     "ax": 232,
+     "ay": 84,
+     "aw": 23,
+     "ah": 27
+    },
+    {
+     "type": "Image",
+     "slot": 12346,
+     "id": "IMAGE_EFFECTS_TOMBSTONE_DARK_BASE_DAMAGE_TOMBSTONE_DARK_BASE_DAMAGE_39X36",
+     "path": "images\\768\\full\\effects\\tombstone_dark_base_damage\\tombstone_dark_base_damage_39x36",
+     "parent": "ATLASIMAGE_ATLAS_TOMBSTONE_DARK_EFFECTS_768_00",
+     "ax": 207,
+     "ay": 225,
+     "aw": 25,
+     "ah": 23
+    },
+    {
+     "type": "Image",
+     "slot": 12347,
+     "id": "IMAGE_EFFECTS_TOMBSTONE_DARK_BASE_DAMAGE_TOMBSTONE_DARK_BASE_DAMAGE_48X48",
+     "path": "images\\768\\full\\effects\\tombstone_dark_base_damage\\tombstone_dark_base_damage_48x48",
+     "parent": "ATLASIMAGE_ATLAS_TOMBSTONE_DARK_EFFECTS_768_00",
+     "ax": 207,
+     "ay": 192,
+     "aw": 31,
+     "ah": 31
+    },
+    {
+     "type": "Image",
+     "slot": 12348,
+     "id": "IMAGE_EFFECTS_TOMBSTONE_DARK_BASE_DAMAGE_TOMBSTONE_DARK_BASE_DAMAGE_59X40",
+     "path": "images\\768\\full\\effects\\tombstone_dark_base_damage\\tombstone_dark_base_damage_59x40",
+     "parent": "ATLASIMAGE_ATLAS_TOMBSTONE_DARK_EFFECTS_768_00",
+     "ax": 207,
+     "ay": 164,
+     "aw": 38,
+     "ah": 26
+    },
+    {
+     "type": "Image",
+     "slot": 12349,
+     "id": "IMAGE_EFFECTS_TOMBSTONE_DARK_BASE_DAMAGE_TOMBSTONE_DARK_BASE_DAMAGE_60X67",
+     "path": "images\\768\\full\\effects\\tombstone_dark_base_damage\\tombstone_dark_base_damage_60x67",
+     "parent": "ATLASIMAGE_ATLAS_TOMBSTONE_DARK_EFFECTS_768_00",
+     "ax": 191,
+     "ay": 84,
+     "aw": 39,
+     "ah": 43
+    },
+    {
+     "type": "Image",
+     "slot": 12350,
+     "id": "IMAGE_EFFECTS_TOMBSTONE_DARK_BASE_DAMAGE_TOMBSTONE_DARK_BASE_DAMAGE_67X51",
+     "path": "images\\768\\full\\effects\\tombstone_dark_base_damage\\tombstone_dark_base_damage_67x51",
+     "parent": "ATLASIMAGE_ATLAS_TOMBSTONE_DARK_EFFECTS_768_00",
+     "ax": 191,
+     "ay": 129,
+     "aw": 43,
+     "ah": 33
+    },
+    {
+     "type": "Image",
+     "slot": 12351,
+     "id": "IMAGE_EFFECTS_TOMBSTONE_DARK_BASE_DAMAGE_TOMBSTONE_DARK_BASE_DAMAGE_7X7",
+     "path": "images\\768\\full\\effects\\tombstone_dark_base_damage\\tombstone_dark_base_damage_7x7",
+     "parent": "ATLASIMAGE_ATLAS_TOMBSTONE_DARK_EFFECTS_768_00",
+     "ax": 237,
+     "ay": 19,
+     "aw": 5,
+     "ah": 5
+    },
+    {
+     "type": "Image",
+     "slot": 12337,
+     "id": "IMAGE_EFFECTS_TOMBSTONE_DARK_SPAWN_EFFECT_ZOMBIE_EGYPT_TOMBRAISER_BEAM_01",
+     "path": "images\\768\\full\\effects\\tombstone_dark_spawn_effect\\zombie_egypt_tombraiser_beam_01",
+     "parent": "ATLASIMAGE_ATLAS_TOMBSTONE_DARK_EFFECTS_768_00",
+     "ax": 191,
+     "ay": 1,
+     "aw": 44,
+     "ah": 81
+    },
+    {
+     "type": "Image",
+     "slot": 12338,
+     "id": "IMAGE_EFFECTS_TOMBSTONE_DARK_SPAWN_EFFECT_ZOMBIE_EGYPT_TOMBRAISER_DISC_01",
+     "path": "images\\768\\full\\effects\\tombstone_dark_spawn_effect\\zombie_egypt_tombraiser_disc_01",
+     "parent": "ATLASIMAGE_ATLAS_TOMBSTONE_DARK_EFFECTS_768_00",
+     "ax": 1,
+     "ay": 172,
+     "aw": 101,
+     "ah": 101
+    },
+    {
+     "type": "Image",
+     "slot": 12339,
+     "id": "IMAGE_EFFECTS_TOMBSTONE_DARK_SPAWN_EFFECT_ZOMBIE_EGYPT_TOMBRAISER_DISC_02",
+     "path": "images\\768\\full\\effects\\tombstone_dark_spawn_effect\\zombie_egypt_tombraiser_disc_02",
+     "parent": "ATLASIMAGE_ATLAS_TOMBSTONE_DARK_EFFECTS_768_00",
+     "ax": 104,
+     "ay": 172,
+     "aw": 101,
+     "ah": 101
+    }
+   ]
   }
  ]
 }
