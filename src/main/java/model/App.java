@@ -26,7 +26,6 @@ public class App {
     private User currentuser;
     public static User loggedInUser;
     private MenuType currentmenu;
-    private final Greenhouse greenhouse = new Greenhouse();
     private final Shop shop = new Shop();
     private final java.util.List<model.entities.plants.Plants> plantSelection = new ArrayList<>();
     private final java.util.Set<model.entities.plants.Plants> boostedSelection = new java.util.HashSet<>();
@@ -61,7 +60,9 @@ public class App {
     public MenuType getCurrentmenu() { return currentmenu; }
     public void setCurrentmenu(MenuType currentmenu) { this.currentmenu = currentmenu; }
 
-    public Greenhouse getGreenhouse() { return greenhouse; }
+    public Greenhouse getGreenhouse() {
+        return getLoggedInUser() == null ? null : getLoggedInUser().getGreenhouse();
+    }
     public Shop getShop() { return shop; }
     public java.util.List<model.entities.plants.Plants> getPlantSelection() { return plantSelection; }
     public int getSelectedLevel() { return selectedLevel; }

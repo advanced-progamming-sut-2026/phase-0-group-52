@@ -39,13 +39,15 @@ public final class LawnField extends WidgetGroup {
     private static final float MOWER_CANVAS = 390f;
     private static final float TOMB_CANVAS = 390f;
     private static final float ARROW_FADE = 0.45f;
-    private static final float BLOCK_SPAN = 0.95f;
+    private static final float BLOCK_SPAN = 1.35f;
+    private static final float BLOCK_FOOT = 0.15f;
     private static final float SLIDE_EASE = 0.35f;
     private static final float RISE_SPAN = 1.6f;
     private static final float WATER_VEIL = 0.55f;
     private static final float HOP = 0.45f;
-    private static final float CHILL_R = 0.82f;
-    private static final float CHILL_G = 0.92f;
+    private static final int FREEZE_STAGES = 3;
+    private static final float ICE_MIN_ALPHA = 0.4f;
+    private static final float ICE_MAX_ALPHA = 0.8f;
     private static final float WIND_SPAN = 1.6f;
     private static final double LOB_SPAN = 4d;
     private static final float LOB_HEIGHT = 1.1f;
@@ -171,10 +173,16 @@ public final class LawnField extends WidgetGroup {
     @Override
     public void act(float delta) {
         super.act(delta);
+        getColor().a = 1f;
+        for (com.badlogic.gdx.scenes.scene2d.Group up = getParent(); up != null;
+                up = up.getParent()) {
+            up.getColor().a = 1f;
+        }
         syncArea();
         syncPlants();
         syncSun();
         syncHorde(delta);
+        feedback.setCeiling(night());
         syncStatus();
         duskPlants();
         flashDamage(delta);
@@ -214,7 +222,7 @@ public final class LawnField extends WidgetGroup {
                     break;
                 case FROZEN:
                 case CHILLED:
-                    rig.setTint(CHILL_R * dusk, CHILL_G * dusk, dusk, 1f);
+                    rig.setTint(dusk, dusk, dusk, 1f);
                     break;
                 default:
                     rig.setTint(dusk, dusk, dusk, 1f);
@@ -563,7 +571,8 @@ public final class LawnField extends WidgetGroup {
 
     private void syncIceBlocks() {
         for (Map.Entry<Plant, Actor> entry : growing.entrySet()) {
-            block(entry.getKey(), entry.getValue(), entry.getKey().isFrozen(),
+            block(entry.getKey(), entry.getValue(),
+                    entry.getKey().getFreezeLevel() > 0,
                     view.gui.FrostArt.ICE_PLANT,
                     (int) entry.getKey().getPosition().y);
         }
@@ -591,15 +600,16 @@ public final class LawnField extends WidgetGroup {
             return;
         }
         if (ice != null) {
-            ice.setTint(1f, 1f, 1f, 1f);
+            ice.setTint(1f, 1f, 1f, iceAlpha(owner));
             view.gui.EntityTuning.Tune tune =
                     view.gui.EntityTuning.of(owner instanceof Plant
                             ? view.gui.FrostArt.PLANT_BLOCK_KEY
                             : view.gui.FrostArt.ZOMBIE_BLOCK_KEY);
             float span = LawnGeometry.cellWidth() * BLOCK_SPAN * tune.scale;
-            ice.setBounds(LawnGeometry.columnLeft(columnOf(owner))
-                            + (LawnGeometry.cellWidth() - span) / 2f + tune.dx,
-                    LawnGeometry.rowFeet(row) + tune.dy, span, span);
+            float lift = LawnGeometry.cellHeight() * BLOCK_FOOT;
+            float middle = host.getX() + host.getWidth() / 2f;
+            float floor = host.getY();
+            ice.setBounds(middle - span / 2f + tune.dx, floor - lift + tune.dy, span, span);
             iceRows.put(ice, Integer.valueOf(row));
         }
     }
@@ -618,6 +628,16 @@ public final class LawnField extends WidgetGroup {
         view.gui.LawnLayer layer = mower != null && mower.isRunning()
                 ? view.gui.LawnLayer.ZOMBIE : view.gui.LawnLayer.MOWER_PARKED;
         return Float.valueOf(layer.depth(LawnGeometry.rowFeet(index)));
+    }
+
+    private static float iceAlpha(Object owner) {
+        int stage = FREEZE_STAGES;
+        if (owner instanceof Plant) {
+            stage = Math.max(1, Math.min(FREEZE_STAGES,
+                    ((Plant) owner).getFreezeLevel()));
+        }
+        float step = (ICE_MAX_ALPHA - ICE_MIN_ALPHA) / (FREEZE_STAGES - 1);
+        return ICE_MIN_ALPHA + step * (stage - 1);
     }
 
     private static int columnOf(Object owner) {

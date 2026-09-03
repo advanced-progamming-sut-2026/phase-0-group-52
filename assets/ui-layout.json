@@ -160,7 +160,7 @@
   "WorldMapScreen-DARK_AGES|Stack/ScrollPane#0/WorldMapStrip#0/island-0/platform": {"dx": 31, "dy": 0, "dw": -35, "dh": -29},
   "WorldMapScreen-DARK_AGES|Stack/ScrollPane#0/WorldMapStrip#0/island-0/packet": {"dx": 19, "dy": -90, "dw": 0, "dh": 0},
   "WorldMapScreen-DARK_AGES|Stack/ScrollPane#0/WorldMapStrip#0/island-0/trim": {"dx": -140, "dy": -10, "dw": 0, "dh": 0},
-  "WorldMapScreen-DARK_AGES|Table/Table#0": {"dx": 1, "dy": -2, "dw": 0, "dh": 0},
+  "WorldMapScreen-DARK_AGES|Table/Table#0": {"dx": 0, "dy": -1, "dw": 0, "dh": 0},
   "WorldMapScreen-DARK_AGES|Stack/ScrollPane#0/WorldMapStrip#0/island-1": {"dx": 10, "dy": 0, "dw": 0, "dh": 0},
   "WorldMapScreen-DARK_AGES|Stack/ScrollPane#0/WorldMapStrip#0/island-1/platform": {"dx": 30, "dy": 10, "dw": -50, "dh": -37},
   "WorldMapScreen-DARK_AGES|Stack/ScrollPane#0/WorldMapStrip#0/island-1/trim": {"dx": -160, "dy": 60, "dw": 20, "dh": 20},
@@ -357,8 +357,5 @@
   "GreenhouseScreen|Table/Table#0/pot-board/PotSlot#5": {"dx": 9, "dy": 9, "dw": 0, "dh": 0},
   "GreenhouseScreen|Table/Table#0/pot-board/PotSlot#4": {"dx": -1, "dy": 10, "dw": 0, "dh": 0},
   "GreenhouseScreen|Table/Table#0/pot-board/PotSlot#0": {"dx": 0, "dy": 10, "dw": 0, "dh": 0},
-  "WorldMapScreen-DARK_AGES|Stack/ScrollPane#0/WorldMapStrip#0/landmark-statue": {"dx": 0, "dy": 0, "dw": 0, "dh": 0, "hidden": true},
-  "WorldMapScreen-DARK_AGES|Stack/ScrollPane#0/WorldMapStrip#0/Image#2": {"dx": -89, "dy": 30, "dw": 179, "dh": 179},
-  "WorldMapScreen-DARK_AGES|Stack/ScrollPane#0/WorldMapStrip#0/island-2/trim": {"dx": 0, "dy": 0, "dw": 0, "dh": 0, "hidden": true},
-  "WorldMapScreen-DARK_AGES|Stack/ScrollPane#0/WorldMapStrip#0/anim-1": {"dx": 0, "dy": 0, "dw": 0, "dh": 0, "hidden": true}
+  "WorldMapScreen-DARK_AGES|Stack/ScrollPane#0/WorldMapStrip#0/Image#2": {"dx": -89, "dy": 30, "dw": 179, "dh": 179}
 }

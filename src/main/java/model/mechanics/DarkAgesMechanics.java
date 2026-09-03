@@ -13,6 +13,11 @@ import model.entities.zombies.Zombies;
 public class DarkAgesMechanics implements ChapterMechanics {
 
     private static final int RISEN_LEVEL = 2;
+    private static final int MAX_GRAVES = 5;
+    private static final int BACK_ROWS = 3;
+    private static final int BACK_ODDS = 8;
+    private static final int SUN_ODDS = 20;
+    private static final int FOOD_ODDS = 10;
 
     private static final int GRAVE_SUN_BONUS = 50;
 
@@ -32,21 +37,24 @@ public class DarkAgesMechanics implements ChapterMechanics {
 
     private void spawnRandomGraves(Game game) {
         GameField field = game.getField();
-        if (field == null) return;
+        if (field == null) {
+            return;
+        }
         int count = 1 + PlantCombat.RANDOM.nextInt(2);
         int tries = 0;
         while (count > 0 && tries < 100) {
             tries++;
-            int c = PlantCombat.RANDOM.nextInt(field.getCols());
+            if (game.getTombstones().size() >= MAX_GRAVES) {
+                return;
+            }
+            int c = graveColumn(field);
             int r = PlantCombat.RANDOM.nextInt(field.getRows());
             Cell cell = field.getCell(c, r);
             if (cell == null || cell.getType() != CellType.NORMAL || !cell.isEmpty()) continue;
             cell.setType(CellType.TOMBSTONE);
             model.entities.Tombstone stone = new model.entities.Tombstone(c, r);
             game.getTombstones().add(stone);
-            String bonus = null;
-            if (PlantCombat.RANDOM.nextInt(100) < 40)
-                bonus = PlantCombat.RANDOM.nextBoolean() ? "sun" : "plant food";
+            String bonus = rollBonus();
             cell.setGraveBonus(bonus);
             stone.setBonus(bonus);
             boolean necromancy = PlantCombat.RANDOM.nextInt(100) < 45;
@@ -56,6 +64,23 @@ public class DarkAgesMechanics implements ChapterMechanics {
                     + (necromancy ? " [necromancy]" : "") + "!");
             count--;
         }
+    }
+
+    private int graveColumn(GameField field) {
+        int cols = field.getCols();
+        int safe = Math.max(1, cols - BACK_ROWS);
+        if (PlantCombat.RANDOM.nextInt(100) < BACK_ODDS) {
+            return safe + PlantCombat.RANDOM.nextInt(Math.max(1, cols - safe - 1));
+        }
+        return PlantCombat.RANDOM.nextInt(safe);
+    }
+
+    private String rollBonus() {
+        int roll = PlantCombat.RANDOM.nextInt(100);
+        if (roll < SUN_ODDS) {
+            return "sun";
+        }
+        return roll < SUN_ODDS + FOOD_ODDS ? "plant food" : null;
     }
 
     private void necromancySpawns(Game game) {
@@ -68,9 +93,10 @@ public class DarkAgesMechanics implements ChapterMechanics {
                     game.getZombies().add(ZombieFactory.create(risen(game),
                             r, new Vec2(c, r), ChapterType.DARK_AGES, null));
                     game.getRisings().add(new Vec2(c, r));
-                    cell.setNecromancy(false);
-                    System.out.println("Necromancy! A zombie rose from the grave at ("
+                    util.Log.info("game", "Necromancy! A zombie claws out of the grave at ("
                             + (c + 1) + ", " + (r + 1) + ")!");
+                    cell.setNecromancy(false);
+
                 }
             }
         }

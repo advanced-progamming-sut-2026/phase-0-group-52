@@ -14,11 +14,11 @@ public final class WavePlan {
     public static final int LATE_LEVEL = 3;
     public static final int MIN_WAVES = 4;
     public static final int MAX_WAVES = 10;
-    public static final double BUDGET_BASE = 520d;
-    public static final double BUDGET_PER_LEVEL = 190d;
-    public static final double BUDGET_PER_WAVE = 0.30d;
-    public static final double DIFFICULTY_STEP = 0.28d;
-    public static final double FLAG_MULTIPLIER = 1.8d;
+    public static final double BUDGET_BASE = 230d;
+    public static final double BUDGET_PER_LEVEL = 90d;
+    public static final double BUDGET_PER_WAVE = 0.22d;
+    public static final double DIFFICULTY_STEP = 0.2d;
+    public static final double FLAG_MULTIPLIER = 1.6d;
 
     private WavePlan() {}
 
@@ -70,14 +70,14 @@ public final class WavePlan {
 
     private static void frostbite(List<Zombies> pool, int level) {
         pool.add(Zombies.ZOMBIE_ARMOR1);
-        pool.add(Zombies.ZOMBIE_ICE_AGE_DODO);
         pool.add(Zombies.ZOMBIE_ICE_AGE_HUNTER);
+        pool.add(Zombies.ZOMBIE_ICE_AGE_DODO);
         if (level >= 2) {
-            pool.add(Zombies.ZOMBIE_ICE_AGE_TROGLOBITE);
-            pool.add(Zombies.ZOMBIE_IMP);
-        }
-        if (level >= LATE_LEVEL) {
             pool.add(Zombies.ZOMBIE_ARMOR2);
+            pool.add(Zombies.ZOMBIE_ICE_AGE_TROGLOBITE);
+        }
+        if (level >= 3) {
+            pool.add(Zombies.ZOMBIE_ARMOR4);
             pool.add(Zombies.ZOMBIE_GARGANTUAR);
         }
     }

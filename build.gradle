@@ -67,7 +67,17 @@ tasks.register('preview', JavaExec) {
     }
 }
 
+tasks.register('sandbox', JavaExec) {
+    workingDir = projectDir
+    group = 'application'
+    description = 'Drops any plant against any zombie on a live lawn for testing behaviour.'
+    classpath = sourceSets.main.runtimeClasspath
+    mainClass = 'tools.Sandbox'
+    javaLauncher = javaToolchains.launcherFor(java.toolchain)
+}
+
 tasks.register('tuneEntities', JavaExec) {
+    workingDir = projectDir
     group = 'application'
     description = 'Places and scales every plant and zombie on every lawn; writes assets/entity-tuning.json.'
     classpath = sourceSets.main.runtimeClasspath
@@ -76,6 +86,7 @@ tasks.register('tuneEntities', JavaExec) {
 }
 
 tasks.register('tunePackets', JavaExec) {
+    workingDir = projectDir
     group = 'application'
     description = 'Hand-places each plant on its seed packet; writes assets/packet-layout.json.'
     classpath = sourceSets.main.runtimeClasspath

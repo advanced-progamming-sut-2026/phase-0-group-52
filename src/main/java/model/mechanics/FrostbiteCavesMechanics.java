@@ -66,14 +66,16 @@ public class FrostbiteCavesMechanics implements ChapterMechanics {
             chilled.add(Integer.valueOf(row));
             util.Log.info("game", "An icy wind sweeps row " + (row + 1) + "!");
             for (Plant p : game.getPlants()) {
-                if (p.getRow() == row && !p.getType().getTags().contains(PlantTag.FIRE))
+                if (p.getRow() == row) {
                     p.addFreezeLevel();
+                }
             }
         }
     }
 
     @Override
     public void onTick(Game game) {
+        fireClearsIce(game);
         thawEncased(game);
         if (!started) {
             started = true;
@@ -128,6 +130,21 @@ public class FrostbiteCavesMechanics implements ChapterMechanics {
                 startThaw.remove(z);
             } else {
                 startThaw.put(z, left);
+            }
+        }
+    }
+
+    private void fireClearsIce(Game game) {
+        for (Plant p : new java.util.ArrayList<Plant>(game.getPlants())) {
+            if (p.isFrozen() || p.getFreezeLevel() > 0) {
+                if (fireNear(game, p.getCol(), p.getRow())) {
+                    p.thawCompletely();
+                }
+            }
+        }
+        for (Zombie z : new java.util.ArrayList<Zombie>(game.getZombies())) {
+            if (z.isEncased() && fireNear(game, z.getCol(), z.getRow())) {
+                z.damageIce(Zombie.ICE_HP);
             }
         }
     }
@@ -195,14 +212,15 @@ public class FrostbiteCavesMechanics implements ChapterMechanics {
             boolean icy = cell.getType() == CellType.SLIPPERY_UP
                     || cell.getType() == CellType.SLIPPERY_DOWN;
             Integer slidAt = slipped.get(z);
+            int here = z.getCol() * 100 + z.getRow();
             if (!icy) {
                 slipped.remove(z);
                 continue;
             }
-            if (slidAt != null && slidAt.intValue() == z.getCol()) {
+            if (slidAt != null && slidAt.intValue() == here) {
                 continue;
             }
-            slipped.put(z, Integer.valueOf(z.getCol()));
+            slipped.put(z, Integer.valueOf(here));
             if (cell.getType() == CellType.SLIPPERY_UP && z.getRow() > 0) {
                 z.setLine(z.getRow() - 1);
             } else if (cell.getType() == CellType.SLIPPERY_DOWN
