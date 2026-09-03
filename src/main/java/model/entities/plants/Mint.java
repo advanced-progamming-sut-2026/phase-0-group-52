@@ -7,6 +7,8 @@ public class Mint extends Plant {
 
     private static final double LIFESPAN = 5;
 
+    private static final double FADE = 1.2;
+
     private double lifeTimer = 0;
 
     public Mint(Plants type, Vec2 position) {
@@ -14,7 +16,13 @@ public class Mint extends Plant {
     }
 
     @Override
+    public boolean isFading() {
+        return lifeTimer >= LIFESPAN - FADE;
+    }
+
+    @Override
     public void onPlanted(Game game) {
+        markActed();
         for (int i = 0; i < game.getPlants().size(); i++) {
             Plant p = game.getPlants().get(i);
             if (p != this && p.getType().getCategory() == getType().getCategory())

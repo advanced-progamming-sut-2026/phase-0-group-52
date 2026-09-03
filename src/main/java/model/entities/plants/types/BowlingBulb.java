@@ -2,45 +2,64 @@ package model.entities.plants.types;
 
 import model.Game;
 import model.Vec2;
+import model.entities.Projectile;
+import model.entities.plants.Muzzle;
 import model.entities.plants.PlantCombat;
 import model.entities.plants.Plants;
 import model.entities.plants.Shooter;
 import model.entities.zombies.Zombie;
 
-import java.util.List;
-
 public class BowlingBulb extends Shooter {
 
-    private static final double[] DAMAGE = {40, 120, 180};
-    private static final double[] DELAY = {2, 5, 10};
+    public static final int BULBS = 1;
 
-    private int nextBulb = 0;
+    private static final double DAMAGE = 40;
+    private static final double DELAY = 2;
+    private static final double FOOD_POWER = 4d;
+    private static final int VOLLEYS = 1;
 
     public BowlingBulb(Vec2 position) {
         super(Plants.BOWLING_BULB, position);
     }
 
-    @Override
-    public void onTick(Game game) {
-        if (isFrozen()) return;
-        actionTimer += model.Game.SECONDS_PER_TICK;
-        if (actionTimer < DELAY[nextBulb]) return;
-        Zombie target = PlantCombat.frontmostAhead(game, getRow(), getCol());
-        if (target == null) return;
-        actionTimer = 0;
-        target.takeDamage(DAMAGE[nextBulb]);
-        nextBulb = (nextBulb + 1) % DAMAGE.length;
-        PlantCombat.removeDeadZombies(game);
+    public int getBulb() {
+        return 1;
     }
 
     @Override
-    public void onPlantFood(Game game) {
+    protected double rechargeTime() {
+        return DELAY;
+    }
 
-        for (int i = 0; i < 3; i++) {
-            List<Zombie> all = game.getZombies();
-            if (all.isEmpty()) break;
-            Zombie target = all.get(PlantCombat.RANDOM.nextInt(all.size()));
-            PlantCombat.explode(game, target.getCol(), target.getRow(), 1, DAMAGE[2]);
+    @Override
+    protected void shoot(Game game) {
+        Zombie target = PlantCombat.frontmostAhead(game, getRow(), getCol());
+        if (target == null) {
+            return;
         }
+        super.shoot(game);
+    }
+
+    @Override
+    protected void fireFrom(Game game, Muzzle muzzle) {
+        roll(game, isBursting() ? DAMAGE * FOOD_POWER : DAMAGE);
+    }
+
+    @Override
+    protected String shotVariant() {
+        return isBursting() ? Projectile.FED + 1 : Projectile.BULB + 1;
+    }
+
+    @Override
+    protected int foodVolleys() {
+        return VOLLEYS;
+    }
+
+    private void roll(Game game, double damage) {
+        Projectile shot = new Projectile(Projectile.Kind.ORB, getType(), getRow(),
+                getCol() + 0.5, damage, 1, Muzzle.MAIN, shotVariant());
+        shot.from(getRow());
+        shot.bouncing(true);
+        game.getProjectiles().add(shot);
     }
 }

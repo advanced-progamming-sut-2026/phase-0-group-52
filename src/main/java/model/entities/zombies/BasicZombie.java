@@ -24,10 +24,14 @@ public class BasicZombie extends Zombie {
 
     @Override
     public void onTick(Game game) {
+        if (getState() == ZombieState.DISABLED || isEncased()) {
+            return;
+        }
         java.util.ArrayList<Plant> here = edible(game.getPlantsAt(getCol(), getRow()));
         if (!here.isEmpty()) {
             setState(ZombieState.ATTACKING);
             Plant target = here.get(here.size() - 1);
+            target.markBitten();
             target.takeDamage(getDamage() * model.Game.SECONDS_PER_TICK);
             if (target.isDead()) {
                 target.onDeath(game);

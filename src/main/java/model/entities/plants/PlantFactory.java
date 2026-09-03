@@ -96,12 +96,15 @@ public abstract class PlantFactory {
 
     private static Plant createByCategory(Plants type, Vec2 position) {
         switch (type.getCategory()) {
-            case SUN_PRODUCER:   return new SunProducer(type, position);
+            case SUN_PRODUCER:   return isMint(type) ? new Mint(type, position)
+                                                     : new SunProducer(type, position);
             case SHOOTER:        return isMint(type) ? new Mint(type, position) : new Shooter(type, position);
             case STRIKE_THROUGH: return isMint(type) ? new Mint(type, position) : new StrikeThrough(type, position);
-            case LOBBER:         return new Lobber(type, position);
+            case LOBBER:         return isMint(type) ? new Mint(type, position)
+                                                     : lobber(type, position);
             case EXPLOSIVE:      return isMint(type) ? new Mint(type, position) : new Explosive(type, position);
-            case MELEE:          return new Melee(type, position);
+            case MELEE:          return isMint(type) ? new Mint(type, position)
+                                                     : new Melee(type, position);
             case MAGIC:          return magicPlant(type, position);
             case MINT:           return new Mint(type, position);
             case WALL_NUT:       return isMint(type) ? new Mint(type, position) : new Wallnut(type, position);
@@ -118,6 +121,12 @@ public abstract class PlantFactory {
             return new Homing(type, position);
         }
         return new Modifier(type, position);
+    }
+
+    private static Plant lobber(Plants type, Vec2 position) {
+        return type == Plants.CABBAGE_PULT
+                ? new model.entities.plants.types.CabbagePult(position)
+                : new Lobber(type, position);
     }
 
     private static boolean isMint(Plants type) {

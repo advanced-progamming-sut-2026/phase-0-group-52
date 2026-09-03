@@ -37,7 +37,87 @@ public abstract class Plant implements PlantInterface {
 
     public void onPlanted(Game game) {}
 
-    public void onPlantFood(Game game) {}
+    public static final double ACT_SHOW = 1.4d;
+    public static final double FED_SHOW = 2.2d;
+    public static final double BITE_SHOW = 0.45d;
+
+    private double actingFor;
+    private double fedFor;
+    private double bittenFor;
+
+    public double attackClipSeconds() {
+        PlantRecord record = PlantData.record(getType());
+        if (record == null || record.getAnimations() == null) {
+            return ACT_SHOW;
+        }
+        java.util.Map<String, Double> clips = record.getAnimations().getClips();
+        for (String name : new String[] {"attack", "special_stage1", "special", "bite"}) {
+            Double seconds = clips.get(name);
+            if (seconds != null && seconds.doubleValue() > 0d) {
+                return seconds.doubleValue();
+            }
+        }
+        return ACT_SHOW;
+    }
+
+    public void markStruck() {
+        markActedFor(attackClipSeconds());
+    }
+
+    public void markActedFor(double seconds) {
+        actingFor = Math.max(actingFor, seconds);
+    }
+
+    public void markActed() {
+        actingFor = ACT_SHOW;
+    }
+
+    public void markFedFor(double seconds) {
+        fedFor = seconds;
+    }
+
+    public void markFed() {
+        fedFor = FED_SHOW;
+    }
+
+    public void markBitten() {
+        bittenFor = BITE_SHOW;
+    }
+
+    public boolean isActing() {
+        return actingFor > 0d;
+    }
+
+    public double fedRemaining() {
+        return fedFor;
+    }
+
+    public boolean isFed() {
+        return fedFor > 0d;
+    }
+
+    public boolean isBitten() {
+        return bittenFor > 0d;
+    }
+
+    public boolean isFading() {
+        return false;
+    }
+
+    public int growthStage() {
+        return 1;
+    }
+
+    public void ageStatesTick() {
+        double step = model.Game.SECONDS_PER_TICK;
+        actingFor = Math.max(0d, actingFor - step);
+        fedFor = Math.max(0d, fedFor - step);
+        bittenFor = Math.max(0d, bittenFor - step);
+    }
+
+    public void onPlantFood(Game game) {
+        markFed();
+    }
 
     public void onDeath(Game game) {}
 
@@ -75,6 +155,10 @@ public abstract class Plant implements PlantInterface {
     public boolean isBoosted() { return boosted; }
 
     public boolean isFrozen() { return frozen; }
+
+    public boolean isFrozenSolid() { return freezeLevel >= FREEZE_STAGES; }
+
+    public static final int FREEZE_STAGES = 3;
     public void setFrozen(boolean frozen) { this.frozen = frozen; }
 
     public int getFreezeLevel() { return freezeLevel; }
