@@ -632,6 +632,17 @@ public final class UiKit implements Disposable {
         install(over ? "ui/cursor-link.png" : "ui/cursor.png");
     }
 
+    public static void hideCursor() {
+        if (com.badlogic.gdx.Gdx.graphics == null) {
+            return;
+        }
+        com.badlogic.gdx.graphics.Pixmap blank = new com.badlogic.gdx.graphics.Pixmap(
+                1, 1, com.badlogic.gdx.graphics.Pixmap.Format.RGBA8888);
+        com.badlogic.gdx.Gdx.graphics.setCursor(
+                com.badlogic.gdx.Gdx.graphics.newCursor(blank, 0, 0));
+        blank.dispose();
+    }
+
     public static void useGameCursor() {
         if (com.badlogic.gdx.Gdx.graphics == null || com.badlogic.gdx.Gdx.files == null) {
             return;

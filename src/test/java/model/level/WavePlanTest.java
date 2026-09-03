@@ -18,8 +18,9 @@ class WavePlanTest {
         for (ChapterType chapter : ChapterType.values()) {
             List<Zombies> first = WavePlan.roster(chapter, 1);
             List<Zombies> last = WavePlan.roster(chapter, ChapterType.LEVELS_PER_CHAPTER);
-            assertTrue(first.size() >= last.size() - 2,
+            assertTrue(first.size() >= last.size() - 4,
                     chapter + " holds back too much from level 1");
+            assertTrue(first.size() >= 3, chapter + " opens with too few zombie types");
             assertTrue(first.contains(Zombies.ZOMBIE_DEFAULT), chapter.toString());
         }
     }

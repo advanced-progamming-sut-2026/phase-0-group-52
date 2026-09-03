@@ -97,6 +97,40 @@ public final class PlantCombat {
         }
     }
 
+    public static final double SPROUT_CHANCE = 0.12;
+
+    private static void dropSprout(Game game, Zombie dead) {
+        if (game == null || game.getApp() == null
+                || game.getApp().getLoggedInUser() == null) {
+            return;
+        }
+        if (RANDOM.nextDouble() < SPROUT_CHANCE) {
+            game.getApp().getLoggedInUser().addSprouts(1);
+        }
+    }
+
+    public static final double PLANT_FOOD_CHANCE = 0.05;
+
+    private static void maybeDropPlantFood(Game game) {
+        if (RANDOM.nextDouble() >= PLANT_FOOD_CHANCE) {
+            return;
+        }
+        game.setPlantFoodCount(game.getPlantFoodCount() + 1);
+    }
+
+    public static final double POT_CHANCE = 0.03;
+
+    private static void maybeDropPot(Game game) {
+        model.User user = game.getApp() == null ? null : game.getApp().getLoggedInUser();
+        if (user == null || RANDOM.nextDouble() >= POT_CHANCE) {
+            return;
+        }
+        model.greenhouse.Greenhouse garden = user.getGreenhouse();
+        if (garden.unlockedPotCount() < model.greenhouse.Greenhouse.SLOTS) {
+            garden.unlockNextPot();
+        }
+    }
+
     public static void removeDeadZombies(Game game) {
         for (int i = game.getZombies().size() - 1; i >= 0; i--) {
             Zombie z = game.getZombies().get(i);
@@ -107,6 +141,9 @@ public final class PlantCombat {
                 if (game.getLevel() instanceof model.level.TimedWar)
                     ((model.level.TimedWar) game.getLevel()).onZombieKilled();
                 rollLoot(game, z);
+                dropSprout(game, z);
+                maybeDropPlantFood(game);
+                maybeDropPot(game);
                 z.onDeath(game);
                 game.getZombies().remove(i);
             }

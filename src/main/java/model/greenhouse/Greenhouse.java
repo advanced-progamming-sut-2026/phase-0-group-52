@@ -6,8 +6,8 @@ import model.entities.plants.Plants;
 
 public class Greenhouse {
 
-    public static final int ROWS = 4;
-    public static final int COLS = 5;
+    public static final int ROWS = 3;
+    public static final int COLS = 4;
     public static final int MARIGOLD_REWARD = 500;
     public static final long HOUR_MILLIS = 3600L * 1000;
 
@@ -16,12 +16,33 @@ public class Greenhouse {
     public Greenhouse() {
         for (int y = 0; y < ROWS; y++)
             for (int x = 0; x < COLS; x++)
-                pots[y][x] = new Pot(x + 1, y + 1, y == 0);
+                pots[y][x] = new Pot(x + 1, y + 1, x == 0 && y == 0);
     }
 
     public Pot getPot(int x, int y) {
         if (x < 1 || x > COLS || y < 1 || y > ROWS) return null;
         return pots[y - 1][x - 1];
+    }
+
+    public static final int SLOTS = ROWS * COLS;
+
+    public java.util.List<Pot> slots() {
+        java.util.List<Pot> all = new java.util.ArrayList<Pot>();
+        for (int y = 0; y < ROWS; y++) {
+            for (int x = 0; x < COLS; x++) {
+                all.add(pots[y][x]);
+            }
+        }
+        return all;
+    }
+
+    public Pot firstEmptyPot() {
+        for (Pot pot : slots()) {
+            if (pot.isUnlocked() && !pot.isOccupied()) {
+                return pot;
+            }
+        }
+        return null;
     }
 
     public int unlockedPotCount() {

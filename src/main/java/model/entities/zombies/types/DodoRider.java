@@ -13,6 +13,17 @@ import model.entities.zombies.Zombies;
 
 public class DodoRider extends WalkingZombie {
 
+    private boolean gliding;
+
+    public boolean isGliding() {
+        return gliding;
+    }
+
+    public void setGliding(boolean value) {
+        this.gliding = value;
+    }
+
+
     public DodoRider(int line, Vec2 position, ChapterType chapter, ZombieType type) {
         super(Zombies.ZOMBIE_ICE_AGE_DODO, line, position, chapter, type);
     }

@@ -4,10 +4,14 @@ public enum LawnLayer {
 
     TOMBSTONE(4),
     MOWER_PARKED(3),
-    GROUND(2),
-    SUN(0);
+    PLANT(2),
+    ZOMBIE(1),
+    SHOT(0),
+    EFFECT(-1),
+    SUN(-2);
 
-    public static final float SPAN = 10000f;
+    private static final float ROW_SPAN = 100f;
+    private static final float IN_FRONT = -1e9f;
 
     private final int rank;
 
@@ -16,6 +20,6 @@ public enum LawnLayer {
     }
 
     public float depth(float rowFeet) {
-        return rank * SPAN + rowFeet;
+        return this == SUN ? IN_FRONT : rowFeet * ROW_SPAN + rank;
     }
 }

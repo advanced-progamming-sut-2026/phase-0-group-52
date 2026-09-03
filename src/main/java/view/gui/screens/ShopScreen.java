@@ -1,35 +1,34 @@
 package view.gui.screens;
 
-import com.badlogic.gdx.graphics.Color;
-import com.badlogic.gdx.scenes.scene2d.ui.Dialog;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
-import com.badlogic.gdx.scenes.scene2d.ui.ScrollPane;
-import com.badlogic.gdx.scenes.scene2d.ui.SelectBox;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
-import com.badlogic.gdx.scenes.scene2d.ui.Window;
-import com.badlogic.gdx.utils.Align;
-import controller.menu.GreenhouseMenuController;
+import model.App;
+import model.User;
 import model.entities.plants.Plants;
 import model.shop.Shop;
 import view.gui.BaseScreen;
 import view.gui.GameContext;
-import view.gui.PvzGame;
 import view.gui.Theme;
+import view.gui.widgets.ShopCard;
 
 public final class ShopScreen extends BaseScreen {
-    private static final int ITEM_POT = 1;
-    private static final int ITEM_PLANT_FOOD = 2;
-    private static final int ITEM_RANDOM_SEEDS = 3;
-    private static final int ITEM_CHOICE_SEEDS = 4;
-    private static final int ITEM_EXCHANGE = 5;
-    private static final int ITEM_DAILY = 6;
 
-    private final GreenhouseMenuController controller;
-    private SelectBox<String> plantPicker;
+    private final controller.menu.GreenhouseController garden;
+
+    private static final int COLUMNS = 3;
+    private static final String PACKET_ICON = "IMAGE_UI_STOREMULTI_SEEDPACKETICON";
+    private static final String POT_ICON =
+            "IMAGE_ZEN_GARDEN_GROWING_PLANT_SLOT_GROWING_PLANT_SLOT_184X161";
+    private static final String FOOD_ICON = "IMAGE_UI_HUD_INGAME_PLANTFOOD_BUTTON";
+
+    private final Shop shop;
+
+    private Table shelf;
 
     public ShopScreen(GameContext context) {
         super(context, "Shop");
-        this.controller = new GreenhouseMenuController(context.app());
+        this.garden = new controller.menu.GreenhouseController(context.app());
+        this.shop = context.app().getShop();
     }
 
     @Override
@@ -38,122 +37,136 @@ public final class ShopScreen extends BaseScreen {
     }
 
     @Override
+    protected String backdropRegion() {
+        return "IMAGE_UI_THYMED_EVENTS_COINS_SPREE_EVENT_BG";
+    }
+
+    @Override
+    protected boolean scrollContent() {
+        return false;
+    }
+
+    @Override
     protected void build() {
-        Table panel = ui.panel();
-        panel.top();
-
-        Table header = new Table();
-        header.add(new Label("Store", ui.skin(), "title")).left().expandX();
-        panel.add(header).growX().padBottom(Theme.PAD).row();
-
-        Table list = new Table();
-        list.top();
-        list.defaults().growX().pad(Theme.PAD_SMALL);
-
-        list.add(item("Flower pot", "Unlocks one greenhouse slot.",
-                Shop.POT_PRICE, "coins", Theme.plantFamily("WALL_NUT"), ITEM_POT, false)).row();
-        list.add(item("Plant food", "Instantly supercharges one plant. Max "
-                        + Shop.PLANT_FOOD_MAX + " held.",
-                Shop.PLANT_FOOD_PRICE, "gems", Theme.PLANT_FOOD, ITEM_PLANT_FOOD, false)).row();
-        list.add(item("Random seed packets", Shop.RANDOM_SEEDS_COUNT + " packets, chosen at random.",
-                Shop.RANDOM_SEEDS_PRICE, "coins", Theme.SUN_DEEP, ITEM_RANDOM_SEEDS, false)).row();
-        list.add(item("Chosen seed packets", Shop.CHOICE_SEEDS_COUNT + " packets for a plant you pick.",
-                Shop.CHOICE_SEEDS_PRICE, "gems", Theme.GREEN, ITEM_CHOICE_SEEDS, true)).row();
-        list.add(item("Currency exchange", Shop.EXCHANGE_DIAMONDS + " gems become "
-                        + Shop.EXCHANGE_COINS + " coins.",
-                Shop.EXCHANGE_DIAMONDS, "gems", Theme.GEM, ITEM_EXCHANGE, false)).row();
-        list.add(item("Daily offer", Shop.DAILY_COUNT + " packets, discounted from "
-                        + Shop.DAILY_BASE_PRICE + ". Once per day.",
-                Shop.DAILY_PRICE, "coins", Theme.COIN, ITEM_DAILY, false)).row();
-
-        ScrollPane scroll = new ScrollPane(list, ui.skin());
-        scroll.setFadeScrollBars(false);
-        view.gui.UiKit.focusOnHover(scroll);
-        panel.add(scroll).grow();
-
-        content.add(panel).width(820f).height(480f).center();
+        shelf = new Table();
+        shelf.defaults().pad(Theme.PAD_SMALL);
+        stock();
+        content.add(shelf).expand().center();
     }
 
-    private Table item(final String name, String description, final int price,
-            final String currency, Color accent, final int itemId, final boolean needsPlant) {
-        Table row = ui.sunken();
-        row.left();
-        row.add(ui.token(40, accent)).size(40f).padRight(Theme.PAD);
-
-        Table text = new Table();
-        text.left();
-        text.add(new Label(name, ui.skin(), "default")).left().row();
-        Label detail = new Label(description, ui.skin(), "muted");
-        detail.setWrap(true);
-        detail.setAlignment(Align.left);
-        text.add(detail).width(360f).left();
-        row.add(text).growX();
-
-        if (needsPlant) {
-            plantPicker = new SelectBox<String>(ui.skin());
-            String[] names = new String[Plants.values().length];
-            for (int i = 0; i < Plants.values().length; i++) {
-                names[i] = Plants.values()[i].getName();
-            }
-            plantPicker.setItems(names);
-            row.add(plantPicker).width(170f).padRight(Theme.PAD);
+    private void stock() {
+        shelf.clear();
+        int column = 0;
+        if (!garden.gardenIsFull()) {
+            column = shelfItem(column, "Flower Pot", "Adds a pot to your Zen Garden.",
+                    "coinIcon", Shop.POT_PRICE, POT_ICON, false, 1, null);
         }
-
-        Label cost = new Label(price + " " + currency, ui.skin(), "value");
-        row.add(cost).right().padRight(Theme.PAD).width(110f);
-
-        row.add(ui.button("Buy", new Runnable() {
-            @Override
-            public void run() {
-                confirm(name, price, currency, itemId, needsPlant);
-            }
-        })).right();
-        return row;
+        column = shelfItem(column, "Plant Food",
+                "Up to " + Shop.PLANT_FOOD_MAX + " stored.",
+                "gemIcon", Shop.PLANT_FOOD_PRICE, FOOD_ICON, false, 2, null);
+        column = shelfItem(column, "Random Seeds",
+                Shop.RANDOM_SEEDS_COUNT + " packets for a plant you own.",
+                "coinIcon", Shop.RANDOM_SEEDS_PRICE, PACKET_ICON, false, 3, null);
+        ShopCard chosen = new ShopCard(ui, context.assets(), "Chosen Seeds",
+                Shop.CHOICE_SEEDS_COUNT + " packets for a plant you pick.", PACKET_ICON,
+                "gemIcon", Shop.CHOICE_SEEDS_PRICE, null, 0, false, new Runnable() {
+                    @Override
+                    public void run() {
+                        pickPlant();
+                    }
+                });
+        shelf.add(chosen).size(ShopCard.WIDTH, ShopCard.HEIGHT);
+        column = column + 1;
+        if (column % COLUMNS == 0) {
+            shelf.row();
+        }
+        column = trade(column);
+        final Plants offer = shop.dailyPlant(context.app().getLoggedInUser());
+        if (offer != null) {
+            ShopCard card = new ShopCard(ui, context.assets(), offer.getName(),
+                    "Unlocks this premium plant.", null,
+                    new view.gui.widgets.SeedPacket(ui, context.assets(), offer),
+                    "coinIcon", Shop.DAILY_PRICE, null, 0, true, new Runnable() {
+                        @Override
+                        public void run() {
+                            confirm(offer.getName(), Shop.DAILY_PRICE, 6, null);
+                        }
+                    });
+            shelf.add(card).size(ShopCard.WIDTH, ShopCard.HEIGHT);
+        }
     }
 
-    private void confirm(String name, int price, String currency,
-            final int itemId, final boolean needsPlant) {
-        final String plantName = (needsPlant && plantPicker != null)
-                ? plantPicker.getSelected() : null;
-
-        Window.WindowStyle style = new Window.WindowStyle();
-        style.titleFont = ui.skin().getFont("title");
-        style.titleFontColor = Theme.TEXT;
-        style.background = ui.primitives().rounded(Theme.RADIUS, Theme.PANEL,
-                Theme.OUTLINE, Theme.BORDER);
-
-        Dialog dialog = new Dialog("", style) {
-            @Override
-            protected void result(Object object) {
-                if (Boolean.TRUE.equals(object)) {
-                    purchase(itemId, plantName);
-                }
-            }
-        };
-        dialog.pad(Theme.PAD_LARGE);
-
-        String question = "Buy " + name + " for " + price + " " + currency + "?";
-        if (plantName != null) {
-            question += "\nPlant: " + plantName;
+    private int trade(int column) {
+        ShopCard card = new ShopCard(ui, context.assets(), "Coin Exchange",
+                "Turn gems into coins.", null, "gemIcon", Shop.EXCHANGE_DIAMONDS,
+                "coinIcon", Shop.EXCHANGE_COINS, false, new Runnable() {
+                    @Override
+                    public void run() {
+                        confirm("Coin Exchange", Shop.EXCHANGE_DIAMONDS, 5, null);
+                    }
+                });
+        shelf.add(card).size(ShopCard.WIDTH, ShopCard.HEIGHT);
+        int next = column + 1;
+        if (next % COLUMNS == 0) {
+            shelf.row();
         }
-        Label message = new Label(question, ui.skin(), "default");
-        message.setAlignment(Align.center);
-        dialog.getContentTable().add(message).pad(Theme.PAD).row();
-
-        dialog.getButtonTable().add(ui.button("Confirm", null)).padRight(Theme.PAD);
-        dialog.getButtonTable().add(ui.secondaryButton("Cancel", null));
-        dialog.setObject(dialog.getButtonTable().getChildren().get(0), Boolean.TRUE);
-        dialog.setObject(dialog.getButtonTable().getChildren().get(1), Boolean.FALSE);
-
-        dialog.show(stage);
+        return next;
     }
 
-    private void purchase(int itemId, String plantName) {
-        StringBuilder command = new StringBuilder("shop buy -i ")
-                .append(itemId).append(" -n 1");
-        if (plantName != null) {
-            command.append(" -t ").append(plantName.replace(' ', '_'));
+    private int shelfItem(int column, final String title, String blurb,
+            String currency, final int price, String icon, boolean sale,
+            final int itemId, final Plants choice) {
+        ShopCard card = new ShopCard(ui, context.assets(), title, blurb, icon,
+                currency, price, sale, new Runnable() {
+                    @Override
+                    public void run() {
+                        confirm(title, price, itemId, choice);
+                    }
+                });
+        shelf.add(card).size(ShopCard.WIDTH, ShopCard.HEIGHT);
+        int next = column + 1;
+        if (next % COLUMNS == 0) {
+            shelf.row();
         }
-        controller.handleCommand(command.toString());
+        return next;
+    }
+
+    private void pickPlant() {
+        new view.gui.widgets.PlantPickPopup(ui, context.assets(),
+                "Which plant?", shop.ownedPlants(context.app().getLoggedInUser()),
+                new view.gui.widgets.PlantPickPopup.Choice() {
+                    @Override
+                    public void picked(Plants plant) {
+                        confirm(plant.getName() + " packets", Shop.CHOICE_SEEDS_PRICE,
+                                4, plant);
+                    }
+                }).showOn(stage);
+    }
+
+    private void confirm(String title, int price, final int itemId, final Plants choice) {
+        new view.gui.ConfirmPopup(ui, "Buy " + title + "?",
+                "This costs " + price + ".", "Buy", new Runnable() {
+                    @Override
+                    public void run() {
+                        buy(itemId, choice);
+                    }
+                }).showOn(stage);
+    }
+
+    private void buy(int itemId, Plants choice) {
+        App app = context.app();
+        User user = app.getLoggedInUser();
+        if (user == null) {
+            toasts.error("Sign in first.");
+            return;
+        }
+        String result = shop.buy(user, app.getGreenhouse(), itemId, 1, choice);
+        if (result != null && result.startsWith("Error")) {
+            toasts.error(result.substring("Error: ".length()));
+        } else {
+            toasts.success(result);
+            new controller.SaveService().persist(user);
+            stock();
+        }
     }
 }

@@ -40,11 +40,18 @@ public final class LevelBuilder {
 
     private LevelBuilder() {}
 
+    private static void carryPlantFood(model.App app, Game game) {
+        if (app != null && app.getLoggedInUser() != null) {
+            game.setPlantFoodCount(app.getLoggedInUser().getPlantFood());
+        }
+    }
+
     public static Game build(App app, ChapterType chapter, int levelNumber) {
         GameField field = new GameField(chapter);
         applyTerrain(field, chapter);
         Game game = new Game(app, null, null, field, 50, new ArrayList<Plant>(), buildWaves(chapter, levelNumber,
                         difficultyOf(app), specialOf(app)));
+        carryPlantFood(app, game);
         if (app != null) game.getChosenPlants().addAll(app.getPlantSelection());
         return game;
     }
@@ -59,6 +66,7 @@ public final class LevelBuilder {
         int startSun = 150;
         Game game = new Game(app, null, null, field, startSun, new ArrayList<Plant>(), buildWaves(chapter, levelNumber,
                         difficultyOf(app), specialOf(app)));
+        carryPlantFood(app, game);
         if (app != null) game.getChosenPlants().addAll(app.getPlantSelection());
         ArrayList<Plants> pool = new ArrayList<Plants>(Arrays.asList(
                 Plants.PEASHOOTER, Plants.SUNFLOWER, Plants.WALL_NUT, Plants.SNOW_PEA, Plants.CHERRY_BOMB));
@@ -143,10 +151,6 @@ public final class LevelBuilder {
             preview.add(pool[pick.nextInt(pool.length)]);
         }
         return preview;
-    }
-
-    private static ArrayList<Wave> buildWaves(ChapterType chapter, int levelNumber) {
-        return buildWaves(chapter, levelNumber, model.level.WavePlan.NORMAL_DIFFICULTY, null);
     }
 
     private static ArrayList<Wave> buildWaves(ChapterType chapter, int levelNumber,

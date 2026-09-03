@@ -20,7 +20,11 @@ public abstract class Zombie {
 
     protected double eatTimer = 0;
 
+    public enum Status { NONE, CHILLED, FROZEN, BURNING, POISONED }
+
     private boolean slowed = false;
+    private int burningTicks;
+    private int poisonedTicks;
 
     private boolean hypnotized = false;
 
@@ -34,6 +38,31 @@ public abstract class Zombie {
         frozenTicks = Math.max(frozenTicks, ticks);
         speed = 0;
         state = ZombieState.DISABLED;
+    }
+
+    public static final double ICE_HP = 300d;
+    public static final double ICE_THAW_PER_TICK = ICE_HP / (40d * model.Game.TICKS_PER_SECOND);
+
+    private double iceHp;
+
+    public double getIceHp() {
+        return iceHp;
+    }
+
+    public boolean isEncased() {
+        return iceHp > 0d;
+    }
+
+    public void encaseInIce() {
+        iceHp = ICE_HP;
+    }
+
+    public void damageIce(double amount) {
+        iceHp = Math.max(0d, iceHp - amount);
+    }
+
+    public void thawIce() {
+        damageIce(ICE_THAW_PER_TICK);
     }
 
     public void advanceFreeze() {
@@ -168,6 +197,36 @@ public abstract class Zombie {
 
     public ZombieAbility getAbility() { return ability; }
     public void setAbility(ZombieAbility ability) { this.ability = ability; }
+
+    public Status status() {
+        if (frozenTicks > 0) {
+            return Status.FROZEN;
+        }
+        if (burningTicks > 0) {
+            return Status.BURNING;
+        }
+        if (poisonedTicks > 0) {
+            return Status.POISONED;
+        }
+        return slowed ? Status.CHILLED : Status.NONE;
+    }
+
+    public void burnFor(int ticks) {
+        burningTicks = Math.max(burningTicks, ticks);
+    }
+
+    public void poisonFor(int ticks) {
+        poisonedTicks = Math.max(poisonedTicks, ticks);
+    }
+
+    public void ageStatus() {
+        if (burningTicks > 0) {
+            burningTicks--;
+        }
+        if (poisonedTicks > 0) {
+            poisonedTicks--;
+        }
+    }
 
     public boolean isSlowed() { return slowed; }
     public void setSlowed(boolean slowed) { this.slowed = slowed; }

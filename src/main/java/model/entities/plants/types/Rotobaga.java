@@ -2,35 +2,63 @@ package model.entities.plants.types;
 
 import model.Game;
 import model.Vec2;
+import model.entities.Projectile;
+import model.entities.plants.Muzzle;
 import model.entities.plants.PlantCombat;
 import model.entities.plants.Plants;
 import model.entities.plants.Shooter;
 import model.entities.zombies.Zombie;
 
+import java.util.Arrays;
+import java.util.List;
+
 public class Rotobaga extends Shooter {
+
+    private static final int VOLLEYS = 16;
+    private static final double SLOPE = 0.09d;
 
     public Rotobaga(Vec2 position) {
         super(Plants.ROTOBAGA, position);
     }
 
     @Override
-    protected void shoot(Game game) {
-        shootDiagonals(game, 1);
+    public List<Muzzle> ports() {
+        return Arrays.asList(
+                new Muzzle("up", -1, 1),
+                new Muzzle("up_back", -1, -1),
+                new Muzzle("down", 1, 1),
+                new Muzzle("down_back", 1, -1));
     }
 
     @Override
-    public void onPlantFood(Game game) {
-
-        shootDiagonals(game, 10);
+    protected boolean aims(Game game, Muzzle muzzle) {
+        if (isBursting()) {
+            return true;
+        }
+        int row = rowOf(game, muzzle);
+        if (row < 0) {
+            return false;
+        }
+        Zombie seen = muzzle.getDirection() > 0
+                ? PlantCombat.frontmostAhead(game, row, getCol())
+                : PlantCombat.nearestBehind(game, row, getCol());
+        return seen != null;
     }
 
-    private void shootDiagonals(Game game, int multiplier) {
-        for (int r = getRow() - 1; r <= getRow() + 1; r += 2) {
-            Zombie ahead = PlantCombat.frontmostAhead(game, r, getCol());
-            if (ahead != null) ahead.takeDamage(multiplier * getAttackdamage());
-            Zombie behind = PlantCombat.nearestBehind(game, r, getCol());
-            if (behind != null) behind.takeDamage(multiplier * getAttackdamage());
+    @Override
+    protected void fireFrom(Game game, Muzzle muzzle) {
+        super.fireFrom(game, muzzle);
+        java.util.List<Projectile> flying = game.getProjectiles();
+        if (flying.isEmpty()) {
+            return;
         }
-        PlantCombat.removeDeadZombies(game);
+        Projectile shot = flying.get(flying.size() - 1);
+        shot.from(getRow());
+        shot.drifting(muzzle.getRowOffset() * SLOPE * muzzle.getDirection());
+    }
+
+    @Override
+    protected int foodVolleys() {
+        return VOLLEYS;
     }
 }

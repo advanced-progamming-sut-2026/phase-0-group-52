@@ -129,7 +129,7 @@ public final class PlantStage extends Table {
         float half = canvas(record) / 2f;
         actor.setExtent(-half, -half + half * DROP, half * 2f, half * 2f);
         if (asShadow) {
-            actor.setColor(0f, 0f, 0f, 0.32f);
+            actor.setTint(0f, 0f, 0f, 0.32f);
         }
         return actor;
     }

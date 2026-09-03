@@ -14,6 +14,10 @@ public class PrimalPotatoMine extends Explosive {
 
     private double armTimer = 0;
 
+    public boolean isArmed() {
+        return armTimer >= ARM_TIME;
+    }
+
     public PrimalPotatoMine(Vec2 position) {
         super(Plants.PRIMAL_POTATO_MINE, position);
     }

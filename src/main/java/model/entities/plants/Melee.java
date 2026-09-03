@@ -36,6 +36,7 @@ public class Melee extends Plant {
                 front = z;
         }
         if (front != null) {
+            markStruck();
             front.takeDamage(getAttackdamage());
             PlantCombat.removeDeadZombies(game);
             actionTimer = getActionInterval();
@@ -81,6 +82,7 @@ public class Melee extends Plant {
             setAttackdamage(getAttackdamage() + getType().getDamage() * 0.5);
         boolean aoe = getType().getTags().contains(PlantTag.AOE);
         boolean hit = false;
+        markStruck();
         if (aoe) {
             for (Zombie z : PlantCombat.zombiesInArea(game, getCol(), getRow(), 1)) {
                 z.takeDamage(getAttackdamage());

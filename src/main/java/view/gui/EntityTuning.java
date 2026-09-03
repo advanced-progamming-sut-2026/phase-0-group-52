@@ -21,6 +21,15 @@ public final class EntityTuning {
         public float dw;
         public float dh;
 
+        public void copyFrom(Tune other) {
+            dx = other.dx;
+            dy = other.dy;
+            scale = other.scale;
+            speed = other.speed;
+            dw = other.dw;
+            dh = other.dh;
+        }
+
         public boolean isDefault() {
             return dx == 0f && dy == 0f && scale == 1f && speed == 1f
                     && dw == 0f && dh == 0f;
@@ -45,6 +54,17 @@ public final class EntityTuning {
             TUNES.put(key, found);
         }
         return found;
+    }
+
+    public static synchronized boolean has(String key) {
+        load();
+        return TUNES.containsKey(key);
+    }
+
+    public static synchronized void reset() {
+        TUNES.clear();
+        loaded = false;
+        dirty = false;
     }
 
     public static synchronized void touch() {
@@ -72,11 +92,65 @@ public final class EntityTuning {
         return "zombie|" + enumName;
     }
 
+    public static final float SHOT_LIFT = 0.45f;
+
+    public static void placeShot(com.badlogic.gdx.scenes.scene2d.Actor actor, Tune tune,
+            model.entities.Projectile.Kind kind, float column, float row) {
+        placeShot(actor, tune, kind, column, row, 1f);
+    }
+
+    public static void placeShot(com.badlogic.gdx.scenes.scene2d.Actor actor, Tune tune,
+            model.entities.Projectile.Kind kind, float column, float row, float muzzleGrip) {
+        float size = LawnGeometry.cellHeight() * ShotArt.baseScale(kind) * tune.scale;
+        actor.setBounds(LawnGeometry.areaX() + (column + 0.5f) * LawnGeometry.cellWidth()
+                        - size / 2f + tune.dx,
+                LawnGeometry.rowFeet(row) + LawnGeometry.cellHeight() * SHOT_LIFT
+                        + tune.dy * muzzleGrip,
+                size, size);
+    }
+
+    public static String shotKey(model.entities.plants.Plants plant, String port,
+            String state) {
+        StringBuilder key = new StringBuilder("shot|")
+                .append(plant == null ? "ANY" : plant.name());
+        if (port != null && !port.isEmpty()
+                && !model.entities.plants.Muzzle.MAIN.equals(port)) {
+            key.append('|').append(port);
+        }
+        if (state != null && !state.isEmpty()) {
+            key.append('|').append(state);
+        }
+        return key.toString();
+    }
+
+    public static String kindKey(model.entities.plants.Plants plant) {
+        return "shot|" + model.entities.Projectile.kindOf(plant).name();
+    }
+
+    public static Tune shotTune(model.entities.plants.Plants plant, String port,
+            String state) {
+        String full = shotKey(plant, port, state);
+        if (has(full)) {
+            return of(full);
+        }
+        String byPort = shotKey(plant, port, "");
+        if (has(byPort)) {
+            return of(byPort);
+        }
+        String own = shotKey(plant, "", "");
+        return has(own) ? of(own) : of(kindKey(plant));
+    }
+
     public static final float PLANT_SCALE = 1.35f;
     public static final float ZOMBIE_SCALE = 1.55f;
 
     public static void place(com.badlogic.gdx.scenes.scene2d.Actor actor, Tune tune,
             float column, int row, boolean zombie) {
+        place(actor, tune, column, (float) row, zombie);
+    }
+
+    public static void place(com.badlogic.gdx.scenes.scene2d.Actor actor, Tune tune,
+            float column, float row, boolean zombie) {
         float base = zombie ? ZOMBIE_SCALE : PLANT_SCALE;
         float width = LawnGeometry.cellWidth() * base * tune.scale;
         float height = LawnGeometry.cellHeight() * base * tune.scale;
@@ -117,7 +191,7 @@ public final class EntityTuning {
     }
 
     private static String collapse(String key) {
-        if (key == null || key.startsWith("grid|")) {
+        if (key == null || !key.startsWith("zombie|")) {
             return key;
         }
         int first = key.indexOf('|');
