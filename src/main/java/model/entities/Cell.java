@@ -36,7 +36,31 @@ public class Cell {
     }
 
     public boolean isPlantable() {
-        return type.isPlantable() && plants.size() < 2;
+        return (type.isPlantable() || hasLilyPad()) && plants.size() < 2;
+    }
+
+    public boolean hasLilyPad() {
+        for (model.entities.plants.Plant plant : plants) {
+            if (plant.getType() == model.entities.plants.Plants.LILY_PAD) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    public boolean accepts(model.entities.plants.Plants wanted) {
+        if (wanted == null) {
+            return false;
+        }
+        if (!type.isWater()) {
+            return isPlantable() && !hasLilyPad();
+        }
+        boolean floats = wanted == model.entities.plants.Plants.LILY_PAD
+                || wanted.getTags().contains(model.entities.plants.PlantTag.WATER);
+        if (floats) {
+            return plants.isEmpty();
+        }
+        return hasLilyPad() && plants.size() < 2;
     }
 
     public boolean isEmpty() {

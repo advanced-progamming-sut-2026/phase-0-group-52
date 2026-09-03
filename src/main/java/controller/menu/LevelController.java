@@ -318,6 +318,11 @@ public class LevelController {
         if (!game.spendSun(type.getCost())) {
             return new Result(false, "Not enough sun.", null);
         }
+        model.entities.Cell target = game.getField().getCell(column, row);
+        if (target != null && !target.accepts(type)) {
+            return new Result(false, target.getType().isWater()
+                    ? "Water needs a Lily Pad first." : "That square is taken.", null);
+        }
         Plant plant = PlantFactory.create(type, new Vec2(column, row));
         game.getField().getCell(column, row).getPlants().add(plant);
         game.getPlants().add(plant);

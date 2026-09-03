@@ -19,7 +19,8 @@ public class BigWaveBeachMechanics implements ChapterMechanics {
 
     private static final int TIDE_INTERVAL = 50;
     private static final int MAX_TIDE = 3;
-    private static final int MIN_TIDE = 1;
+    private static final int MIN_TIDE = 0;
+    private static final int SURFACE_LEVEL = 2;
     private static final int LOW_GROUND_INTERVAL = 70;
     private static final int LOW_GROUND_COUNT = 2;
 
@@ -76,13 +77,14 @@ public class BigWaveBeachMechanics implements ChapterMechanics {
         if (tideLevel >= MAX_TIDE) {
             tideLevel = MAX_TIDE;
             tideDir = -1;
-            System.out.println("A big wave rolls in! The rightmost " + tideLevel + " columns are underwater.");
+            util.Log.info("game", "A big wave rolls in! The rightmost " + tideLevel
+                    + " columns are underwater.");
         } else if (tideLevel <= MIN_TIDE) {
             tideLevel = MIN_TIDE;
             tideDir = 1;
-            System.out.println("The tide recedes back to the shoreline.");
+            util.Log.info("game", "Low tide - the shoreline is clear.");
         } else {
-            System.out.println((tideDir > 0 ? "The tide rises" : "The tide falls")
+            util.Log.info("game", (tideDir > 0 ? "The tide rises" : "The tide falls")
                     + " - " + tideLevel + " column(s) underwater.");
         }
         applyTide(game);
@@ -112,12 +114,17 @@ public class BigWaveBeachMechanics implements ChapterMechanics {
     }
 
     private void washAwayLandPlants(Game game, Cell cell, int col, int row) {
-        if (cell.getPlants().isEmpty()) return;
-        for (Plant p : cell.getPlants())
-            if (p.getType().getTags().contains(PlantTag.WATER)) return;
+        if (cell.getPlants().isEmpty() || cell.hasLilyPad()) {
+            return;
+        }
+        for (Plant p : cell.getPlants()) {
+            if (p.getType().getTags().contains(PlantTag.WATER)) {
+                return;
+            }
+        }
         for (Plant p : new ArrayList<Plant>(cell.getPlants())) game.getPlants().remove(p);
         cell.getPlants().clear();
-        System.out.println("The tide washed away the plant at (" + (col + 1) + ", " + (row + 1) + ")!");
+        util.Log.info("game", "The tide washed away the plant at (" + (col + 1) + ", " + (row + 1) + ")!");
     }
 
     private void emergeFromLowGround(Game game) {
@@ -126,9 +133,13 @@ public class BigWaveBeachMechanics implements ChapterMechanics {
         if (PlantCombat.RANDOM.nextInt(100) >= 40) return;
         int[] tile = lowGround.get(PlantCombat.RANDOM.nextInt(lowGround.size()));
         int col = tile[0], row = tile[1];
-        Zombie z = ZombieFactory.create(Zombies.ZOMBIE_DEFAULT, row, new Vec2(col, row),
+        java.util.List<Zombies> pool = model.level.WavePlan.roster(
+                model.ChapterType.BIG_WAVE_BEACH, SURFACE_LEVEL);
+        Zombies kind = pool.isEmpty() ? Zombies.ZOMBIE_DEFAULT
+                : pool.get(PlantCombat.RANDOM.nextInt(pool.size()));
+        Zombie z = ZombieFactory.create(kind, row, new Vec2(col, row),
                 field.getChapter(), null);
         game.getZombies().add(z);
-        System.out.println("A zombie surfaced from the low beach at (" + (col + 1) + ", " + (row + 1) + ")!");
+        util.Log.info("game", "A zombie surfaced from the low beach at (" + (col + 1) + ", " + (row + 1) + ")!");
     }
 }

@@ -46,6 +46,16 @@ public class Tombstone {
         return Math.min(STAGES, 1 + (int) (lost * STAGES));
     }
 
+    private String bonus;
+
+    public String getBonus() {
+        return bonus;
+    }
+
+    public void setBonus(String value) {
+        this.bonus = value;
+    }
+
     public String clipName() {
         int stage = damageStage();
         return stage == 0 ? "undamaged" : "damage" + Math.min(STAGES, stage);

@@ -245,7 +245,8 @@ public class GameMenuController {
         if (completed > currentPassed) {
             u.setLastChapter(completed / levelsPerChapter + 1);
             u.setLastLevel(completed % levelsPerChapter + 1);
-            System.out.println("Progress saved: chapter " + u.getLastChapter() + ", level " + u.getLastLevel() + " unlocked.");
+            System.out.println("Progress saved: chapter " + u.getLastChapter()
+                    + ", level " + u.getLastLevel() + " unlocked.");
         }
     }
 

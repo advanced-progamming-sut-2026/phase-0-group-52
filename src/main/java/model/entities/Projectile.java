@@ -238,6 +238,9 @@ public class Projectile {
                     && zombie instanceof model.entities.zombies.types.ParasolZombie) {
                 continue;
             }
+            if (zombie.isSubmerged(game)) {
+                continue;
+            }
             if (source == Plants.CABBAGE_PULT && FED.equals(variant)
                     && model.entities.plants.types.CabbagePult.tooBigToRain(zombie)) {
                 continue;
