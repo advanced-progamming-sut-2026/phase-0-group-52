@@ -319,6 +319,7 @@ public final class LevelHud extends Table {
             SeedPacket packet = new SeedPacket(ui, assets, plant,
                     SeedPacket.Mode.GAME, PACKET_SCALE);
             packet.setSelected(plant == armed);
+            packet.setBoosted(controller.isBoosted(plant));
             packet.setAffordable(controller.canAfford(plant));
             packet.setRecharge(controller.isOnCooldown(plant)
                     ? (float) rechargeFraction(plant) : 0f);

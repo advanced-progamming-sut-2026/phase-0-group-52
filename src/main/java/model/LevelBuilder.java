@@ -130,12 +130,29 @@ public final class LevelBuilder {
                 }
                 break;
             case FROSTBITE_CAVES:
-                int rr = PlantCombat.RANDOM.nextInt(field.getRows());
-                Cell cell = field.getCell(field.getCols() / 2, rr);
-                if (cell != null) cell.setType(CellType.SLIPPERY_DOWN);
+                seedIce(field);
                 break;
             default:
                 break;
+        }
+    }
+
+    private static void seedIce(model.GameField field) {
+        int patches = 2 + PlantCombat.RANDOM.nextInt(3);
+        for (int i = 0; i < patches; i++) {
+            int row = PlantCombat.RANDOM.nextInt(field.getRows());
+            int column = 2 + PlantCombat.RANDOM.nextInt(Math.max(1, field.getCols() - 3));
+            Cell cell = field.getCell(column, row);
+            if (cell == null || cell.getType() != CellType.NORMAL) {
+                continue;
+            }
+            boolean canRise = row > 0;
+            boolean canFall = row < field.getRows() - 1;
+            if (!canRise && !canFall) {
+                continue;
+            }
+            boolean rising = canRise && (!canFall || PlantCombat.RANDOM.nextBoolean());
+            cell.setType(rising ? CellType.SLIPPERY_UP : CellType.SLIPPERY_DOWN);
         }
     }
 

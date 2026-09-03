@@ -198,6 +198,15 @@ public abstract class Zombie {
     public ZombieAbility getAbility() { return ability; }
     public void setAbility(ZombieAbility ability) { this.ability = ability; }
 
+    public boolean isSubmerged(model.Game game) {
+        if (origin != Zombies.ZOMBIE_BEACH_SNORKEL || game == null
+                || game.getField() == null) {
+            return false;
+        }
+        model.entities.Cell cell = game.getField().getCell(getCol(), getRow());
+        return cell != null && cell.getType().isWater() && cell.getPlants().isEmpty();
+    }
+
     public Status status() {
         if (frozenTicks > 0) {
             return Status.FROZEN;

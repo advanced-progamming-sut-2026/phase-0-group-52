@@ -12,6 +12,12 @@ public class Lawnmower {
     private boolean running;
     private double column = START_COLUMN;
 
+    public void reset() {
+        isactive = true;
+        running = false;
+        column = START_COLUMN;
+    }
+
     public void destroyZombies(model.Game game) {
         if (!isactive || game == null) {
             return;

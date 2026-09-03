@@ -57,34 +57,51 @@ public final class WavePlan {
         pool.add(Zombies.ZOMBIE_ARMOR1);
         pool.add(Zombies.ZOMBIE_RA);
         pool.add(Zombies.ZOMBIE_EXPLORER);
+        pool.add(Zombies.ZOMBIE_TOMB_RAISER);
         if (level >= 2) {
             pool.add(Zombies.ZOMBIE_ARMOR2);
+            pool.add(Zombies.ZOMBIE_IMP);
         }
-        pool.add(Zombies.ZOMBIE_TOMB_RAISER);
+        if (level >= LATE_LEVEL) {
+            pool.add(Zombies.ZOMBIE_ARMOR4);
+            pool.add(Zombies.ZOMBIE_GARGANTUAR);
+        }
     }
 
     private static void frostbite(List<Zombies> pool, int level) {
+        pool.add(Zombies.ZOMBIE_ARMOR1);
         pool.add(Zombies.ZOMBIE_ICE_AGE_DODO);
         pool.add(Zombies.ZOMBIE_ICE_AGE_HUNTER);
         if (level >= 2) {
             pool.add(Zombies.ZOMBIE_ICE_AGE_TROGLOBITE);
+            pool.add(Zombies.ZOMBIE_IMP);
+        }
+        if (level >= LATE_LEVEL) {
+            pool.add(Zombies.ZOMBIE_ARMOR2);
+            pool.add(Zombies.ZOMBIE_GARGANTUAR);
         }
     }
 
     private static void dark(List<Zombies> pool, int level) {
+        pool.add(Zombies.ZOMBIE_DEFAULT);
         pool.add(Zombies.ZOMBIE_DARK_ARMOR3);
         pool.add(Zombies.ZOMBIE_DARK_JUGGLER);
         pool.add(Zombies.ZOMBIE_WIZARD);
         if (level >= 2) {
             pool.add(Zombies.ZOMBIE_DARK_IMP_DRAGON);
         }
+        if (level >= 3) {
+            pool.add(Zombies.ZOMBIE_DARK_KING);
+        }
     }
 
     private static void beach(List<Zombies> pool, int level) {
+        pool.add(Zombies.ZOMBIE_ARMOR1);
         pool.add(Zombies.ZOMBIE_BEACH_FISHERMAN);
         pool.add(Zombies.ZOMBIE_BEACH_SNORKEL);
         if (level >= 2) {
             pool.add(Zombies.ZOMBIE_BEACH_OCTOPUS);
+            pool.add(Zombies.ZOMBIE_IMP);
         }
     }
 
@@ -95,6 +112,15 @@ public final class WavePlan {
         List<Zombies> out = new ArrayList<Zombies>(roster);
         if (special == SpecialLevel.SAVE_OUR_SEEDS || special == SpecialLevel.LOCKED_PLANTS) {
             out.remove(Zombies.ZOMBIE_TOMB_RAISER);
+        }
+        if (special == SpecialLevel.LOVE_YOUR_PLANTS
+                || special == SpecialLevel.SAVE_OUR_SEEDS) {
+            out.remove(Zombies.ZOMBIE_GARGANTUAR);
+            out.remove(Zombies.ZOMBIE_DARK_KING);
+        }
+        if (special == SpecialLevel.CONVEYOR
+                || special == SpecialLevel.PLANT_WHAT_YOU_GET) {
+            out.remove(Zombies.ZOMBIE_IMP);
         }
         if (out.isEmpty()) {
             out.add(Zombies.ZOMBIE_DEFAULT);

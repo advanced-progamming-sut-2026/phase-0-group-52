@@ -41,12 +41,11 @@ public final class LawnField extends WidgetGroup {
     private static final float ARROW_FADE = 0.45f;
     private static final float BLOCK_SPAN = 0.95f;
     private static final float SLIDE_EASE = 0.35f;
+    private static final float RISE_SPAN = 1.6f;
+    private static final float WATER_VEIL = 0.55f;
     private static final float HOP = 0.45f;
-    private static final int FREEZE_STAGES = 3;
-    private static final float ICE_BLUE_R = 0.45f;
-    private static final float ICE_BLUE_G = 0.72f;
-    private static final float ICE_MIN_FADE = 0.16f;
-    private static final float ICE_MAX_FADE = 0.4f;
+    private static final float CHILL_R = 0.82f;
+    private static final float CHILL_G = 0.92f;
     private static final float WIND_SPAN = 1.6f;
     private static final double LOB_SPAN = 4d;
     private static final float LOB_HEIGHT = 1.1f;
@@ -60,8 +59,6 @@ public final class LawnField extends WidgetGroup {
     private static final float SHOT_LEASH = 1.2f;
     private static final float TORNADO_CANVAS = 320f;
     private static final float TORNADO_SCALE = 1.45f;
-    private static final String TOMB_PAM =
-            "768/INITIAL/GRAVESTONES/EGYPT_HIEROGLYPH/EGYPT_HIEROGLYPH.PAM";
     private static final float MOWER_SCALE = 2.8f;
     private static final float SPAWN_GAP = 0.22f;
     private static final String MOWER_SPAWN =
@@ -95,6 +92,8 @@ public final class LawnField extends WidgetGroup {
     private final Map<Object, PamActor> iceBlocks = new HashMap<Object, PamActor>();
     private final java.util.List<PamActor> puffs = new java.util.ArrayList<PamActor>();
     private final Map<Actor, Integer> iceRows = new HashMap<Actor, Integer>();
+    private final Map<String, Actor> water = new HashMap<String, Actor>();
+    private final Map<Actor, Integer> waterRows = new HashMap<Actor, Integer>();
     private final Map<Plant, java.util.List<PamActor>> laneFire =
             new HashMap<Plant, java.util.List<PamActor>>();
     private final Map<Plant, Integer> swings = new HashMap<Plant, Integer>();
@@ -177,15 +176,23 @@ public final class LawnField extends WidgetGroup {
         syncSun();
         syncHorde(delta);
         syncStatus();
+        duskPlants();
         flashDamage(delta);
         syncShots(delta);
         syncLaneFire();
         syncTombstones();
+        syncRisings();
+        syncWater();
         syncIce(delta);
         syncMowers();
         spawnNextMower(delta);
         placeMowers();
         sortDepth();
+    }
+
+    private float night() {
+        return controller.chapter() == model.ChapterType.DARK_AGES
+                ? view.gui.widgets.NightVeil.ENTITY_BRIGHT : 1f;
     }
 
     private void syncStatus() {
@@ -197,10 +204,21 @@ public final class LawnField extends WidgetGroup {
             if (feedback.isFlashing(entry.getValue())) {
                 continue;
             }
+            float dusk = night();
             switch (entry.getKey().status()) {
-                case BURNING:  rig.setTint(1f, 0.72f, 0.62f, 1f); break;
-                case POISONED: rig.setTint(0.8f, 1f, 0.7f, 1f); break;
-                default:       rig.setTint(1f, 1f, 1f, 1f); break;
+                case BURNING:
+                    rig.setTint(dusk, 0.72f * dusk, 0.62f * dusk, 1f);
+                    break;
+                case POISONED:
+                    rig.setTint(0.8f * dusk, dusk, 0.7f * dusk, 1f);
+                    break;
+                case FROZEN:
+                case CHILLED:
+                    rig.setTint(CHILL_R * dusk, CHILL_G * dusk, dusk, 1f);
+                    break;
+                default:
+                    rig.setTint(dusk, dusk, dusk, 1f);
+                    break;
             }
         }
     }
@@ -253,6 +271,11 @@ public final class LawnField extends WidgetGroup {
         Float mown = mowerDepth(actor);
         if (mown != null) {
             return mown.floatValue();
+        }
+        Integer wetRow = waterRows.get(actor);
+        if (wetRow != null) {
+            return view.gui.LawnLayer.TOMBSTONE.depth(
+                    LawnGeometry.rowFeet(wetRow.intValue()));
         }
         Integer icy = iceRows.get(actor);
         if (icy != null) {
@@ -568,13 +591,7 @@ public final class LawnField extends WidgetGroup {
             return;
         }
         if (ice != null) {
-            if (owner instanceof Plant) {
-                int deep = Math.max(1, Math.min(FREEZE_STAGES,
-                        ((Plant) owner).getFreezeLevel()));
-                float weight = deep / (float) FREEZE_STAGES;
-                ice.setTint(mixTo(1f, ICE_BLUE_R, weight), mixTo(1f, ICE_BLUE_G, weight),
-                        1f, ICE_MIN_FADE + (ICE_MAX_FADE - ICE_MIN_FADE) * weight);
-            }
+            ice.setTint(1f, 1f, 1f, 1f);
             view.gui.EntityTuning.Tune tune =
                     view.gui.EntityTuning.of(owner instanceof Plant
                             ? view.gui.FrostArt.PLANT_BLOCK_KEY
@@ -613,9 +630,6 @@ public final class LawnField extends WidgetGroup {
         return 0;
     }
 
-    private static float mixTo(float from, float to, float at) {
-        return from + (to - from) * at;
-    }
 
     private void puff(float x, float y) {
         final PamActor burst = view.gui.FrostArt.rig(assets,
@@ -641,6 +655,77 @@ public final class LawnField extends WidgetGroup {
         }
     }
 
+    private static final String RISE_RIG =
+            "768/FULL/EFFECTS/TOMBSTONE_DARK_SPAWN_EFFECT/TOMBSTONE_DARK_SPAWN_EFFECT.PAM";
+
+    private void syncWater() {
+        if (controller.game() == null || controller.game().getField() == null) {
+            return;
+        }
+        model.GameField field = controller.game().getField();
+        java.util.Set<String> wet = new java.util.HashSet<String>();
+        for (int column = 0; column < field.getCols(); column++) {
+            for (int row = 0; row < field.getRows(); row++) {
+                model.entities.Cell cell = field.getCell(column, row);
+                if (cell == null || !cell.getType().isWater()) {
+                    continue;
+                }
+                String key = column + ":" + row;
+                wet.add(key);
+                Actor pool = water.get(key);
+                if (pool == null) {
+                    pool = new com.badlogic.gdx.scenes.scene2d.ui.Image(
+                            ui.primitives().rounded(10, Theme.WATER_SHALLOW,
+                                    Theme.WATER_DEEP, 2));
+                    pool.setColor(1f, 1f, 1f, WATER_VEIL);
+                    pool.setTouchable(com.badlogic.gdx.scenes.scene2d.Touchable.disabled);
+                    water.put(key, pool);
+                    addActor(pool);
+                }
+                pool.setBounds(LawnGeometry.columnLeft(column),
+                        LawnGeometry.rowFeet(row), LawnGeometry.cellWidth(),
+                        LawnGeometry.cellHeight());
+                waterRows.put(pool, Integer.valueOf(row));
+            }
+        }
+        java.util.Iterator<Map.Entry<String, Actor>> dried = water.entrySet().iterator();
+        while (dried.hasNext()) {
+            Map.Entry<String, Actor> entry = dried.next();
+            if (!wet.contains(entry.getKey())) {
+                waterRows.remove(entry.getValue());
+                entry.getValue().remove();
+                dried.remove();
+            }
+        }
+    }
+
+    private void syncRisings() {
+        if (assets == null || controller.game() == null) {
+            return;
+        }
+        java.util.List<model.Vec2> risen = controller.game().getRisings();
+        while (!risen.isEmpty()) {
+            model.Vec2 at = risen.remove(0);
+            final PamActor rise = view.gui.FrostArt.rig(assets, RISE_RIG, "animation");
+            if (rise == null) {
+                continue;
+            }
+            float span = LawnGeometry.cellWidth() * RISE_SPAN;
+            rise.setBounds(LawnGeometry.columnLeft((int) at.x)
+                            + (LawnGeometry.cellWidth() - span) / 2f,
+                    LawnGeometry.rowFeet((int) at.y), span, span);
+            addActor(rise);
+            puffs.add(rise);
+            rise.play(rise.clipName(), false, new Runnable() {
+                @Override
+                public void run() {
+                    puffs.remove(rise);
+                    rise.remove();
+                }
+            });
+        }
+    }
+
     private void syncTombstones() {
         if (assets == null || controller.game() == null) {
             return;
@@ -649,7 +734,11 @@ public final class LawnField extends WidgetGroup {
         for (model.entities.Tombstone stone : live) {
             PamActor actor = stones.get(stone);
             if (actor == null) {
-                actor = PlantStage.anchored(assets, TOMB_PAM, stone.clipName(),
+                String tombRig = view.gui.ChapterArt.gravestone(controller.chapter(),
+                        stone.getBonus());
+                actor = PlantStage.anchored(assets,
+                        tombRig, view.gui.FrostArt.clipOf(assets, tombRig,
+                                stone.clipName(), "undamaged", "idle"),
                         TOMB_CANVAS, TOMB_CANVAS);
                 if (!actor.isReady()) {
                     return;
@@ -1013,6 +1102,18 @@ public final class LawnField extends WidgetGroup {
             swings.put(plant, Integer.valueOf(next));
         }
         return next == 0 ? "attack" : "attack" + (next + 1);
+    }
+
+    private void duskPlants() {
+        float dusk = night();
+        if (dusk >= 1f) {
+            return;
+        }
+        for (Actor actor : growing.values()) {
+            if (actor instanceof PamActor && !feedback.isFlashing(actor)) {
+                ((PamActor) actor).setTint(dusk, dusk, dusk, 1f);
+            }
+        }
     }
 
     private void syncPlantClip(Plant plant, Actor actor) {

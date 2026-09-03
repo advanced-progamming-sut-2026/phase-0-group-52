@@ -204,6 +204,13 @@ public class Game {
         return getSuns().size() >= SUN_ON_LAWN_CAP;
     }
 
+    private final java.util.List<model.Vec2> risings =
+            new java.util.ArrayList<model.Vec2>();
+
+    public java.util.List<model.Vec2> getRisings() {
+        return risings;
+    }
+
     private boolean endless;
 
     public boolean isEndless() {

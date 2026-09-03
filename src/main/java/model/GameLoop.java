@@ -65,7 +65,10 @@ public class GameLoop {
         for (Zombie z : new ArrayList<Zombie>(game.getZombies())) {
             z.ageStatus();
             z.advanceFreeze();
-            if (z.isFrozenSolid()) continue;
+            if (z.isFrozenSolid() || z.isEncased()
+                    || z.getState() == model.entities.zombies.ZombieState.DISABLED) {
+                continue;
+            }
             z.onTick(game);
         }
         if (mechanics != null) mechanics.onTick(game);
