@@ -153,6 +153,11 @@ public class Game {
 
     public ArrayList<model.entities.Tombstone> getTombstones() { return tombstones; }
 
+    private final ArrayList<model.entities.Projectile> shots =
+            new ArrayList<model.entities.Projectile>();
+
+    public ArrayList<model.entities.Projectile> getProjectiles() { return shots; }
+
     private String lastDrop;
 
     public void noteDrop(String text) { this.lastDrop = text; }
@@ -193,6 +198,22 @@ public class Game {
     public Set<Plants> getBoostedTypes() { return boostedTypes; }
 
     public boolean isGameOver() { return gameOver; }
+    public static final int SUN_ON_LAWN_CAP = 5;
+
+    public boolean lawnIsLitteredWithSun() {
+        return getSuns().size() >= SUN_ON_LAWN_CAP;
+    }
+
+    private boolean endless;
+
+    public boolean isEndless() {
+        return endless;
+    }
+
+    public void setEndless(boolean value) {
+        this.endless = value;
+    }
+
     public void setGameOver(boolean gameOver) { this.gameOver = gameOver; }
 
     public boolean isWon() { return won; }
