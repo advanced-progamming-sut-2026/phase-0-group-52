@@ -84,6 +84,11 @@ public final class LevelScreen implements Screen, Navigator.Hosted {
                 clearCarry();
             }
         });
+        if (controller.chapter() == model.ChapterType.DARK_AGES) {
+            view.gui.widgets.NightVeil veil = new view.gui.widgets.NightVeil();
+            veil.setFillParent(true);
+            stage.addActor(veil);
+        }
         stage.addActor(field);
 
         hud = buildHud();

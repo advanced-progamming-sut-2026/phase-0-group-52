@@ -12,6 +12,8 @@ import model.entities.zombies.Zombies;
 
 public class DarkAgesMechanics implements ChapterMechanics {
 
+    private static final int RISEN_LEVEL = 2;
+
     private static final int GRAVE_SUN_BONUS = 50;
 
     public boolean isSkySunDisabled() { return true; }
@@ -24,6 +26,7 @@ public class DarkAgesMechanics implements ChapterMechanics {
 
     @Override
     public void onTick(Game game) {
+        clearBrokenGraves(game);
         grantDestroyedGraveBonuses(game);
     }
 
@@ -39,10 +42,13 @@ public class DarkAgesMechanics implements ChapterMechanics {
             Cell cell = field.getCell(c, r);
             if (cell == null || cell.getType() != CellType.NORMAL || !cell.isEmpty()) continue;
             cell.setType(CellType.TOMBSTONE);
+            model.entities.Tombstone stone = new model.entities.Tombstone(c, r);
+            game.getTombstones().add(stone);
             String bonus = null;
             if (PlantCombat.RANDOM.nextInt(100) < 40)
                 bonus = PlantCombat.RANDOM.nextBoolean() ? "sun" : "plant food";
             cell.setGraveBonus(bonus);
+            stone.setBonus(bonus);
             boolean necromancy = PlantCombat.RANDOM.nextInt(100) < 45;
             cell.setNecromancy(necromancy);
             System.out.println("A grave rose at (" + (c + 1) + ", " + (r + 1) + ")"
@@ -59,14 +65,41 @@ public class DarkAgesMechanics implements ChapterMechanics {
             for (int c = 0; c < field.getCols(); c++) {
                 Cell cell = field.getCell(c, r);
                 if (cell != null && cell.isNecromancy() && cell.getType() == CellType.TOMBSTONE) {
-                    game.getZombies().add(ZombieFactory.create(Zombies.ZOMBIE_DEFAULT,
+                    game.getZombies().add(ZombieFactory.create(risen(game),
                             r, new Vec2(c, r), ChapterType.DARK_AGES, null));
+                    game.getRisings().add(new Vec2(c, r));
                     cell.setNecromancy(false);
                     System.out.println("Necromancy! A zombie rose from the grave at ("
                             + (c + 1) + ", " + (r + 1) + ")!");
                 }
             }
         }
+    }
+
+    private void clearBrokenGraves(Game game) {
+        java.util.Iterator<model.entities.Tombstone> gone =
+                game.getTombstones().iterator();
+        while (gone.hasNext()) {
+            model.entities.Tombstone stone = gone.next();
+            if (!stone.isDestroyed()) {
+                continue;
+            }
+            Cell cell = game.getField() == null ? null
+                    : game.getField().getCell(stone.getColumn(), stone.getRow());
+            if (cell != null) {
+                cell.setType(CellType.NORMAL);
+            }
+            gone.remove();
+        }
+    }
+
+    private Zombies risen(Game game) {
+        java.util.List<Zombies> pool =
+                model.level.WavePlan.roster(ChapterType.DARK_AGES, RISEN_LEVEL);
+        if (pool.isEmpty()) {
+            return Zombies.ZOMBIE_DEFAULT;
+        }
+        return pool.get(PlantCombat.RANDOM.nextInt(pool.size()));
     }
 
     private void grantDestroyedGraveBonuses(Game game) {

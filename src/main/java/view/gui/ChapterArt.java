@@ -7,6 +7,15 @@ public final class ChapterArt {
 
     private ChapterArt() {}
 
+    public static String gravestone(ChapterType chapter, String bonus) {
+        if (chapter != ChapterType.DARK_AGES) {
+            return "768/INITIAL/GRAVESTONES/EGYPT_HIEROGLYPH/EGYPT_HIEROGLYPH.PAM";
+        }
+        String rig = "sun".equals(bonus) ? "DARK_SUN"
+                : bonus != null ? "DARK_PLANTFOOD" : "DARK_NOOP";
+        return "768/FULL/GRAVESTONES/" + rig + "/" + rig + ".PAM";
+    }
+
     public static String world(ChapterType chapter) {
         if (chapter == null) {
             return "EGYPT";

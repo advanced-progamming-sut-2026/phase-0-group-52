@@ -64,7 +64,7 @@ public class FrostbiteCavesMechanics implements ChapterMechanics {
         for (int i = 0; i < count; i++) {
             int row = PlantCombat.RANDOM.nextInt(rows);
             chilled.add(Integer.valueOf(row));
-            System.out.println("An icy wind hits row " + (row + 1) + "!");
+            util.Log.info("game", "An icy wind sweeps row " + (row + 1) + "!");
             for (Plant p : game.getPlants()) {
                 if (p.getRow() == row && !p.getType().getTags().contains(PlantTag.FIRE))
                     p.addFreezeLevel();
