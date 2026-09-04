@@ -23,6 +23,16 @@ public class LoveYourPlants extends Level {
     public void onPlantLost() { lostPlants++; }
 
     @Override
+    public String objective() {
+        return "Lose no more than " + maxLostPlants + " plants.";
+    }
+
+    @Override
+    public String objectiveTag() {
+        return "LOVE YOUR PLANTS";
+    }
+
+    @Override
     public String checkDefeat(Game game) {
         if (lostPlants >= maxLostPlants)
             return "You lost " + lostPlants + " plants. You lose!";

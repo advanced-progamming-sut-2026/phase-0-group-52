@@ -91,6 +91,9 @@ public class QuestManager {
                     qp.setProgress(0);
                 }
                 return qp.getProgress() >= qp.getTarget();
+            case MOWER_TIME:
+                qp.setProgress(qp.getProgress() + stats.getMowerKills());
+                return qp.getProgress() >= qp.getTarget();
             case ALMOST_WON:
                 qp.setProgress(qp.getProgress() + stats.getKillsAtColZeroNoMower());
                 return qp.getProgress() >= qp.getTarget();

@@ -27,6 +27,7 @@ public class GameStats {
     private int sunCollected;
     private int plantsLost;
     private int killsAtColZeroNoMower;
+    private int mowerKills;
     private int firstWaveTick = -1;
     private int finalSun;
 
@@ -48,6 +49,10 @@ public class GameStats {
 
     public java.util.Set<String> getKilledZombies() {
         return java.util.Collections.unmodifiableSet(killedZombies);
+    }
+
+    public void recordMowerKill() {
+        mowerKills++;
     }
 
     public void recordKillAtColZeroNoMower() {
@@ -80,6 +85,7 @@ public class GameStats {
     public int getSunCollected() { return sunCollected; }
     public int getPlantsLost() { return plantsLost; }
     public int getKillsAtColZeroNoMower() { return killsAtColZeroNoMower; }
+    public int getMowerKills() { return mowerKills; }
     public int getFirstWaveTick() { return firstWaveTick; }
     public int getFinalSun() { return finalSun; }
     public List<PlantPlacement> getPlantsPlanted() { return plantsPlanted; }

@@ -11,7 +11,8 @@ import java.util.Queue;
 
 public class ConveyorBeltLevel extends Level {
 
-    public static final int DELIVERY_INTERVAL = 12;
+    public static final int DELIVERY_INTERVAL = 45;
+    public static final int BELT_CAPACITY = 8;
 
     private final Queue<Plants> belt = new LinkedList<Plants>();
     private double timer = 0;
@@ -38,10 +39,20 @@ public class ConveyorBeltLevel extends Level {
 
     private void deliver() {
         ArrayList<Plants> pool = getAllowedplants();
-        if (pool == null || pool.isEmpty()) return;
+        if (pool == null || pool.isEmpty() || belt.size() >= BELT_CAPACITY) return;
         Plants plant = pool.get(PlantCombat.RANDOM.nextInt(pool.size()));
         belt.add(plant);
         System.out.println("The conveyor belt delivered a " + plant.getName() + ".");
+    }
+
+    @Override
+    public String objective() {
+        return "No sun and no seed bank - plant whatever the belt delivers.";
+    }
+
+    @Override
+    public String objectiveTag() {
+        return "CONVEYOR BELT";
     }
 
     public Queue<Plants> getBelt() { return belt; }

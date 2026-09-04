@@ -47,6 +47,7 @@ public class TombRaiser extends WalkingZombie {
                 continue;
             }
             cell.setType(CellType.TOMBSTONE);
+            game.getTombstones().add(new model.entities.Tombstone(col, row));
             raised++;
             System.out.println("A tombstone rises at (" + (col + 1) + ", " + (row + 1) + ")!");
             return;

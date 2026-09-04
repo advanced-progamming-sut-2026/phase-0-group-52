@@ -147,107 +147,21 @@ public class GameMenuController {
                 + " | Wave: " + (game.getCurrentWaveIndex() + 1) + "/" + game.getWaves().size());
     }
 
-    private void recordZombiesMet(model.User user, Game game) {
-        for (String alias : game.getStats().getKilledZombies()) {
-            model.entities.zombies.ZombieRecord record =
-                    model.entities.zombies.ZombieData.byAlias(alias);
-            if (record != null && user.markZombieSeen(alias)) {
-                user.getNewsList().addNews(
-                        "A new zombie joined your almanac: " + record.getName() + "!");
-            }
-        }
-    }
-
     private void onLevelEnd(Game game) {
         model.User u = app.getCurrentuser();
-        if (game.isWon() && u != null) {
+        if (game.isWon()) {
             System.out.println("Dear humanz, zis is not done yet; we will come back to eat your brainz, humanz.");
-            u.setCoins(u.getCoins() + 500);
-            recordZombiesMet(u, game);
-            int score = game.getStats().getZombiesKilled() * 10 + game.getSunAmount();
-            if (score > u.getMaxPoint()) u.setMaxPoint(score);
-            advanceProgress(u, game);
-            System.out.println("Reward: 500 coins, score " + score + ". Use 'menu enter chapter_menu' to continue.");
-            int clearedLevel = game.getLevel() != null ? game.getLevel().getLevelnumber() : u.getLastLevel();
-            model.ChapterType playedIn = game.getLevel() != null
-                    ? game.getLevel().getChaptertype() : app.getSelectedChapter();
-            if (playedIn != null) {
-                u.getAdventure().openChapter(playedIn);
-                u.getAdventure().recordCleared(playedIn, clearedLevel);
-                if (clearedLevel >= model.ChapterType.LEVELS_PER_CHAPTER) {
-                    model.ChapterType next =
-                            model.ChapterType.byNumber(playedIn.number() + 1);
-                    if (next != null) {
-                        u.getAdventure().openChapter(next);
-                    }
-                }
-            }
-            if (clearedLevel >= u.getLastLevel()) {
-                if (clearedLevel >= model.ChapterType.LEVELS_PER_CHAPTER) {
-                    int nextChapter = Math.min(model.ChapterType.values().length,
-                            Math.max(1, u.getLastChapter()) + 1);
-                    u.setLastChapter(nextChapter);
-                    u.setLastLevel(1);
-                    u.getNewsList().addNews("Chapter cleared! A new world is open.");
-                } else {
-                    u.setLastLevel(clearedLevel + 1);
-                    u.getNewsList().addNews("New level unlocked: level " + (clearedLevel + 1)
-                            + "! A tougher wave awaits.");
-                }
-            }
+            System.out.println("Reward: " + controller.LevelEndService.WIN_COINS
+                    + " coins. Use 'menu enter chapter_menu' to continue.");
         } else {
             System.out.println("Use 'menu enter chapter_menu' to try again.");
         }
-        if (u != null) awardMeowPoints(game, u);
-        new controller.QuestService().onLevelEnd(game, game.isWon());
-        app.getPlantSelection().clear();
-        app.getBoostedSelection().clear();
-        app.setImitatedPlant(null);
-        app.setAwaitingImitate(false);
-        app.setPendingSpecial(null);
-        app.getLockedPlants().clear();
+        new controller.LevelEndService().finish(app, game);
+        if (u != null) {
+            System.out.println("Best Meow Points: " + u.getMostMeowPoint() + ".");
+        }
+        new controller.LevelEndService().clearDeck(app);
         System.out.println("Your plant deck was reset. Pick a new deck in choose_plant_menu for the next level.");
-    }
-
-    private void awardMeowPoints(Game game, model.User u) {
-        model.mechanics.MeowPointTracker meow = new model.mechanics.MeowPointTracker();
-        model.GameStats s = game.getStats();
-        java.util.Map<Integer, Integer> perTick = new java.util.HashMap<Integer, Integer>();
-        for (int t : s.getKillTicks()) {
-            Integer c = perTick.get(t);
-            perTick.put(t, c == null ? 1 : c + 1);
-        }
-        for (int cnt : perTick.values())
-            if (cnt > 1) meow.onSimultaneousKills(cnt);
-        int fast = s.killsWithinTicksOfFirstWave(300);
-        for (int i = 0; i < fast; i++) meow.onFastKill();
-        if (game.isWon()) {
-            if (s.getPlantsLost() == 0) meow.onPerfectDefense();
-            if (s.getFirstWaveTick() >= 0 && game.getCurrentTick() - s.getFirstWaveTick() <= 600)
-                meow.onWaveClearedQuickly();
-        }
-        int earned = meow.getPoints();
-        meow.applyTo(u);
-        System.out.println("Meow points earned this level: " + earned
-                + " (best Meow Points: " + u.getMostMeowPoint() + ").");
-    }
-
-    private void advanceProgress(model.User u, Game game) {
-        int levelsPerChapter = 4;
-        int chapterNum = 1;
-        if (game.getField() != null && game.getField().getChapter() != null)
-            chapterNum = game.getField().getChapter().ordinal() + 1;
-        int levelNum = app.getSelectedLevel();
-        int completed = (chapterNum - 1) * levelsPerChapter + levelNum;
-        int curChapter = Math.max(1, u.getLastChapter());
-        int curLevel = Math.max(1, u.getLastLevel());
-        int currentPassed = (curChapter - 1) * levelsPerChapter + (curLevel - 1);
-        if (completed > currentPassed) {
-            u.setLastChapter(completed / levelsPerChapter + 1);
-            u.setLastLevel(completed % levelsPerChapter + 1);
-            System.out.println("Progress saved: chapter " + u.getLastChapter()
-                    + ", level " + u.getLastLevel() + " unlocked.");
-        }
     }
 
     private void handleCollect(String[] parts) {

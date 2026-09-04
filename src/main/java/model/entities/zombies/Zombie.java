@@ -27,6 +27,7 @@ public abstract class Zombie {
     private int poisonedTicks;
 
     private boolean hypnotized = false;
+    private boolean carriesPlantFood = false;
 
     private int frozenTicks = 0;
     private double preFreezeSpeed = 0;
@@ -241,5 +242,9 @@ public abstract class Zombie {
     public void setSlowed(boolean slowed) { this.slowed = slowed; }
 
     public boolean isHypnotized() { return hypnotized; }
+
+    public boolean carriesPlantFood() { return carriesPlantFood; }
+
+    public void setCarriesPlantFood(boolean value) { this.carriesPlantFood = value; }
     public void setHypnotized(boolean hypnotized) { this.hypnotized = hypnotized; }
 }

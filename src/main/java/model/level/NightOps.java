@@ -13,5 +13,15 @@ public class NightOps extends Level {
     }
 
     @Override
+    public String objective() {
+        return "No sun falls from the sky - survive on what you grow.";
+    }
+
+    @Override
+    public String objectiveTag() {
+        return "NIGHT OPS";
+    }
+
+    @Override
     public boolean isSkySunEnabled() { return false; }
 }

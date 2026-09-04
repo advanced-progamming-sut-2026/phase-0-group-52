@@ -75,16 +75,20 @@ class FrostbiteTest {
         boolean announced = false;
         for (int wave = 0; wave < 40 && !announced; wave++) {
             ice.onWaveStart(game);
-            announced = !ice.takeChilledRows().isEmpty();
+            announced = !game.getGusts().isEmpty();
         }
         assertTrue(announced, "the wind should report which rows it chilled");
-        assertTrue(ice.takeChilledRows().isEmpty(),
+        game.getGusts().clear();
+        assertTrue(game.getGusts().isEmpty(),
                 "and taking them clears the list so they are not replayed");
     }
 
     @Test
     void aZombieSlidesOncePerIcyTileNotOncePerTick() {
         Game game = lawn();
+        FrostbiteCavesMechanics ice = new FrostbiteCavesMechanics();
+        ice.onTick(game);
+        game.getZombies().clear();
         for (int column = 0; column < game.getField().getCols(); column++) {
             game.getField().getCell(column, 2).setType(CellType.SLIPPERY_UP);
         }
@@ -93,7 +97,6 @@ class FrostbiteTest {
                 ChapterType.FROSTBITE_CAVES);
         game.getZombies().add(walker);
 
-        FrostbiteCavesMechanics ice = new FrostbiteCavesMechanics();
         int startRow = walker.getRow();
         for (int tick = 0; tick < 6; tick++) {
             ice.onTick(game);
@@ -260,5 +263,63 @@ class FrostbiteTest {
                 "a frozen shooter must not fire");
         assertEquals(stood, caught.getPosition().x, 0.001d,
                 "and an encased zombie must not budge");
+    }
+
+    @Test
+    void theCaveOpensWithIcePatchesAndEncasedZombies() {
+        Game game = lawn();
+        FrostbiteCavesMechanics ice = new FrostbiteCavesMechanics();
+        ice.onTick(game);
+
+        int patches = 0;
+        for (int row = 0; row < game.getField().getRows(); row++) {
+            for (int column = 0; column < game.getField().getCols(); column++) {
+                CellType type = game.getField().getCell(column, row).getType();
+                if (type == CellType.SLIPPERY_UP || type == CellType.SLIPPERY_DOWN) {
+                    patches++;
+                }
+            }
+        }
+        assertTrue(patches > 0 && patches <= FrostbiteCavesMechanics.ICE_PATCHES_MAX,
+                "the cave should lay a few icy tiles, saw " + patches);
+        assertEquals(FrostbiteCavesMechanics.FROZEN_AT_START, game.getZombies().size(),
+                "and start with a couple of zombies frozen in place");
+        for (model.entities.zombies.Zombie z : game.getZombies()) {
+            assertTrue(z.isEncased(), "each opening zombie is encased");
+            assertEquals(0d, z.getSpeed(), 0.001d, "and cannot move");
+        }
+    }
+
+    @Test
+    void anIcyTileNeverPointsOffTheLawn() {
+        for (int run = 0; run < 40; run++) {
+            Game game = lawn();
+            new FrostbiteCavesMechanics().onTick(game);
+            int rows = game.getField().getRows();
+            for (int column = 0; column < game.getField().getCols(); column++) {
+                assertTrue(game.getField().getCell(column, 0).getType()
+                                != CellType.SLIPPERY_UP,
+                        "the top row cannot slide further up");
+                assertTrue(game.getField().getCell(column, rows - 1).getType()
+                                != CellType.SLIPPERY_DOWN,
+                        "the bottom row cannot slide further down");
+            }
+        }
+    }
+
+    @Test
+    void aDodoRiderGlidesOverIceInsteadOfSlipping() {
+        Game game = lawn();
+        game.getField().getCell(5, 2).setType(CellType.SLIPPERY_DOWN);
+        model.entities.zombies.Zombie dodo = model.entities.zombies.ZombieFactory.create(
+                model.entities.zombies.Zombies.ZOMBIE_ICE_AGE_DODO, 2, 5,
+                ChapterType.FROSTBITE_CAVES);
+        game.getZombies().add(dodo);
+        FrostbiteCavesMechanics ice = new FrostbiteCavesMechanics();
+        int row = dodo.getRow();
+        for (int i = 0; i < 8; i++) {
+            ice.onTick(game);
+        }
+        assertEquals(row, dodo.getRow(), "a dodo rider does not slip");
     }
 }
