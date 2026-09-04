@@ -6,7 +6,7 @@ import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import model.entities.plants.PlantData;
 import model.entities.plants.PlantRecord;
 import model.entities.plants.Plants;
-import view.gui.Assets;
+import view.gui.GameContext;
 import view.gui.Theme;
 import view.gui.UiKit;
 
@@ -18,11 +18,13 @@ public final class PlantPickCard extends Table {
     private final UiKit ui;
     private final AlmanacControls controls;
     private final PlantStage stage;
+    private final PlantLevelRow levelRow;
 
-    public PlantPickCard(UiKit ui, Assets assets) {
-        this.ui = ui;
-        this.controls = new AlmanacControls(ui, assets);
-        this.stage = new PlantStage(ui, assets);
+    public PlantPickCard(GameContext context, Runnable onChange) {
+        this.ui = context.ui();
+        this.controls = new AlmanacControls(context.ui(), context.assets());
+        this.stage = new PlantStage(context.ui(), context.assets());
+        this.levelRow = new PlantLevelRow(context, onChange);
         top();
     }
 
@@ -34,10 +36,17 @@ public final class PlantPickCard extends Table {
         }
         PlantRecord record = PlantData.record(plant);
         stage.show(record, "idle");
+        levelRow.setBurstHost(stage.overlay());
+        levelRow.show(plant);
+
+        Table right = new Table();
+        right.top();
+        right.add(text(record)).grow().row();
+        right.add(levelRow).growX().padTop(Theme.PAD_SMALL);
 
         Table body = new Table();
         body.add(stage).width(STAGE_WIDTH).growY();
-        body.add(text(record)).grow().padLeft(Theme.PAD_SMALL).top();
+        body.add(right).grow().padLeft(Theme.PAD_SMALL).top();
 
         add(controls.nameHeader(plant.getName(), null,
                 AlmanacControls.levelFace(level), NAME_HEIGHT))

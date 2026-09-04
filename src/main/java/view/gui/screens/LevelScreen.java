@@ -27,6 +27,8 @@ import view.gui.widgets.LevelPausePopup;
 public final class LevelScreen implements Screen, Navigator.Hosted {
 
     private static final float GHOST_ALPHA = 0.85f;
+    private static final float START_BUTTON = 320f;
+    private static final float START_LIFT = 150f;
     private static final float GHOST_ICON = 72f;
     private static final float GHOST_SCALE = 1.7f;
 
@@ -99,6 +101,7 @@ public final class LevelScreen implements Screen, Navigator.Hosted {
         notice.announce(controller.objective());
         lastWave = controller.currentWave();
         hud.rebuildPackets();
+        buildStartButton();
     }
 
     private LevelHud buildHud() {
@@ -214,7 +217,50 @@ public final class LevelScreen implements Screen, Navigator.Hosted {
         shown = true;
         controller.setPaused(true);
         new LevelOutcomePopup(context, controller,
-                controller.hasWon(), controller.outcome()).showOn(stage);
+                controller.hasWon(), controller.outcome(), new Runnable() {
+                    @Override
+                    public void run() {
+                        replay();
+                    }
+                }).showOn(stage);
+    }
+
+    private void buildStartButton() {
+        if (!controller.wavesHeld()) {
+            return;
+        }
+        final com.badlogic.gdx.scenes.scene2d.ui.Table bar =
+                new com.badlogic.gdx.scenes.scene2d.ui.Table();
+        bar.setFillParent(true);
+        bar.bottom().padBottom(START_LIFT);
+        bar.add(ui.faceButton("Start the waves", "epic", new Runnable() {
+            @Override
+            public void run() {
+                model.Result go = controller.releaseWaves();
+                if (go.isSuccess()) {
+                    bar.remove();
+                    notice.announce(go.getMessage());
+                }
+            }
+        })).width(START_BUTTON);
+        stage.addActor(bar);
+    }
+
+    private void replay() {
+        model.Result again = controller.restart();
+        if (!again.isSuccess()) {
+            context.toasts().error(again.getMessage());
+            controller.leave();
+            return;
+        }
+        shown = false;
+        armed = null;
+        feeding = false;
+        shovelling = false;
+        carried = null;
+        controller.setPaused(false);
+        build();
+        notice.announce(controller.objective());
     }
 
     private void announceWaves() {
@@ -301,6 +347,9 @@ public final class LevelScreen implements Screen, Navigator.Hosted {
         hud.refresh();
         finish();
         field.setArmed(armed);
+        field.setTool(shovelling ? view.gui.widgets.LawnField.Tool.SHOVEL
+                : feeding ? view.gui.widgets.LawnField.Tool.FOOD
+                : view.gui.widgets.LawnField.Tool.NONE);
         followMouse();
         stage.act(delta);
         stage.draw();

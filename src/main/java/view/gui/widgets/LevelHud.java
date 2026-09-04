@@ -42,6 +42,9 @@ public final class LevelHud extends Table {
     private static final float METER_WIDTH = 360f;
     private static final float SUN_GRANT = 100f;
     private static final float TITLE_SCALE = 1.5f;
+    private static final float GOAL_SCALE = 0.72f;
+    private static final int BELT_SLOTS = 10;
+    private static final double LOW_TIME = 10d;
     private static final String NUKE_ICON =
             "IMAGE_UI_HUD_INGAME_PROGRESS_METER_ZOMBIEHEAD";
     private static final float NUKE_CANVAS = 390f;
@@ -64,6 +67,10 @@ public final class LevelHud extends Table {
     private final Label coinLabel;
     private final Label gemLabel;
     private final Label title;
+    private final Label goal;
+    private final Label extra;
+    private int armedSlot = -1;
+    private int beltSize = -1;
 
     private Plants armed;
     private boolean shovelling;
@@ -82,6 +89,13 @@ public final class LevelHud extends Table {
         this.sunLabel = new Label("0", ui.skin(), "packetCost");
         this.coinLabel = new Label("0", ui.skin(), "onDark");
         this.gemLabel = new Label("0", ui.skin(), "onDark");
+        this.extra = new Label("", ui.skin(), "titleOnDark");
+        this.extra.setAlignment(Align.center);
+        this.extra.setColor(Theme.SUN);
+        this.goal = new Label("", ui.skin(), "titleOnDark");
+        this.goal.setAlignment(Align.center);
+        this.goal.setFontScale(GOAL_SCALE);
+        this.goal.setColor(Theme.SUN);
         this.title = new Label("", ui.skin(), "titleOnDark");
         this.title.setFontScale(TITLE_SCALE);
         setFillParent(true);
@@ -227,7 +241,11 @@ public final class LevelHud extends Table {
         }
         row.add(corner).left().bottom();
         title.setAlignment(Align.center);
-        row.add(title).expandX().center().bottom();
+        Table centre = new Table();
+        centre.add(extra).center().padBottom(2f).row();
+        centre.add(goal).center().padBottom(2f).row();
+        centre.add(title).center();
+        row.add(centre).expandX().center().bottom();
         row.add(meter).size(METER_WIDTH, COUNTER_HEIGHT).right().bottom()
                 .padRight(PAD * 2f);
         return row;
@@ -313,6 +331,10 @@ public final class LevelHud extends Table {
 
     public void rebuildPackets() {
         packets.clearChildren();
+        if (controller.isConveyor()) {
+            rebuildBelt();
+            return;
+        }
         List<Plants> bank = controller.bank();
         int column = 0;
         for (final Plants plant : bank) {
@@ -341,6 +363,38 @@ public final class LevelHud extends Table {
         }
     }
 
+    private void rebuildBelt() {
+        List<Plants> belt = controller.belt();
+        int slot = 0;
+        for (final Plants plant : belt) {
+            if (slot >= BELT_SLOTS) {
+                break;
+            }
+            final int index = slot;
+            SeedPacket packet = new SeedPacket(ui, assets, plant,
+                    SeedPacket.Mode.GAME, PACKET_SCALE);
+            packet.setSelected(plant == armed && index == armedSlot);
+            packet.setAffordable(true);
+            packet.setFree(true);
+            packet.onClick(new Runnable() {
+                @Override
+                public void run() {
+                    boolean same = plant == armed && index == armedSlot;
+                    armedSlot = same ? -1 : index;
+                    sink.armed(same ? null : plant);
+                }
+            });
+            packets.add(packet).size(SeedPacket.ART_W * PACKET_SCALE,
+                    SeedPacket.ART_H * PACKET_SCALE).pad(3f);
+            if (++slot % PACKET_COLUMNS == 0) {
+                packets.row();
+            }
+        }
+        if (belt.isEmpty()) {
+            packets.add(ui.muted("The belt is empty...")).pad(PAD);
+        }
+    }
+
     private double rechargeFraction(Plants plant) {
         double left = controller.cooldownLeft(plant);
         double total = Math.max(0.001, plant.getRecharge());
@@ -361,6 +415,12 @@ public final class LevelHud extends Table {
         coinLabel.setText(user == null ? "0" : String.valueOf(user.getCoins()));
         gemLabel.setText(user == null ? "0" : String.valueOf(user.getGems()));
         title.setText(caption());
+        goal.setText(controller.objectiveTag());
+        extra.setText(sideNote());
+        if (controller.isConveyor() && controller.belt().size() != beltSize) {
+            beltSize = controller.belt().size();
+            rebuildPackets();
+        }
         for (Actor actor : packets.getChildren()) {
             if (actor instanceof SeedPacket) {
                 SeedPacket packet = (SeedPacket) actor;
@@ -379,6 +439,21 @@ public final class LevelHud extends Table {
         String special = context.app().getPendingSpecial();
         String base = chapter + " - Day " + controller.levelNumber();
         return special == null ? base : base + ": " + AlmanacControls.pretty(special);
+    }
+
+    private String sideNote() {
+        double left = controller.secondsLeft();
+        if (left >= 0d) {
+            extra.setColor(left <= LOW_TIME ? Theme.RED_LIGHT : Theme.SUN);
+            return String.format("%d:%02d", (int) left / 60, (int) left % 60);
+        }
+        int lost = controller.plantsLost();
+        if (lost >= 0) {
+            int cap = controller.plantsAllowedToLose();
+            extra.setColor(lost >= cap - 1 ? Theme.RED_LIGHT : Theme.SUN);
+            return "Plants lost  " + lost + " / " + cap;
+        }
+        return "";
     }
 
     private boolean cheating() {

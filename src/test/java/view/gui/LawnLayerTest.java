@@ -46,4 +46,15 @@ class LawnLayerTest {
                     "sun should stay in front of " + other + " on any row");
         }
     }
+
+    @Test
+    void groundNeverDrawsOverWhatStandsOnIt() {
+        float row = 400f;
+        float ground = LawnLayer.TOMBSTONE.depth(row) + 1f;
+        for (LawnLayer standing : new LawnLayer[] {LawnLayer.PLANT, LawnLayer.ZOMBIE,
+            LawnLayer.SHOT, LawnLayer.MOWER_PARKED}) {
+            assertTrue(standing.depth(row) < ground,
+                    standing + " must draw in front of the tile it stands on");
+        }
+    }
 }

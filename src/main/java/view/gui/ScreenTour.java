@@ -167,6 +167,42 @@ final class ScreenTour {
         pump(20);
         Screenshots.capture("screenshots/tour-35-level.png");
         app.setGame(null);
+        captureSpecial(model.level.SpecialLevel.CONVEYOR,
+                model.ChapterType.FROSTBITE_CAVES, "36-conveyor");
+        captureSpecial(model.level.SpecialLevel.DEADLINE,
+                model.ChapterType.BIG_WAVE_BEACH, "37-deadline");
+        captureSpecial(model.level.SpecialLevel.TIMED_WAR,
+                model.ChapterType.FROSTBITE_CAVES, "38-timed-war");
+        captureSpecial(model.level.SpecialLevel.PLANT_WHAT_YOU_GET,
+                model.ChapterType.DARK_AGES, "39-plant-what-you-get");
+    }
+
+    private void captureSpecial(model.level.SpecialLevel kind,
+            model.ChapterType chapter, String name) {
+        model.App app = game.context().app();
+        app.setSelectedChapter(chapter);
+        app.setSelectedLevel(2);
+        app.getPlantSelection().clear();
+        app.getPlantSelection().add(model.entities.plants.Plants.PEASHOOTER);
+        app.getPlantSelection().add(model.entities.plants.Plants.SUNFLOWER);
+        app.setPendingSpecial(kind.getKey());
+        if (!new controller.menu.LevelController(app).start().isSuccess()) {
+            app.setPendingSpecial(null);
+            return;
+        }
+        game.render();
+        if (!(game.getScreen() instanceof view.gui.screens.LevelScreen)) {
+            app.setGame(null);
+            return;
+        }
+        ((view.gui.screens.LevelScreen) game.getScreen()).show();
+        controller.menu.LevelController runner = new controller.menu.LevelController(app);
+        for (int tick = 0; tick < 90; tick++) {
+            runner.tick((float) model.Game.SECONDS_PER_TICK);
+        }
+        pump(20);
+        Screenshots.capture("screenshots/tour-" + name + ".png");
+        app.setGame(null);
     }
 
     private void captureWorldMap() {

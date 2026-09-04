@@ -49,6 +49,7 @@ public final class Assets implements Disposable {
 
     private final Set<String> loaded = new HashSet<String>();
     private final Set<String> failed = new HashSet<String>();
+    private final java.util.Deque<String> pending = new java.util.ArrayDeque<String>();
     private final Map<String, Texture> files = new HashMap<String, Texture>();
     private final Random random = new Random();
 
@@ -82,6 +83,32 @@ public final class Assets implements Disposable {
 
     public PamPlayer player() {
         return player;
+    }
+
+    public static final long PREFETCH_BUDGET_NANOS = 4_000_000L;
+
+    public void prefetch(String path) {
+        if (path == null || player == null || loaded.contains(path)
+                || failed.contains(path) || pending.contains(path)) {
+            return;
+        }
+        pending.addLast(path);
+    }
+
+    public void prefetchAll(java.util.Collection<String> paths) {
+        if (paths == null) {
+            return;
+        }
+        for (String path : paths) {
+            prefetch(path);
+        }
+    }
+
+    public void pumpPrefetch() {
+        long deadline = System.nanoTime() + PREFETCH_BUDGET_NANOS;
+        while (!pending.isEmpty() && System.nanoTime() < deadline) {
+            load(pending.pollFirst());
+        }
     }
 
     public boolean load(String path) {

@@ -27,7 +27,10 @@ public final class ShopCard extends Table {
     private static final float BAND = 26f;
     private static final float HOVER_LIFT = 1.04f;
 
+    private static final float COUNTDOWN_TEXT = 0.86f;
+
     private final Table sheen = new Table();
+    private Label countdown;
 
     public ShopCard(UiKit ui, Assets assets, String title, String blurb, String art,
             String currencyIcon, int price, boolean daily, final Runnable onPick) {
@@ -92,13 +95,27 @@ public final class ShopCard extends Table {
         paint.setBackground(ui.primitives().rounded(12,
                 daily ? Theme.SUN : new Color(1f, 1f, 1f, 0f), Theme.OUTLINE, daily ? 2 : 0));
         if (daily) {
-            Label tag = new Label("DAILY", ui.skin(), "titleOnDark");
-            tag.setAlignment(Align.center);
-            paint.add(tag).grow();
+            countdown = new Label("", ui.skin(), "titleOnDark");
+            countdown.setAlignment(Align.center);
+            countdown.setFontScale(COUNTDOWN_TEXT);
+            tickCountdown();
+            paint.add(countdown).grow();
         }
         strip.add(paint).height(BAND).growX().padTop(BAND * 0.42f)
                 .padLeft(BAND * 0.7f).padRight(BAND * 0.7f);
         return strip;
+    }
+
+    @Override
+    public void act(float delta) {
+        super.act(delta);
+        tickCountdown();
+    }
+
+    private void tickCountdown() {
+        if (countdown != null) {
+            countdown.setText("DAILY  " + model.shop.Shop.refreshCountdown());
+        }
     }
 
     private Table body(UiKit ui, Assets assets, String title, String blurb, String art,
