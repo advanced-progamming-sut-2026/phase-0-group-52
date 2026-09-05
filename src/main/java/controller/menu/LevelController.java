@@ -526,6 +526,10 @@ public class LevelController {
         return model.level.SpecialLevel.byKey(special);
     }
 
+    protected void resetRun() {
+        reset();
+    }
+
     private void reset() {
         loop = null;
         special = null;

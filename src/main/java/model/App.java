@@ -34,6 +34,7 @@ public class App {
     private model.entities.plants.Plants imitatedPlant;
     private boolean awaitingImitate;
     private String pendingSpecial;
+    private String pendingMinigame;
     private final java.util.Set<model.entities.plants.Plants> lockedPlants = new java.util.HashSet<>();
 
     private App(){
@@ -75,6 +76,9 @@ public class App {
     public void setAwaitingImitate(boolean awaitingImitate) { this.awaitingImitate = awaitingImitate; }
     public String getPendingSpecial() { return pendingSpecial; }
     public void setPendingSpecial(String pendingSpecial) { this.pendingSpecial = pendingSpecial; }
+
+    public String getPendingMinigame() { return pendingMinigame; }
+    public void setPendingMinigame(String value) { this.pendingMinigame = value; }
     public java.util.Set<model.entities.plants.Plants> getLockedPlants() { return lockedPlants; }
     public java.util.Set<model.entities.plants.Plants> getBoostedSelection() { return boostedSelection; }
 

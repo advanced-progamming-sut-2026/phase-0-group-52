@@ -271,6 +271,7 @@ public class UserRepository {
         bool(sb, "uiEditMode", u.isUiEditMode());
         bool(sb, "stayLoggedIn", u.isStayLoggedIn());
         plants(sb, u);
+        minigameBests(sb, u);
         seenZombies(sb, u);
         adventure(sb, u);
         chapters(sb, u);
@@ -316,6 +317,7 @@ public class UserRepository {
         u.setPlantFood(intOf(m, "plantFood"));
         readGarden(u, m.get("garden"));
         readPlants(u, m.get("plants"));
+        readMinigameBests(u, m.get("minigameBests"));
         readSeenZombies(u, m.get("seenZombies"));
         readAdventure(u, m.get("adventure"));
         readChapters(u, m.get("chapters"));
@@ -499,6 +501,42 @@ public class UserRepository {
                     .append(",\"boosted\":").append(boosted).append('}');
         }
         sb.append("\"plants\":[").append(rows).append("],");
+    }
+
+    private void minigameBests(StringBuilder sb, User u) {
+        StringBuilder rows = new StringBuilder();
+        for (java.util.Map.Entry<String, Integer> entry : u.getMinigameBests().entrySet()) {
+            if (rows.length() > 0) {
+                rows.append(',');
+            }
+            rows.append('"').append(entry.getKey()).append("\":")
+                    .append(entry.getValue().intValue());
+        }
+        sb.append("\"minigameBests\":{").append(rows).append("},");
+    }
+
+    private void readMinigameBests(User u, Object raw) {
+        if (!(raw instanceof Map)) {
+            return;
+        }
+        for (Map.Entry<?, ?> entry : ((Map<?, ?>) raw).entrySet()) {
+            if (entry.getKey() == null) {
+                continue;
+            }
+            u.recordMinigameBest(String.valueOf(entry.getKey()),
+                    (int) numOf(entry.getValue()));
+        }
+    }
+
+    private static double numOf(Object raw) {
+        if (raw instanceof Number) {
+            return ((Number) raw).doubleValue();
+        }
+        try {
+            return raw == null ? 0d : Double.parseDouble(String.valueOf(raw));
+        } catch (NumberFormatException e) {
+            return 0d;
+        }
     }
 
     private void readPlants(User u, Object raw) {

@@ -25,8 +25,13 @@ public class GameLoop {
     private int skySunTimer = 0;
 
     public GameLoop(Game game) {
-        this.mechanics = (game.getField() != null)
-                ? ChapterMechanics.forChapter(game.getField().getChapter()) : null;
+        this.mechanics = game.getField() == null || !terrainWanted(game)
+                ? null : ChapterMechanics.forChapter(game.getField().getChapter());
+    }
+
+    private static boolean terrainWanted(Game game) {
+        return !(game.getLevel() instanceof model.level.MinigameLevel)
+                || ((model.level.MinigameLevel) game.getLevel()).usesChapterMechanics();
     }
 
     public ChapterMechanics mechanics() {
