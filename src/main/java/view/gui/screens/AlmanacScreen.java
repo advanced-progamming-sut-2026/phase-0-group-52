@@ -27,7 +27,6 @@ import view.gui.UiKit;
 import view.gui.widgets.AlmanacFilterPopup;
 import view.gui.widgets.PamActor;
 import view.gui.widgets.SeedPacket;
-import view.gui.widgets.XpBar;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -38,21 +37,8 @@ public final class AlmanacScreen extends BaseScreen {
     private static final float NAME_HEIGHT = 48f;
     private static final float STAGE_HEIGHT = 162f;
     private static final float ARROW = 40f;
-    private static final float XP_HEIGHT = 12f;
-    private static final float BADGE_SIZE = 64f;
-    private static final float ACTION_ICON = 62f;
-    private static final float PRICE_ICON = 24f;
     private static final float TILE_HEIGHT = 54f;
     private static final float TILE_GAP = 3f;
-    private static final float COST_ROW = 26f;
-    private static final int BURST_COPIES = 3;
-    private static final float BURST_COVERAGE = 1.2f;
-    private static final float XP_FILL_HEIGHT = 8f;
-    private static final float XP_FILL_INSET = 3f;
-    private static final float XP_ROW = 36f;
-    private static final float BOLT_EXTENT = 120f;
-    private static final float BOLT_DROP = 0.22f;
-    private static final float XP_FONT = 1f;
     private static final com.badlogic.gdx.graphics.Color STATE_GREY =
             new com.badlogic.gdx.graphics.Color(0.82f, 0.85f, 0.8f, 1f);
     private static final float PACKET_SCALE = 0.68f;
@@ -74,6 +60,7 @@ public final class AlmanacScreen extends BaseScreen {
 
     private final AlmanacFilterPopup.Rules rules = new AlmanacFilterPopup.Rules();
     private final CollectionMenuController controller;
+    private view.gui.widgets.PlantLevelRow levelRow;
     private final view.gui.widgets.AlmanacControls controls;
     private final view.gui.widgets.StatTiles tiles;
 
@@ -377,174 +364,17 @@ public final class AlmanacScreen extends BaseScreen {
     }
 
     private Table levelingPanel() {
-        Table panel = new Table();
-        PlantRecord r = record();
-        PlantProgress state = progress();
-        if (r == null || !unlocked()) {
-            return panel;
-        }
-        boolean maxed = state.isMaxLevel();
-        if (!maxed) {
-            panel.add(xpBar(state)).growX().height(XP_ROW)
-                    .padLeft(ARROW / 2f).padRight(ARROW / 2f).row();
-        }
-        panel.add(actionRow(r, state, maxed)).growX().padTop(maxed ? 0f : Theme.PAD_SMALL);
-        return panel;
-    }
-
-    private Table actionRow(PlantRecord r, PlantProgress state, boolean maxed) {
-        Table row = new Table();
-        row.left();
-        if (r.isBoostable()) {
-            row.add(controls.iconButton("IMAGE_UI_PERKS_RIFT_ICON_SUNBOOST", canBoost(), true,
-                    new Runnable() {
+        if (levelRow == null) {
+            levelRow = new view.gui.widgets.PlantLevelRow(context, new Runnable() {
                 @Override
                 public void run() {
-                    doBoost();
+                    rebuild();
                 }
-            })).size(ACTION_ICON).bottom().padRight(4f);
-            Table gems = new Table();
-            gems.left();
-            gems.add(controls.priceCell(String.valueOf(r.getGemCost()), "gemIcon", PRICE_ICON))
-                    .left().height(COST_ROW).row();
-            gems.add(new Table()).height(COST_ROW);
-            row.add(gems).left();
+            });
         }
-        row.add(new Table()).growX();
-        if (maxed) {
-            Label done = new Label("Max level", ui.skin(), "muted");
-            row.add(done).right().padRight(4f).padTop(UiKit.opticalPad(done));
-            return row;
-        }
-
-        int next = state.getLevel() + 1;
-        Table costs = new Table();
-        costs.right();
-        costs.add(controls.priceCell(state.getPackets() + "/"
-                + r.getLeveling().packetsToLevel(next),
-                "IMAGE_UI_STOREMULTI_SEEDPACKETMINIICON", PRICE_ICON))
-                .right().height(COST_ROW).row();
-        costs.add(controls.priceCell(String.valueOf(r.getLeveling().coinsToLevel(next)),
-                "coinIcon", PRICE_ICON)).right().height(COST_ROW);
-        row.add(costs).right().padRight(6f);
-
-        row.add(controls.iconButton("IMAGE_UI_ALMANAC_ALMANAC_BOOST_LARGE", canUpgrade(), new Runnable() {
-            @Override
-            public void run() {
-                doUpgrade();
-            }
-        })).size(ACTION_ICON).bottom();
-        return row;
-    }
-
-    private Table xpBar(PlantProgress state) {
-        Drawable trackArt = regionOf("IMAGE_UI_LEVELING_PROGRESS_BG");
-        if (trackArt == null) {
-            trackArt = ui.primitives().rounded((int) (XP_HEIGHT / 2f),
-                    Theme.darken(Theme.PANEL_SUNKEN, 0.4f), Theme.OUTLINE, 1);
-        }
-        Drawable fillArt = ui.primitives().rounded((int) (XP_FILL_HEIGHT / 2f),
-                state.isXpFull() ? Theme.GREEN : Theme.SUN,
-                Theme.darken(state.isXpFull() ? Theme.GREEN : Theme.SUN, 0.35f), 1);
-
-        XpBar bar = new XpBar(trackArt, fillArt, state.xpRatio(), XP_FILL_INSET);
-
-        Label count = new Label(state.getXp() + " / " + state.xpNeeded(),
-                ui.skin(), "packetCost");
-        count.setAlignment(Align.center);
-        count.setFontScale(XP_FONT);
-
-        Table barHolder = new Table();
-        barHolder.add(bar).growX().height(XP_HEIGHT);
-
-        Stack stack = new Stack();
-        stack.add(barHolder);
-
-        Table text = new Table();
-        text.add(count).center();
-        stack.add(text);
-
-        Table over = new Table();
-        over.right();
-        over.add(bolt(state)).size(BADGE_SIZE);
-        stack.add(over);
-
-        Table holder = new Table();
-        holder.add(stack).grow();
-        return holder;
-    }
-
-    private Table bolt(PlantProgress state) {
-        Table holder = new Table();
-        if (art() == null) {
-            return holder;
-        }
-        PamActor badge = new PamActor(art(), Assets.UPGRADE_BADGE,
-                state.isXpFull() ? "idle" : "no_charge").setFit(true);
-        badge.setExtent(-BOLT_EXTENT, -BOLT_EXTENT + BOLT_EXTENT * BOLT_DROP,
-                BOLT_EXTENT * 2f, BOLT_EXTENT * 2f);
-        if (badge.isReady()) {
-            holder.add(badge).grow();
-        }
-        return holder;
-    }
-
-    private boolean canBoost() {
-        return context.user() != null && PlantData.canBoost(context.user(), selected);
-    }
-
-    private boolean canUpgrade() {
-        if (context.user() == null) {
-            return false;
-        }
-        return context.settings().isDebugMode()
-                || PlantData.canUpgrade(context.user(), selected);
-    }
-
-    private void doBoost() {
-        if (!canBoost()) {
-            context.toasts().error("Not enough diamonds to boost.");
-            return;
-        }
-        controller.boostPlant(selected);
-        rebuild();
-    }
-
-    private void doUpgrade() {
-        String blocker = context.user() == null ? "No user is signed in."
-                : PlantData.upgradeBlocker(context.user(), selected);
-        if (blocker != null) {
-            context.toasts().error(blocker);
-            return;
-        }
-        controller.upgradePlant(selected);
-        celebrate();
-        rebuild();
-    }
-
-
-    private void celebrate() {
-        if (art() == null || plantStage == null) {
-            return;
-        }
-        Table burstLayer = plantStage.overlay();
-        burstLayer.clearChildren();
-        for (int i = 0; i < BURST_COPIES; i++) {
-            PamActor burst = new PamActor(art(), Assets.BOOST_EFFECT, "animation")
-                    .setFit(false)
-                    .setCoverage(BURST_COVERAGE + i * 0.25f);
-            if (!burst.isReady()) {
-                return;
-            }
-            Table holder = new Table();
-            holder.setFillParent(true);
-            holder.add(burst).grow();
-            burstLayer.addActor(holder);
-            holder.addAction(com.badlogic.gdx.scenes.scene2d.actions.Actions.sequence(
-                    com.badlogic.gdx.scenes.scene2d.actions.Actions.delay(1.1f),
-                    com.badlogic.gdx.scenes.scene2d.actions.Actions.fadeOut(0.7f),
-                    com.badlogic.gdx.scenes.scene2d.actions.Actions.removeActor()));
-        }
+        levelRow.setBurstHost(plantStage == null ? null : plantStage.overlay());
+        levelRow.show(selected);
+        return levelRow;
     }
 
     private Table statsPane() {

@@ -164,7 +164,20 @@ public abstract class Plant implements PlantInterface {
     public int getFreezeLevel() { return freezeLevel; }
     public double getIceHp() { return iceHp; }
 
+    public boolean resistsCold() {
+        return getType().getTags().contains(PlantTag.FIRE);
+    }
+
+    public void thawCompletely() {
+        freezeLevel = 0;
+        frozen = false;
+        iceHp = 0;
+    }
+
     public void addFreezeLevel() {
+        if (resistsCold()) {
+            return;
+        }
         if (freezeLevel >= 3) return;
         freezeLevel++;
         if (freezeLevel >= 3) {

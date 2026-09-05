@@ -29,6 +29,19 @@ public class TimedWar extends Level {
     public void onZombieKilled() { kills++; }
 
     @Override
+    public String objective() {
+        if (targetKills > 0) {
+            return "Destroy " + targetKills + " zombies before the clock runs out.";
+        }
+        return "Bank " + targetSun + " sun before the clock runs out.";
+    }
+
+    @Override
+    public String objectiveTag() {
+        return "TIMED WAR";
+    }
+
+    @Override
     public void onTick(Game game) {
         elapsed += 1;
     }

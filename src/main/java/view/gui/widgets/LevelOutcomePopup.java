@@ -24,7 +24,7 @@ public final class LevelOutcomePopup extends Popup {
     private final LevelController controller;
 
     public LevelOutcomePopup(GameContext context, LevelController controller,
-            boolean won, String message) {
+            boolean won, String message, final Runnable onRestart) {
         super(context.ui(), won ? "Level Complete!" : "The Zombies Ate Your Brains!", 760f, 620f);
         this.context = context;
         this.controller = controller;
@@ -32,7 +32,7 @@ public final class LevelOutcomePopup extends Popup {
         body().add(banner(won)).size(ART, ART).center().padBottom(Theme.PAD).row();
 
         Label headline = new Label(won
-                ? "Ancient Egypt bows to your garden."
+                ? controller.chapter().getDisplayName() + " bows to your garden."
                 : "They got through. Try a different line-up.",
                 ui.skin(), won ? "titleOnDark" : "onDark");
         headline.setAlignment(Align.center);
@@ -46,6 +46,16 @@ public final class LevelOutcomePopup extends Popup {
         body().add(text).growX().center().pad(Theme.PAD).row();
 
         Table row = new Table();
+        row.add(ui.faceButton(won ? "Play it again" : "Try again", "secondary",
+                new Runnable() {
+                    @Override
+                    public void run() {
+                        close();
+                        if (onRestart != null) {
+                            onRestart.run();
+                        }
+                    }
+                })).pad(Theme.PAD_SMALL);
         row.add(ui.faceButton("Exit to the map", "primary", new Runnable() {
             @Override
             public void run() {

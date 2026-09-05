@@ -47,6 +47,7 @@ public final class Theme {
 
     public static final Color GREEN = rgb(0x7CB342);
     public static final Color GREEN_LIGHT = rgb(0x9CCC54);
+    public static final Color SHOVEL_MARK = rgb(0xE8A33D);
     public static final Color GREEN_DARK = rgb(0x558B2F);
     public static final Color WATER_SHALLOW = rgb(0x35A7C8);
     public static final Color WATER_DEEP = rgb(0x14618A);

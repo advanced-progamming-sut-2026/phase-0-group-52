@@ -110,7 +110,8 @@ public final class GreenhouseScreen extends BaseScreen {
         stock.addListener(new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {
-                if (x < event.getListenerActor().getWidth() - PLUS_ICON) {
+                if (!context.settings().isDebugMode()
+                        || x < event.getListenerActor().getWidth() - PLUS_ICON) {
                     takeSprout();
                 }
             }
@@ -146,7 +147,8 @@ public final class GreenhouseScreen extends BaseScreen {
     private Table pill(String icon, Label amount) {
         Table holder = new Table();
         holder.setBackground(ui.drawable("counter"));
-        holder.add(amount).expandX().center().padLeft(TOOL * 0.5f).padRight(PLUS_ICON);
+        holder.add(amount).expandX().center().padLeft(TOOL * 0.5f)
+                .padRight(context.settings().isDebugMode() ? PLUS_ICON : Theme.PAD_SMALL);
         Table front = new Table();
         front.left();
         front.add(fitted(icon)).size(TOOL * 0.52f).padLeft(-TOOL * 0.1f);
@@ -163,6 +165,9 @@ public final class GreenhouseScreen extends BaseScreen {
     private Table plusSlot() {
         Table slot = new Table();
         slot.right();
+        if (!context.settings().isDebugMode()) {
+            return slot;
+        }
         Image plus = new Image(ui.drawable("plusIcon"));
         plus.setScaling(Scaling.fit);
         plus.setTouchable(Touchable.enabled);

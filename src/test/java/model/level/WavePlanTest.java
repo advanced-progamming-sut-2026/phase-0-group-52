@@ -66,4 +66,32 @@ class WavePlanTest {
         assertEquals(1, WavePlan.compose(roster, 1d, new Random(0)).size(),
                 "a tiny budget still yields exactly one zombie");
     }
+
+    @Test
+    void anEarlyWaveIsAHandfulOfZombiesNotACrowd() {
+        java.util.List<Zombies> roster =
+                WavePlan.roster(ChapterType.ANCIENT_EGYPT, 1);
+        java.util.Random random = new java.util.Random(7);
+        int biggest = 0;
+        int total = 0;
+        int waves = WavePlan.waveCount(1);
+        for (int wave = 0; wave < waves; wave++) {
+            double budget = WavePlan.budget(1, wave, waves, 3);
+            int size = WavePlan.compose(roster, budget, random).size();
+            biggest = Math.max(biggest, size);
+            total += size;
+        }
+        assertTrue(biggest <= 8,
+                "no single early wave should be a wall of zombies, saw " + biggest);
+        assertTrue(total <= 30,
+                "a first level should not spawn a horde overall, saw " + total);
+    }
+
+    @Test
+    void wavesAreFarEnoughApartToFightBetweenThem() {
+        double seconds = model.GameLoop.WAVE_INTERVAL
+                / (double) model.Game.TICKS_PER_SECOND;
+        assertTrue(seconds >= 20d,
+                "there should be real time between waves, saw " + seconds + "s");
+    }
 }

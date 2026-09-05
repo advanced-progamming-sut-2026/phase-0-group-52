@@ -45,15 +45,15 @@ public enum SpecialLevel {
     public static SpecialLevel[] of(ChapterType chapter) {
         switch (chapter) {
             case ANCIENT_EGYPT:
-                return new SpecialLevel[]{SAVE_OUR_SEEDS, LOCKED_PLANTS};
+                return new SpecialLevel[]{SAVE_OUR_SEEDS, LOVE_YOUR_PLANTS};
             case FROSTBITE_CAVES:
                 return new SpecialLevel[]{CONVEYOR, TIMED_WAR};
             case DARK_AGES:
                 return new SpecialLevel[]{NIGHT_OPS, PLANT_WHAT_YOU_GET};
             case BIG_WAVE_BEACH:
-                return new SpecialLevel[]{DEADLINE, LOVE_YOUR_PLANTS};
+                return new SpecialLevel[]{DEADLINE, LOCKED_PLANTS};
             default:
-                return new SpecialLevel[]{SAVE_OUR_SEEDS, LOCKED_PLANTS};
+                return new SpecialLevel[]{SAVE_OUR_SEEDS, LOVE_YOUR_PLANTS};
         }
     }
 

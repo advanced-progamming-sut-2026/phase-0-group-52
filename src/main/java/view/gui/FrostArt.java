@@ -19,6 +19,8 @@ public final class FrostArt {
     public static final String BLOCK_KEY = "ice|block";
     public static final String WIND_KEY = "ice|wind";
 
+    public static final float BLOCK_SPAN = 1.35f;
+
     public static final String PLANT_BLOCK_KEY = "ice|plant";
     public static final String ZOMBIE_BLOCK_KEY = "ice|zombie";
 

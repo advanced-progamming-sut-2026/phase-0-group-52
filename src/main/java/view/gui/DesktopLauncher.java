@@ -21,6 +21,9 @@ public final class DesktopLauncher {
         config.setTitle("Plants vs. Zombies 2");
         config.setWindowedMode(Theme.WORLD_WIDTH, Theme.WORLD_HEIGHT);
         config.setWindowSizeLimits(960, 540, -1, -1);
+        config.setWindowIcon(com.badlogic.gdx.Files.FileType.Internal,
+                "assets/ui/icon/pvz2_128.png", "assets/ui/icon/pvz2_64.png",
+                "assets/ui/icon/pvz2_32.png", "assets/ui/icon/pvz2_16.png");
         config.useVsync(true);
         config.setForegroundFPS(60);
 

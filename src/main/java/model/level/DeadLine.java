@@ -20,6 +20,16 @@ public class DeadLine extends Level {
     public void setDeadlineCol(int deadlineCol) { this.deadlineCol = deadlineCol; }
 
     @Override
+    public String objective() {
+        return "Never let a zombie cross the dead line.";
+    }
+
+    @Override
+    public String objectiveTag() {
+        return "DEAD LINE";
+    }
+
+    @Override
     public String checkDefeat(Game game) {
         for (Zombie z : game.getZombies())
             if (!z.isHypnotized() && z.getPosition().x < deadlineCol)

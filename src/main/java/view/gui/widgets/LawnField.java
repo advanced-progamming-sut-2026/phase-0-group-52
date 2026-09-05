@@ -39,13 +39,14 @@ public final class LawnField extends WidgetGroup {
     private static final float MOWER_CANVAS = 390f;
     private static final float TOMB_CANVAS = 390f;
     private static final float ARROW_FADE = 0.45f;
-    private static final float BLOCK_SPAN = 0.95f;
+    private static final float TILE_SHEEN = 0.42f;
     private static final float SLIDE_EASE = 0.35f;
     private static final float RISE_SPAN = 1.6f;
     private static final float WATER_VEIL = 0.55f;
     private static final float HOP = 0.45f;
-    private static final float CHILL_R = 0.82f;
-    private static final float CHILL_G = 0.92f;
+    private static final int FREEZE_STAGES = 3;
+    private static final float ICE_MIN_ALPHA = 0.4f;
+    private static final float ICE_MAX_ALPHA = 0.8f;
     private static final float WIND_SPAN = 1.6f;
     private static final double LOB_SPAN = 4d;
     private static final float LOB_HEIGHT = 1.1f;
@@ -79,6 +80,24 @@ public final class LawnField extends WidgetGroup {
 
     private Sink sink;
     private boolean showGrid;
+    public enum Tool { NONE, SHOVEL, FOOD }
+
+    private static final float HOVER_FILL = 0.28f;
+    private static final float HOVER_EDGE = 0.85f;
+    private static final float HOVER_LINE = 3f;
+    private static final float FOOD_GLOW_LOW = 0.25f;
+    private static final float FOOD_GLOW_HIGH = 1f;
+    private static final float FOOD_GLOW_RATE = 3.2f;
+    private static final float FOOD_GLOW_BITE = 0.42f;
+    private static final float DEADLINE_WIDTH = 5f;
+    private static final float DEADLINE_LOW = 0.35f;
+    private static final float DEADLINE_HIGH = 0.8f;
+    private static final float DEADLINE_RATE = 2.4f;
+    private static final float GUARD_RING = 0.55f;
+    private static final float ICE_JOLT = 1.06f;
+    private static final float ICE_JOLT_TIME = 0.07f;
+
+    private Tool tool = Tool.NONE;
     private Plants armed;
     private int hoverColumn = -1;
     private int hoverRow = -1;
@@ -88,8 +107,9 @@ public final class LawnField extends WidgetGroup {
             new HashMap<model.entities.Projectile, PamActor>();
     private final Map<model.entities.Projectile, Float> shotFlight =
             new HashMap<model.entities.Projectile, Float>();
-    private final Map<String, Actor> icyTiles = new HashMap<String, Actor>();
     private final Map<Object, PamActor> iceBlocks = new HashMap<Object, PamActor>();
+    private final Map<model.entities.Tombstone, Double> graveHp =
+            new HashMap<model.entities.Tombstone, Double>();
     private final java.util.List<PamActor> puffs = new java.util.ArrayList<PamActor>();
     private final Map<Actor, Integer> iceRows = new HashMap<Actor, Integer>();
     private final Map<String, Actor> water = new HashMap<String, Actor>();
@@ -163,18 +183,34 @@ public final class LawnField extends WidgetGroup {
         showGrid = value;
     }
 
+    public void setTool(Tool value) {
+        tool = value == null ? Tool.NONE : value;
+        if (tool != Tool.NONE) {
+            armed = null;
+        }
+    }
+
     public void setArmed(Plants value) {
         armed = value;
+        if (value != null) {
+            tool = Tool.NONE;
+        }
     }
 
 
     @Override
     public void act(float delta) {
         super.act(delta);
+        getColor().a = 1f;
+        for (com.badlogic.gdx.scenes.scene2d.Group up = getParent(); up != null;
+                up = up.getParent()) {
+            up.getColor().a = 1f;
+        }
         syncArea();
         syncPlants();
         syncSun();
         syncHorde(delta);
+        feedback.setCeiling(night());
         syncStatus();
         duskPlants();
         flashDamage(delta);
@@ -205,6 +241,14 @@ public final class LawnField extends WidgetGroup {
                 continue;
             }
             float dusk = night();
+            if (entry.getKey().carriesPlantFood()) {
+                float pulse = FOOD_GLOW_LOW + (FOOD_GLOW_HIGH - FOOD_GLOW_LOW)
+                        * (float) (0.5d + 0.5d * Math.sin(PamActor.sharedClock()
+                                * FOOD_GLOW_RATE));
+                rig.setTint(dusk * (1f - pulse * FOOD_GLOW_BITE), dusk,
+                        dusk * (1f - pulse * FOOD_GLOW_BITE), 1f);
+                continue;
+            }
             switch (entry.getKey().status()) {
                 case BURNING:
                     rig.setTint(dusk, 0.72f * dusk, 0.62f * dusk, 1f);
@@ -214,7 +258,7 @@ public final class LawnField extends WidgetGroup {
                     break;
                 case FROZEN:
                 case CHILLED:
-                    rig.setTint(CHILL_R * dusk, CHILL_G * dusk, dusk, 1f);
+                    rig.setTint(dusk, dusk, dusk, 1f);
                     break;
                 default:
                     rig.setTint(dusk, dusk, dusk, 1f);
@@ -237,10 +281,73 @@ public final class LawnField extends WidgetGroup {
             Double was = plantHp.get(entry.getKey());
             if (was != null && hp < was) {
                 feedback.hit(entry.getValue());
+                flashIce(entry.getKey());
             }
             plantHp.put(entry.getKey(), hp);
         }
+        flashGraves();
+        markGuarded();
         feedback.act(delta);
+    }
+
+    private void markGuarded() {
+        java.util.List<Plant> guarded = controller.guarded();
+        if (guarded.isEmpty()) {
+            return;
+        }
+        for (Plant plant : guarded) {
+            Actor actor = growing.get(plant);
+            if (actor instanceof PamActor && !feedback.isFlashing(actor)) {
+                float pulse = GUARD_RING + (1f - GUARD_RING)
+                        * (float) (0.5d + 0.5d * Math.sin(PamActor.sharedClock() * 2.6d));
+                ((PamActor) actor).setTint(1f, pulse, pulse * GUARD_RING, 1f);
+            }
+        }
+    }
+
+    private void flashGraves() {
+        for (Map.Entry<model.entities.Tombstone, PamActor> entry : stones.entrySet()) {
+            model.entities.Tombstone stone = entry.getKey();
+            double hp = stone.getHp();
+            Double was = graveHp.get(stone);
+            if (was != null && hp < was) {
+                feedback.hit(entry.getValue());
+                chip(stone.getColumn(), stone.getRow());
+            }
+            graveHp.put(stone, hp);
+        }
+        java.util.Iterator<Map.Entry<model.entities.Tombstone, Double>> gone =
+                graveHp.entrySet().iterator();
+        while (gone.hasNext()) {
+            if (!stones.containsKey(gone.next().getKey())) {
+                gone.remove();
+            }
+        }
+    }
+
+    private void flashIce(Object owner) {
+        PamActor ice = iceBlocks.get(owner);
+        if (ice != null) {
+            feedback.hit(ice);
+            crack(ice);
+        }
+    }
+
+    private void crack(PamActor ice) {
+        if (ice.getActions().size > 0) {
+            return;
+        }
+        ice.setOrigin(com.badlogic.gdx.utils.Align.center);
+        ice.addAction(com.badlogic.gdx.scenes.scene2d.actions.Actions.sequence(
+                com.badlogic.gdx.scenes.scene2d.actions.Actions.scaleTo(
+                        ICE_JOLT, 1f / ICE_JOLT, ICE_JOLT_TIME),
+                com.badlogic.gdx.scenes.scene2d.actions.Actions.scaleTo(
+                        1f, 1f, ICE_JOLT_TIME)));
+    }
+
+    private void chip(int column, int row) {
+        puff(LawnGeometry.columnLeft(column) + LawnGeometry.cellWidth() / 2f,
+                LawnGeometry.rowFeet(row) + LawnGeometry.cellHeight() / 2f);
     }
 
     private void sortDepth() {
@@ -467,38 +574,46 @@ public final class LawnField extends WidgetGroup {
                 || controller.game().getField() == null) {
             return;
         }
-        syncIcyTiles();
         syncIceBlocks();
         blowChillWind();
         agePuffs(delta);
     }
 
-    private void syncIcyTiles() {
+    private void paintIcyGround(Batch batch, float parentAlpha) {
+        if (controller.game() == null || controller.game().getField() == null
+                || assets == null) {
+            return;
+        }
+        com.badlogic.gdx.graphics.g2d.TextureRegion sheet =
+                assets.region(view.gui.FrostArt.TILE_ICE);
+        if (sheet == null) {
+            return;
+        }
         model.GameField field = controller.game().getField();
-        java.util.Set<String> live = new java.util.HashSet<String>();
+        view.gui.EntityTuning.Tune tune =
+                view.gui.EntityTuning.of(view.gui.FrostArt.TILE_KEY);
+        float w = LawnGeometry.cellWidth() * tune.scale;
+        float h = LawnGeometry.cellHeight() * tune.scale;
         for (int row = 0; row < field.getRows(); row++) {
             for (int column = 0; column < field.getCols(); column++) {
                 model.entities.Cell cell = field.getCell(column, row);
                 if (cell == null || !isIcy(cell.getType())) {
                     continue;
                 }
-                String at = column + ":" + row;
-                live.add(at);
-                if (!icyTiles.containsKey(at)) {
-                    icyTiles.put(at, addIcyTile(cell.getType(), column, row));
+                float x = LawnGeometry.columnLeft(column) + tune.dx;
+                float y = LawnGeometry.rowFeet(row) + tune.dy;
+                batch.setColor(1f, 1f, 1f, TILE_SHEEN * parentAlpha);
+                batch.draw(sheet, x, y, w, h);
+                com.badlogic.gdx.scenes.scene2d.utils.Drawable arrow = ui.drawable(
+                        cell.getType() == model.entities.CellType.SLIPPERY_UP
+                                ? "sortAscending" : "sortDescending");
+                if (arrow != null) {
+                    batch.setColor(1f, 1f, 1f, ARROW_FADE * parentAlpha);
+                    arrow.draw(batch, x + w * 0.34f, y + h * 0.3f, w * 0.32f, h * 0.4f);
                 }
             }
         }
-        java.util.Iterator<Map.Entry<String, Actor>> thawed =
-                icyTiles.entrySet().iterator();
-        while (thawed.hasNext()) {
-            Map.Entry<String, Actor> entry = thawed.next();
-            if (!live.contains(entry.getKey())) {
-                puff(entry.getValue().getX(), entry.getValue().getY());
-                entry.getValue().remove();
-                thawed.remove();
-            }
-        }
+        batch.setColor(1f, 1f, 1f, parentAlpha);
     }
 
     private void blowChillWind() {
@@ -527,43 +642,15 @@ public final class LawnField extends WidgetGroup {
     }
 
     private static boolean isIcy(model.entities.CellType type) {
-        return type == model.entities.CellType.FROZEN
-                || type == model.entities.CellType.SLIPPERY_UP
+        return type == model.entities.CellType.SLIPPERY_UP
                 || type == model.entities.CellType.SLIPPERY_DOWN;
     }
 
-    private Actor addIcyTile(model.entities.CellType type, int column, int row) {
-        com.badlogic.gdx.scenes.scene2d.Group cell =
-                new com.badlogic.gdx.scenes.scene2d.Group();
-        com.badlogic.gdx.scenes.scene2d.ui.Image sheet =
-                new com.badlogic.gdx.scenes.scene2d.ui.Image(assets.region(view.gui.FrostArt.TILE_ICE));
-        sheet.setScaling(com.badlogic.gdx.utils.Scaling.stretch);
-        view.gui.EntityTuning.Tune tune =
-                view.gui.EntityTuning.of(view.gui.FrostArt.TILE_KEY);
-        float w = LawnGeometry.cellWidth() * tune.scale;
-        float h = LawnGeometry.cellHeight() * tune.scale;
-        sheet.setBounds(0f, 0f, w, h);
-        cell.addActor(sheet);
-        if (type != model.entities.CellType.FROZEN) {
-            com.badlogic.gdx.scenes.scene2d.ui.Image arrow =
-                    new com.badlogic.gdx.scenes.scene2d.ui.Image(ui.drawable(
-                    type == model.entities.CellType.SLIPPERY_UP
-                            ? "sortAscending" : "sortDescending"));
-            arrow.setScaling(com.badlogic.gdx.utils.Scaling.fit);
-            arrow.setColor(1f, 1f, 1f, ARROW_FADE);
-            arrow.setBounds(w * 0.34f, h * 0.3f, w * 0.32f, h * 0.4f);
-            cell.addActor(arrow);
-        }
-        cell.setBounds(LawnGeometry.columnLeft(column) + tune.dx,
-                LawnGeometry.rowFeet(row) + tune.dy, w, h);
-        cell.setTouchable(Touchable.disabled);
-        addActor(cell);
-        return cell;
-    }
 
     private void syncIceBlocks() {
         for (Map.Entry<Plant, Actor> entry : growing.entrySet()) {
-            block(entry.getKey(), entry.getValue(), entry.getKey().isFrozen(),
+            block(entry.getKey(), entry.getValue(),
+                    entry.getKey().getFreezeLevel() > 0,
                     view.gui.FrostArt.ICE_PLANT,
                     (int) entry.getKey().getPosition().y);
         }
@@ -591,18 +678,20 @@ public final class LawnField extends WidgetGroup {
             return;
         }
         if (ice != null) {
-            ice.setTint(1f, 1f, 1f, 1f);
+            ice.setTint(1f, 1f, 1f, iceAlpha(owner));
             view.gui.EntityTuning.Tune tune =
                     view.gui.EntityTuning.of(owner instanceof Plant
                             ? view.gui.FrostArt.PLANT_BLOCK_KEY
                             : view.gui.FrostArt.ZOMBIE_BLOCK_KEY);
-            float span = LawnGeometry.cellWidth() * BLOCK_SPAN * tune.scale;
-            ice.setBounds(LawnGeometry.columnLeft(columnOf(owner))
-                            + (LawnGeometry.cellWidth() - span) / 2f + tune.dx,
+            float span = LawnGeometry.cellWidth() * view.gui.FrostArt.BLOCK_SPAN * tune.scale;
+            float middle = LawnGeometry.columnLeft(cellOf(owner))
+                    + LawnGeometry.cellWidth() / 2f;
+            ice.setBounds(middle - span / 2f + tune.dx,
                     LawnGeometry.rowFeet(row) + tune.dy, span, span);
             iceRows.put(ice, Integer.valueOf(row));
         }
     }
+
 
     private Float mowerDepth(Actor actor) {
         if (mowers == null) {
@@ -620,7 +709,7 @@ public final class LawnField extends WidgetGroup {
         return Float.valueOf(layer.depth(LawnGeometry.rowFeet(index)));
     }
 
-    private static int columnOf(Object owner) {
+    private static int cellOf(Object owner) {
         if (owner instanceof Plant) {
             return (int) ((Plant) owner).getPosition().x;
         }
@@ -629,6 +718,17 @@ public final class LawnField extends WidgetGroup {
         }
         return 0;
     }
+
+    private static float iceAlpha(Object owner) {
+        int stage = FREEZE_STAGES;
+        if (owner instanceof Plant) {
+            stage = Math.max(1, Math.min(FREEZE_STAGES,
+                    ((Plant) owner).getFreezeLevel()));
+        }
+        float step = (ICE_MAX_ALPHA - ICE_MIN_ALPHA) / (FREEZE_STAGES - 1);
+        return ICE_MIN_ALPHA + step * (stage - 1);
+    }
+
 
 
     private void puff(float x, float y) {
@@ -1053,6 +1153,46 @@ public final class LawnField extends WidgetGroup {
         return controller.chapter() == null ? null : controller.chapter().name();
     }
 
+    public static void warmLevel(view.gui.Assets assets, model.ChapterType chapter,
+            java.util.List<model.entities.plants.Plants> deck,
+            java.util.List<model.entities.zombies.Zombies> horde) {
+        if (assets == null) {
+            return;
+        }
+        if (deck != null) {
+            for (model.entities.plants.Plants type : deck) {
+                model.entities.plants.PlantRecord record =
+                        model.entities.plants.PlantData.record(type);
+                if (record != null && record.getAnimations().hasPlant()) {
+                    assets.prefetch(record.getAnimations().getPlant());
+                }
+            }
+        }
+        if (horde != null) {
+            for (model.entities.zombies.Zombies type : horde) {
+                warmZombie(assets, type);
+            }
+        }
+        assets.prefetch(view.gui.FrostArt.ICE_PLANT);
+        assets.prefetch(view.gui.FrostArt.ICE_ZOMBIE);
+        assets.prefetch(view.gui.ChapterArt.gravestone(chapter, null));
+    }
+
+    private static void warmZombie(view.gui.Assets assets,
+            model.entities.zombies.Zombies type) {
+        model.entities.zombies.ZombieRecord record =
+                model.entities.zombies.ZombieData.of(type);
+        if (record == null) {
+            return;
+        }
+        if (record.isComposite()) {
+            assets.prefetch(record.getBodyPath());
+            assets.prefetch(record.getHeadPath());
+        } else if (record.hasAnimation()) {
+            assets.prefetch(record.getAnimationPath());
+        }
+    }
+
     private Actor zombieActor(model.entities.zombies.Zombie zombie) {
         model.entities.zombies.ZombieRecord record =
                 model.entities.zombies.ZombieData.of(zombie.getOrigin());
@@ -1475,10 +1615,12 @@ public final class LawnField extends WidgetGroup {
 
     @Override
     public void draw(Batch batch, float parentAlpha) {
+        paintIcyGround(batch, parentAlpha);
         if (showGrid) {
             paintGrid(batch, parentAlpha);
         }
-        if (armed != null && hoverColumn >= 0 && hoverRow >= 0) {
+        paintDeadline(batch, parentAlpha);
+        if (aiming() && hoverColumn >= 0 && hoverRow >= 0) {
             paintHover(batch, parentAlpha);
         }
         super.draw(batch, parentAlpha);
@@ -1499,14 +1641,59 @@ public final class LawnField extends WidgetGroup {
         }
     }
 
-    private void paintHover(Batch batch, float parentAlpha) {
-        boolean free = controller.isFree(hoverColumn, hoverRow);
-        Drawable tint = ui.primitives().flat(Theme.alpha(
-                free ? Theme.GREEN_LIGHT : Theme.RED, 0.28f));
+    private void paintDeadline(Batch batch, float parentAlpha) {
+        int column = controller.deadlineColumn();
+        if (column < 0) {
+            return;
+        }
+        float x = LawnGeometry.columnLeft(column) + LawnGeometry.cellWidth();
+        float bottom = LawnGeometry.rowFeet(controller.rows() - 1);
+        float top = LawnGeometry.rowFeet(0) + LawnGeometry.cellHeight();
+        float pulse = DEADLINE_LOW + (DEADLINE_HIGH - DEADLINE_LOW)
+                * (float) (0.5d + 0.5d * Math.sin(PamActor.sharedClock() * DEADLINE_RATE));
         batch.setColor(1f, 1f, 1f, parentAlpha);
-        tint.draw(batch, LawnGeometry.columnLeft(hoverColumn),
-                LawnGeometry.rowFeet(hoverRow),
-                LawnGeometry.cellWidth(), LawnGeometry.cellHeight());
+        ui.primitives().flat(Theme.alpha(Theme.RED, pulse))
+                .draw(batch, x - DEADLINE_WIDTH / 2f, bottom, DEADLINE_WIDTH, top - bottom);
+    }
+
+    private boolean aiming() {
+        return armed != null || tool != Tool.NONE;
+    }
+
+    private Color hoverTint() {
+        if (tool == Tool.SHOVEL) {
+            return plantAt(hoverColumn, hoverRow) == null ? Theme.RED : Theme.SHOVEL_MARK;
+        }
+        if (tool == Tool.FOOD) {
+            return plantAt(hoverColumn, hoverRow) == null ? Theme.RED : Theme.GREEN_LIGHT;
+        }
+        return controller.isFree(hoverColumn, hoverRow) ? Theme.GREEN_LIGHT : Theme.RED;
+    }
+
+    private Plant plantAt(int column, int row) {
+        for (Plant plant : controller.planted()) {
+            if ((int) plant.getPosition().x == column
+                    && (int) plant.getPosition().y == row) {
+                return plant;
+            }
+        }
+        return null;
+    }
+
+    private void paintHover(Batch batch, float parentAlpha) {
+        Color mark = hoverTint();
+        float x = LawnGeometry.columnLeft(hoverColumn);
+        float y = LawnGeometry.rowFeet(hoverRow);
+        float width = LawnGeometry.cellWidth();
+        float height = LawnGeometry.cellHeight();
+        batch.setColor(1f, 1f, 1f, parentAlpha);
+        ui.primitives().flat(Theme.alpha(mark, HOVER_FILL))
+                .draw(batch, x, y, width, height);
+        Drawable edge = ui.primitives().flat(Theme.alpha(mark, HOVER_EDGE));
+        edge.draw(batch, x, y, width, HOVER_LINE);
+        edge.draw(batch, x, y + height - HOVER_LINE, width, HOVER_LINE);
+        edge.draw(batch, x, y, HOVER_LINE, height);
+        edge.draw(batch, x + width - HOVER_LINE, y, HOVER_LINE, height);
     }
 
     private void syncArea() {

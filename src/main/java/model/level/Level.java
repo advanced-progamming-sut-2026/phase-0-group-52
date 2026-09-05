@@ -36,6 +36,14 @@ public abstract class Level extends AttackPattern {
         return allowedplants == null || allowedplants.isEmpty() || allowedplants.contains(type);
     }
 
+    public String objective() {
+        return "Survive the attack - do not let a zombie reach your house.";
+    }
+
+    public String objectiveTag() {
+        return "DEFEND THE HOUSE";
+    }
+
     public void onTick(Game game) {}
 
     public void onWaveStart(Game game) {}

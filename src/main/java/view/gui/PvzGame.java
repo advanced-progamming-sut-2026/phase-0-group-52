@@ -139,6 +139,9 @@ public final class PvzGame extends Game {
         }
         syncToModel(false);
         syncLayoutEditor();
+        if (context.assets() != null) {
+            context.assets().pumpPrefetch();
+        }
         super.render();
 
         if (com.badlogic.gdx.Gdx.input.isKeyJustPressed(com.badlogic.gdx.Input.Keys.F10)) {

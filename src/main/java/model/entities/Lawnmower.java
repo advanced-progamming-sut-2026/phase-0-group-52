@@ -27,6 +27,7 @@ public class Lawnmower {
                 : new java.util.ArrayList<model.entities.zombies.Zombie>(game.getZombies())) {
             if (z.getRow() == line && z.getPosition().x <= column + REACH) {
                 z.setHp(0);
+                game.getStats().recordMowerKill();
             }
         }
         model.entities.plants.PlantCombat.removeDeadZombies(game);
@@ -42,6 +43,7 @@ public class Lawnmower {
                 : new java.util.ArrayList<model.entities.zombies.Zombie>(game.getZombies())) {
             if (z.getRow() == line && z.getPosition().x <= column + REACH) {
                 z.setHp(0);
+                game.getStats().recordMowerKill();
             }
         }
         model.entities.plants.PlantCombat.removeDeadZombies(game);

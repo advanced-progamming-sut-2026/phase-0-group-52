@@ -53,6 +53,7 @@ public final class LevelBuilder {
                         difficultyOf(app), specialOf(app)));
         carryPlantFood(app, game);
         if (app != null) game.getChosenPlants().addAll(app.getPlantSelection());
+        game.setLevel(new model.level.HomeDefense(levelNumber, chapter, null, null));
         return game;
     }
 
@@ -116,12 +117,6 @@ public final class LevelBuilder {
         switch (chapter) {
             case ANCIENT_EGYPT:
             case DARK_AGES:
-                for (int i = 0; i < 3; i++) {
-                    int r = PlantCombat.RANDOM.nextInt(field.getRows());
-                    int c = 4 + PlantCombat.RANDOM.nextInt(field.getCols() - 4);
-                    Cell cell = field.getCell(c, r);
-                    if (cell != null) cell.setType(CellType.TOMBSTONE);
-                }
                 break;
             case BIG_WAVE_BEACH:
                 for (int r = 0; r < field.getRows(); r++) {
@@ -173,21 +168,33 @@ public final class LevelBuilder {
     private static ArrayList<Wave> buildWaves(ChapterType chapter, int levelNumber,
             int difficulty, model.level.SpecialLevel special) {
         ArrayList<Wave> waves = new ArrayList<Wave>();
-        int count = model.level.WavePlan.waveCount(levelNumber);
+        int count = model.level.WavePlan.waveCount(levelNumber, special);
         java.util.List<Zombies> roster = model.level.WavePlan.restrict(
                 model.level.WavePlan.roster(chapter, levelNumber), special);
         java.util.Random random = new java.util.Random(
                 (chapter == null ? 0 : chapter.ordinal()) * 977L + levelNumber * 31L + difficulty);
         for (int w = 0; w < count; w++) {
-            double budget = model.level.WavePlan.budget(levelNumber, difficulty, w, count);
+            double budget = model.level.WavePlan.budget(levelNumber, difficulty, w,
+                    count, special);
             ArrayList<Zombie> zs = new ArrayList<Zombie>();
             for (Zombies type : model.level.WavePlan.compose(roster, budget, random)) {
                 int row = random.nextInt(GameField.ROWS);
                 zs.add(ZombieFactory.create(type, row, SPAWN_COLUMN, chapter));
             }
+            markFoodCarrier(zs, w, random);
             waves.add(new Wave(zs, w + 1, 0));
         }
         return waves;
+    }
+
+    public static final int FIRST_FOOD_WAVE = 1;
+
+    private static void markFoodCarrier(ArrayList<Zombie> wave, int waveIndex,
+            java.util.Random random) {
+        if (waveIndex < FIRST_FOOD_WAVE || wave.isEmpty()) {
+            return;
+        }
+        wave.get(random.nextInt(wave.size())).setCarriesPlantFood(true);
     }
 
     private static Zombies[] poolFor(ChapterType chapter) {

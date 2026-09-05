@@ -34,6 +34,7 @@ public class LevelController {
     private boolean paused;
     private boolean won;
     private String outcome;
+    private String special;
 
     public LevelController(App app) {
         this.app = app;
@@ -47,16 +48,94 @@ public class LevelController {
         if (chapter == null) {
             return new Result(false, "Enter a chapter first.", null);
         }
-        if (app.getPlantSelection().isEmpty()) {
+        if (app.getPlantSelection().isEmpty() && !suppliesOwnPlants()) {
             return new Result(false, "Choose at least one plant.", null);
         }
         reset();
-        Game game = LevelBuilder.build(app, chapter, app.getSelectedLevel());
+        special = app.getPendingSpecial();
+        Game game = special == null
+                ? LevelBuilder.build(app, chapter, app.getSelectedLevel())
+                : LevelBuilder.buildSpecial(app, chapter, app.getSelectedLevel(), special);
+        if (game == null) {
+            special = null;
+            game = LevelBuilder.build(app, chapter, app.getSelectedLevel());
+        }
         game.setApp(app);
         app.setGame(game);
+        app.setPendingSpecial(null);
         resetMowers(game);
         app.setCurrentmenu(MenuType.GAME_MENU);
         return new Result(true, "Level started.", null);
+    }
+
+    private boolean suppliesOwnPlants() {
+        model.level.SpecialLevel kind =
+                model.level.SpecialLevel.byKey(app.getPendingSpecial());
+        return kind == model.level.SpecialLevel.CONVEYOR
+                || kind == model.level.SpecialLevel.PLANT_WHAT_YOU_GET;
+    }
+
+    public boolean isConveyor() {
+        Game game = game();
+        return game != null && game.getLevel() instanceof model.level.ConveyorBeltLevel;
+    }
+
+    public List<Plants> belt() {
+        Game game = game();
+        if (game == null || !(game.getLevel() instanceof model.level.ConveyorBeltLevel)) {
+            return new ArrayList<Plants>();
+        }
+        return new ArrayList<Plants>(
+                ((model.level.ConveyorBeltLevel) game.getLevel()).getBelt());
+    }
+
+    public int deadlineColumn() {
+        Game game = game();
+        return game != null && game.getLevel() instanceof model.level.DeadLine
+                ? ((model.level.DeadLine) game.getLevel()).getDeadlineCol() : -1;
+    }
+
+    public List<Plant> guarded() {
+        Game game = game();
+        if (game == null || !(game.getLevel() instanceof model.level.SaveOurSeeds)) {
+            return new ArrayList<Plant>();
+        }
+        return ((model.level.SaveOurSeeds) game.getLevel()).getProtectedPlants();
+    }
+
+    public double secondsLeft() {
+        Game game = game();
+        if (game == null || !(game.getLevel() instanceof model.level.TimedWar)) {
+            return -1d;
+        }
+        return ((model.level.TimedWar) game.getLevel()).getRemainingTime()
+                / Game.TICKS_PER_SECOND;
+    }
+
+    public int plantsLost() {
+        Game game = game();
+        return game != null && game.getLevel() instanceof model.level.LoveYourPlants
+                ? ((model.level.LoveYourPlants) game.getLevel()).getLostPlants() : -1;
+    }
+
+    public int plantsAllowedToLose() {
+        Game game = game();
+        return game != null && game.getLevel() instanceof model.level.LoveYourPlants
+                ? ((model.level.LoveYourPlants) game.getLevel()).getMaxLostPlants() : -1;
+    }
+
+    public boolean wavesHeld() {
+        Game game = game();
+        return game != null && game.getLevel() != null && game.getLevel().areWavesHeld();
+    }
+
+    public Result releaseWaves() {
+        Game game = game();
+        if (game == null || !(game.getLevel() instanceof model.level.PlantWhatYouGet)) {
+            return new Result(false, "Nothing to start.", null);
+        }
+        ((model.level.PlantWhatYouGet) game.getLevel()).startWaves(game.getCurrentTick());
+        return new Result(true, "Here they come!", null);
     }
 
     public Game game() {
@@ -88,14 +167,15 @@ public class LevelController {
 
     public String objective() {
         Game game = game();
-        if (game != null && game.getLevel() != null) {
-            String goal = game.getLevel().getClass().getSimpleName();
-            if (goal.equals("DeadLine")) {
-                return "Do not let the zombies cross the line!";
-            }
-            return "Survive: " + goal;
-        }
-        return "Do not let the zombies reach your house!";
+        return game == null || game.getLevel() == null
+                ? "Do not let the zombies reach your house."
+                : game.getLevel().objective();
+    }
+
+    public String objectiveTag() {
+        Game game = game();
+        return game == null || game.getLevel() == null
+                ? "DEFEND THE HOUSE" : game.getLevel().objectiveTag();
     }
 
     public Result feed(int column, int row) {
@@ -117,12 +197,14 @@ public class LevelController {
     }
 
     public java.util.List<Integer> takeChilledRows() {
-        if (loop == null || !(loop.mechanics()
-                instanceof model.mechanics.FrostbiteCavesMechanics)) {
+        Game game = game();
+        if (game == null || game.getGusts().isEmpty()) {
             return new java.util.ArrayList<Integer>();
         }
-        return ((model.mechanics.FrostbiteCavesMechanics) loop.mechanics())
-                .takeChilledRows();
+        java.util.List<Integer> rows =
+                new java.util.ArrayList<Integer>(game.getGusts());
+        game.getGusts().clear();
+        return rows;
     }
 
     public java.util.List<model.entities.Projectile> projectiles() {
@@ -312,10 +394,17 @@ public class LevelController {
         if (!isFree(column, row)) {
             return new Result(false, whyBlocked(column, row), null);
         }
-        if (game.isOnCooldown(type)) {
+        if (game.getLevel() != null && !game.getLevel().isPlantAllowed(type)) {
+            return new Result(false, type.getName() + " is locked in this level.", null);
+        }
+        boolean fromBelt = game.getLevel() instanceof model.level.ConveyorBeltLevel;
+        if (fromBelt && !((model.level.ConveyorBeltLevel) game.getLevel()).hasOnBelt(type)) {
+            return new Result(false, "That plant is not on the belt.", null);
+        }
+        if (!fromBelt && game.isOnCooldown(type)) {
             return new Result(false, type.getName() + " is recharging.", null);
         }
-        if (!game.spendSun(type.getCost())) {
+        if (!fromBelt && !game.spendSun(type.getCost())) {
             return new Result(false, "Not enough sun.", null);
         }
         model.entities.Cell target = game.getField().getCell(column, row);
@@ -327,8 +416,13 @@ public class LevelController {
         game.getField().getCell(column, row).getPlants().add(plant);
         game.getPlants().add(plant);
         plant.onPlanted(game);
+        game.getStats().recordPlantPlanted(type, column, row);
         applyStoredBoost(game, plant, type);
-        game.startCooldown(type);
+        if (fromBelt) {
+            ((model.level.ConveyorBeltLevel) game.getLevel()).takeFromBelt(type);
+        } else {
+            game.startCooldown(type);
+        }
         award(type);
         return new Result(true, type.getName() + " planted.", type);
     }
@@ -363,6 +457,7 @@ public class LevelController {
             return new Result(false, "That sun is gone.", null);
         }
         game.addSun(sun.getAmount());
+        game.getStats().addSunCollected(sun.getAmount());
         return new Result(true, "+" + sun.getAmount() + " sun.", null);
     }
 
@@ -386,6 +481,7 @@ public class LevelController {
             if (ended != null) {
                 outcome = ended;
                 won = game.isWon();
+                new controller.LevelEndService().finish(app, game);
                 return;
             }
         }
@@ -412,14 +508,27 @@ public class LevelController {
     }
 
     public Result restart() {
+        java.util.List<Plants> deck = new ArrayList<Plants>(
+                app.getGame() == null ? app.getPlantSelection()
+                        : app.getGame().getChosenPlants());
+        String again = special;
         app.setSuspendedGame(null);
         app.setGame(null);
         reset();
+        app.setPendingSpecial(again);
+        if (app.getPlantSelection().isEmpty() && !deck.isEmpty()) {
+            app.getPlantSelection().addAll(deck);
+        }
         return start();
+    }
+
+    public model.level.SpecialLevel special() {
+        return model.level.SpecialLevel.byKey(special);
     }
 
     private void reset() {
         loop = null;
+        special = null;
         threatAtStart = 0d;
         carry = 0f;
         outcome = null;
@@ -469,8 +578,7 @@ public class LevelController {
     public Result leave() {
         app.setSuspendedGame(null);
         app.setGame(null);
-        app.getPlantSelection().clear();
-        app.getBoostedSelection().clear();
+        new controller.LevelEndService().clearDeck(app);
         reset();
         app.setCurrentmenu(MenuType.CHAPTER_MENU);
         return new Result(true, "Left the level.", null);

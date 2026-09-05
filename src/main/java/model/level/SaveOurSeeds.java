@@ -22,6 +22,16 @@ public class SaveOurSeeds extends Level {
     public void protectPlant(Plant plant) { protectedPlants.add(plant); }
 
     @Override
+    public String objective() {
+        return "Keep every endangered plant alive.";
+    }
+
+    @Override
+    public String objectiveTag() {
+        return "SAVE OUR SEEDS";
+    }
+
+    @Override
     public String checkDefeat(Game game) {
         for (Plant p : protectedPlants)
             if (p.isDead() || !game.getPlants().contains(p))

@@ -25,6 +25,16 @@ public class PlantWhatYouGet extends ConveyorBeltLevel {
     public int getWaveStartTick() { return waveStartTick; }
 
     @Override
+    public String objective() {
+        return "Plant everything the belt gives you, then start the waves.";
+    }
+
+    @Override
+    public String objectiveTag() {
+        return "PLANT WHAT YOU GET";
+    }
+
+    @Override
     public boolean areWavesHeld() { return !wavesStarted; }
 
     @Override

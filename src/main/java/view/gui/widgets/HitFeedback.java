@@ -14,6 +14,12 @@ public final class HitFeedback {
 
     private final Map<Actor, Float> hurt = new HashMap<Actor, Float>();
 
+    private float ceiling = 1f;
+
+    public void setCeiling(float value) {
+        this.ceiling = value;
+    }
+
     public void hit(Actor actor) {
         if (actor != null) {
             hurt.put(actor, FLASH_TIME);
@@ -35,13 +41,13 @@ public final class HitFeedback {
             float left = entry.getValue() - delta;
             Actor actor = entry.getKey();
             if (left <= 0f || actor.getStage() == null) {
-                paint(actor, 1f, 1f, 1f);
+                paint(actor, ceiling, ceiling, ceiling);
                 fading.remove();
                 continue;
             }
             entry.setValue(left);
             float pulse = (float) Math.abs(Math.sin(left / FLASH_TIME * Math.PI));
-            float shade = 1f - pulse * FLASH_STRENGTH;
+            float shade = ceiling * (1f - pulse * FLASH_STRENGTH);
             paint(actor, shade, shade, shade);
         }
     }

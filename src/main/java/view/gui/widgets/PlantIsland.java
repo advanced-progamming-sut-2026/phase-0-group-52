@@ -75,6 +75,7 @@ public final class PlantIsland extends WidgetGroup {
 
     public PlantIsland(UiKit ui, Assets assets, ChapterType chapter, String islandArt,
             String decorArt, State state, Plants prize, Listener listener) {
+        warm(assets, chapter, prize);
         this.state = state;
         this.listener = listener;
         this.world = chapter;
@@ -266,6 +267,17 @@ public final class PlantIsland extends WidgetGroup {
         pinataRig.play(pop, false, null);
         pinata.addAction(Actions.sequence(Actions.delay(BURST_HOLD),
                 Actions.fadeOut(BURST_FADE), Actions.run(done)));
+    }
+
+    private static void warm(Assets assets, ChapterType chapter, Plants prize) {
+        if (assets == null) {
+            return;
+        }
+        assets.prefetch(WorldMapArt.CONFETTI);
+        assets.prefetch(WorldMapArt.pinata(chapter));
+        if (prize != null) {
+            assets.prefetch(assets.plantPam(prize));
+        }
     }
 
     private Actor mystery(UiKit ui, Assets assets, ChapterType chapter) {

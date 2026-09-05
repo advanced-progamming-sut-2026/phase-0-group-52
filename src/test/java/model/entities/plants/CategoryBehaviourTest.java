@@ -191,8 +191,10 @@ class CategoryBehaviourTest {
                 ChapterType.ANCIENT_EGYPT);
         doomed.setHp(1d);
         game.getZombies().add(doomed);
-        run(game, (model.GameLoop.MIN_LEVEL_TICKS / (double) Game.TICKS_PER_SECOND) + 10d);
-        assertTrue(game.isGameOver(), "a real level should still finish");
+        game.getWaves().add(new model.Wave(new ArrayList<Zombie>(), 1, 0));
+        run(game, 20d);
+        assertTrue(game.isGameOver(),
+                "a real level ends as soon as the last wave is cleared");
     }
 
     @Test

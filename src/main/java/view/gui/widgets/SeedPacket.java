@@ -375,6 +375,13 @@ public final class SeedPacket extends WidgetGroup {
     private boolean affordable = true;
     private boolean unaffordable;
 
+    public SeedPacket setFree(boolean value) {
+        if (priceTab != null) {
+            priceTab.setVisible(!value);
+        }
+        return this;
+    }
+
     public SeedPacket setLocked(boolean value) {
         if (this.locked != value) {
             this.locked = value;

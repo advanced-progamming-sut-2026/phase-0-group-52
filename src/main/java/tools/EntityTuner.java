@@ -38,12 +38,11 @@ public final class EntityTuner extends ApplicationAdapter {
     private static final float REPEAT_RATE = 0.035f;
     private static final float BOOST = 10f;
     private static final float MOWER_SCALE = 2.8f;
+    private static final float TOMB_CANVAS = 390f;
     private static final float ICE_SPAN = 1.6f;
     private static final float POT_X = 420f;
     private static final float POT_Y = 180f;
     private static final float POUR_LOOP = 1.6f;
-    private static final String TOMB_PAM =
-            "768/INITIAL/GRAVESTONES/EGYPT_HIEROGLYPH/EGYPT_HIEROGLYPH.PAM";
 
     private Assets assets;
     private UiKit ui;
@@ -455,11 +454,20 @@ public final class EntityTuner extends ApplicationAdapter {
     }
 
     private Actor tombActor() {
+        String rig = view.gui.ChapterArt.gravestone(chapter,
+                chapter == ChapterType.DARK_AGES ? tombBonus() : null);
         clips = new java.util.ArrayList<String>(java.util.Arrays.asList(
                 "undamaged", "damage1", "damage2", "damage3", "damage4"));
-        PamActor actor = PlantStage.anchored(assets, TOMB_PAM,
-                clips.get(Math.floorMod(clipIndex, clips.size())), 390f, 390f);
-        return actor.isReady() ? actor : null;
+        String clip = clips.get(Math.floorMod(clipIndex, clips.size()));
+        PamActor actor = PlantStage.anchored(assets, rig,
+                view.gui.FrostArt.clipOf(assets, rig, clip, "undamaged"),
+                TOMB_CANVAS, TOMB_CANVAS);
+        return actor != null && actor.isReady() ? actor : null;
+    }
+
+    private String tombBonus() {
+        int pick = Math.floorMod(plantIndex, 3);
+        return pick == 0 ? null : pick == 1 ? "sun" : "plant food";
     }
 
     private Actor mowerActor() {

@@ -49,6 +49,9 @@ public final class MainMenuScreen extends BaseScreen {
     private static final float GREENHOUSE_HEIGHT = 160f;
     private static final float BEE_SIZE = 62f;
     private static final float BEE_EXTENT = 300f;
+    private static final float CAN_SIZE = 96f;
+    private static final float CAN_SHADOW = 5f;
+    private static final float CAN_SHADE = 0.32f;
     private static final float SHOP_DIM = 0.45f;
     private static final String[] BEE_CLIPS = {
             "idle", "idle", "idle", "idle", "idle", "idle", "idle", "idle",
@@ -382,6 +385,11 @@ public final class MainMenuScreen extends BaseScreen {
             layers.add(beeLayer);
         }
 
+        Table can = wateringCan();
+        if (can != null) {
+            layers.add(can);
+        }
+
         Table caption = new Table();
         caption.bottom().left();
         caption.add(new Label("GREENHOUSE", ui.skin(), "titleOnDark"))
@@ -393,6 +401,35 @@ public final class MainMenuScreen extends BaseScreen {
         Animations.attachPress(button);
         UiKit.onClick(button, action);
         return button;
+    }
+
+    private Table wateringCan() {
+        com.badlogic.gdx.graphics.g2d.TextureRegion art = context.assets() == null ? null
+                : context.assets().region(view.gui.screens.GreenhouseScreen.CAN_ICON);
+        if (art == null) {
+            return null;
+        }
+        float ratio = art.getRegionWidth() / (float) art.getRegionHeight();
+        Stack pair = new Stack();
+        pair.add(canLayer(art, ratio, com.badlogic.gdx.graphics.Color.BLACK, CAN_SHADOW));
+        pair.add(canLayer(art, ratio, com.badlogic.gdx.graphics.Color.WHITE, 0f));
+
+        Table holder = new Table();
+        holder.center();
+        holder.add(pair).size(CAN_SIZE * ratio + CAN_SHADOW, CAN_SIZE + CAN_SHADOW);
+        return holder;
+    }
+
+    private Table canLayer(com.badlogic.gdx.graphics.g2d.TextureRegion art, float ratio,
+            com.badlogic.gdx.graphics.Color tint, float drop) {
+        Image image = new Image(
+                new com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable(art));
+        image.setScaling(Scaling.fit);
+        image.setColor(tint.r, tint.g, tint.b, drop > 0f ? CAN_SHADE : 1f);
+        Table layer = new Table();
+        layer.add(image).size(CAN_SIZE * ratio, CAN_SIZE)
+                .padTop(drop * 2f).padLeft(drop * 2f);
+        return layer;
     }
 
     private Table shopButton(Runnable action) {
