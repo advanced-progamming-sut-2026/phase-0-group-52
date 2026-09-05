@@ -137,6 +137,10 @@ public abstract class Zombie {
 
     public int getRow() { return line; }
 
+    public boolean occupiesRow(int row) { return line == row; }
+
+    public int rowSpan() { return 1; }
+
     public double getHp() { return hp; }
     public void setHp(double hp) { this.hp = hp; }
 

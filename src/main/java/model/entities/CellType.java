@@ -9,7 +9,8 @@ public enum CellType {
     FROZEN,
     LOW_GROUND,
     NECROMANCY,
-    CRATER;
+    CRATER,
+    BURNING;
 
     public boolean isPlantable() {
         return this == NORMAL || this == LOW_GROUND || this == NECROMANCY;
@@ -17,5 +18,9 @@ public enum CellType {
 
     public boolean isWater() {
         return this == WATER;
+    }
+
+    public boolean isBurning() {
+        return this == BURNING;
     }
 }

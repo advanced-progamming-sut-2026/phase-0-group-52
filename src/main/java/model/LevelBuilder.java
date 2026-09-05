@@ -53,7 +53,9 @@ public final class LevelBuilder {
                         difficultyOf(app), specialOf(app)));
         carryPlantFood(app, game);
         if (app != null) game.getChosenPlants().addAll(app.getPlantSelection());
-        game.setLevel(new model.level.HomeDefense(levelNumber, chapter, null, null));
+        game.setLevel(levelNumber >= ChapterType.LEVELS_PER_CHAPTER
+                ? new model.level.ZombossLevel(levelNumber, chapter)
+                : new model.level.HomeDefense(levelNumber, chapter, null, null));
         return game;
     }
 

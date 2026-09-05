@@ -67,6 +67,24 @@ public class Cell {
         return plants.isEmpty();
     }
 
+    private int burnUntilTick;
+
+    public int getBurnUntilTick() { return burnUntilTick; }
+
+    public void burn(int untilTick) {
+        this.type = CellType.BURNING;
+        this.burnUntilTick = untilTick;
+    }
+
+    public boolean coolIfDue(int tick) {
+        if (type != CellType.BURNING || tick < burnUntilTick) {
+            return false;
+        }
+        type = CellType.NORMAL;
+        burnUntilTick = 0;
+        return true;
+    }
+
     public CellType getType() { return type; }
     public double getHp() { return hp; }
     public void setHp(double hp) { this.hp = hp; }

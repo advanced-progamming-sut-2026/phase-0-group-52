@@ -69,6 +69,10 @@ public class LevelController {
     }
 
     private boolean suppliesOwnPlants() {
+        if (app.getPendingSpecial() == null
+                && app.getSelectedLevel() >= ChapterType.LEVELS_PER_CHAPTER) {
+            return true;
+        }
         model.level.SpecialLevel kind =
                 model.level.SpecialLevel.byKey(app.getPendingSpecial());
         return kind == model.level.SpecialLevel.CONVEYOR
@@ -87,6 +91,10 @@ public class LevelController {
         }
         return new ArrayList<Plants>(
                 ((model.level.ConveyorBeltLevel) game.getLevel()).getBelt());
+    }
+
+    public boolean suppliesFromBelt() {
+        return isConveyor() || isBossFight();
     }
 
     public int deadlineColumn() {
@@ -122,6 +130,39 @@ public class LevelController {
         Game game = game();
         return game != null && game.getLevel() instanceof model.level.LoveYourPlants
                 ? ((model.level.LoveYourPlants) game.getLevel()).getMaxLostPlants() : -1;
+    }
+
+    public boolean isBossFight() {
+        Game game = game();
+        return game != null && game.getLevel() instanceof model.level.ZombossLevel;
+    }
+
+    private model.level.ZombossLevel boss() {
+        Game game = game();
+        return game == null || !(game.getLevel() instanceof model.level.ZombossLevel)
+                ? null : (model.level.ZombossLevel) game.getLevel();
+    }
+
+    public float bossHealth() {
+        model.level.ZombossLevel fight = boss();
+        return fight == null ? 0f : fight.bossHealth();
+    }
+
+    public int bossSegments() {
+        model.level.ZombossLevel fight = boss();
+        return fight == null ? 0 : fight.bossSegments();
+    }
+
+    public boolean bossStunned() {
+        model.level.ZombossLevel fight = boss();
+        return fight != null && fight.bossStunned();
+    }
+
+    public java.util.List<model.Vec2> takeBossStrikes() {
+        model.level.ZombossLevel fight = boss();
+        return fight == null || fight.getBoss() == null
+                ? new java.util.ArrayList<model.Vec2>()
+                : fight.getBoss().takeStrikes();
     }
 
     public boolean wavesHeld() {
@@ -397,7 +438,8 @@ public class LevelController {
         if (game.getLevel() != null && !game.getLevel().isPlantAllowed(type)) {
             return new Result(false, type.getName() + " is locked in this level.", null);
         }
-        boolean fromBelt = game.getLevel() instanceof model.level.ConveyorBeltLevel;
+        boolean fromBelt = game.getLevel() instanceof model.level.ConveyorBeltLevel
+                || game.getLevel() instanceof model.level.ZombossLevel;
         if (fromBelt && !((model.level.ConveyorBeltLevel) game.getLevel()).hasOnBelt(type)) {
             return new Result(false, "That plant is not on the belt.", null);
         }
