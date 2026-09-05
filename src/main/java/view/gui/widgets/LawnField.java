@@ -87,6 +87,13 @@ public final class LawnField extends WidgetGroup {
     private static final float FOOD_GLOW_HIGH = 1f;
     private static final float FOOD_GLOW_RATE = 3.2f;
     private static final float FOOD_GLOW_BITE = 0.42f;
+    private static final float BURN_LOW = 0.28f;
+    private static final float BURN_HIGH = 0.52f;
+    private static final float BURN_RATE = 5.2f;
+    private static final float BURN_EDGE = 4f;
+    private static final float BOSS_SPAN = 3.6f;
+    private static final float BOSS_LIFT = 1.5f;
+    private static final float BOSS_STUN = 0.72f;
     private static final float DEADLINE_WIDTH = 5f;
     private static final float DEADLINE_LOW = 0.35f;
     private static final float DEADLINE_HIGH = 0.8f;
@@ -1148,7 +1155,11 @@ public final class LawnField extends WidgetGroup {
             if (entry.getValue() instanceof PamActor) {
                 ((PamActor) entry.getValue()).setRate(zombie.isEncased() ? 0f : 1f);
             }
-            placeZombie(entry.getValue(), value, zombie.getRow(), zombie, lit);
+            if (zombie instanceof model.entities.zombies.types.Zomboss) {
+                placeBoss(entry.getValue(), (model.entities.zombies.types.Zomboss) zombie);
+            } else {
+                placeZombie(entry.getValue(), value, zombie.getRow(), zombie, lit);
+            }
             hop(entry.getValue(), zombie, value);
             markRider(zombie, entry.getValue());
         }
@@ -1229,6 +1240,25 @@ public final class LawnField extends WidgetGroup {
         actor.setY(actor.getY() + lift);
     }
 
+    private void placeBoss(Actor actor, model.entities.zombies.types.Zomboss boss) {
+        view.gui.EntityTuning.Tune tune = view.gui.EntityTuning.of(
+                view.gui.EntityTuning.bossKey(chapterName()));
+        float width = LawnGeometry.cellWidth() * BOSS_SPAN * tune.scale;
+        float height = LawnGeometry.cellHeight() * boss.rowSpan() * BOSS_LIFT * tune.scale;
+        float middle = LawnGeometry.areaX()
+                + ((float) boss.getPosition().x + 0.5f) * LawnGeometry.cellWidth();
+        float feet = LawnGeometry.rowFeet(boss.getRow() + boss.rowSpan() - 1);
+        actor.setBounds(middle - width / 2f + tune.dx, feet + tune.dy, width, height);
+        if (actor instanceof PamActor) {
+            ((PamActor) actor).setRate(boss.isStunned() ? 0f : 1f);
+            if (!feedback.isFlashing(actor)) {
+                float dusk = night();
+                float shade = boss.isStunned() ? BOSS_STUN : 1f;
+                ((PamActor) actor).setTint(dusk, dusk * shade, dusk * shade, 1f);
+            }
+        }
+    }
+
     private void placeZombie(Actor actor, float column, int row,
             model.entities.zombies.Zombie zombie, float lane) {
         view.gui.EntityTuning.place(actor, view.gui.EntityTuning.of(
@@ -1304,7 +1334,29 @@ public final class LawnField extends WidgetGroup {
         return swap.isReady() ? swap : null;
     }
 
+    public static String bossRig(model.ChapterType chapter) {
+        String world = view.gui.ChapterArt.world(chapter);
+        String root = "ANCIENT_EGYPT".equals(chapter == null ? "" : chapter.name())
+                ? "INITIAL" : "FULL";
+        return "768/" + root + "/ZOMBIE/ZOMBIE_" + world + "_ZOMBOSS/ZOMBIE_"
+                + world + "_ZOMBOSS.PAM";
+    }
+
+    private Actor bossActor(model.entities.zombies.types.Zomboss boss) {
+        String rig = bossRig(boss.getWorld());
+        PamActor actor = view.gui.FrostArt.rig(assets, rig,
+                "idle", "attack", "animation", "walk");
+        if (actor == null) {
+            return null;
+        }
+        actor.setFit(true);
+        return actor;
+    }
+
     private Actor zombieActor(model.entities.zombies.Zombie zombie) {
+        if (zombie instanceof model.entities.zombies.types.Zomboss) {
+            return bossActor((model.entities.zombies.types.Zomboss) zombie);
+        }
         model.entities.zombies.ZombieRecord record =
                 model.entities.zombies.ZombieData.of(zombie.getOrigin());
         if (record == null || assets == null) {
@@ -1733,6 +1785,7 @@ public final class LawnField extends WidgetGroup {
     @Override
     public void draw(Batch batch, float parentAlpha) {
         paintIcyGround(batch, parentAlpha);
+        paintBurntGround(batch, parentAlpha);
         if (showGrid) {
             paintGrid(batch, parentAlpha);
         }
@@ -1771,6 +1824,33 @@ public final class LawnField extends WidgetGroup {
         batch.setColor(1f, 1f, 1f, parentAlpha);
         ui.primitives().flat(Theme.alpha(Theme.RED, pulse))
                 .draw(batch, x - DEADLINE_WIDTH / 2f, bottom, DEADLINE_WIDTH, top - bottom);
+    }
+
+    private void paintBurntGround(Batch batch, float parentAlpha) {
+        if (controller.game() == null || controller.game().getField() == null) {
+            return;
+        }
+        model.GameField field = controller.game().getField();
+        float pulse = BURN_LOW + (BURN_HIGH - BURN_LOW)
+                * (float) (0.5d + 0.5d * Math.sin(PamActor.sharedClock() * BURN_RATE));
+        Drawable ember = ui.primitives().flat(Theme.alpha(Theme.EMBER, pulse));
+        Drawable edge = ui.primitives().flat(Theme.alpha(Theme.RED, pulse));
+        batch.setColor(1f, 1f, 1f, parentAlpha);
+        for (int column = 0; column < field.getCols(); column++) {
+            for (int row = 0; row < field.getRows(); row++) {
+                model.entities.Cell cell = field.getCell(column, row);
+                if (cell == null || !cell.getType().isBurning()) {
+                    continue;
+                }
+                float x = LawnGeometry.columnLeft(column);
+                float y = LawnGeometry.rowFeet(row);
+                float w = LawnGeometry.cellWidth();
+                float h = LawnGeometry.cellHeight();
+                ember.draw(batch, x, y, w, h);
+                edge.draw(batch, x, y, w, BURN_EDGE);
+                edge.draw(batch, x, y + h - BURN_EDGE, w, BURN_EDGE);
+            }
+        }
     }
 
     private boolean aiming() {

@@ -176,6 +176,42 @@ final class ScreenTour {
         captureSpecial(model.level.SpecialLevel.PLANT_WHAT_YOU_GET,
                 model.ChapterType.DARK_AGES, "39-plant-what-you-get");
         captureMinigames();
+        captureBosses();
+    }
+
+    private void captureBosses() {
+        captureBoss(model.ChapterType.ANCIENT_EGYPT, "50-boss-egypt");
+        captureBoss(model.ChapterType.FROSTBITE_CAVES, "51-boss-frostbite");
+        captureBoss(model.ChapterType.DARK_AGES, "52-boss-dark");
+        captureBoss(model.ChapterType.BIG_WAVE_BEACH, "53-boss-beach");
+    }
+
+    private void captureBoss(model.ChapterType chapter, String name) {
+        model.App app = game.context().app();
+        app.setGame(null);
+        game.navigator().goMenu(MenuType.MAIN_MENU);
+        pump(2);
+        app.setSelectedChapter(chapter);
+        app.setSelectedLevel(model.ChapterType.LEVELS_PER_CHAPTER);
+        app.getPlantSelection().clear();
+        app.setPendingSpecial(null);
+        if (!new controller.menu.LevelController(app).start().isSuccess()) {
+            return;
+        }
+        game.navigator().goMenu(MenuType.GAME_MENU);
+        pump(4);
+        if (!(game.getScreen() instanceof view.gui.screens.LevelScreen)) {
+            app.setGame(null);
+            return;
+        }
+        ((view.gui.screens.LevelScreen) game.getScreen()).show();
+        controller.menu.LevelController runner = new controller.menu.LevelController(app);
+        for (int tick = 0; tick < 200; tick++) {
+            runner.tick((float) model.Game.SECONDS_PER_TICK);
+        }
+        pump(20);
+        Screenshots.capture("screenshots/tour-" + name + ".png");
+        app.setGame(null);
     }
 
     private void captureMinigames() {

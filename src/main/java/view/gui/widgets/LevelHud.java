@@ -331,7 +331,7 @@ public final class LevelHud extends Table {
 
     public void rebuildPackets() {
         packets.clearChildren();
-        if (controller.isConveyor()) {
+        if (controller.isConveyor() || controller.isBossFight()) {
             rebuildBelt();
             return;
         }
@@ -410,14 +410,20 @@ public final class LevelHud extends Table {
         }
         sunLabel.setText(String.valueOf(controller.sun()));
         foodBank.setFilled(controller.plantFood());
-        meter.set(controller.waveCount(), controller.threatProgress());
+        if (controller.isBossFight()) {
+            meter.setBoss(view.gui.widgets.WaveMeter.BOSS_SEGMENTS,
+                    controller.bossHealth(), controller.bossStunned());
+        } else {
+            meter.set(controller.waveCount(), controller.threatProgress());
+        }
         User user = context.user();
         coinLabel.setText(user == null ? "0" : String.valueOf(user.getCoins()));
         gemLabel.setText(user == null ? "0" : String.valueOf(user.getGems()));
         title.setText(caption());
         goal.setText(controller.objectiveTag());
         extra.setText(sideNote());
-        if (controller.isConveyor() && controller.belt().size() != beltSize) {
+        if ((controller.isConveyor() || controller.isBossFight())
+                && controller.belt().size() != beltSize) {
             beltSize = controller.belt().size();
             rebuildPackets();
         }
