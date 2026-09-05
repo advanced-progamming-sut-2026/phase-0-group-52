@@ -20,7 +20,7 @@ public final class PlantCombat {
     public static Zombie frontmostAhead(Game game, int row, double fromX) {
         Zombie best = null;
         for (Zombie z : game.getZombies()) {
-            if (z.getRow() != row || z.isDead()) continue;
+            if (!z.occupiesRow(row) || z.isDead()) continue;
             if (z.getPosition().x >= fromX
                     && (best == null || z.getPosition().x < best.getPosition().x))
                 best = z;
@@ -31,7 +31,7 @@ public final class PlantCombat {
     public static Zombie nearestBehind(Game game, int row, double fromX) {
         Zombie best = null;
         for (Zombie z : game.getZombies()) {
-            if (z.getRow() != row || z.isDead()) continue;
+            if (!z.occupiesRow(row) || z.isDead()) continue;
             if (z.getPosition().x < fromX
                     && (best == null || z.getPosition().x > best.getPosition().x))
                 best = z;

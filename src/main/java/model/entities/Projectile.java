@@ -231,7 +231,7 @@ public class Projectile {
 
     private Zombie firstHit(Game game) {
         for (Zombie zombie : game.getZombies()) {
-            if (zombie.getRow() != row || struck.contains(zombie)) {
+            if (!zombie.occupiesRow(row) || struck.contains(zombie)) {
                 continue;
             }
             if (kind == Kind.LOB

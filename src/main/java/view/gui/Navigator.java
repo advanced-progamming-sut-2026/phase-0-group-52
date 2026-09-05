@@ -52,7 +52,9 @@ public final class Navigator {
             Entry entry = walk.next();
             if (entry.place == Place.MENU
                     && (entry.menu == MenuType.GAME_MENU
-                        || entry.menu == MenuType.CHOOSE_PLANT_MENU)) {
+                        || entry.menu == MenuType.CHOOSE_PLANT_MENU
+                        || entry.menu == MenuType.MINIGAME_MENU
+                        || entry.menu == MenuType.BEGHOULED_MENU)) {
                 walk.remove();
             }
         }

@@ -85,7 +85,7 @@ public class Game {
     public ArrayList<Zombie> getZombiesInRow(int row) {
         ArrayList<Zombie> result = new ArrayList<>();
         for (Zombie z : zombies) {
-            if (z.getRow() == row) result.add(z);
+            if (z.occupiesRow(row)) result.add(z);
         }
         return result;
     }
@@ -202,6 +202,12 @@ public class Game {
 
     public boolean lawnIsLitteredWithSun() {
         return getSuns().size() >= SUN_ON_LAWN_CAP;
+    }
+
+    private final java.util.List<Integer> gusts = new java.util.ArrayList<Integer>();
+
+    public java.util.List<Integer> getGusts() {
+        return gusts;
     }
 
     private final java.util.List<model.Vec2> risings =

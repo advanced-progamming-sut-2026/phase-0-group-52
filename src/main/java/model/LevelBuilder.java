@@ -53,7 +53,9 @@ public final class LevelBuilder {
                         difficultyOf(app), specialOf(app)));
         carryPlantFood(app, game);
         if (app != null) game.getChosenPlants().addAll(app.getPlantSelection());
-        game.setLevel(new model.level.HomeDefense(levelNumber, chapter, null, null));
+        game.setLevel(levelNumber >= ChapterType.LEVELS_PER_CHAPTER
+                ? new model.level.ZombossLevel(levelNumber, chapter)
+                : new model.level.HomeDefense(levelNumber, chapter, null, null));
         return game;
     }
 
@@ -111,6 +113,82 @@ public final class LevelBuilder {
                 level = tw;break;
             default: return null;}
         game.setLevel(level);return game;
+    }
+
+    public static final int MINIGAME_SUN = 150;
+    public static final int IZOMBIE_WAVES = 0;
+    public static final int SCORE_TARGET_BASE = 400;
+    public static final int SCORE_TARGET_STEP = 250;
+
+    public static Game buildMinigame(App app, minigame.MinigameType kind, int levelNumber) {
+        if (kind == null || !kind.isLawnBased()) {
+            return null;
+        }
+        ChapterType chapter = chapterFor(kind);
+        GameField field = new GameField(chapter);
+        applyTerrain(field, chapter);
+        ArrayList<Wave> waves = kind == minigame.MinigameType.I_ZOMBIE
+                || kind == minigame.MinigameType.VASE_BREAKER
+                ? new ArrayList<Wave>()
+                : buildWaves(chapter, levelNumber, difficultyOf(app), null);
+        Game game = new Game(app, null, null, field,
+                startSunFor(kind), new ArrayList<Plant>(), waves);
+        game.setApp(app);
+        carryPlantFood(app, game);
+        game.setLevel(levelFor(kind, chapter, levelNumber));
+        stockDeck(app, game, kind);
+        return game;
+    }
+
+    private static ChapterType chapterFor(minigame.MinigameType kind) {
+        switch (kind) {
+            case WALLNUT_BOWLING: return ChapterType.BIG_WAVE_BEACH;
+            case I_ZOMBIE:        return ChapterType.DARK_AGES;
+            case VASE_BREAKER:    return ChapterType.ANCIENT_EGYPT;
+            case SCORE:           return ChapterType.FROSTBITE_CAVES;
+            default:              return ChapterType.ANCIENT_EGYPT;
+        }
+    }
+
+    private static int startSunFor(minigame.MinigameType kind) {
+        if (kind == minigame.MinigameType.I_ZOMBIE) {
+            return model.level.IZombieLevel.START_BRAINS;
+        }
+        return kind == minigame.MinigameType.WALLNUT_BOWLING
+                || kind == minigame.MinigameType.VASE_BREAKER ? 0 : MINIGAME_SUN;
+    }
+
+    private static model.level.Level levelFor(minigame.MinigameType kind,
+            ChapterType chapter, int levelNumber) {
+        switch (kind) {
+            case ZOMBOTANY:
+                return new model.level.ZombotanyLevel(levelNumber, chapter, null);
+            case WALLNUT_BOWLING:
+                return new model.level.WallNutBowlingLevel(levelNumber, chapter, null);
+            case I_ZOMBIE:
+                return new model.level.IZombieLevel(levelNumber, chapter, null);
+            case VASE_BREAKER:
+                return new model.level.VasebreakerLevel(levelNumber, chapter, null);
+            case SCORE:
+                return new model.level.ScoreAttackLevel(levelNumber, chapter, null,
+                        SCORE_TARGET_BASE + SCORE_TARGET_STEP * Math.max(0, levelNumber - 1));
+            default:
+                return new model.level.HomeDefense(levelNumber, chapter, null, null);
+        }
+    }
+
+    private static void stockDeck(App app, Game game, minigame.MinigameType kind) {
+        if (kind == minigame.MinigameType.I_ZOMBIE
+                || kind == minigame.MinigameType.WALLNUT_BOWLING
+                || kind == minigame.MinigameType.VASE_BREAKER) {
+            return;
+        }
+        if (app != null && !app.getPlantSelection().isEmpty()) {
+            game.getChosenPlants().addAll(app.getPlantSelection());
+            return;
+        }
+        game.getChosenPlants().addAll(Arrays.asList(Plants.SUNFLOWER, Plants.PEASHOOTER,
+                Plants.WALL_NUT, Plants.SNOW_PEA, Plants.CHERRY_BOMB, Plants.POTATO_MINE));
     }
 
     private static void applyTerrain(GameField field, ChapterType chapter) {

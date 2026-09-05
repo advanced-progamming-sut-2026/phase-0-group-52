@@ -14,11 +14,15 @@ public final class WaveMeter extends Widget {
     private static final float FLAG_RISE = 0.82f;
     private static final float HEAD = 58f;
     private static final float INSET = 6f;
+    private static final float TICK_WIDTH = 5f;
+    public static final int BOSS_SEGMENTS = 3;
 
     private final Assets assets;
 
     private int waves;
     private float progress;
+    private boolean boss;
+    private boolean stunned;
 
     public WaveMeter(Assets assets) {
         this.assets = assets;
@@ -27,6 +31,14 @@ public final class WaveMeter extends Widget {
     public void set(int waveCount, float value) {
         waves = waveCount;
         progress = Math.max(0f, Math.min(1f, value));
+        boss = false;
+    }
+
+    public void setBoss(int segments, float health, boolean stunned) {
+        waves = segments;
+        progress = 1f - Math.max(0f, Math.min(1f, health));
+        boss = true;
+        this.stunned = stunned;
     }
 
     @Override
@@ -37,6 +49,20 @@ public final class WaveMeter extends Widget {
     @Override
     public float getPrefHeight() {
         return PREF_HEIGHT;
+    }
+
+    private void segmentTicks(Batch batch, float runX, float runWidth) {
+        TextureRegion trough = assets.region("IMAGE_UI_HUD_INGAME_PROGRESS_METER_FILL");
+        if (trough == null) {
+            return;
+        }
+        batch.setColor(0.15f, 0.06f, 0.06f, getColor().a);
+        for (int i = 1; i < BOSS_SEGMENTS; i++) {
+            float at = runX + runWidth * (i / (float) BOSS_SEGMENTS);
+            batch.draw(trough, at - TICK_WIDTH / 2f, getY() + INSET,
+                    TICK_WIDTH, getHeight() - INSET * 2f);
+        }
+        batch.setColor(1f, 1f, 1f, getColor().a);
     }
 
     @Override
@@ -63,7 +89,11 @@ public final class WaveMeter extends Widget {
 
         flags(batch, runX, runWidth);
 
-        TextureRegion head = assets.region("IMAGE_UI_HUD_INGAME_PROGRESS_METER_ZOMBIEHEAD");
+        TextureRegion head = assets.region(boss
+                ? Assets.SKULL : "IMAGE_UI_HUD_INGAME_PROGRESS_METER_ZOMBIEHEAD");
+        if (boss && stunned) {
+            batch.setColor(1f, 1f, 0.55f, alpha);
+        }
         if (head != null) {
             float at = progress >= 0.999f ? runX
                     : runX + runWidth * (1f - progress);
@@ -74,6 +104,10 @@ public final class WaveMeter extends Widget {
     }
 
     private void flags(Batch batch, float runX, float runWidth) {
+        if (boss) {
+            segmentTicks(batch, runX, runWidth);
+            return;
+        }
         TextureRegion pole =
                 assets.region("IMAGE_ZOMBIE_LNY_FLAG_ZOMBIE_LNY_FLAG_ZOMBIE_123X95");
         if (pole == null) {

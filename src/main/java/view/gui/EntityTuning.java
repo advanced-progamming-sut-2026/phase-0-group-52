@@ -88,6 +88,10 @@ public final class EntityTuning {
                 LawnGeometry.defaultHeight() + tune.dh);
     }
 
+    public static String bossKey(String chapterName) {
+        return "boss|" + chapterName;
+    }
+
     public static String zombieKey(String enumName) {
         return "zombie|" + enumName;
     }

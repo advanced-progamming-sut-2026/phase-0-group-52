@@ -56,6 +56,19 @@ public class Shop {
         return dailyPlant;
     }
 
+    public static long secondsUntilRefresh() {
+        java.time.LocalDateTime now = java.time.LocalDateTime.now();
+        java.time.LocalDateTime midnight =
+                now.toLocalDate().plusDays(1).atStartOfDay();
+        return java.time.Duration.between(now, midnight).getSeconds();
+    }
+
+    public static String refreshCountdown() {
+        long left = Math.max(0L, secondsUntilRefresh());
+        return String.format("%02d:%02d:%02d",
+                left / 3600L, left % 3600L / 60L, left % 60L);
+    }
+
     private long today() {
         return LocalDate.now().toEpochDay();
     }

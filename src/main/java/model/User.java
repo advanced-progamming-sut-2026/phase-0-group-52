@@ -310,6 +310,26 @@ public class User {
         return java.util.Collections.unmodifiableSet(seenZombies);
     }
 
+    private final java.util.Map<String, Integer> minigameBests =
+            new java.util.LinkedHashMap<String, Integer>();
+
+    public java.util.Map<String, Integer> getMinigameBests() {
+        return minigameBests;
+    }
+
+    public int getMinigameBest(String minigameName) {
+        Integer best = minigameBests.get(minigameName);
+        return best == null ? 0 : best.intValue();
+    }
+
+    public boolean recordMinigameBest(String minigameName, int score) {
+        if (minigameName == null || score <= getMinigameBest(minigameName)) {
+            return false;
+        }
+        minigameBests.put(minigameName, Integer.valueOf(score));
+        return true;
+    }
+
     public boolean markMinigameUnlocked(String minigameName) {
         return unlockedMinigames.add(minigameName);
     }

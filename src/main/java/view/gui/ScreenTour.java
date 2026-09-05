@@ -175,6 +175,116 @@ final class ScreenTour {
                 model.ChapterType.FROSTBITE_CAVES, "38-timed-war");
         captureSpecial(model.level.SpecialLevel.PLANT_WHAT_YOU_GET,
                 model.ChapterType.DARK_AGES, "39-plant-what-you-get");
+        captureMinigames();
+        captureBosses();
+    }
+
+    private void captureBosses() {
+        captureBoss(model.ChapterType.ANCIENT_EGYPT, "50-boss-egypt");
+        captureBoss(model.ChapterType.FROSTBITE_CAVES, "51-boss-frostbite");
+        captureBoss(model.ChapterType.DARK_AGES, "52-boss-dark");
+        captureBoss(model.ChapterType.BIG_WAVE_BEACH, "53-boss-beach");
+    }
+
+    private void captureBoss(model.ChapterType chapter, String name) {
+        model.App app = game.context().app();
+        app.setGame(null);
+        game.navigator().goMenu(MenuType.MAIN_MENU);
+        pump(2);
+        app.setSelectedChapter(chapter);
+        app.setSelectedLevel(model.ChapterType.LEVELS_PER_CHAPTER);
+        app.getPlantSelection().clear();
+        app.setPendingSpecial(null);
+        if (!new controller.menu.LevelController(app).start().isSuccess()) {
+            return;
+        }
+        game.navigator().goMenu(MenuType.GAME_MENU);
+        pump(4);
+        if (!(game.getScreen() instanceof view.gui.screens.LevelScreen)) {
+            app.setGame(null);
+            return;
+        }
+        ((view.gui.screens.LevelScreen) game.getScreen()).show();
+        controller.menu.LevelController runner = new controller.menu.LevelController(app);
+        for (int tick = 0; tick < 200; tick++) {
+            runner.tick((float) model.Game.SECONDS_PER_TICK);
+        }
+        pump(20);
+        Screenshots.capture("screenshots/tour-" + name + ".png");
+        view.gui.widgets.BossDialogue.play(
+                ((view.gui.screens.LevelScreen) game.getScreen()).uiStage(),
+                game.context(), "Dr. Zomboss",
+                new model.level.ZombossLevel(4, chapter).partingLines(true), null);
+        pump(1);
+        Screenshots.capture("screenshots/tour-54-" + name + "-dialogue.png");
+        app.setGame(null);
+    }
+
+    private void captureMinigames() {
+        model.App app = game.context().app();
+        model.User user = app.getCurrentuser();
+        boolean cheat = user != null && user.isDebugMode();
+        if (user != null) {
+            user.setDebugMode(true);
+        }
+        game.navigator().goMenu(MenuType.MAIN_MENU);
+        pump(8);
+        Screenshots.capture("screenshots/tour-40-minigame-panel.png");
+        if (game.getScreen() instanceof view.gui.screens.MainMenuScreen) {
+            ((view.gui.screens.MainMenuScreen) game.getScreen()).scrollMinigames(1f);
+            pump(4);
+            Screenshots.capture("screenshots/tour-40-minigame-panel-end.png");
+        }
+        captureMinigame(minigame.MinigameType.VASE_BREAKER, "41-vasebreaker");
+        captureMinigame(minigame.MinigameType.WALLNUT_BOWLING, "42-bowling");
+        captureMinigame(minigame.MinigameType.I_ZOMBIE, "43-izombie");
+        captureMinigame(minigame.MinigameType.ZOMBOTANY, "44-zombotany");
+        captureMinigame(minigame.MinigameType.SCORE, "45-score");
+        captureBeghouled();
+        if (user != null) {
+            user.setDebugMode(cheat);
+        }
+        game.navigator().goMenu(MenuType.MAIN_MENU);
+        pump(4);
+    }
+
+    private void captureMinigame(minigame.MinigameType kind, String name) {
+        model.App app = game.context().app();
+        app.setGame(null);
+        game.navigator().goMenu(MenuType.MAIN_MENU);
+        pump(2);
+        app.setSelectedLevel(1);
+        app.getPlantSelection().clear();
+        app.setPendingMinigame(kind.name());
+        game.navigator().goMenu(MenuType.MINIGAME_MENU);
+        pump(4);
+        if (!(game.getScreen() instanceof view.gui.screens.MinigameScreen)) {
+            app.setPendingMinigame(null);
+            return;
+        }
+        controller.menu.MinigameRunController runner =
+                new controller.menu.MinigameRunController(app);
+        int ticks = kind == minigame.MinigameType.ZOMBOTANY
+                || kind == minigame.MinigameType.SCORE ? 380 : 60;
+        for (int tick = 0; tick < ticks; tick++) {
+            runner.tick((float) model.Game.SECONDS_PER_TICK);
+        }
+        pump(20);
+        Screenshots.capture("screenshots/tour-" + name + ".png");
+        app.setGame(null);
+        app.setPendingMinigame(null);
+    }
+
+    private void captureBeghouled() {
+        model.App app = game.context().app();
+        app.setGame(null);
+        game.navigator().goMenu(MenuType.MAIN_MENU);
+        pump(2);
+        app.setPendingMinigame(minigame.MinigameType.BEGHOULED.name());
+        game.navigator().goMenu(MenuType.BEGHOULED_MENU);
+        pump(8);
+        Screenshots.capture("screenshots/tour-46-beghouled.png");
+        app.setPendingMinigame(null);
     }
 
     private void captureSpecial(model.level.SpecialLevel kind,
