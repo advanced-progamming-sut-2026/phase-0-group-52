@@ -208,7 +208,8 @@ public final class PvzGame extends Game {
     }
 
     private Screen screenFor(MenuType type) {
-        if (type == MenuType.GAME_MENU || type == MenuType.CHOOSE_PLANT_MENU) {
+        if (type == MenuType.GAME_MENU || type == MenuType.CHOOSE_PLANT_MENU
+                || type == MenuType.MINIGAME_MENU || type == MenuType.BEGHOULED_MENU) {
             Screen fresh = create(type);
             screens.put(type, fresh);
             return fresh;
@@ -234,6 +235,8 @@ public final class PvzGame extends Game {
             case TRAVEL_LOG_MENU:  return new QuestsScreen(context);
             case CHOOSE_PLANT_MENU: return new ChoosePlantScreen(context);
             case GAME_MENU:        return new LevelScreen(context);
+            case MINIGAME_MENU:    return new view.gui.screens.MinigameScreen(context);
+            case BEGHOULED_MENU:   return new view.gui.screens.BeghouledScreen(context);
             default:               return null;
         }
     }
@@ -244,6 +247,11 @@ public final class PvzGame extends Game {
 
     public void showShop() {
         navigator.goShop();
+    }
+
+    public void showMinigame(minigame.MinigameType type) {
+        navigator.goMenu(type == minigame.MinigameType.BEGHOULED
+                ? MenuType.BEGHOULED_MENU : MenuType.MINIGAME_MENU);
     }
 
     public GameContext context() {

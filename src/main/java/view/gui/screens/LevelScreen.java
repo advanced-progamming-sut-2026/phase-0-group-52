@@ -48,6 +48,7 @@ public final class LevelScreen implements Screen, Navigator.Hosted {
     private int lastWave = -1;
     private final com.badlogic.gdx.math.Vector2 cursor = new com.badlogic.gdx.math.Vector2();
     private boolean shovelling;
+    private view.gui.widgets.Sandstorm storm;
     private boolean shown;
 
     public LevelScreen(GameContext context) {
@@ -92,6 +93,9 @@ public final class LevelScreen implements Screen, Navigator.Hosted {
             stage.addActor(veil);
         }
         stage.addActor(field);
+        storm = new view.gui.widgets.Sandstorm(assets());
+        storm.setBounds(0f, 0f, Theme.WORLD_WIDTH, Theme.WORLD_HEIGHT);
+        stage.addActor(storm);
 
         hud = buildHud();
         stage.addActor(hud);
@@ -341,8 +345,13 @@ public final class LevelScreen implements Screen, Navigator.Hosted {
         if (drop != null) {
             context.toasts().info(drop);
         }
-        if (controller.consumeStorm() && notice != null) {
-            notice.announce("Sandstorms are carrying zombies in!");
+        if (controller.consumeStorm()) {
+            if (notice != null) {
+                notice.announce("Sandstorms are carrying zombies in!");
+            }
+            if (storm != null) {
+                storm.blow();
+            }
         }
         hud.refresh();
         finish();

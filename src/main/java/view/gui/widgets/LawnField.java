@@ -58,8 +58,6 @@ public final class LawnField extends WidgetGroup {
     private static final double FED_OUTRO = 0.5d;
     private static final float SHOT_SMOOTHING = 6f;
     private static final float SHOT_LEASH = 1.2f;
-    private static final float TORNADO_CANVAS = 320f;
-    private static final float TORNADO_SCALE = 1.45f;
     private static final float MOWER_SCALE = 2.8f;
     private static final float SPAWN_GAP = 0.22f;
     private static final String MOWER_SPAWN =
@@ -108,6 +106,20 @@ public final class LawnField extends WidgetGroup {
     private final Map<model.entities.Projectile, Float> shotFlight =
             new HashMap<model.entities.Projectile, Float>();
     private final Map<Object, PamActor> iceBlocks = new HashMap<Object, PamActor>();
+    private static final float VASE_SPAN = 0.78f;
+    private static final float VASE_RATIO = 1.25f;
+    private static final float VASE_LIFT = 6f;
+    private static final float NUT_SPAN = 1.05f;
+    private static final float NUT_LIFT = 4f;
+    private static final float NUT_SPIN = 46f;
+
+    private controller.menu.MinigameRunController minigame;
+    private final Map<model.entities.Vase, Actor> urns =
+            new HashMap<model.entities.Vase, Actor>();
+    private final Map<model.entities.BowlingNut, Actor> rolling =
+            new HashMap<model.entities.BowlingNut, Actor>();
+    private static final float RIDER_TINT = 0.86f;
+
     private final Map<model.entities.Tombstone, Double> graveHp =
             new HashMap<model.entities.Tombstone, Double>();
     private final java.util.List<PamActor> puffs = new java.util.ArrayList<PamActor>();
@@ -120,10 +132,6 @@ public final class LawnField extends WidgetGroup {
     private final java.util.Set<Plant> wasActing = new java.util.HashSet<Plant>();
     private final Map<model.entities.Tombstone, PamActor> stones =
             new HashMap<model.entities.Tombstone, PamActor>();
-    private final Map<model.entities.zombies.Zombie, PamActor> tornadoes =
-            new HashMap<model.entities.zombies.Zombie, PamActor>();
-    private final Map<model.entities.zombies.Zombie, PamActor> tornadoFronts =
-            new HashMap<model.entities.zombies.Zombie, PamActor>();
     private final Map<model.entities.zombies.Zombie, Double> zombieHp =
             new HashMap<model.entities.zombies.Zombie, Double>();
     private final Map<Plant, Double> plantHp = new HashMap<Plant, Double>();
@@ -201,6 +209,9 @@ public final class LawnField extends WidgetGroup {
     @Override
     public void act(float delta) {
         super.act(delta);
+        if (controller.game() == null) {
+            return;
+        }
         getColor().a = 1f;
         for (com.badlogic.gdx.scenes.scene2d.Group up = getParent(); up != null;
                 up = up.getParent()) {
@@ -221,6 +232,8 @@ public final class LawnField extends WidgetGroup {
         syncWater();
         syncIce(delta);
         syncMowers();
+        syncVases();
+        syncNuts();
         spawnNextMower(delta);
         placeMowers();
         sortDepth();
@@ -305,6 +318,101 @@ public final class LawnField extends WidgetGroup {
         }
     }
 
+    public void setMinigame(controller.menu.MinigameRunController value) {
+        minigame = value;
+    }
+
+    private com.badlogic.gdx.scenes.scene2d.utils.Drawable vaseArt(
+            model.entities.Vase vase) {
+        return ui.imageFile("assets/ui/minigames/" + vase.artName() + ".png");
+    }
+
+    private void syncVases() {
+        if (minigame == null || !minigame.isVasebreaker()) {
+            return;
+        }
+        for (model.entities.Vase vase : minigame.vases()) {
+            Actor actor = urns.get(vase);
+            if (vase.isBroken()) {
+                if (actor != null) {
+                    puff(actor.getX() + actor.getWidth() / 2f,
+                            actor.getY() + actor.getHeight() / 2f);
+                    actor.remove();
+                    urns.remove(vase);
+                }
+                continue;
+            }
+            if (actor == null) {
+                com.badlogic.gdx.scenes.scene2d.utils.Drawable art = vaseArt(vase);
+                if (art == null) {
+                    continue;
+                }
+                com.badlogic.gdx.scenes.scene2d.ui.Image urn =
+                        new com.badlogic.gdx.scenes.scene2d.ui.Image(art);
+                urn.setScaling(com.badlogic.gdx.utils.Scaling.fit);
+                urn.setTouchable(com.badlogic.gdx.scenes.scene2d.Touchable.disabled);
+                actor = urn;
+                urns.put(vase, actor);
+                addActor(actor);
+            }
+            float width = LawnGeometry.cellWidth() * VASE_SPAN;
+            float height = width * VASE_RATIO;
+            actor.setBounds(LawnGeometry.columnLeft(vase.getColumn())
+                            + (LawnGeometry.cellWidth() - width) / 2f,
+                    LawnGeometry.rowFeet(vase.getRow()) + VASE_LIFT, width, height);
+        }
+    }
+
+    private void syncNuts() {
+        if (minigame == null || !minigame.isBowling()) {
+            return;
+        }
+        java.util.List<model.entities.BowlingNut> live = minigame.nuts();
+        for (model.entities.BowlingNut nut : live) {
+            Actor actor = rolling.get(nut);
+            if (actor == null) {
+                actor = plantActor(nut.isExplosive() ? Plants.EXPLODE_O_NUT
+                        : nut.isHeavy() ? Plants.TALL_NUT : Plants.WALL_NUT);
+                if (actor == null) {
+                    continue;
+                }
+                rolling.put(nut, actor);
+                addActor(actor);
+            }
+            float span = LawnGeometry.cellWidth() * NUT_SPAN;
+            actor.setBounds(LawnGeometry.columnLeft(0)
+                            + (float) nut.getColumn() * LawnGeometry.cellWidth()
+                            + (LawnGeometry.cellWidth() - span) / 2f,
+                    LawnGeometry.rowFeet((int) Math.round(nut.getLane())) + NUT_LIFT,
+                    span, span);
+            actor.setOrigin(com.badlogic.gdx.utils.Align.center);
+            actor.setRotation(-(float) nut.getColumn() * NUT_SPIN);
+        }
+        java.util.Iterator<Map.Entry<model.entities.BowlingNut, Actor>> gone =
+                rolling.entrySet().iterator();
+        while (gone.hasNext()) {
+            Map.Entry<model.entities.BowlingNut, Actor> entry = gone.next();
+            if (!live.contains(entry.getKey())) {
+                puff(entry.getValue().getX(), entry.getValue().getY());
+                entry.getValue().remove();
+                gone.remove();
+            }
+        }
+    }
+
+    private Actor plantActor(Plants type) {
+        model.entities.plants.PlantRecord record =
+                model.entities.plants.PlantData.record(type);
+        if (record == null || assets == null || !record.getAnimations().hasPlant()) {
+            return null;
+        }
+        PamActor rig = PlantStage.anchored(assets, record.getAnimations().getPlant(),
+                PlantStage.clipOf(record, "idle"),
+                record.getAnimations().getCanvasWidth(),
+                record.getAnimations().getCanvasHeight());
+        return rig.isReady() ? rig : null;
+    }
+
     private void flashGraves() {
         for (Map.Entry<model.entities.Tombstone, PamActor> entry : stones.entrySet()) {
             model.entities.Tombstone stone = entry.getKey();
@@ -374,6 +482,10 @@ public final class LawnField extends WidgetGroup {
             if (entry.getValue() == actor) {
                 return view.gui.LawnLayer.SUN.depth(actor.getY());
             }
+        }
+        Float minigameDepth = minigameDepth(actor);
+        if (minigameDepth != null) {
+            return minigameDepth.floatValue();
         }
         Float mown = mowerDepth(actor);
         if (mown != null) {
@@ -693,6 +805,22 @@ public final class LawnField extends WidgetGroup {
     }
 
 
+    private Float minigameDepth(Actor actor) {
+        for (Map.Entry<model.entities.Vase, Actor> entry : urns.entrySet()) {
+            if (entry.getValue() == actor) {
+                return Float.valueOf(view.gui.LawnLayer.TOMBSTONE.depth(
+                        LawnGeometry.rowFeet(entry.getKey().getRow())));
+            }
+        }
+        for (Map.Entry<model.entities.BowlingNut, Actor> entry : rolling.entrySet()) {
+            if (entry.getValue() == actor) {
+                return Float.valueOf(view.gui.LawnLayer.SHOT.depth(
+                        LawnGeometry.rowFeet(entry.getKey().getRow())));
+            }
+        }
+        return null;
+    }
+
     private Float mowerDepth(Actor actor) {
         if (mowers == null) {
             return null;
@@ -908,7 +1036,8 @@ public final class LawnField extends WidgetGroup {
     }
 
     private void placeMowers() {
-        if (mowers == null) {
+        if (mowers == null || controller.game() == null
+                || controller.game().getField() == null) {
             return;
         }
         for (int row = 0; row < mowers.size(); row++) {
@@ -998,7 +1127,6 @@ public final class LawnField extends WidgetGroup {
         while (gone.hasNext()) {
             Map.Entry<model.entities.zombies.Zombie, Actor> entry = gone.next();
             if (!live.contains(entry.getKey())) {
-                dropTornado(entry.getKey());
                 playDeath(entry.getKey(), entry.getValue());
                 smoothed.remove(entry.getKey());
                 clipShown.remove(entry.getKey());
@@ -1022,7 +1150,7 @@ public final class LawnField extends WidgetGroup {
             }
             placeZombie(entry.getValue(), value, zombie.getRow(), zombie, lit);
             hop(entry.getValue(), zombie, value);
-            syncTornado(zombie, entry.getValue());
+            markRider(zombie, entry.getValue());
         }
     }
 
@@ -1081,55 +1209,14 @@ public final class LawnField extends WidgetGroup {
         return record.getClips().contains(wanted) ? wanted : fallback;
     }
 
-    private void syncTornado(model.entities.zombies.Zombie zombie, Actor rider) {
-        if (!zombie.isRidingStorm()) {
-            dropTornado(zombie);
+    private void markRider(model.entities.zombies.Zombie zombie, Actor rider) {
+        if (!zombie.isRidingStorm() || !(rider instanceof PamActor)
+                || feedback.isFlashing(rider)) {
             return;
         }
-        PamActor rear = tornadoes.get(zombie);
-        PamActor front = tornadoFronts.get(zombie);
-        if (rear == null) {
-            rear = spin(Sandstorm.REAR);
-            front = spin(Sandstorm.TOP);
-            if (rear == null || front == null) {
-                return;
-            }
-            tornadoes.put(zombie, rear);
-            tornadoFronts.put(zombie, front);
-            addActor(rear);
-            addActor(front);
-        }
-        float grow = rider.getWidth() * (TORNADO_SCALE - 1f) / 2f;
-        float x = rider.getX() - grow;
-        float w = rider.getWidth() * TORNADO_SCALE;
-        float h = rider.getHeight() * TORNADO_SCALE;
-        rear.setBounds(x, rider.getY(), w, h);
-        front.setBounds(x, rider.getY(), w, h);
-        rear.toBack();
-        rider.toFront();
-        front.toFront();
-    }
-
-    private PamActor spin(String path) {
-        PamActor rig = PlantStage.anchored(assets, path, "loop",
-                TORNADO_CANVAS, TORNADO_CANVAS);
-        if (!rig.isReady()) {
-            util.Log.warn("gui", "Sandstorm rig " + path + " did not load");
-            return null;
-        }
-        rig.play("loop", true, null);
-        return rig;
-    }
-
-    private void dropTornado(model.entities.zombies.Zombie zombie) {
-        PamActor rear = tornadoes.remove(zombie);
-        if (rear != null) {
-            rear.remove();
-        }
-        PamActor front = tornadoFronts.remove(zombie);
-        if (front != null) {
-            front.remove();
-        }
+        float dusk = night();
+        ((PamActor) rider).setTint(dusk, dusk * RIDER_TINT,
+                dusk * RIDER_TINT * RIDER_TINT, 1f);
     }
 
     private void hop(Actor actor, model.entities.zombies.Zombie zombie, float column) {
@@ -1193,6 +1280,30 @@ public final class LawnField extends WidgetGroup {
         }
     }
 
+    private static final Plants[] ZOMBOTANY_HEADS = {
+        Plants.PEASHOOTER, Plants.SUNFLOWER, Plants.WALL_NUT,
+        Plants.SNOW_PEA, Plants.CACTUS,
+    };
+
+    private boolean isZombotany() {
+        return controller.game() != null
+                && controller.game().getLevel() instanceof model.level.ZombotanyLevel;
+    }
+
+    private Actor plantHeaded(model.entities.zombies.Zombie zombie,
+            model.entities.zombies.ZombieRecord record, String clip) {
+        Plants head = ZOMBOTANY_HEADS[Math.abs(zombie.hashCode()) % ZOMBOTANY_HEADS.length];
+        model.entities.plants.PlantRecord grown =
+                model.entities.plants.PlantData.record(head);
+        if (grown == null || !grown.getAnimations().hasPlant()
+                || record.getAnimationPath() == null) {
+            return null;
+        }
+        HeadSwapActor swap = new HeadSwapActor(assets, record.getAnimationPath(),
+                grown.getAnimations().getPlant(), clip, record.getHideParts());
+        return swap.isReady() ? swap : null;
+    }
+
     private Actor zombieActor(model.entities.zombies.Zombie zombie) {
         model.entities.zombies.ZombieRecord record =
                 model.entities.zombies.ZombieData.of(zombie.getOrigin());
@@ -1201,6 +1312,12 @@ public final class LawnField extends WidgetGroup {
         }
         String clip = record.getClips() != null && record.getClips().contains("walk")
                 ? "walk" : "idle";
+        if (isZombotany() && !record.isComposite()) {
+            Actor grafted = plantHeaded(zombie, record, clip);
+            if (grafted != null) {
+                return grafted;
+            }
+        }
         if (record.isComposite()) {
             HeadSwapActor swap = new HeadSwapActor(assets, record.getBodyPath(),
                     record.getHeadPath(), clip, record.getHideParts());

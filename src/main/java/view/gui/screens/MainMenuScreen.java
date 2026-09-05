@@ -27,6 +27,8 @@ import view.gui.Theme;
 import view.gui.UiKit;
 import view.gui.Assets;
 import view.gui.widgets.Carousel;
+import minigame.MinigameType;
+import view.gui.widgets.MinigameCard;
 import view.gui.widgets.PamActor;
 import view.gui.widgets.QuestCard;
 
@@ -44,6 +46,7 @@ public final class MainMenuScreen extends BaseScreen {
     private static final float QUEST_CARD_HEIGHT = 66f;
     private static final int MAX_PANEL_QUESTS = 6;
     private static final float ADVENTURE_WIDTH = 624f;
+    private static final float HINT_SCALE = 0.72f;
     private static final float QUEST_PANEL_WIDTH = 300f;
     private static final float GREENHOUSE_WIDTH = 252f;
     private static final float GREENHOUSE_HEIGHT = 160f;
@@ -59,22 +62,23 @@ public final class MainMenuScreen extends BaseScreen {
             "action3", "action3", "action1", "action2"};
     private static final float VEIL_DELAY = 0.35f;
     private static final float VEIL_FADE = 0.45f;
-    private static final String[] MINIGAMES = {
-            "Vasebreaker", "Wallnut Bowling", "I, Zombie", "Beghouled"};
 
     private final MainMenuController controller;
     private final QuestRepository questRepository = new QuestRepository();
+    private final controller.menu.MinigameMenuController minigames;
 
     private Carousel chapterCarousel;
     private PamActor portal;
     private Image veil;
     private boolean[] lockState;
-    private Carousel minigameCarousel;
+    private Table minigameRow;
+    private ScrollPane minigameStrip;
     private Table questList;
 
     public MainMenuScreen(GameContext context) {
         super(context, "");
         this.controller = new MainMenuController(context.app());
+        this.minigames = new controller.menu.MinigameMenuController(context.app());
     }
 
     @Override
@@ -231,31 +235,75 @@ public final class MainMenuScreen extends BaseScreen {
         Table panel = ui.panel();
         panel.top();
 
-        minigameCarousel = new Carousel(ui)
-                .setCardSize(112f, 208f)
-                .setSpacing(124f)
-                .setFalloff(0.34f)
-                .setCentreAll(true)
-                .setListener(new Carousel.Listener() {
-                    @Override
-                    public void onSelected(int index) {
-                    }
+        Table caption = new Table();
+        Label heading = new Label("Minigames", ui.skin(), "titleOnDark");
+        heading.setColor(Theme.SUN);
+        caption.add(heading).left();
+        caption.add().expandX();
+        Label hint = new Label("scroll for more", ui.skin(), "muted");
+        hint.setFontScale(HINT_SCALE);
+        caption.add(hint).right().padRight(Theme.PAD_SMALL);
+        panel.add(caption).growX().padLeft(Theme.PAD_SMALL).padBottom(2f).row();
 
-                    @Override
-                    public void onActivated(int index) {
-                        context.toasts().info(MINIGAMES[index]
-                                + " opens when the lawn screen lands.");
-                    }
-                });
-
-        List<Carousel.Item> items = new ArrayList<Carousel.Item>();
-        for (String name : MINIGAMES) {
-            items.add(new Carousel.Item(name, Theme.plantFamily("EXPLOSIVE"), false));
-        }
-        minigameCarousel.setItems(items);
-
-        panel.add(minigameCarousel).grow();
+        minigameRow = new Table();
+        minigameRow.left();
+        ScrollPane strip = new ScrollPane(minigameRow, ui.skin(), "bare");
+        strip.setScrollingDisabled(false, true);
+        strip.setFadeScrollBars(false);
+        strip.setOverscroll(false, false);
+        UiKit.focusOnHover(strip);
+        minigameStrip = strip;
+        panel.add(strip).grow();
+        rebuildMinigames();
         return panel;
+    }
+
+    private void rebuildMinigames() {
+        if (minigameRow == null) {
+            return;
+        }
+        minigameRow.clearChildren();
+        for (final MinigameType type : minigames.catalogue()) {
+            boolean locked = !minigames.isUnlocked(type);
+            minigameRow.add(new MinigameCard(ui, context.assets(), type, locked,
+                    noteFor(type, locked), new Runnable() {
+                        @Override
+                        public void run() {
+                            openMinigame(type);
+                        }
+                    })).size(MinigameCard.WIDTH, MinigameCard.HEIGHT)
+                    .padRight(Theme.PAD_SMALL);
+        }
+    }
+
+    public void scrollMinigames(float fraction) {
+        if (minigameStrip == null) {
+            return;
+        }
+        minigameStrip.layout();
+        minigameStrip.setScrollX(minigameStrip.getMaxX() * fraction);
+        minigameStrip.updateVisualScroll();
+    }
+
+    private String noteFor(MinigameType type, boolean locked) {
+        if (!type.isPlayable()) {
+            return "Phase 3";
+        }
+        if (locked) {
+            int needed = minigames.requiredLevels(type);
+            return "Clear " + needed + " level" + (needed == 1 ? "" : "s");
+        }
+        int best = minigames.bestScore(type);
+        return best > 0 ? "Best  " + best : "Ready to play";
+    }
+
+    private void openMinigame(MinigameType type) {
+        model.Result opened = minigames.open(type);
+        if (!opened.isSuccess()) {
+            context.toasts().error(opened.getMessage());
+            return;
+        }
+        game().showMinigame(type);
     }
 
     private Table bottomRight() {
