@@ -18,7 +18,6 @@ public class GameLoop {
     public static final int MIN_WAVE_GAP = 14 * Game.TICKS_PER_SECOND;
     public static final int MAX_WAVE_GAP = 24 * Game.TICKS_PER_SECOND;
     public static final int CLEAR_THRESHOLD = 2;
-    public static final int MIN_LEVEL_TICKS = 120 * Game.TICKS_PER_SECOND;
 
     private int lastWaveTick;
 
@@ -95,7 +94,7 @@ public class GameLoop {
         if (defeat != null) return end(game, false, defeat);
         String victory = game.getLevel() != null ? game.getLevel().checkVictory(game) : null;
         if (victory != null) return end(game, true, victory);
-        if (allWavesSpawned(game) && game.getZombies().isEmpty() && tick > MIN_LEVEL_TICKS)
+        if (lawnIsClear(game))
             return end(game, true, "All zombies defeated. You win!");
         if (anyZombieAtHouse(game))
             return end(game, false, "A zombie reached your house. You lose!");
@@ -175,6 +174,11 @@ public class GameLoop {
 
     private boolean allWavesSpawned(Game game) {
         return game.getCurrentWaveIndex() >= game.getWaves().size() - 1;
+    }
+
+    private boolean lawnIsClear(Game game) {
+        return game.getWaves() != null && !game.getWaves().isEmpty()
+                && allWavesSpawned(game) && game.getZombies().isEmpty();
     }
 
     private boolean anyZombieAtHouse(Game game) {

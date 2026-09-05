@@ -131,7 +131,13 @@ public final class AlmanacFilterPopup extends Popup {
             if (!chapters.isEmpty() && !chapters.contains(tierOf(r))) {
                 return false;
             }
-            return true;
+            return owned(plant) ? showUnlocked : showLocked;
+        }
+
+        private static boolean owned(Plants plant) {
+            model.User user = model.App.getInstance() == null
+                    ? null : model.App.getInstance().getLoggedInUser();
+            return user == null || user.getPlants().isUnlocked(plant);
         }
 
         private static String tierOf(PlantRecord r) {

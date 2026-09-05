@@ -79,11 +79,15 @@ public class ChoosePlantMenuController {
             return out;
         }
         for (Plants plant : Plants.values()) {
-            if (user.getPlants().isUnlocked(plant)) {
+            if (user.getPlants().isUnlocked(plant) && !isLockedOut(plant)) {
                 out.add(plant);
             }
         }
         return out;
+    }
+
+    public boolean isLockedOut(Plants plant) {
+        return app.getLockedPlants().contains(plant);
     }
 
     public boolean isBoosted(Plants plant) {

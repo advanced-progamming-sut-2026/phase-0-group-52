@@ -22,6 +22,16 @@ public class LockedPlantsLevel extends Level {
                 Plants.REPEATER, Plants.WINTER_MELON));
     }
 
+    @Override
+    public String objective() {
+        return "Some of your plants are locked away - win without them.";
+    }
+
+    @Override
+    public String objectiveTag() {
+        return "LOCKED AND LOADED";
+    }
+
     public Set<Plants> getLockedPlants() { return lockedPlants; }
 
     public void lockPlant(Plants plant) { lockedPlants.add(plant); }

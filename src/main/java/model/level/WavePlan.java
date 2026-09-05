@@ -19,6 +19,10 @@ public final class WavePlan {
     public static final double BUDGET_PER_WAVE = 0.22d;
     public static final double DIFFICULTY_STEP = 0.2d;
     public static final double FLAG_MULTIPLIER = 1.6d;
+    public static final double TIMED_PRESSURE = 1.35d;
+    public static final double GENTLE_PRESSURE = 0.75d;
+    public static final double BELT_PRESSURE = 0.85d;
+    public static final double LOCKED_PRESSURE = 0.9d;
 
     private WavePlan() {}
 
@@ -31,10 +35,39 @@ public final class WavePlan {
     }
 
     public static double budget(int levelNumber, int difficulty, int waveIndex, int waveCount) {
+        return budget(levelNumber, difficulty, waveIndex, waveCount, null);
+    }
+
+    public static double budget(int levelNumber, int difficulty, int waveIndex,
+            int waveCount, SpecialLevel special) {
         double scale = 1d + (difficulty - NORMAL_DIFFICULTY) * DIFFICULTY_STEP;
         double growth = 1d + waveIndex * BUDGET_PER_WAVE;
         double total = (BUDGET_BASE + BUDGET_PER_LEVEL * (levelNumber - 1)) * scale * growth;
-        return isFlagWave(waveIndex, waveCount) ? total * FLAG_MULTIPLIER : total;
+        if (isFlagWave(waveIndex, waveCount)) {
+            total *= FLAG_MULTIPLIER;
+        }
+        return total * pressure(special);
+    }
+
+    public static double pressure(SpecialLevel special) {
+        if (special == null) {
+            return 1d;
+        }
+        switch (special) {
+            case TIMED_WAR:      return TIMED_PRESSURE;
+            case SAVE_OUR_SEEDS: return GENTLE_PRESSURE;
+            case LOVE_YOUR_PLANTS: return GENTLE_PRESSURE;
+            case CONVEYOR:
+            case PLANT_WHAT_YOU_GET: return BELT_PRESSURE;
+            case LOCKED_PLANTS:  return LOCKED_PRESSURE;
+            case DEADLINE:       return GENTLE_PRESSURE;
+            default:             return 1d;
+        }
+    }
+
+    public static int waveCount(int levelNumber, SpecialLevel special) {
+        int base = waveCount(levelNumber);
+        return special == SpecialLevel.TIMED_WAR ? Math.min(MAX_WAVES, base + 2) : base;
     }
 
     public static List<Zombies> roster(ChapterType chapter, int levelNumber) {

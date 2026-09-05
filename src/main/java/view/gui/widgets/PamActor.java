@@ -51,7 +51,7 @@ public final class PamActor extends Widget {
         WORLD_RATE = Math.max(0.1f, value);
     }
 
-    private static float sharedClock() {
+    static float sharedClock() {
         long frame = Gdx.graphics.getFrameId();
         if (frame != SHARED_FRAME) {
             SHARED_FRAME = frame;

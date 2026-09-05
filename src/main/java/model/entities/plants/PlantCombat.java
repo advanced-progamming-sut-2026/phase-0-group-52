@@ -109,13 +109,16 @@ public final class PlantCombat {
         }
     }
 
-    public static final double PLANT_FOOD_CHANCE = 0.05;
-
-    private static void maybeDropPlantFood(Game game) {
-        if (RANDOM.nextDouble() >= PLANT_FOOD_CHANCE) {
+    private static void maybeDropPlantFood(Game game, Zombie dead) {
+        if (dead == null || !dead.carriesPlantFood()) {
+            return;
+        }
+        dead.setCarriesPlantFood(false);
+        if (game.getPlantFoodCount() >= Game.MAX_PLANT_FOOD) {
             return;
         }
         game.setPlantFoodCount(game.getPlantFoodCount() + 1);
+        game.noteDrop("Plant food!");
     }
 
     public static final double POT_CHANCE = 0.03;
@@ -142,7 +145,7 @@ public final class PlantCombat {
                     ((model.level.TimedWar) game.getLevel()).onZombieKilled();
                 rollLoot(game, z);
                 dropSprout(game, z);
-                maybeDropPlantFood(game);
+                maybeDropPlantFood(game, z);
                 maybeDropPot(game);
                 z.onDeath(game);
                 game.getZombies().remove(i);

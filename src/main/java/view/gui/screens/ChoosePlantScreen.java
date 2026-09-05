@@ -96,7 +96,12 @@ public final class ChoosePlantScreen extends BaseScreen {
         content.top().left();
         slotGrid = new Table();
         grid = new Table();
-        card = new PlantPickCard(ui, context.assets());
+        card = new PlantPickCard(context, new Runnable() {
+            @Override
+            public void run() {
+                repaint();
+            }
+        });
 
         content.add(leftColumn()).grow().pad(Theme.PAD);
         content.add(rightPanel()).width(PANEL_WIDTH).growY();
@@ -306,10 +311,7 @@ public final class ChoosePlantScreen extends BaseScreen {
         List<Plants> owned = controller.owned();
         int column = 0;
         for (Plants plant : rules.apply()) {
-            if (!owned.contains(plant)) {
-                continue;
-            }
-            grid.add(available(plant)).pad(3f);
+            grid.add(owned.contains(plant) ? available(plant) : lockedPacket(plant)).pad(3f);
             if (++column % COLUMNS == 0) {
                 grid.row();
             }
@@ -317,6 +319,21 @@ public final class ChoosePlantScreen extends BaseScreen {
         if (column == 0) {
             grid.add(ui.muted("No plants match that search.")).pad(Theme.PAD);
         }
+    }
+
+    private SeedPacket lockedPacket(final Plants plant) {
+        SeedPacket packet = new SeedPacket(ui, context.assets(), plant,
+                SeedPacket.Mode.GAME, PACKET_SCALE);
+        packet.setLocked(true);
+        packet.onClick(new Runnable() {
+            @Override
+            public void run() {
+                show(plant);
+                context.toasts().error(plant.getName() + " is not unlocked yet.");
+                repaint();
+            }
+        });
+        return packet;
     }
 
     private SeedPacket available(final Plants plant) {
@@ -350,6 +367,9 @@ public final class ChoosePlantScreen extends BaseScreen {
     @Override
     public void show() {
         super.show();
+        view.gui.widgets.LawnField.warmLevel(context.assets(), controller.chapter(),
+                controller.owned(), model.LevelBuilder.firstWave(
+                        controller.chapter(), controller.levelNumber()));
         playIntro();
     }
 
