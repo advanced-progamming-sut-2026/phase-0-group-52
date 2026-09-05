@@ -39,7 +39,6 @@ public final class EntityTuner extends ApplicationAdapter {
     private static final float BOOST = 10f;
     private static final float MOWER_SCALE = 2.8f;
     private static final float TOMB_CANVAS = 390f;
-    private static final float ICE_SPAN = 1.6f;
     private static final float POT_X = 420f;
     private static final float POT_Y = 180f;
     private static final float POUR_LOOP = 1.6f;
@@ -563,7 +562,7 @@ public final class EntityTuner extends ApplicationAdapter {
         }
         if (iceMode) {
             EntityTuning.Tune tune = EntityTuning.of(key());
-            float span = LawnGeometry.cellWidth() * ICE_SPAN * tune.scale;
+            float span = LawnGeometry.cellWidth() * view.gui.FrostArt.BLOCK_SPAN * tune.scale;
             performer.setBounds(LawnGeometry.columnLeft(column)
                             + (LawnGeometry.cellWidth() - span) / 2f + tune.dx,
                     LawnGeometry.rowFeet(row) + tune.dy, span, span);

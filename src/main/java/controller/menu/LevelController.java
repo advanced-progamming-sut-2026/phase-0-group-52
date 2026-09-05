@@ -158,6 +158,17 @@ public class LevelController {
         return fight != null && fight.bossStunned();
     }
 
+    public java.util.List<String> bossLines(boolean won) {
+        model.level.ZombossLevel fight = boss();
+        return fight == null ? new java.util.ArrayList<String>()
+                : fight.partingLines(won);
+    }
+
+    public String bossSpeaker() {
+        model.level.ZombossLevel fight = boss();
+        return fight == null ? "" : fight.speaker();
+    }
+
     public java.util.List<model.Vec2> takeBossStrikes() {
         model.level.ZombossLevel fight = boss();
         return fight == null || fight.getBoss() == null

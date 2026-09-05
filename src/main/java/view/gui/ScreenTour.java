@@ -211,6 +211,12 @@ final class ScreenTour {
         }
         pump(20);
         Screenshots.capture("screenshots/tour-" + name + ".png");
+        view.gui.widgets.BossDialogue.play(
+                ((view.gui.screens.LevelScreen) game.getScreen()).uiStage(),
+                game.context(), "Dr. Zomboss",
+                new model.level.ZombossLevel(4, chapter).partingLines(true), null);
+        pump(1);
+        Screenshots.capture("screenshots/tour-54-" + name + "-dialogue.png");
         app.setGame(null);
     }
 

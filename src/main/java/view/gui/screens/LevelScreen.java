@@ -220,6 +220,20 @@ public final class LevelScreen implements Screen, Navigator.Hosted {
         }
         shown = true;
         controller.setPaused(true);
+        if (controller.isBossFight() && view.gui.widgets.BossDialogue.play(stage, context,
+                controller.bossSpeaker(), controller.bossLines(controller.hasWon()),
+                new Runnable() {
+                    @Override
+                    public void run() {
+                        openOutcome();
+                    }
+                })) {
+            return;
+        }
+        openOutcome();
+    }
+
+    private void openOutcome() {
         new LevelOutcomePopup(context, controller,
                 controller.hasWon(), controller.outcome(), new Runnable() {
                     @Override

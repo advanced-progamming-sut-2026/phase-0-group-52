@@ -70,6 +70,24 @@ public class ZombossLevel extends ConveyorBeltLevel {
         return "ZOMBOSS";
     }
 
+    public java.util.List<String> partingLines(boolean won) {
+        java.util.List<String> lines = new java.util.ArrayList<String>();
+        if (won) {
+            lines.add("Impossible! My beautiful machine!");
+            lines.add("Enjoy your little garden while it lasts.");
+            lines.add("I shall return, and next time I bring the good robot.");
+        } else {
+            lines.add("Your lawn is mine, and so are your brains.");
+            lines.add("Do not feel bad. Nobody beats me on the first try.");
+            lines.add("Or the second. Ha! Until next time.");
+        }
+        return lines;
+    }
+
+    public String speaker() {
+        return "Dr. Zomboss";
+    }
+
     public float bossHealth() {
         return boss == null ? 1f : boss.healthFraction();
     }
